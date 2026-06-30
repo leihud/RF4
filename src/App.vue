@@ -655,7 +655,8 @@ h2 {
 
 .search-dropdown {
   position: relative;
-  min-width: 200px;
+  min-width: 400px;
+  flex: 1;
 }
 
 .search-input-wrapper {
@@ -729,8 +730,8 @@ h2 {
   font-size: 14px;
   color: #2c3e50;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-all;
 }
 
 .dropdown-tension {
