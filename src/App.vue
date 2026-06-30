@@ -64,21 +64,36 @@
               </template>
             </template>
           </div>
-          <select
+          <div
             v-if="(type === '鱼竿' || type === '渔轮') && selectedType === type"
-            v-model="selectedEquipment"
-            @click.stop
-            @change="addEquipment"
+            class="search-dropdown"
+            ref="dropdownRef"
           >
-            <option value="">请选择装备</option>
-            <option
-              v-for="equipment in getTypeEquipment(type)"
-              :key="equipment.equipmentName"
-              :value="equipment.equipmentName"
-            >
-              {{ equipment.equipmentName }}
-            </option>
-          </select>
+            <div class="search-input-wrapper">
+              <input
+                type="text"
+                class="search-input"
+                v-model="searchQuery"
+                placeholder="搜索装备..."
+                @click.stop="isDropdownOpen = !isDropdownOpen"
+              />
+              <span class="search-icon">🔍</span>
+            </div>
+            <div v-if="isDropdownOpen" class="dropdown-list">
+              <div
+                v-for="equipment in filteredEquipment"
+                :key="equipment.equipmentName"
+                class="dropdown-item"
+                @click.stop="selectEquipment(equipment)"
+              >
+                <span class="dropdown-name">{{ equipment.equipmentName }}</span>
+                <span class="dropdown-tension">{{ equipment.maxTension }} kN</span>
+              </div>
+              <div v-if="filteredEquipment.length === 0" class="dropdown-empty">
+                未找到匹配的装备
+              </div>
+            </div>
+          </div>
           <button
             v-if="(type === '鱼竿' || type === '渔轮') && selectedType !== type"
             class="select-btn"
@@ -124,15 +139,32 @@ export default {
       customEquipment: {
         '主线': { maxTension: 0, wear: 0 },
         '引线': { maxTension: 0, wear: 0 }
-      }
+      },
+      searchQuery: '',
+      isDropdownOpen: false,
+      dropdownRef: null
     }
   },
   mounted() {
     this.loadEquipmentData()
+    document.addEventListener('click', this.handleClickOutside)
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleClickOutside)
   },
   computed: {
     equipmentTypes() {
       return ['鱼竿', '渔轮', '主线', '引线']
+    },
+    filteredEquipment() {
+      const equipment = this.getTypeEquipment(this.selectedType)
+      if (!this.searchQuery.trim()) {
+        return equipment
+      }
+      const query = this.searchQuery.toLowerCase()
+      return equipment.filter(item => 
+        item.equipmentName.toLowerCase().includes(query)
+      )
     },
     allEquipmentSelected() {
       const rod = this.getSelectedEquipmentByType('鱼竿')
@@ -278,6 +310,14 @@ export default {
     selectType(type) {
       this.selectedType = type
       this.selectedEquipment = ''
+      this.searchQuery = ''
+      this.isDropdownOpen = false
+    },
+    selectEquipment(equipment) {
+      this.selectedEquipment = equipment.equipmentName
+      this.addEquipment()
+      this.searchQuery = ''
+      this.isDropdownOpen = false
     },
     getTypeEquipment(type) {
       return this.equipmentData.filter(item => item.equipmentType === type)
@@ -308,6 +348,12 @@ export default {
       const index = this.selectedEquipmentList.findIndex(item => item.equipmentType === type)
       if (index >= 0) {
         this.selectedEquipmentList.splice(index, 1)
+      }
+    },
+    handleClickOutside(event) {
+      const dropdown = this.$el.querySelector('.search-dropdown')
+      if (dropdown && !dropdown.contains(event.target)) {
+        this.isDropdownOpen = false
       }
     }
   }
@@ -481,21 +527,7 @@ h2 {
   border-radius: 4px;
 }
 
-.type-item select {
-  padding: 8px 12px;
-  border: 1px solid #42b983;
-  border-radius: 4px;
-  background-color: white;
-  font-size: 14px;
-  color: #2c3e50;
-  cursor: pointer;
-  min-width: 150px;
-}
 
-.type-item select:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.3);
-}
 
 .summary-section {
   background-color: #e8f5e9;
@@ -619,5 +651,99 @@ h2 {
 .select-btn:hover {
   background-color: #42b983;
   color: white;
+}
+
+.search-dropdown {
+  position: relative;
+  min-width: 200px;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 32px 8px 12px;
+  border: 1px solid #42b983;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #2c3e50;
+  background-color: white;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.3);
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+.search-icon {
+  position: absolute;
+  right: 8px;
+  font-size: 14px;
+  color: #999;
+  pointer-events: none;
+}
+
+.dropdown-list {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.dropdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #f5f5f5;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover {
+  background-color: #e8f5e9;
+}
+
+.dropdown-name {
+  flex: 1;
+  font-size: 14px;
+  color: #2c3e50;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdown-tension {
+  font-size: 13px;
+  color: #42b983;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.dropdown-empty {
+  padding: 15px;
+  text-align: center;
+  color: #999;
+  font-size: 14px;
 }
 </style>
