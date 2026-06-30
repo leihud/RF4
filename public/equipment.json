@@ -1,0 +1,32 @@
+[
+  {
+    "equipmentType": "鱼竿",
+    "equipmentName": "Classic Model Carp 360XH",
+    "maxTension": 27.4
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Rigal 20 2S",
+    "maxTension": 74.33
+  },
+  {
+    "equipmentType": "鱼竿",
+    "equipmentName": "Comfort FD360",
+    "maxTension": 6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Tagara Il 6000",
+    "maxTension": 45.89
+  },
+  {
+    "equipmentType": "鱼竿",
+    "equipmentName": "Poseidon Sensi 80-20130",
+    "maxTension": 49.2
+  },
+  {
+    "equipmentType": "鱼竿",
+    "equipmentName": "Poseidon Sensi 80-50190",
+    "maxTension": 63.7
+  }
+]
