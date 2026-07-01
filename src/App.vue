@@ -1,7 +1,8 @@
 <template>
   <div class="app">
     <div class="header">
-      <h1>装备拉力计算表</h1>
+      <h1>最大拉力磨损计算器（非盈利商业行为，个人使用）</h1>
+    
       <button class="refresh-btn" @click="loadEquipmentData">🔄 刷新数据</button>
     </div>
 
@@ -64,8 +65,7 @@
               </template>
             </template>
           </div>
-          <div
-            v-if="(type === '鱼竿' || type === '渔轮') && selectedType === type"
+          <div v-if="(type === '鱼竿' || type === '渔轮') && selectedType === type"
             class="search-dropdown"
             ref="dropdownRef"
           >
@@ -74,10 +74,28 @@
                 type="text"
                 class="search-input"
                 v-model="searchQuery"
-                placeholder="搜索装备..."
+                placeholder="搜索装备名称..."
                 @click.stop="isDropdownOpen = !isDropdownOpen"
               />
               <span class="search-icon">🔍</span>
+            </div>
+            <div class="tension-filter-wrapper" v-if="isDropdownOpen">
+              <input
+                type="number"
+                class="tension-filter-input"
+                v-model="minTensionFilter"
+                placeholder="最小拉力"
+                min="0"
+              />
+              <span class="tension-filter-separator">-</span>
+              <input
+                type="number"
+                class="tension-filter-input"
+                v-model="maxTensionFilter"
+                placeholder="最大拉力"
+                min="0"
+              />
+              <span class="tension-filter-unit">kN</span>
             </div>
             <div v-if="isDropdownOpen" class="dropdown-list">
               <div
@@ -142,7 +160,9 @@ export default {
       },
       searchQuery: '',
       isDropdownOpen: false,
-      dropdownRef: null
+      dropdownRef: null,
+      minTensionFilter: '',
+      maxTensionFilter: ''
     }
   },
   mounted() {
@@ -158,20 +178,28 @@ export default {
     },
     filteredEquipment() {
       const equipment = this.getTypeEquipment(this.selectedType)
-      if (!this.searchQuery.trim()) {
-        return equipment
+      let filtered = [...equipment]
+
+      if (this.searchQuery.trim()) {
+        const query = this.searchQuery.toLowerCase()
+        filtered = filtered.filter(item => 
+          item.equipmentName.toLowerCase().includes(query)
+        )
       }
-      const query = this.searchQuery.toLowerCase()
-      return equipment.filter(item => 
-        item.equipmentName.toLowerCase().includes(query)
+
+      const minTension = parseFloat(this.minTensionFilter) || 0
+      const maxTension = parseFloat(this.maxTensionFilter) || Infinity
+      
+      filtered = filtered.filter(item => 
+        item.maxTension >= minTension && item.maxTension <= maxTension
       )
+
+      return filtered.sort((a, b) => a.maxTension - b.maxTension)
     },
     allEquipmentSelected() {
       const rod = this.getSelectedEquipmentByType('鱼竿')
       const reel = this.getSelectedEquipmentByType('渔轮')
-      const mainLine = this.customEquipment['主线'].maxTension > 0
-      const leader = this.customEquipment['引线'].maxTension > 0
-      return rod && reel && mainLine && leader
+      return rod && reel
     },
     equipmentSummaryText() {
       const rod = this.getSelectedEquipmentByType('鱼竿')?.equipmentName || '未选择'
@@ -204,68 +232,141 @@ export default {
       return tensions.length > 0 ? Math.min(...tensions) : 0
     },
     equipmentAdvice() {
-      if (!this.allEquipmentSelected) return null
+      const rod = this.getSelectedEquipmentByType('鱼竿')
+      const reel = this.getSelectedEquipmentByType('渔轮')
+      const mainLineTension = this.customEquipment['主线'].maxTension > 0 ? parseFloat(this.calculateCustomActualTension('主线')) : 0
+      const leaderTension = this.customEquipment['引线'].maxTension > 0 ? parseFloat(this.calculateCustomActualTension('引线')) : 0
 
-      const typeOrder = ['鱼竿', '渔轮', '主线', '引线']
-      const actualTensions = typeOrder.map(type => {
-        let actualTension = 0
-        let equipment = { equipmentName: type }
-        
-        if (type === '主线' || type === '引线') {
-          actualTension = parseFloat(this.calculateCustomActualTension(type))
-          equipment.equipmentName = `${type}(${this.customEquipment[type].maxTension}kN)`
-        } else {
-          equipment = this.selectedEquipmentList.find(e => e.equipmentType === type)
-          actualTension = parseFloat(this.calculateActualTension(equipment))
-        }
-        
+      if (!rod && !reel && mainLineTension === 0 && leaderTension === 0) return null
+
+      const rodTension = rod ? parseFloat(this.calculateActualTension(rod)) : 0
+      const reelTension = reel ? parseFloat(this.calculateActualTension(reel)) : 0
+
+      // 只有鱼竿或渔轮时的提示
+      if (rod && !reel) {
         return {
-          type,
-          actualTension,
-          equipment
-        }
-      })
-
-      let issues = []
-      
-      for (let i = 0; i < actualTensions.length - 1; i++) {
-        if (actualTensions[i].actualTension <= actualTensions[i + 1].actualTension) {
-          issues.push({
-            lower: actualTensions[i],
-            higher: actualTensions[i + 1]
-          })
+          isOptimal: false,
+          message: `💡 已选择鱼竿(${rodTension}kN)，请选择渔轮和主线来完成装备搭配。`
         }
       }
-
-      if (issues.length === 0) {
+      if (!rod && reel) {
         return {
-          isOptimal: true,
-          message: '✅ 装备搭配很棒！引线拉力最小，符合安全规范。'
+          isOptimal: false,
+          message: `💡 已选择渔轮(${reelTension}kN)，请选择鱼竿和主线来完成装备搭配。`
         }
       }
 
-      let messages = []
-      
-      issues.forEach(issue => {
-        const { lower, higher } = issue
-        if (lower.type === '引线') {
-          messages.push(`${lower.equipment.equipmentName}(${lower.actualTension}kN)的拉力超过了${higher.equipment.equipmentName}(${higher.actualTension}kN)，建议换个拉力更小的引线，或者换个拉力更大的${higher.type}`)
+      // 鱼竿和渔轮都有，但主线未配置
+      if (rod && reel && mainLineTension <= 0) {
+        return {
+          isOptimal: false,
+          message: `💡 已选择鱼竿(${rodTension}kN)和渔轮(${reelTension}kN)，请配置主线和引线来完成装备搭配。`
+        }
+      }
+
+      // 只有鱼竿和主线（无渔轮）
+      if (rod && !reel && mainLineTension > 0) {
+        if (rodTension >= mainLineTension) {
+          return {
+            isOptimal: false,
+            message: `✅ 鱼竿(${rodTension}kN)拉力大于主线(${mainLineTension}kN)，搭配合理；建议配置渔轮和引线以完善装备组合。`
+          }
         } else {
-          messages.push(`${lower.equipment.equipmentName}(${lower.actualTension}kN)应该比${higher.equipment.equipmentName}(${higher.actualTension}kN)拉力大，建议调整一下装备搭配`)
+          return {
+            isOptimal: false,
+            message: `⚠️ 主线(${mainLineTension}kN)拉力大于鱼竿(${rodTension}kN)，建议降低主线拉力或增大鱼竿拉力。`
+          }
         }
-      })
-
-      const minTensionValue = Math.min(...actualTensions.map(t => t.actualTension))
-      const minTensionType = actualTensions.find(t => t.actualTension === minTensionValue)?.type
-      
-      if (minTensionType !== '引线' && !messages.some(m => m.includes('引线'))) {
-        const minEquipment = actualTensions.find(t => t.actualTension === minTensionValue)
-        messages.push(`${minEquipment.equipment.equipmentName}(${minTensionValue}kN)的拉力最小了，这样很危险！建议换个拉力更小的引线保护起来`)
       }
 
+      // 只有渔轮和主线（无鱼竿）
+      if (!rod && reel && mainLineTension > 0) {
+        return {
+          isOptimal: false,
+          message: `💡 已配置渔轮(${reelTension}kN)和主线(${mainLineTension}kN)，请配置鱼竿来完成装备搭配。`
+        }
+      }
+
+      // 二、存在引线（引线拉力 > 0）
+      if (leaderTension > 0) {
+        // 致命危险：引线拉力大于鱼竿
+        if (leaderTension > rodTension) {
+          return {
+            isOptimal: false,
+            message: '❌ 致命危险搭配！引线拉力超过鱼竿极限，整套装备无任何缓冲保护，中大鱼直接爆竿，建议大幅降低引线拉力。'
+          }
+        }
+
+        // 渔轮拉力为最小 - 高危（会磨损渔轮）
+        if (reelTension <= leaderTension && reelTension <= mainLineTension && reelTension <= rodTension) {
+          return {
+            isOptimal: false,
+            message: '❌ 高危搭配！渔轮拉力为整套最小阈值，大鱼猛冲时渔轮会持续过载磨损齿轮、摩擦片，长期使用会永久损坏渔轮；建议增大渔轮拉力或更换拉力更小的引线。'
+          }
+        }
+
+        // 主线和引线拉力相等 - 注意损耗（可能同时断裂）
+        if (mainLineTension === leaderTension) {
+          return {
+            isOptimal: false,
+            message: '⚠️ 主线与引线拉力相等，过载时可能同时断裂，建议降低引线拉力或增大主线拉力，避免线组整体损坏。'
+          }
+        }
+
+        // 引线拉力是最小的 - 安全搭配（过载只拉断引线）
+        if (leaderTension <= mainLineTension && leaderTension <= reelTension && leaderTension <= rodTension) {
+          // 主线拉力大于渔轮，但引线最小 - 仍属安全
+          if (mainLineTension > reelTension) {
+            return {
+              isOptimal: false,
+              message: '⚠️ 主线拉力大于渔轮拉力，但引线拉力最小，过载只会拉断引线不会损伤渔轮；推荐降低主线拉力或调大渔轮拉力，匹配标准搭配逻辑。'
+            }
+          }
+          // 引线最小的情况 - 安全
+          return {
+            isOptimal: true,
+            message: '✅ 装备拉力搭配合理，过载时会优先拉断低成本引线，完美保护主线、渔轮、鱼竿。'
+          }
+        }
+
+        // 主线拉力为最小 - 安全（过载只断主线，更换成本较高）
+        if (mainLineTension <= leaderTension && mainLineTension <= reelTension && mainLineTension <= rodTension) {
+          return {
+            isOptimal: false,
+            message: '⚠️ 当前主线拉力最小，过载时会先拉断主线，会丢失鱼钩、铅坠整套配件，更换成本较高；建议搭配低拉力引线降低损耗成本。'
+          }
+        }
+      }
+
+      // 三、无引线（引线拉力 = 0 / 无配置）
+      if (leaderTension <= 0) {
+        // 渔轮拉力为最小 - 高危（会磨损渔轮）
+        if (reelTension <= mainLineTension && reelTension <= rodTension) {
+          return {
+            isOptimal: false,
+            message: '❌ 高危搭配！渔轮拉力为整套最小阈值，大鱼猛冲时渔轮会持续过载磨损齿轮、摩擦片，长期使用会永久损坏渔轮；建议增大渔轮拉力或增加引线。'
+          }
+        }
+
+        // 主线拉力为最小 - 安全（过载只断主线）
+        if (mainLineTension <= reelTension && mainLineTension <= rodTension) {
+          return {
+            isOptimal: false,
+            message: '⚠️ 当前未配置引线，过载会直接拉断主线，每次断线需要重新更换完整主线，建议搭配低拉力引线降低损耗成本。'
+          }
+        }
+
+        // 鱼竿拉力为最小 - 致命危险（无缓冲保护）
+        return {
+          isOptimal: false,
+          message: '❌ 致命危险搭配！鱼竿拉力为整套最小阈值，中大鱼直接爆竿，请调低主线或渔轮拉力，确保鱼竿拉力最大。'
+        }
+      }
+
+      // 默认提示
       return {
         isOptimal: false,
-        message: '⚠️ 有这些问题需要注意：\n' + messages.join('\n')
+        message: '💡 请检查装备配置。'
       }
     }
   },
@@ -311,12 +412,16 @@ export default {
       this.selectedType = type
       this.selectedEquipment = ''
       this.searchQuery = ''
+      this.minTensionFilter = ''
+      this.maxTensionFilter = ''
       this.isDropdownOpen = false
     },
     selectEquipment(equipment) {
       this.selectedEquipment = equipment.equipmentName
       this.addEquipment()
       this.searchQuery = ''
+      this.minTensionFilter = ''
+      this.maxTensionFilter = ''
       this.isDropdownOpen = false
     },
     getTypeEquipment(type) {
@@ -691,6 +796,40 @@ h2 {
   font-size: 14px;
   color: #999;
   pointer-events: none;
+}
+
+.tension-filter-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 0;
+  border-top: 1px solid #eee;
+  margin-top: 4px;
+}
+
+.tension-filter-input {
+  width: 80px;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.tension-filter-input:focus {
+  outline: none;
+  border-color: #42b983;
+  box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.3);
+}
+
+.tension-filter-separator {
+  color: #999;
+  font-size: 14px;
+}
+
+.tension-filter-unit {
+  font-size: 13px;
+  color: #666;
 }
 
 .dropdown-list {
