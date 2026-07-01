@@ -27,7 +27,9 @@ const equipmentData = jsonData.map(item => {
   const keys = Object.keys(item);
   let type = '';
   let name = '';
-  let tension = 0;
+  let lockTension = 0;
+  let panelTension = 0;
+  let price = 0;
   
   keys.forEach(key => {
     const value = item[key];
@@ -35,15 +37,25 @@ const equipmentData = jsonData.map(item => {
       type = typeMap[value] || value;
     } else if (key.includes('鍚嶇') || key.includes('名称')) {
       name = value;
+    } else if (key.includes('閿佽') || key.includes('锁轮')) {
+      lockTension = value === '-' ? 0 : parseFloat(value);
+    } else if (key.includes('闈㈣') || key.includes('面板')) {
+      panelTension = value === '-' ? 0 : parseFloat(value);
+    } else if (key.includes('浠锋') || key.includes('价格')) {
+      price = value === '-' ? 0 : parseFloat(value);
     } else if (key.includes('鍔?') || key.includes('拉力')) {
-      tension = value === '-' ? 0 : parseFloat(value);
+      if (lockTension === 0) {
+        lockTension = value === '-' ? 0 : parseFloat(value);
+      }
     }
   });
   
   return {
     equipmentType: type,
     equipmentName: name,
-    maxTension: isNaN(tension) ? 0 : tension
+    lockTension: isNaN(lockTension) ? 0 : lockTension,
+    panelTension: isNaN(panelTension) ? 0 : panelTension,
+    price: isNaN(price) ? 0 : price
   };
 }).filter(item => item.equipmentType && item.equipmentName);
 

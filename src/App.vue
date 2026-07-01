@@ -2,11 +2,25 @@
   <div class="app">
     <div class="header">
       <h1>最大拉力磨损计算器（非盈利商业行为，个人使用）</h1>
-    
-      <button class="refresh-btn" @click="loadEquipmentData">🔄 刷新数据</button>
     </div>
 
-    <div class="equipment-selector">
+    <div class="rule-selector">
+      <span class="rule-label">计算规则：</span>
+      <button 
+        v-for="rule in calculationRules" 
+        :key="rule.value"
+        :class="['rule-btn', { active: calculationRule === rule.value }]"
+        @click="selectCalculationRule(rule.value)"
+      >
+        {{ rule.label }}
+      </button>
+    </div>
+    
+    <div v-if="!calculationRule" class="rule-warning">
+      ⚠️ 请先选择计算规则
+    </div>
+    
+    <div class="equipment-selector" :class="{ disabled: !calculationRule }">
       <h2>选择装备类型</h2>
       <div class="type-buttons">
         <div
@@ -44,20 +58,55 @@
             <template v-else>
               <template v-if="getSelectedEquipmentByType(type)">
                 <span class="selected-name">{{ getSelectedEquipmentByType(type).equipmentName }}</span>
-                <span class="selected-tension">{{ getSelectedEquipmentByType(type).maxTension }} kN</span>
-                <div class="wear-input-wrapper">
-                  <span class="wear-label">磨损度：</span>
-                  <input
-                    type="number"
-                    class="wear-input"
-                    v-model.number="getSelectedEquipmentByType(type).wear"
-                    placeholder="0"
-                    min="0"
-                    max="100"
-                  />
-                  <span class="wear-unit">%</span>
-                </div>
-                <span class="actual-tension">实际拉力：{{ calculateActualTension(getSelectedEquipmentByType(type)) }} kN</span>
+                <template v-if="type === '鱼竿'">
+                  <span class="selected-tension">面板拉力：{{ getSelectedEquipmentByType(type).panelTension || getSelectedEquipmentByType(type).lockTension }} kN</span>
+                  <span v-if="getSelectedEquipmentByType(type).price > 0" class="selected-price">价格：¥{{ getSelectedEquipmentByType(type).price }}</span>
+                  <div class="wear-input-wrapper">
+                    <span class="wear-label">磨损度：</span>
+                    <input
+                      type="number"
+                      class="wear-input"
+                      v-model.number="getSelectedEquipmentByType(type).wear"
+                      placeholder="0"
+                      min="0"
+                      max="100"
+                    />
+                    <span class="wear-unit">%</span>
+                  </div>
+                  <span class="actual-tension">实际面板拉力：{{ calculateActualPanelTension(getSelectedEquipmentByType(type)) }} kN</span>
+                </template>
+                <template v-else>
+                  <span class="selected-tension">面板拉力：{{ getSelectedEquipmentByType(type).panelTension || getSelectedEquipmentByType(type).lockTension || 0 }} kN</span>
+                  <span class="selected-tension">锁轮拉力：{{ getSelectedEquipmentByType(type).lockTension }} kN</span>
+                  <span v-if="getSelectedEquipmentByType(type).price > 0" class="selected-price">价格：¥{{ getSelectedEquipmentByType(type).price }}</span>
+                  <div class="wear-input-wrapper">
+                    <span class="wear-label">磨损度：</span>
+                    <input
+                      type="number"
+                      class="wear-input"
+                      v-model.number="getSelectedEquipmentByType(type).wear"
+                      placeholder="0"
+                      min="0"
+                      max="100"
+                    />
+                    <span class="wear-unit">%</span>
+                  </div>
+                  <div v-if="type === '渔轮'" class="friction-input-wrapper">
+                    <span class="friction-label">摩擦值：</span>
+                    <input
+                      type="number"
+                      class="friction-input"
+                      v-model.number="frictionValue['渔轮']"
+                      placeholder="0"
+                      min="0"
+                      max="29"
+                      @input="handleFrictionInput"
+                    />
+                    <span class="friction-unit">{{ (frictionValue['渔轮'] / 29 * 100).toFixed(0) }}%</span>
+                  </div>
+                  <span class="actual-panel-tension">实际面板拉力：{{ calculateActualPanelTension(getSelectedEquipmentByType(type)) }} kN</span>
+                  <span class="actual-tension">实际锁轮拉力：{{ calculateActualLockTension(getSelectedEquipmentByType(type)) }} kN</span>
+                </template>
                 <button class="clear-btn" @click.stop="clearEquipmentByType(type)">×</button>
               </template>
               <template v-else>
@@ -105,7 +154,8 @@
                 @click.stop="selectEquipment(equipment)"
               >
                 <span class="dropdown-name">{{ equipment.equipmentName }}</span>
-                <span class="dropdown-tension">{{ equipment.maxTension }} kN</span>
+                <span class="dropdown-tension">{{ equipment.panelTension }} kN</span>
+                <span v-if="equipment.price > 0" class="dropdown-price">¥{{ equipment.price }}</span>
               </div>
               <div v-if="filteredEquipment.length === 0" class="dropdown-empty">
                 未找到匹配的装备
@@ -131,11 +181,15 @@
           <span class="summary-value">{{ equipmentSummaryText }}</span>
         </div>
         <div class="summary-row">
-          <span class="summary-label">最小拉力限制：</span>
+          <span class="summary-label">最小锁轮拉力限制：</span>
           <span class="summary-value">{{ minTension }} kN</span>
         </div>
+        <div class="summary-row">
+          <span class="summary-label">装备总价值：</span>
+          <span class="summary-value">¥{{ equipmentTotalPrice }}</span>
+        </div>
         <div v-if="equipmentAdvice" class="advice-section">
-          <div class="advice-title">💡 装备建议：</div>
+          <div class="advice-title">� 锁轮建议：</div>
           <div class="advice-item" :class="{ 'advice-warning': !equipmentAdvice.isOptimal }">
             <pre class="advice-text">{{ equipmentAdvice.message }}</pre>
           </div>
@@ -158,6 +212,10 @@ export default {
         '主线': { maxTension: 0, wear: 0 },
         '引线': { maxTension: 0, wear: 0 }
       },
+      frictionValue: {
+        '渔轮': 15
+      },
+      calculationRule: '',
       searchQuery: '',
       isDropdownOpen: false,
       dropdownRef: null,
@@ -176,6 +234,12 @@ export default {
     equipmentTypes() {
       return ['鱼竿', '渔轮', '主线', '引线']
     },
+    calculationRules() {
+      return [
+        { value: 'guide', label: '宝典通用规则' },
+        { value: 'forum', label: '论坛计算规则' }
+      ]
+    },
     filteredEquipment() {
       const equipment = this.getTypeEquipment(this.selectedType)
       let filtered = [...equipment]
@@ -191,10 +255,10 @@ export default {
       const maxTension = parseFloat(this.maxTensionFilter) || Infinity
       
       filtered = filtered.filter(item => 
-        item.maxTension >= minTension && item.maxTension <= maxTension
+        item.panelTension >= minTension && item.panelTension <= maxTension
       )
 
-      return filtered.sort((a, b) => a.maxTension - b.maxTension)
+      return filtered.sort((a, b) => a.panelTension - b.panelTension)
     },
     allEquipmentSelected() {
       const rod = this.getSelectedEquipmentByType('鱼竿')
@@ -208,17 +272,25 @@ export default {
       const leader = this.customEquipment['引线'].maxTension > 0 ? `引线(${this.customEquipment['引线'].maxTension}kN)` : '未设置'
       return `${rod} + ${reel} + ${mainLine} + ${leader}`
     },
+    equipmentTotalPrice() {
+      let total = 0
+      const rod = this.getSelectedEquipmentByType('鱼竿')
+      const reel = this.getSelectedEquipmentByType('渔轮')
+      if (rod && rod.price > 0) total += rod.price
+      if (reel && reel.price > 0) total += reel.price
+      return total
+    },
     minTension() {
       const tensions = []
       
       const rod = this.getSelectedEquipmentByType('鱼竿')
       if (rod) {
-        tensions.push(parseFloat(this.calculateActualTension(rod)))
+        tensions.push(parseFloat(this.calculateActualPanelTension(rod)))
       }
       
       const reel = this.getSelectedEquipmentByType('渔轮')
       if (reel) {
-        tensions.push(parseFloat(this.calculateActualTension(reel)))
+        tensions.push(parseFloat(this.calculateActualLockTension(reel)))
       }
       
       if (this.customEquipment['主线'].maxTension > 0) {
@@ -239,134 +311,110 @@ export default {
 
       if (!rod && !reel && mainLineTension === 0 && leaderTension === 0) return null
 
-      const rodTension = rod ? parseFloat(this.calculateActualTension(rod)) : 0
-      const reelTension = reel ? parseFloat(this.calculateActualTension(reel)) : 0
+      const rodTension = rod ? parseFloat(this.calculateActualPanelTension(rod)) : 0
+      const reelLockTension = reel ? parseFloat(this.calculateActualLockTension(reel)) : 0
+      const reelPanelTension = reel ? parseFloat(this.calculateActualPanelTension(reel)) : 0
 
-      // 只有鱼竿或渔轮时的提示
-      if (rod && !reel) {
-        return {
-          isOptimal: false,
-          message: `💡 已选择鱼竿(${rodTension}kN)，请选择渔轮和主线来完成装备搭配。`
-        }
-      }
-      if (!rod && reel) {
-        return {
-          isOptimal: false,
-          message: `💡 已选择渔轮(${reelTension}kN)，请选择鱼竿和主线来完成装备搭配。`
-        }
-      }
+      const generateNormalAdvice = () => {
+        if (!rod && !reel) return ''
+        if (!rod) return `💡 请配置鱼竿来完成装备搭配。`
+        if (!reel) return `💡 请配置渔轮来完成装备搭配。`
+        if (mainLineTension <= 0) return `💡 请配置主线来完成装备搭配。`
 
-      // 鱼竿和渔轮都有，但主线未配置
-      if (rod && reel && mainLineTension <= 0) {
-        return {
-          isOptimal: false,
-          message: `💡 已选择鱼竿(${rodTension}kN)和渔轮(${reelTension}kN)，请配置主线和引线来完成装备搭配。`
-        }
-      }
-
-      // 只有鱼竿和主线（无渔轮）
-      if (rod && !reel && mainLineTension > 0) {
-        if (rodTension >= mainLineTension) {
-          return {
-            isOptimal: false,
-            message: `✅ 鱼竿(${rodTension}kN)拉力大于主线(${mainLineTension}kN)，搭配合理；建议配置渔轮和引线以完善装备组合。`
+        if (leaderTension > 0) {
+          if (leaderTension > rodTension) {
+            return '❌ 致命危险！引线拉力超过鱼竿极限，中大鱼直接爆竿，建议大幅降低引线拉力。'
+          }
+          if (reelPanelTension <= leaderTension && reelPanelTension <= mainLineTension && reelPanelTension <= rodTension) {
+            return '❌ 高危！渔轮实际面板拉力为最小，大鱼猛冲会过载磨损渔轮，建议调整摩擦值或增大渔轮拉力。'
+          }
+          if (mainLineTension === leaderTension) {
+            return '⚠️ 主线与引线拉力相等，过载可能同时断裂，建议降低引线或增大主线拉力。'
+          }
+          if (leaderTension <= mainLineTension && leaderTension <= reelPanelTension && leaderTension <= rodTension) {
+            return '✅ 常态搭配合理，过载优先拉断低成本引线，保护主线、渔轮、鱼竿。'
+          }
+          if (mainLineTension <= leaderTension && mainLineTension <= reelPanelTension && mainLineTension <= rodTension) {
+            return '✅ 常态搭配合理，过载优先拉断主线，保护渔轮、鱼竿；建议搭配低拉力引线降低损耗成本。'
           }
         } else {
-          return {
-            isOptimal: false,
-            message: `⚠️ 主线(${mainLineTension}kN)拉力大于鱼竿(${rodTension}kN)，建议降低主线拉力或增大鱼竿拉力。`
+          if (reelPanelTension <= mainLineTension && reelPanelTension <= rodTension) {
+            return '❌ 高危！渔轮实际面板拉力为最小，会过载磨损渔轮，建议调整摩擦值或增大渔轮拉力。'
           }
+          if (mainLineTension <= reelPanelTension && mainLineTension <= rodTension) {
+            return '✅ 常态搭配合理，过载优先拉断主线，保护渔轮、鱼竿；建议搭配低拉力引线降低损耗。'
+          }
+          return '❌ 致命危险！鱼竿拉力为最小，中大鱼直接爆竿，请调整配置。'
         }
+        return ''
       }
 
-      // 只有渔轮和主线（无鱼竿）
-      if (!rod && reel && mainLineTension > 0) {
-        return {
-          isOptimal: false,
-          message: `💡 已配置渔轮(${reelTension}kN)和主线(${mainLineTension}kN)，请配置鱼竿来完成装备搭配。`
+      const generateLockAdvice = () => {
+        if (!rod && !reel) return ''
+        if (!rod) return ''
+        if (!reel) return ''
+        if (mainLineTension <= 0) return ''
+
+        if (leaderTension > 0) {
+          if (leaderTension > rodTension) {
+            return '❌ 致命危险！引线拉力超过鱼竿极限，中大鱼直接爆竿，建议大幅降低引线拉力。'
+          }
+          if (reelLockTension <= leaderTension && reelLockTension <= mainLineTension && reelLockTension <= rodTension) {
+            return '❌ 高危！渔轮实际锁轮拉力为最小，大鱼猛冲会过载磨损渔轮，建议增大渔轮锁轮拉力或更换拉力更小的引线。'
+          }
+          if (mainLineTension === leaderTension) {
+            return '⚠️ 主线与引线拉力相等，过载可能同时断裂，建议降低引线或增大主线拉力。'
+          }
+          if (leaderTension <= mainLineTension && leaderTension <= reelLockTension && leaderTension <= rodTension) {
+            return '✅ 锁轮搭配合理，过载优先拉断低成本引线，保护主线、渔轮、鱼竿。'
+          }
+          if (mainLineTension <= leaderTension && mainLineTension <= reelLockTension && mainLineTension <= rodTension) {
+            return '✅ 锁轮搭配合理，过载优先拉断主线，保护渔轮、鱼竿；建议搭配低拉力引线降低损耗成本。'
+          }
+        } else {
+          if (reelLockTension <= mainLineTension && reelLockTension <= rodTension) {
+            return '❌ 高危！渔轮实际锁轮拉力为最小，会过载磨损渔轮，建议增大渔轮锁轮拉力或增加引线。'
+          }
+          if (mainLineTension <= reelLockTension && mainLineTension <= rodTension) {
+            return '✅ 锁轮搭配合理，过载优先拉断主线，保护渔轮、鱼竿；建议搭配低拉力引线降低损耗。'
+          }
+          return '❌ 致命危险！鱼竿拉力为最小，中大鱼直接爆竿，请调整配置。'
         }
+        return ''
       }
 
-      // 二、存在引线（引线拉力 > 0）
-      if (leaderTension > 0) {
-        // 致命危险：引线拉力大于鱼竿
-        if (leaderTension > rodTension) {
-          return {
-            isOptimal: false,
-            message: '❌ 致命危险搭配！引线拉力超过鱼竿极限，整套装备无任何缓冲保护，中大鱼直接爆竿，建议大幅降低引线拉力。'
-          }
-        }
+      const normalAdvice = generateNormalAdvice()
+      const lockAdvice = generateLockAdvice()
 
-        // 渔轮拉力为最小 - 高危（会磨损渔轮）
-        if (reelTension <= leaderTension && reelTension <= mainLineTension && reelTension <= rodTension) {
-          return {
-            isOptimal: false,
-            message: '❌ 高危搭配！渔轮拉力为整套最小阈值，大鱼猛冲时渔轮会持续过载磨损齿轮、摩擦片，长期使用会永久损坏渔轮；建议增大渔轮拉力或更换拉力更小的引线。'
-          }
-        }
-
-        // 主线和引线拉力相等 - 注意损耗（可能同时断裂）
-        if (mainLineTension === leaderTension) {
-          return {
-            isOptimal: false,
-            message: '⚠️ 主线与引线拉力相等，过载时可能同时断裂，建议降低引线拉力或增大主线拉力，避免线组整体损坏。'
-          }
-        }
-
-        // 引线拉力是最小的 - 安全搭配（过载只拉断引线）
-        if (leaderTension <= mainLineTension && leaderTension <= reelTension && leaderTension <= rodTension) {
-          // 主线拉力大于渔轮，但引线最小 - 仍属安全
-          if (mainLineTension > reelTension) {
-            return {
-              isOptimal: false,
-              message: '⚠️ 主线拉力大于渔轮拉力，但引线拉力最小，过载只会拉断引线不会损伤渔轮；推荐降低主线拉力或调大渔轮拉力，匹配标准搭配逻辑。'
-            }
-          }
-          // 引线最小的情况 - 安全
-          return {
-            isOptimal: true,
-            message: '✅ 装备拉力搭配合理，过载时会优先拉断低成本引线，完美保护主线、渔轮、鱼竿。'
-          }
-        }
-
-        // 主线拉力为最小 - 安全（过载只断主线，更换成本较高）
-        if (mainLineTension <= leaderTension && mainLineTension <= reelTension && mainLineTension <= rodTension) {
-          return {
-            isOptimal: false,
-            message: '⚠️ 当前主线拉力最小，过载时会先拉断主线，会丢失鱼钩、铅坠整套配件，更换成本较高；建议搭配低拉力引线降低损耗成本。'
-          }
-        }
+      let message = ''
+      if (normalAdvice) {
+        message += `【常态建议】${normalAdvice}`
+      }
+      if (lockAdvice && reel && reelLockTension !== reelPanelTension) {
+        message += `\n\n【锁轮建议】${lockAdvice}`
       }
 
-      // 三、无引线（引线拉力 = 0 / 无配置）
-      if (leaderTension <= 0) {
-        // 渔轮拉力为最小 - 高危（会磨损渔轮）
-        if (reelTension <= mainLineTension && reelTension <= rodTension) {
-          return {
-            isOptimal: false,
-            message: '❌ 高危搭配！渔轮拉力为整套最小阈值，大鱼猛冲时渔轮会持续过载磨损齿轮、摩擦片，长期使用会永久损坏渔轮；建议增大渔轮拉力或增加引线。'
-          }
+      const getFrictionAdvice = () => {
+        if (!reel || mainLineTension <= 0) return ''
+        const friction = this.frictionValue['渔轮'] || 0
+        
+        if (friction > 25) {
+          return `\n\n💡 摩擦值建议：当前摩擦值(${friction})较高，建议适当降低以保护渔轮内部结构。`
+        } else if (friction < 5) {
+          return `\n\n💡 摩擦值建议：当前摩擦值(${friction})较低，可适当提高以获得更好的控鱼效果。`
         }
-
-        // 主线拉力为最小 - 安全（过载只断主线）
-        if (mainLineTension <= reelTension && mainLineTension <= rodTension) {
-          return {
-            isOptimal: false,
-            message: '⚠️ 当前未配置引线，过载会直接拉断主线，每次断线需要重新更换完整主线，建议搭配低拉力引线降低损耗成本。'
-          }
-        }
-
-        // 鱼竿拉力为最小 - 致命危险（无缓冲保护）
-        return {
-          isOptimal: false,
-          message: '❌ 致命危险搭配！鱼竿拉力为整套最小阈值，中大鱼直接爆竿，请调低主线或渔轮拉力，确保鱼竿拉力最大。'
-        }
+        return ''
       }
 
-      // 默认提示
+      message += getFrictionAdvice()
+
+      if (!message) {
+        message = '💡 请检查装备配置。'
+      }
+
       return {
-        isOptimal: false,
-        message: '💡 请检查装备配置。'
+        isOptimal: message.includes('✅'),
+        message: message
       }
     }
   },
@@ -392,21 +440,52 @@ export default {
         ]
       }
     },
-    calculateActualTension(equipment) {
+    calculateActualLockTension(equipment) {
       const wear = equipment.wear || 0
-      let actual
-      if (equipment.equipmentType === '渔轮' || equipment.equipmentType === '鱼竿') {
-        actual = equipment.maxTension * (1 - 0.7 * wear / 100)
+      const lockTension = equipment.lockTension || equipment.maxTension || 0
+      if (equipment.equipmentType === '鱼竿') {
+        return (lockTension * (1 - 0.7 * wear / 100)).toFixed(2)
+      } else if (equipment.equipmentType === '渔轮') {
+        if (this.calculationRule === 'forum') {
+          return (lockTension * 0.3 + lockTension * 0.7 * (1 - wear / 100)).toFixed(2)
+        } else {
+          return (lockTension * (1 - 0.7 * wear / 100)).toFixed(2)
+        }
       } else {
-        actual = equipment.maxTension * (1 - wear / 100)
+        return (lockTension * (1 - wear / 100)).toFixed(2)
       }
-      return actual.toFixed(2)
+    },
+    calculateActualPanelTension(equipment) {
+      const wear = equipment.wear || 0
+      const panelTension = equipment.panelTension || equipment.lockTension || equipment.maxTension || 0
+      if (equipment.equipmentType === '鱼竿') {
+        return (panelTension * (1 - 0.7 * wear / 100)).toFixed(2)
+      } else if (equipment.equipmentType === '渔轮') {
+        const friction = this.frictionValue['渔轮'] || 0
+        const wearRatio = wear / 100
+        if (this.calculationRule === 'forum') {
+          return (panelTension * (1 - wearRatio) / 30 * friction).toFixed(2)
+        } else {
+          const frictionRatio = friction / 29
+          return (panelTension * (1 - wearRatio) * frictionRatio).toFixed(2)
+        }
+      }
+      return panelTension.toFixed(2)
     },
     calculateCustomActualTension(type) {
       const equipment = this.customEquipment[type]
       const wear = equipment.wear || 0
       const actual = equipment.maxTension * (1 - wear / 100)
       return actual.toFixed(2)
+    },
+    handleFrictionInput() {
+      let value = this.frictionValue['渔轮'] || 0
+      value = Math.round(value)
+      value = Math.max(0, Math.min(29, value))
+      this.frictionValue['渔轮'] = value
+    },
+    selectCalculationRule(rule) {
+      this.calculationRule = rule
     },
     selectType(type) {
       this.selectedType = type
@@ -465,12 +544,30 @@ export default {
 }
 </script>
 
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+#app {
+  width: 100%;
+}
+</style>
+
 <style scoped>
 .app {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 30px;
-  font-family: Arial, sans-serif;
+  padding: 20px;
+  width: 100%;
 }
 
 .header {
@@ -506,11 +603,62 @@ h2 {
   margin-bottom: 15px;
 }
 
+.rule-selector {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  padding: 15px;
+  background-color: #e8f5e9;
+  border-radius: 8px;
+}
+
+.rule-label {
+  font-weight: bold;
+  color: #333;
+}
+
+.rule-btn {
+  padding: 8px 20px;
+  border: 2px solid #4caf50;
+  background-color: white;
+  color: #4caf50;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 14px;
+}
+
+.rule-btn:hover {
+  background-color: #e8f5e9;
+}
+
+.rule-btn.active {
+  background-color: #4caf50;
+  color: white;
+}
+
+.rule-warning {
+  text-align: center;
+  padding: 15px;
+  background-color: #fff3e0;
+  color: #ff9800;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
 .equipment-selector {
   background-color: #f8f9fa;
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 20px;
+  transition: opacity 0.3s;
+}
+
+.equipment-selector.disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .type-buttons {
@@ -630,6 +778,54 @@ h2 {
   padding: 4px 10px;
   background-color: #e8f4f8;
   border-radius: 4px;
+}
+
+.actual-panel-tension {
+  font-size: 14px;
+  font-weight: bold;
+  color: #9b59b6;
+  margin-left: 10px;
+  padding: 4px 10px;
+  background-color: #f5f0fa;
+  border-radius: 4px;
+}
+
+.selected-price {
+  color: #e67e22;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.friction-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 10px;
+}
+
+.friction-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.friction-input {
+  width: 50px;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.friction-input:focus {
+  outline: none;
+  border-color: #42b983;
+  box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.3);
+}
+
+.friction-unit {
+  font-size: 14px;
+  color: #666;
 }
 
 
@@ -848,12 +1044,17 @@ h2 {
 
 .dropdown-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px 12px;
+  padding: 10px 15px;
   cursor: pointer;
   border-bottom: 1px solid #f5f5f5;
   transition: background-color 0.2s;
+}
+
+.dropdown-item .dropdown-name {
+  flex: 1;
+  min-width: 0;
+  margin-right: 20px;
 }
 
 .dropdown-item:last-child {
@@ -877,7 +1078,18 @@ h2 {
   font-size: 13px;
   color: #42b983;
   font-weight: bold;
-  margin-left: 10px;
+  margin-left: 20px;
+  min-width: 60px;
+  text-align: right;
+}
+
+.dropdown-price {
+  font-size: 13px;
+  color: #e74c3c;
+  font-weight: bold;
+  margin-left: 20px;
+  min-width: 60px;
+  text-align: right;
 }
 
 .dropdown-empty {
@@ -885,5 +1097,252 @@ h2 {
   text-align: center;
   color: #999;
   font-size: 14px;
+}
+
+@media (min-width: 768px) and (max-width: 1200px) {
+  .app {
+    padding: 15px;
+    max-width: 900px;
+  }
+  
+  h1 {
+    font-size: 22px;
+  }
+  
+  .type-item {
+    padding: 15px 20px;
+    gap: 15px;
+  }
+  
+  .type-label {
+    min-width: 60px;
+    font-size: 14px;
+  }
+  
+  .type-value {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .search-dropdown {
+    min-width: 300px;
+  }
+  
+  .dropdown-tension,
+  .dropdown-price {
+    margin-left: 15px;
+    min-width: 50px;
+  }
+  
+  .summary-row {
+    padding: 12px 0;
+  }
+  
+  .summary-label,
+  .summary-value {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .app {
+    padding: 10px;
+    max-width: 100%;
+  }
+  
+  h1 {
+    font-size: 18px;
+    text-align: center;
+  }
+  
+  h2 {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .rule-selector {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px;
+  }
+  
+  .type-item {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px 15px;
+    gap: 10px;
+  }
+  
+  .type-label {
+    min-width: auto;
+    font-size: 14px;
+  }
+  
+  .type-value {
+    flex-wrap: wrap;
+    gap: 6px;
+    width: 100%;
+  }
+  
+  .custom-input-group {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  
+  .wear-input-wrapper,
+  .friction-input-wrapper {
+    margin-left: 0;
+  }
+  
+  .search-dropdown {
+    min-width: 100%;
+    width: 100%;
+  }
+  
+  .tension-filter-wrapper {
+    flex-wrap: wrap;
+  }
+  
+  .tension-filter-input {
+    width: 70px;
+  }
+  
+  .dropdown-item {
+    flex-wrap: wrap;
+    padding: 8px 12px;
+  }
+  
+  .dropdown-name {
+    flex: 1;
+    min-width: 100%;
+    margin-right: 0;
+    margin-bottom: 4px;
+  }
+  
+  .dropdown-tension,
+  .dropdown-price {
+    margin-left: 0;
+    min-width: auto;
+    text-align: left;
+    margin-right: 15px;
+  }
+  
+  .selected-name {
+    min-width: 100%;
+  }
+  
+  .selected-tension {
+    font-size: 12px;
+  }
+  
+  .selected-price {
+    font-size: 12px;
+  }
+  
+  .actual-tension,
+  .actual-panel-tension {
+    font-size: 12px;
+    padding: 3px 8px;
+    margin-left: 0;
+  }
+  
+  .summary-card {
+    padding: 15px;
+  }
+  
+  .summary-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    padding: 10px 0;
+  }
+  
+  .summary-label,
+  .summary-value {
+    font-size: 13px;
+  }
+  
+  .summary-value {
+    text-align: left;
+    flex: none;
+  }
+  
+  .advice-text {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  
+  .wear-input,
+  .friction-input,
+  .tension-input {
+    width: 45px;
+    padding: 3px 6px;
+    font-size: 12px;
+  }
+  
+  .rule-btn {
+    padding: 6px 15px;
+    font-size: 13px;
+  }
+  
+  .select-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+  
+  .search-input {
+    font-size: 13px;
+    padding: 6px 28px 6px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app {
+    padding: 8px;
+  }
+  
+  h1 {
+    font-size: 16px;
+  }
+  
+  h2 {
+    font-size: 14px;
+  }
+  
+  .type-item {
+    padding: 10px 12px;
+  }
+  
+  .type-value {
+    gap: 4px;
+  }
+  
+  .rule-selector {
+    padding: 10px;
+  }
+  
+  .rule-btn {
+    padding: 5px 12px;
+    font-size: 12px;
+  }
+  
+  .dropdown-item {
+    padding: 6px 10px;
+  }
+  
+  .summary-card {
+    padding: 12px;
+  }
+  
+  .advice-text {
+    font-size: 12px;
+  }
 }
 </style>

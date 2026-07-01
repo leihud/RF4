@@ -1,4167 +1,695 @@
 [
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Classic Model Carp 360XH",
-    "maxTension": 27.4
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Rigal 20 2S",
-    "maxTension": 74.33
+    "equipmentName": "Express Fishing Telestick TL13",
+    "lockTension": 0,
+    "panelTension": 4,
+    "price": 19
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Comfort FD360",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Tagara Il 6000",
-    "maxTension": 45.89
+    "equipmentName": "Express Fishing Telestick TL16",
+    "lockTension": 0,
+    "panelTension": 4,
+    "price": 25
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Poseidon Sensi 80-20130",
-    "maxTension": 49.2
+    "equipmentName": "Express Fishing Telestick TL20",
+    "lockTension": 0,
+    "panelTension": 4,
+    "price": 31
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Poseidon Sensi 80-50190",
-    "maxTension": 63.7
+    "equipmentName": "Kama Comfort Tele 4",
+    "lockTension": 0,
+    "panelTension": 5.5,
+    "price": 41
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Express Fishing TeleStick TL13",
-    "maxTension": 4
+    "equipmentName": "Kama Comfort Tele 5",
+    "lockTension": 0,
+    "panelTension": 5.5,
+    "price": 45
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Express Fishing TeleStick TL16",
-    "maxTension": 4
+    "equipmentName": "Kama Comfort Tele 6",
+    "lockTension": 0,
+    "panelTension": 5.5,
+    "price": 46
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Express Fishing TeleStick TL20",
-    "maxTension": 4
+    "equipmentName": "Kama Comfort Tele 7",
+    "lockTension": 0,
+    "panelTension": 5.5,
+    "price": 49
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Kama Comfort Telescopic 4",
-    "maxTension": 5.5
+    "equipmentName": "Express Fishing Starling Stick SS13",
+    "lockTension": 0,
+    "panelTension": 6.1,
+    "price": 58
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Kama Comfort Telescopic 5",
-    "maxTension": 5.5
+    "equipmentName": "Express Fishing Starling Stick SS20",
+    "lockTension": 0,
+    "panelTension": 6.1,
+    "price": 68
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Kama Comfort Telescopic 6",
-    "maxTension": 5.5
+    "equipmentName": "Hazel Fishing Rod",
+    "lockTension": 0,
+    "panelTension": 6.5,
+    "price": 90
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Kama Comfort Telescopic7",
-    "maxTension": 5.5
+    "equipmentName": "Express Fishing Warus WS13",
+    "lockTension": 0,
+    "panelTension": 7.4,
+    "price": 159
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Express Fishing StarlingStick SS13",
-    "maxTension": 6.1
+    "equipmentName": "Express Fishing Warus WS20",
+    "lockTension": 0,
+    "panelTension": 7.4,
+    "price": 168
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Express Fishing StarlingStick SS20",
-    "maxTension": 6.1
+    "equipmentName": "Express Fishing Warus WS26",
+    "lockTension": 0,
+    "panelTension": 7.4,
+    "price": 175
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Express Fishing WalrusStick WS13",
-    "maxTension": 7.4
+    "equipmentName": "Kama Kontakt 5",
+    "lockTension": 0,
+    "panelTension": 7,
+    "price": 184
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Express Fishing WalrusStick WS20",
-    "maxTension": 7.4
+    "equipmentName": "Kama Kontakt 6",
+    "lockTension": 0,
+    "panelTension": 7,
+    "price": 199
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Express Fishing WalrusStick WS26",
-    "maxTension": 7.4
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kama Kontakt Telescopic 5",
-    "maxTension": 7
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kama Kontakt Telescopic 6",
-    "maxTension": 7
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kama Kontakt Telescopic 7",
-    "maxTension": 7
+    "equipmentName": "Kama Kontakt 7",
+    "lockTension": 0,
+    "panelTension": 7,
+    "price": 220
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Express Fishing RedStick RS16",
-    "maxTension": 8
+    "lockTension": 0,
+    "panelTension": 8,
+    "price": 266
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Express Fishing RedStick RS23",
-    "maxTension": 8
+    "equipmentName": "Express Fishing Redstick RS23",
+    "lockTension": 0,
+    "panelTension": 8,
+    "price": 285
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Onega Rods Belmor Pole 5",
-    "maxTension": 8.6
+    "equipmentName": "Pomor Ryazanka BK4",
+    "lockTension": 0,
+    "panelTension": 9.1,
+    "price": 898
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Onega Rods Belmor Pole 7",
-    "maxTension": 8.6
+    "equipmentName": "Pomor Ryazanka BK6",
+    "lockTension": 0,
+    "panelTension": 9.1,
+    "price": 948
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Syberia linear Telescopic 13",
-    "maxTension": 8.7
+    "equipmentName": "Pomor Ryazanka BK8",
+    "lockTension": 0,
+    "panelTension": 9.1,
+    "price": 998
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Syberia linear Telescopic 20",
-    "maxTension": 8.7
+    "equipmentName": "Onega Belmor 5",
+    "lockTension": 0,
+    "panelTension": 8.6,
+    "price": 229
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Syberia linear Telescopic 26",
-    "maxTension": 8.7
+    "equipmentName": "Onega Belmor 7",
+    "lockTension": 0,
+    "panelTension": 8.6,
+    "price": 368
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Kama Ultra Telescopic 4",
-    "maxTension": 2.2
+    "equipmentName": "Syberia Linear 13",
+    "lockTension": 0,
+    "panelTension": 8.7,
+    "price": 349
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Kama Ultra Telescopic 5",
-    "maxTension": 2.2
+    "equipmentName": "Syberia Linear 20",
+    "lockTension": 0,
+    "panelTension": 8.7,
+    "price": 378
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Kama Ultra Telescopic 6",
-    "maxTension": 2.2
+    "equipmentName": "Syberia Linear 26",
+    "lockTension": 0,
+    "panelTension": 8.7,
+    "price": 394
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Kama Ultra Telescopic 7",
-    "maxTension": 2.2
+    "equipmentName": "Kama Ultra 4",
+    "lockTension": 0,
+    "panelTension": 2.2,
+    "price": 389
+  },
+  {
+    "equipmentType": "鱼竿",
+    "equipmentName": "Kama Ultra 5",
+    "lockTension": 0,
+    "panelTension": 2.2,
+    "price": 399
+  },
+  {
+    "equipmentType": "鱼竿",
+    "equipmentName": "Kama Ultra 6",
+    "lockTension": 0,
+    "panelTension": 2.2,
+    "price": 419
+  },
+  {
+    "equipmentType": "鱼竿",
+    "equipmentName": "Kama Ultra 7",
+    "lockTension": 0,
+    "panelTension": 2.2,
+    "price": 429
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Syberia Genius T500",
-    "maxTension": 4.9
+    "lockTension": 0,
+    "panelTension": 4.9,
+    "price": 454
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Syberia Genius T700",
-    "maxTension": 4.9
+    "lockTension": 0,
+    "panelTension": 4.9,
+    "price": 489
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Syberia Trophy T400",
-    "maxTension": 2.6
+    "lockTension": 0,
+    "panelTension": 2.6,
+    "price": 539
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Syberia Trophy T400",
-    "maxTension": 2.6
+    "equipmentName": "Syberia Trophy T600",
+    "lockTension": 0,
+    "panelTension": 2.6,
+    "price": 589
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Syberia Model Two T500",
-    "maxTension": 9.4
+    "equipmentName": "Sybera Model Two T500",
+    "lockTension": 0,
+    "panelTension": 9.4,
+    "price": 675
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Syberia Model Two T600",
-    "maxTension": 9.4
+    "equipmentName": "Sybera Model Two T600",
+    "lockTension": 0,
+    "panelTension": 9.4,
+    "price": 689
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Syberia Model Two T700",
-    "maxTension": 9.4
+    "equipmentName": "Sybera Model Two T700",
+    "lockTension": 0,
+    "panelTension": 9.4,
+    "price": 708
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Syberia Model Two T800",
-    "maxTension": 9.4
+    "equipmentName": "Sybera Model Two T800",
+    "lockTension": 0,
+    "panelTension": 9.4,
+    "price": 778
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Kama Mechta Telescopic 6",
-    "maxTension": 10.5
+    "equipmentName": "Kama Mechta 6",
+    "lockTension": 0,
+    "panelTension": 10.5,
+    "price": 799
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Kama Mechta Telescopic 8",
-    "maxTension": 10.5
+    "equipmentName": "Kama Mechta 8",
+    "lockTension": 0,
+    "panelTension": 10.5,
+    "price": 879
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Onega Rods Pole 4",
-    "maxTension": 10.5
+    "equipmentName": "Onega White Pole 4",
+    "lockTension": 0,
+    "panelTension": 10.5,
+    "price": 859
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Onega Rods Pole 6",
-    "maxTension": 10.5
+    "equipmentName": "Onega White Pole 6",
+    "lockTension": 0,
+    "panelTension": 10.5,
+    "price": 949
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Syberia Model One T700",
-    "maxTension": 11.2
+    "equipmentName": "Sybera Model One T700",
+    "lockTension": 0,
+    "panelTension": 11.2,
+    "price": 990
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Onega Rods Aurora Pole 5",
-    "maxTension": 12
+    "equipmentName": "Onega Aurora Pole 5",
+    "lockTension": 0,
+    "panelTension": 12,
+    "price": 1263
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Onega Rods Aurora Pole 7",
-    "maxTension": 12
+    "equipmentName": "Onega Aurora Pole 7",
+    "lockTension": 0,
+    "panelTension": 12,
+    "price": 1370
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Onega Rods Crystal Pole 5",
-    "maxTension": 6
+    "equipmentName": "Ataman L4",
+    "lockTension": 0,
+    "panelTension": 5,
+    "price": 8486
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Onega Rods Crystal Pole 7",
-    "maxTension": 6
+    "equipmentName": "Ataman L5",
+    "lockTension": 0,
+    "panelTension": 5,
+    "price": 8986
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Oega Rods Soul Pole 5",
-    "maxTension": 3.5
+    "equipmentName": "Ataman L6",
+    "lockTension": 0,
+    "panelTension": 5,
+    "price": 9486
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Oega Rods Soul Pole 7",
-    "maxTension": 3.5
+    "equipmentName": "Ataman L7",
+    "lockTension": 0,
+    "panelTension": 5,
+    "price": 9986
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Silver Fish Heritage TL 500",
-    "maxTension": 8
+    "equipmentName": "Ataman L8",
+    "lockTension": 0,
+    "panelTension": 5,
+    "price": 110336
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Silver Fish Heritage TL 600",
-    "maxTension": 8
+    "equipmentName": "Ataman UL4",
+    "lockTension": 0,
+    "panelTension": 31,
+    "price": 8486
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Silver Fish Heritage TL 700",
-    "maxTension": 8
+    "equipmentName": "Ataman UL5",
+    "lockTension": 0,
+    "panelTension": 31,
+    "price": 8986
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Onega Rods Ethnic Pole 4",
-    "maxTension": 14
+    "equipmentName": "Ataman UL6",
+    "lockTension": 0,
+    "panelTension": 31,
+    "price": 9486
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Onega Rods Ethnic Pole 6",
-    "maxTension": 14
+    "equipmentName": "Ataman UL7",
+    "lockTension": 0,
+    "panelTension": 31,
+    "price": 9986
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Onega Rods Ethnic Pole 7",
-    "maxTension": 14
+    "equipmentName": "Ataman UL8",
+    "lockTension": 0,
+    "panelTension": 31,
+    "price": 110336
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Silver Fish Windmaster TL 500",
-    "maxTension": 7.9
+    "equipmentName": "Onega Crystal Pole 5",
+    "lockTension": 0,
+    "panelTension": 6,
+    "price": 1319
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Silver Fish Windmaster TL 700",
-    "maxTension": 7.9
+    "equipmentName": "Onega Crystal Pole 7",
+    "lockTension": 0,
+    "panelTension": 6,
+    "price": 1460
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Silver Fish Expression TL 500",
-    "maxTension": 4.5
+    "equipmentName": "Onega Soul Pole 5",
+    "lockTension": 0,
+    "panelTension": 3.5,
+    "price": 1341
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Silver Fish Expression TL 700",
-    "maxTension": 4.5
+    "equipmentName": "Onega Soul Pole 7",
+    "lockTension": 0,
+    "panelTension": 3.5,
+    "price": 1482
+  },
+  {
+    "equipmentType": "鱼竿",
+    "equipmentName": "Silver Fish Heritage TL500",
+    "lockTension": 0,
+    "panelTension": 8,
+    "price": 1424
+  },
+  {
+    "equipmentType": "鱼竿",
+    "equipmentName": "Silver Fish Heritage TL600",
+    "lockTension": 0,
+    "panelTension": 8,
+    "price": 1501
+  },
+  {
+    "equipmentType": "鱼竿",
+    "equipmentName": "Silver Fish Heritage TL700",
+    "lockTension": 0,
+    "panelTension": 8,
+    "price": 1597
+  },
+  {
+    "equipmentType": "鱼竿",
+    "equipmentName": "Onega Ethnic Pole 4",
+    "lockTension": 0,
+    "panelTension": 14,
+    "price": 1590
+  },
+  {
+    "equipmentType": "鱼竿",
+    "equipmentName": "Onega Ethnic Pole 6",
+    "lockTension": 0,
+    "panelTension": 14,
+    "price": 1788
+  },
+  {
+    "equipmentType": "鱼竿",
+    "equipmentName": "Onega Ethnic Pole 8",
+    "lockTension": 0,
+    "panelTension": 14,
+    "price": 1919
+  },
+  {
+    "equipmentType": "鱼竿",
+    "equipmentName": "Silver Fish Windmaster TL500",
+    "lockTension": 0,
+    "panelTension": 7.9,
+    "price": 2453
+  },
+  {
+    "equipmentType": "鱼竿",
+    "equipmentName": "Silver Fish Windmaster TL700",
+    "lockTension": 0,
+    "panelTension": 7.9,
+    "price": 2631
+  },
+  {
+    "equipmentType": "鱼竿",
+    "equipmentName": "Silver Fish Expression TL500",
+    "lockTension": 0,
+    "panelTension": 4.5,
+    "price": 2968
+  },
+  {
+    "equipmentType": "鱼竿",
+    "equipmentName": "Silver Fish Expression TL700",
+    "lockTension": 0,
+    "panelTension": 4.5,
+    "price": 3250
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Blade Spirit 500",
-    "maxTension": 18
+    "lockTension": 0,
+    "panelTension": 18,
+    "price": 3032
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Blade Spirit 600",
-    "maxTension": 18
+    "lockTension": 0,
+    "panelTension": 18,
+    "price": 3145
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Blade Spirit 700",
-    "maxTension": 18
+    "lockTension": 0,
+    "panelTension": 18,
+    "price": 3358
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Silver Fish Falcon TL 400",
-    "maxTension": 21.8
+    "equipmentName": "VJ Excellent Pole 13",
+    "lockTension": 0,
+    "panelTension": 7.1,
+    "price": 3499
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Silver Fish Falcon TL 600",
-    "maxTension": 21.8
+    "equipmentName": "VJ Excellent Pole 19",
+    "lockTension": 0,
+    "panelTension": 7.1,
+    "price": 3899
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Silver Fish Falcon TL 800",
-    "maxTension": 21.8
+    "equipmentName": "VJ Excellent Pole 26",
+    "lockTension": 0,
+    "panelTension": 7.1,
+    "price": 4198
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Silver Fish Crimson Star TL 500",
-    "maxTension": 13
+    "equipmentName": "Silver Fish Falcon TL400",
+    "lockTension": 0,
+    "panelTension": 21.8,
+    "price": 3102
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Silver Fish Crimson Star TL 600",
-    "maxTension": 13
+    "equipmentName": "Silver Fish Falcon TL600",
+    "lockTension": 0,
+    "panelTension": 21.8,
+    "price": 3398
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Silver Fish Crimson Star TL 700",
-    "maxTension": 13
+    "equipmentName": "Silver Fish Falcon TL800",
+    "lockTension": 0,
+    "panelTension": 21.8,
+    "price": 3689
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Silver Fish Crimson Star TL 800",
-    "maxTension": 13
+    "equipmentName": "Silver Fish Crimson Star TL500",
+    "lockTension": 0,
+    "panelTension": 13,
+    "price": 3464
+  },
+  {
+    "equipmentType": "鱼竿",
+    "equipmentName": "Silver Fish Crimson Star TL600",
+    "lockTension": 0,
+    "panelTension": 13,
+    "price": 3543
+  },
+  {
+    "equipmentType": "鱼竿",
+    "equipmentName": "Silver Fish Crimson Star TL700",
+    "lockTension": 0,
+    "panelTension": 13,
+    "price": 3699
+  },
+  {
+    "equipmentType": "鱼竿",
+    "equipmentName": "Silver Fish Crimson Star TL800",
+    "lockTension": 0,
+    "panelTension": 13,
+    "price": 3988
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Blade Inferno 500",
-    "maxTension": 25
+    "lockTension": 0,
+    "panelTension": 25,
+    "price": 6486
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Blade Inferno 600",
-    "maxTension": 25
+    "lockTension": 0,
+    "panelTension": 25,
+    "price": 7078
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Blade Inferno 700",
-    "maxTension": 25
+    "lockTension": 0,
+    "panelTension": 25,
+    "price": 7794
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Blade Inferno 800",
-    "maxTension": 25
+    "lockTension": 0,
+    "panelTension": 25,
+    "price": 8514
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Blade Razor 400",
-    "maxTension": 10
+    "lockTension": 0,
+    "panelTension": 10,
+    "price": 6615
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Blade Razor 500",
-    "maxTension": 10
+    "lockTension": 0,
+    "panelTension": 10,
+    "price": 6851
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Blade Razor 600",
-    "maxTension": 10
+    "lockTension": 0,
+    "panelTension": 10,
+    "price": 7208
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Blade Razor Ultra 500",
-    "maxTension": 5.6
+    "equipmentName": "Blade Razor UItra 500",
+    "lockTension": 0,
+    "panelTension": 5.6,
+    "price": 7197
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Blade Razor Ultra 600",
-    "maxTension": 5.6
+    "equipmentName": "Blade Razor UItra 600",
+    "lockTension": 0,
+    "panelTension": 5.6,
+    "price": 7435
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Blade Razor Ultra 700",
-    "maxTension": 5.6
+    "lockTension": 0,
+    "panelTension": 5.6,
+    "price": 7913
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Blade Razor Ultra 800",
-    "maxTension": 5.6
+    "lockTension": 0,
+    "panelTension": 5.6,
+    "price": 8514
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Blade Master 500",
-    "maxTension": 17
+    "lockTension": 0,
+    "panelTension": 17,
+    "price": 10178
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Blade Master 600",
-    "maxTension": 17
+    "lockTension": 0,
+    "panelTension": 17,
+    "price": 10868
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Blade Master 700",
-    "maxTension": 17
+    "lockTension": 0,
+    "panelTension": 17,
+    "price": 11960
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Blade Master 800",
-    "maxTension": 17
+    "lockTension": 0,
+    "panelTension": 17,
+    "price": 12981
   },
   {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Атаман L4",
-    "maxTension": 5
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Атаман L5",
-    "maxTension": 5
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Атаман L6",
-    "maxTension": 5
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Атаман L7",
-    "maxTension": 5
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Атаман L8",
-    "maxTension": 5
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Атаман UL4",
-    "maxTension": 3.1
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Атаман UL5",
-    "maxTension": 3.1
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Атаман UL6",
-    "maxTension": 3.1
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Атаман UL7",
-    "maxTension": 3.1
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Атаман UL8",
-    "maxTension": 3.1
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Поморъ Удочка из орешника",
-    "maxTension": 6.5
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Поморъ Рязанка БК4",
-    "maxTension": 9.1
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Поморъ Рязанка БК6",
-    "maxTension": 9.1
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Поморъ Рязанка БК8",
-    "maxTension": 9.1
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Excellent Pole 13",
-    "maxTension": 7.1
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Excellent Pole 19",
-    "maxTension": 7.1
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Excellent Pole 26",
-    "maxTension": 7.1
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Sorento FD100",
-    "maxTension": 4
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Sorento FD120",
-    "maxTension": 4
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Sorento FD130",
-    "maxTension": 4
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Comfort FD330",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Comfort FD360",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Comfort FD390",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Asteria FD110",
-    "maxTension": 7
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Asteria FD130",
-    "maxTension": 7
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Palmar FD120",
-    "maxTension": 12
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Palmar FD150",
-    "maxTension": 12
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Fantazia FD350",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Fantazia FD370",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Fantazia FD390",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Fantazia FD410",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Parsey FD110",
-    "maxTension": 16
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Parsey FD140",
-    "maxTension": 16
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Fortuna Feeder FD390",
-    "maxTension": 17
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Fortuna Feeder FD420",
-    "maxTension": 19
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Impuls FD390",
-    "maxTension": 21
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Impuls FD420",
-    "maxTension": 21
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Impuls FD450",
-    "maxTension": 21
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Sentense FD340MH",
-    "maxTension": 24
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Mechta FD360",
-    "maxTension": 25
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Mechta FD390",
-    "maxTension": 25
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Mechta FD420",
-    "maxTension": 25
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Mechta FD440",
-    "maxTension": 25
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model Two FD360M",
-    "maxTension": 23
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model Two FD360MH",
-    "maxTension": 25
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model Two FD390XH",
-    "maxTension": 26
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model Two FD420H",
-    "maxTension": 26
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model One FD360M",
-    "maxTension": 27
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model One FD390M",
-    "maxTension": 27
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model One FD420H",
-    "maxTension": 29
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model One FD450XH",
-    "maxTension": 29
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Wingate FF110H",
-    "maxTension": 32
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Wingate FF120H",
-    "maxTension": 33
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Wingate FF130XH",
-    "maxTension": 33
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Coldstream FM120MH",
-    "maxTension": 33
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Coldstream FM130H",
-    "maxTension": 35
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Coldstream FM140H",
-    "maxTension": 35
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Bunessan FF120H",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Bunessan FXF120XH",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Bunessan FF120H",
-    "maxTension": 16
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Bunessan FF140H",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Blackwood FSL130H",
-    "maxTension": 24
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Blackwood FSL140XH",
-    "maxTension": 25
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Royal FM120H",
-    "maxTension": 33
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Royal FM130XH",
-    "maxTension": 33
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Royal FM130XXH",
-    "maxTension": 30
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Поморъ Рязанка СКФ",
-    "maxTension": 26.1
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Express Fishing Persey CP110",
-    "maxTension": 20.1
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Express Fishing Persey CP120",
-    "maxTension": 20.1
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Syberia Classic Model Carp 360H",
-    "maxTension": 26
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Syberia Classic Model Carp 360XH",
-    "maxTension": 27.4
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kama Mechta Carp 340",
-    "maxTension": 30
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kama Mechta Carp 360",
-    "maxTension": 33
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kama Mechta Carp 380",
-    "maxTension": 35
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Syberia Fortuna Carp 360M",
-    "maxTension": 31.2
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Syberia Fortuna Carp 360H",
-    "maxTension": 35.5
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Syberia Fortuna Carp 360XH",
-    "maxTension": 39
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Westhill Carp Dominator CSL118H",
-    "maxTension": 49.6
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Westhill Carp Dominator CF118XH",
-    "maxTension": 45.9
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Westhill Carp Dominator CM128XH",
-    "maxTension": 51
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Westhill Carp Dominator CF128XH",
-    "maxTension": 47.5
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Native 12-2.75",
-    "maxTension": 50
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Native 12-3.50",
-    "maxTension": 52
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Native 13-3.50",
-    "maxTension": 52
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Sage 12-2.75",
-    "maxTension": 56
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Sage 12-3.00",
-    "maxTension": 58
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Sage 12-3.25",
-    "maxTension": 59
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Sage 12-3.50",
-    "maxTension": 60
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Sage 13-3.00",
-    "maxTension": 58
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Sage 13-3.50",
-    "maxTension": 60
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Atlas 12-4.00",
-    "maxTension": 57
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Atlas 12-4.50",
-    "maxTension": 59
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Atlas 13-5.00",
-    "maxTension": 62
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Avalon 12-2.75",
-    "maxTension": 62
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Avalon 12-3.25",
-    "maxTension": 64.1
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Avalon 12-3.50",
-    "maxTension": 65.2
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Avalon 12-3.75",
-    "maxTension": 66
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Legacy 12-2.50",
-    "maxTension": 70.2
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Legacy 12-3.00",
-    "maxTension": 72.1
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Legacy 12-3.25",
-    "maxTension": 73.3
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Legacy 12-3.50",
-    "maxTension": 75
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Legacy 12-3.75",
-    "maxTension": 76
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Legacy 13-4.00",
-    "maxTension": 78
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Legacy 13-4.50",
-    "maxTension": 80.2
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Legacy Ti 12-2.50",
-    "maxTension": 70.2
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Legacy Ti 12-3.00",
-    "maxTension": 72.1
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Legacy Ti 12-3.25",
-    "maxTension": 73.3
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Legacy Ti 12-3.50",
-    "maxTension": 75
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Legacy Ti 12-3.75",
-    "maxTension": 76
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Legacy Ti 13-4.00",
-    "maxTension": 78
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Kingfisher Legacy Ti 13-4.50",
-    "maxTension": 80.2
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Corona CST C60MH",
-    "maxTension": 4
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Corona CST C66MH",
-    "maxTension": 4
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Corona CST C66H",
-    "maxTension": 5
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Corona CST C70H",
-    "maxTension": 5
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Dynamic CST C60MH",
-    "maxTension": 5
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Dynamic CST C60H",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Dynamic CST C66MH",
-    "maxTension": 5
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Dynamic CST C70M",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Vision CST C66MH",
-    "maxTension": 9
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Arrow CST C60M",
-    "maxTension": 2
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Arrow CST C70M",
-    "maxTension": 2
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Heavy CST C66H",
-    "maxTension": 11
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Heavy CST C70XH",
-    "maxTension": 13
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Heavy CST C80XH",
-    "maxTension": 15
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Premium Stick CST C60MH",
-    "maxTension": 9
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Premium Stick CST C66H",
-    "maxTension": 9
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Premium Stick CST C66MH",
-    "maxTension": 9
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Premium Stick CST C70M",
-    "maxTension": 7
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Premium Stick CST C70H",
-    "maxTension": 9
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Premium Stick CST C70MH",
-    "maxTension": 9
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Premium Stick CST C80M",
-    "maxTension": 7
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Premium Stick CST C80H",
-    "maxTension": 9
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Belmor CSTF78M",
-    "maxTension": 12
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Belmor CSTF78MH",
-    "maxTension": 13
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Belmor CSTF88H",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Belmor CSTXF88XH",
-    "maxTension": 16
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Linear CST 68ML",
-    "maxTension": 7
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Linear CST 78MH",
-    "maxTension": 13
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Linear CST 98H",
-    "maxTension": 15
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Lait CSTSL68UL",
-    "maxTension": 2
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Lait CSTSL70L",
-    "maxTension": 5
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Lait CSTSL78ML",
-    "maxTension": 8
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Fortuna CST 60MH",
-    "maxTension": 13
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Fortuna CST 66MH",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Fortuna CST 68MH",
-    "maxTension": 13
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Karelia CSTM68L",
-    "maxTension": 8
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Karelia CSTM78ML",
-    "maxTension": 12
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Karelia CSTF78M",
-    "maxTension": 16
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Karelia CSTF78MH",
-    "maxTension": 18
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Super Duty CST60MH",
-    "maxTension": 24
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Super Duty CST78H",
-    "maxTension": 24
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Super Duty CST86XH",
-    "maxTension": 30
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Mechta CSTF60MH",
-    "maxTension": 20
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Mechta CSTF68ML",
-    "maxTension": 17
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Mechta CSTM70UL",
-    "maxTension": 3
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Mechta CSTM70L",
-    "maxTension": 13
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Mechta CSTF78MH",
-    "maxTension": 20
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Mechta CSTXF78MH",
-    "maxTension": 19
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Mechta CSTXF88H",
-    "maxTension": 21
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Mechta CSTXF88XH",
-    "maxTension": 23
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Mechta CSTM98MH",
-    "maxTension": 17
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Aurora CSTF78M",
-    "maxTension": 20
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Aurora CSTXF78MH",
-    "maxTension": 21
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Aurora CSTF88H",
-    "maxTension": 28
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model One CST S68ML",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model One CST S68MH",
-    "maxTension": 21
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model One CST S78L",
-    "maxTension": 15
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model One CST S78M",
-    "maxTension": 23
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model One CST S88H",
-    "maxTension": 35
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Aeros CST CSXF60H",
-    "maxTension": 32
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Aeros CST CSXF66MH",
-    "maxTension": 27
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ventura CF66ML",
-    "maxTension": 22
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ventura CF66MH",
-    "maxTension": 31
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ventura CXF70M",
-    "maxTension": 26
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ventura CFXF70MH",
-    "maxTension": 30
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ventura CM77H",
-    "maxTension": 34
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ethnic CSTF66MH",
-    "maxTension": 26
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ethnic CSTM68UL",
-    "maxTension": 5
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ethnic CSTM78L",
-    "maxTension": 17
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ethnic CSTF78ML",
-    "maxTension": 20
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ethnic CSTXF78H",
-    "maxTension": 36
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ethnic CSTM88MH",
-    "maxTension": 27
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ethnic CSTF88H",
-    "maxTension": 36
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ethnic CSTXF88XH",
-    "maxTension": 35
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ethnic CSTXF98H",
-    "maxTension": 36
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Inregra CF66M",
-    "maxTension": 31
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Inregra CF70ML",
-    "maxTension": 26
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Inregra CF70MH",
-    "maxTension": 33
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Inregra CF77M",
-    "maxTension": 32
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Cardena CST CSF60L",
-    "maxTension": 9
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Cardena CST CSM68UL",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Cardena CST CSM78ML",
-    "maxTension": 37
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Versa CF66ML",
-    "maxTension": 22
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Versa CM66MH",
-    "maxTension": 35
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Versa CF70UL",
-    "maxTension": 7
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Versa CM70L",
-    "maxTension": 21
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Versa CF77M",
-    "maxTension": 23
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Versa CF77XH",
-    "maxTension": 35
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Versa CF80MH",
-    "maxTension": 35
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Versa CM80H",
-    "maxTension": 35
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Evora CST CSSL78MH",
-    "maxTension": 38
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Evora CST CSSL98H",
-    "maxTension": 49
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Pulse CF60UL",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Pulse CF66L",
-    "maxTension": 9
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Pulse CF66ML",
-    "maxTension": 12
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Pulse CF70MH",
-    "maxTension": 21
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Pulse CXF70M",
-    "maxTension": 18
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Pulse CF70H",
-    "maxTension": 23
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Pulse CF70XH",
-    "maxTension": 23
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Advent CST-F66L",
-    "maxTension": 17
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Advent CST-F66ML",
-    "maxTension": 28
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Advent CST-F70MH",
-    "maxTension": 32
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Advent CST-F70H",
-    "maxTension": 45
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Advent CST-F70HH",
-    "maxTension": 50
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Advent CST-F70HHH",
-    "maxTension": 53
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Advent CST-F86HH",
-    "maxTension": 50
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Advent CST-F93MH",
-    "maxTension": 32
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Advent CST-F96H",
-    "maxTension": 45
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Advent CST-F100HHH",
-    "maxTension": 53
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Barracuda CST CSM68M",
-    "maxTension": 78
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Barracuda CST CSSL78M",
-    "maxTension": 60
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Barracuda CST CSSL88MH",
-    "maxTension": 96
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Barracuda CST CSM88H",
-    "maxTension": 95
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Rocket CM77M",
-    "maxTension": 78
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Rocket CM88MH",
-    "maxTension": 84
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Rocket CM88H",
-    "maxTension": 86
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Rocket CM88XH",
-    "maxTension": 89
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Legend CF66UL",
-    "maxTension": 9
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Legend CF66L",
-    "maxTension": 16
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Legend CF66M",
-    "maxTension": 39
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Legend CF68ML",
-    "maxTension": 29
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Legend CF70m",
-    "maxTension": 39
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Legend CF70MH",
-    "maxTension": 41
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Legend CF77ML",
-    "maxTension": 29
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Legend CF77H",
-    "maxTension": 42
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Armada CST CSXF60UL",
-    "maxTension": 5
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Armada CST CSF60M",
-    "maxTension": 16
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Armada CST CSF60MH",
-    "maxTension": 22
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Armada CST CSXF60H",
-    "maxTension": 21
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Armada CST CSXF68M",
-    "maxTension": 13
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Armada CST CSF68MH",
-    "maxTension": 22
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Armada CST CSF68XH",
-    "maxTension": 25
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Black Edition CST CSF60MH",
-    "maxTension": 45
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Black Edition CST CSXF60H",
-    "maxTension": 43
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Black Edition CST CSF68M",
-    "maxTension": 42
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Black Edition CST CSM68MH",
-    "maxTension": 50
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Black Edition CST CSXF68M",
-    "maxTension": 40
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Black Edition CST CSF68XH",
-    "maxTension": 51
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Black Edition CST CSF78MH",
-    "maxTension": 45
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Vexillar CST-F66L",
-    "maxTension": 15
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Vexillar CST-F66MH",
-    "maxTension": 40
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Vexillar CST-F70UL",
-    "maxTension": 10
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Vexillar CST-F70H",
-    "maxTension": 42
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Aquilon CST-M68ULL",
-    "maxTension": 12
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Aquilon CST-M70UL",
-    "maxTension": 13
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Aquilon CST-M71L",
-    "maxTension": 20
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Trout Master CST-M60L",
-    "maxTension": 21
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Trout Master CST-M68L",
-    "maxTension": 25
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Trout Master CST-M71ML",
-    "maxTension": 50
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Trout Master CST-M82M",
-    "maxTension": 80
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Trout Master CST-M88MH",
-    "maxTension": 100
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ultima CST-M60UL",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ultima CST-M61L",
-    "maxTension": 36
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ultima CST-M68ML",
-    "maxTension": 60
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ultima CST-M75ML",
-    "maxTension": 62
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ultima CST-M77M",
-    "maxTension": 106
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ultima CST-M87H",
-    "maxTension": 125
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ultima CST-M88HH",
-    "maxTension": 136
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ultima CST-M100HH",
-    "maxTension": 142
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Поморъ Рязанка СКС",
-    "maxTension": 16
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ranger Match RM13",
-    "maxTension": 4
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ranger Match RM16",
-    "maxTension": 4
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Harp Match HM12",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Harp Match HM16",
-    "maxTension": 4
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Harp Match HM20",
-    "maxTension": 4
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ellite Match EM12",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ellite Match EM16",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ellite Match EM18",
-    "maxTension": 7
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ellite Match EM18XH",
-    "maxTension": 8
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ellite Match EM20",
-    "maxTension": 7
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Akkord Match 3.6",
-    "maxTension": 9
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Akkord Match 3.9",
-    "maxTension": 9
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Akkord Match 4.2",
-    "maxTension": 9
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Genius Match M110M",
-    "maxTension": 8
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Genius Match M150M",
-    "maxTension": 8
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Vertigo Match M130H",
-    "maxTension": 12
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Vertigo Match M140H",
-    "maxTension": 12
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Vertigo Match M150H",
-    "maxTension": 12
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Karelia Match 320M",
-    "maxTension": 13
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Karelia Match 360M",
-    "maxTension": 13
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Karelia Match 380MH",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Fortuna Match M130ML",
-    "maxTension": 13
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Fortuna Match M140MH",
-    "maxTension": 16
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Katapulta 4.2",
-    "maxTension": 16
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Sport Match 3.3",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Sport Match 3.6",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Sport Match 3.9",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Sport Match 4.4",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model One Match M140MH",
-    "maxTension": 16
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model One Match M140XH",
-    "maxTension": 16
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ethnic Match 340MH",
-    "maxTension": 18
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ethnic Match 380MH",
-    "maxTension": 18
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ethnic Match 340H",
-    "maxTension": 20
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Elementary Match 390",
-    "maxTension": 19
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Elementary Match 420",
-    "maxTension": 19
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Inventer Match 300",
-    "maxTension": 12
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Inventer Match 330",
-    "maxTension": 12
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Inventer Match 360",
-    "maxTension": 12
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Borray Match 390",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Borray Match 420",
-    "maxTension": 23
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Borray Match 450",
-    "maxTension": 23
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Falcon Match 360",
-    "maxTension": 42
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Falcon Match 390",
-    "maxTension": 42
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Falcon Match 360XH",
-    "maxTension": 44
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Rebellion Match 390H",
-    "maxTension": 41
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Rebellion Match 420H",
-    "maxTension": 41
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Rebellion Match 450LC",
-    "maxTension": 15
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Raven Match 320 ",
-    "maxTension": 18
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Raven Match 340",
-    "maxTension": 36
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Raven Match 360",
-    "maxTension": 40
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Shooting Match 420",
-    "maxTension": 52
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Shooting Match 450",
-    "maxTension": 58
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Plasma Match 320",
-    "maxTension": 22
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Plasma Match 340",
-    "maxTension": 34
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Plasma Match 380",
-    "maxTension": 46
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Plasma Match 420",
-    "maxTension": 54
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Monster Match 320 ",
-    "maxTension": 31
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Monster Match 360",
-    "maxTension": 50
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Monster Match 400",
-    "maxTension": 58
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Monster Match 440",
-    "maxTension": 65
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Heavy Jerk C70XH",
-    "maxTension": 15
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Heavy Jerk C80XH",
-    "maxTension": 13
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Mechta JXF70XH",
-    "maxTension": 23
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Super Duty Jerk JR60XH",
-    "maxTension": 27
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Super Duty Jerk JR68XH",
-    "maxTension": 28
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Fortuna Jerk J60H",
-    "maxTension": 23
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Fortuna Jerk J60XH",
-    "maxTension": 30
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Karelia Jerk JXF66H",
-    "maxTension": 32
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Karelia Jerk JXF70H",
-    "maxTension": 34.1
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model One Jerk J60H",
-    "maxTension": 35
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model One Jerk J60XH",
-    "maxTension": 39
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model One Jerk J68XH",
-    "maxTension": 40
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ethnic Jerk JF66H",
-    "maxTension": 43
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ethnic Jerk JXF70H",
-    "maxTension": 44
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ethnic Jerk JXF70XH",
-    "maxTension": 45
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Versus JF70MH",
-    "maxTension": 38
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Versus JF70H",
-    "maxTension": 39
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Versus JF77XH",
-    "maxTension": 40
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Legend JXF70H",
-    "maxTension": 46
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Legend JXF70XH",
-    "maxTension": 49
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Barracuda JB JSF60MH",
-    "maxTension": 60
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Barracuda JB JSF68H",
-    "maxTension": 61
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Barracuda JB JSF68XH",
-    "maxTension": 62
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Muskie Strike JSF60H",
-    "maxTension": 49
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Muskie Strike JSF60XH",
-    "maxTension": 54
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Muskie Strike JSF68XH",
-    "maxTension": 48
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Advent J-F68H",
-    "maxTension": 50
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Advent J-F68HH",
-    "maxTension": 52
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Advent J-F70HHH",
-    "maxTension": 54
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ultima J-F68MH",
-    "maxTension": 72
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ultima J-F70H",
-    "maxTension": 77
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ultima J-F71HH",
-    "maxTension": 84
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ultima J-F72HHH",
-    "maxTension": 88
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Palmar PCK78",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Palmar PCK88",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Fortuna Picker P300-MH",
-    "maxTension": 9
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Persey PCK98",
-    "maxTension": 8
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Impuls P300",
-    "maxTension": 10
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Mechta P240",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Mechta P270",
-    "maxTension": 15
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Mechta P300",
-    "maxTension": 16
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model Two Picker 270M",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model Two Picker 300MH",
-    "maxTension": 11
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model One Picker 240M",
-    "maxTension": 15
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model One Picker 270M",
-    "maxTension": 22
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model One Picker 300MH",
-    "maxTension": 25
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Wingate Picker PF98H",
-    "maxTension": 26
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Bunessan Picker PF88H",
-    "maxTension": 10
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Bunessan Picker PF88XH",
-    "maxTension": 13
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Bunessan Picker PF98XH",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Blackwood Picker PSL98MH",
-    "maxTension": 18
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Royal Picker PM88MH",
-    "maxTension": 29
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Royal Picker PF98H",
-    "maxTension": 24
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Royal Picker PM98H",
-    "maxTension": 29
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Sensiv Bolognese II SB13",
-    "maxTension": 3
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Sensiv Bolognese II SB16",
-    "maxTension": 3
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Sensiv Bolognese II SB23",
-    "maxTension": 3
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Siren Bolognese SB13",
-    "maxTension": 5
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Siren Bolognese SB120",
-    "maxTension": 5
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "S-Eagle Bolognese SB13",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "S-Eagle Bolognese SB20",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "S-Eagle Bolognese SB25",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "KingMaster Bolognese KB16",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "KingMaster Bolognese KB20",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "KingMaster Bolognese KB26",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Linear Bolognese 400",
-    "maxTension": 8
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Linear Bolognese 500",
-    "maxTension": 8
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Linear Bolognese 600",
-    "maxTension": 8
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Linear Bolognese 700",
-    "maxTension": 8
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Genius Bolognese 400",
-    "maxTension": 4
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Genius Bolognese 600",
-    "maxTension": 4
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Fortuna Bolognese 500",
-    "maxTension": 4
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Fortuna Bolognese 600",
-    "maxTension": 4
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Fortuna Bolognese 700",
-    "maxTension": 4
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Mechta Bolognese 5",
-    "maxTension": 10
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Mechta Bolognese 6",
-    "maxTension": 10
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Mechta Bolognese 7",
-    "maxTension": 10
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model One Bolognese 500",
-    "maxTension": 10
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Model One Bolognese 700",
-    "maxTension": 10
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ethnic Bolognese 4",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ethnic Bolognese 6",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Ethnic Bolognese 8",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Heritage BL 500",
-    "maxTension": 8
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Heritage BL 600",
-    "maxTension": 8
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Heritage BL 700",
-    "maxTension": 8
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Windmaster BL 500",
-    "maxTension": 7
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Windmaster BL 700",
-    "maxTension": 7
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Windmaster BL 800",
-    "maxTension": 7
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Spirit Bolognese 500",
-    "maxTension": 18
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Spirit Bolognese 600",
-    "maxTension": 18
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Spirit Bolognese 700",
-    "maxTension": 18
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Falcon BL 400",
-    "maxTension": 20
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Falcon BL 600",
-    "maxTension": 20
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Falcon BL 700",
-    "maxTension": 20
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Crimson Star BL 500",
-    "maxTension": 13
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Crimson Star BL 600",
-    "maxTension": 13
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Crimson Star BL 700",
-    "maxTension": 13
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Crimson Star BL 800",
-    "maxTension": 13
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Rebellion BL 600",
-    "maxTension": 10
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Rebellion BL 800",
-    "maxTension": 10
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Inferno Bolognese 500",
-    "maxTension": 25
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Inferno Bolognese 600",
-    "maxTension": 25
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Inferno Bolognese 700",
-    "maxTension": 25
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Inferno Bolognese 800",
-    "maxTension": 25
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Razor Bolognese 400",
-    "maxTension": 10
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Razor Bolognese 500",
-    "maxTension": 10
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Razor Bolognese 600",
-    "maxTension": 10
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Master Bolognese 500",
-    "maxTension": 17
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Master Bolognese 600",
-    "maxTension": 17
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Master Bolognese 700",
-    "maxTension": 17
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Master Bolognese 800",
-    "maxTension": 17
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Поморъ Рязанка СК6",
-    "maxTension": 9.1
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Venga 10000",
-    "maxTension": 99
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Venga TE 10000",
-    "maxTension": 99
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Venga Black 10000",
-    "maxTension": 99
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Venga Platinum 10000",
-    "maxTension": 99
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Venga MMXXII 10000",
-    "maxTension": 99
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Venga MMXXI 10000",
-    "maxTension": 99
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Tagara 10000",
-    "maxTension": 62
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Tagara TE 10000",
-    "maxTension": 62
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Gold 80S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sputnik Alfa 8000",
-    "maxTension": 38
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Narga 8000",
-    "maxTension": 43
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Natora 8000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Admiral 8000s",
-    "maxTension": 58
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Caliber HSV 80 SLC",
-    "maxTension": 31
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Caliber 80 SLC",
-    "maxTension": 37
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Everest II 8000s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Tagara 8000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sputnik Titan 8000",
-    "maxTension": 28
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Bestia 8000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Evia 8000",
-    "maxTension": 41
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Overlord 87",
-    "maxTension": 80
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Tama Silver 80",
-    "maxTension": 67
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Megara 8000",
-    "maxTension": 72
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Venga 8000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Venga Black 8000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Venga Platinum 8000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Adriatica 5000s",
-    "maxTension": 14
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Pride 6000s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sputnik Proton 6000",
-    "maxTension": 17
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sputnik Pulsar 6000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Sabre 60s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Super Cast 6000s",
-    "maxTension": 16
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sputnik Alfa 6000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Commandor 2 60s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Commandor GS 60s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Everest II 6000s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Gold 60S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Mayor LTD 2 6000s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Narga 6000",
-    "maxTension": 17
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Natora 6000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Admiral 6000s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Bestia 6000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman P-Series 2 GS 60S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Z-Series 2 60S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Tagara 6000",
-    "maxTension": 45
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Tagara TE 6000",
-    "maxTension": 45
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Venga 6000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Venga Black 6000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Venga Platinum 6000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Venga TE 6000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Chronica 6000",
-    "maxTension": 72
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Full Metal 60",
-    "maxTension": 49
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Dragon 40s",
-    "maxTension": 9
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sputnik Element 4000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sputnik Element Pro 4000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Hercules G2 40s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Horizon 2 4000s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Lacerti 2 4000s",
-    "maxTension": 5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Lacerti-S 2 4000s",
-    "maxTension": 5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Lagoon-HP 4000s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Pride 4000s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sputnik Proton 4000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sputnik Pulsar 4000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Sabre 40s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Admiral 4000s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sputnik Alfa 4000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Bird 2 GSX 40S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Commandor 2 40S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Commandor GS 40S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Conquest II 4000s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Everest II 4000s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Mayor 2 4000s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Mayor LTD 2 4000s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Narga 4000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Natora 4000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman P-Series 2 GS 40S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Z-Series 2 40S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Bestia 4000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Tagara 4000",
-    "maxTension": 34
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Marshall Model De Luxe 430S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Adriatica 3000s",
-    "maxTension": 6.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Bird 2 GS 30S",
-    "maxTension": 18.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Bird 2 GSX 30S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Commandor 2 30S",
-    "maxTension": 18
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Corsair 30S",
-    "maxTension": 22
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Dragon 30s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sputnik Element 3000",
-    "maxTension": 8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sputnik Element PRO 3000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Gold 30s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Horizon 2 3000S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Hydra G2 30s",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Lagoon 3000s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Libra 3000s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Mayor LTD 2 3000S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Meteor 30s",
-    "maxTension": 16
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Mosquito 2 3000S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Natora 3000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Pegasus 30s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman P-Series 2 GS 30S",
-    "maxTension": 25
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Spark 3000s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Z-Series 2 30S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Admiral 2000S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sputnik Alfa 2000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Bird 2 20S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Bird 2 GSX 20S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Commandor 2 20S",
-    "maxTension": 10
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Conquiest II 2000S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Corsair 20S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sputnik Element 2000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sputnik Element PRO 2000",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Hercules G2 20s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Horizon 2 2000S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Hydra Smart 25S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Lagoon-HP 2000s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Libra 2000s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Mayor 2 2000S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Narga 2000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Natora 2000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Overlord 3 20S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Overlord 3B 20S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Overlord 3E 20S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Pride 2000s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sputnik Proton 2000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman P-Series 2 GS 20S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sputnik Pulsar 2000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Sirius 20s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Spark 2000s",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Z-Series 2 20S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Bestia 2000",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman JSX 20S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman JSX inferno 20S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Overlord 3BS 20S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Overlord 3GS 20S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Overlord 3RS 20S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Черноморец Pelengas ",
-    "maxTension": 11
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "CCCP Vyatka-2",
-    "maxTension": 4.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Admiral 1000S",
-    "maxTension": 6.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sputnik Alfa 1000",
-    "maxTension": 4
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Bestia 1000",
-    "maxTension": 7.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Bird 2 GS 10S",
-    "maxTension": 3.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Bird 2 GSX 10S",
-    "maxTension": 4
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Corsair 10S",
-    "maxTension": 5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident EasySpin 1000s",
-    "maxTension": 3.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sputnik Element 1000",
-    "maxTension": 2
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sputnik Element PRO 1000",
-    "maxTension": 2
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Lagoon 1000s",
-    "maxTension": 2
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Natora 1000",
-    "maxTension": 5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Overlord 3 10S",
-    "maxTension": 5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Overlord 3B 10S",
-    "maxTension": 5.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Overlord 3BS 10S",
-    "maxTension": 7.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Overlord 3E 10S",
-    "maxTension": 6.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Pegasus 10s",
-    "maxTension": 2.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman P-Series 2 GS 10S",
-    "maxTension": 6.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Z-Series 2 10S",
-    "maxTension": 6
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman JSX 10S",
-    "maxTension": 8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman JSX inferno 10S",
-    "maxTension": 8.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Overlord 3GS 10S",
-    "maxTension": 8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Overlord 3RS 10S",
-    "maxTension": 8.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Black Bird 2 LS-R",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Charger 2 TC-R",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Energy SNB-R",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Jet-Series JS-R",
-    "maxTension": 38
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Mayor 2 TMC-R",
-    "maxTension": 28
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Nitro 2  TN-R",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Optimus",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Pro Bird 2 MS-R",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Profisher",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Riva 2 MS-R",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Silver Bird 2 LS-R",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Spectrum TSH-R",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia SportPro X2 MS-R",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Thunderbolt SSP HS-R",
-    "maxTension": 21
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia T-Tech STT-HSR",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia T-Tech STT-R",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Winner 2 LP",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Zero 2 ZHS-R",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Zero 2 Z-R",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Admiral LP-R PG",
-    "maxTension": 44
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Jet-Bullet LP HS-R",
-    "maxTension": 36
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Jet-Series JSGHS-R",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Jet-Series JSG-R",
-    "maxTension": 32
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Pillar 2 TPC-R",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Pillar 2 TPC-R-HS",
-    "maxTension": 36.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Zero GS ZG-R",
-    "maxTension": 56.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Jet-Series JSXHS-R",
-    "maxTension": 35
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Jet-Series JSX-R",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman JSX inferno LP-R",
-    "maxTension": 31
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Polestar ELT LP-R",
-    "maxTension": 40.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Jet-Series ULX LP-R",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Centauri ZC80",
-    "maxTension": 125.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Centauri ZC80 LCTR",
-    "maxTension": 125.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Centauri ZC70",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Classic ZC70",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Rocket Jet RJ7",
-    "maxTension": 126
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman ZM-3 Spear SG70",
-    "maxTension": 97
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman ZM Ranger Z70",
-    "maxTension": 88
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Billionaire 60R",
-    "maxTension": 71
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Billionaire H-Version 60R",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Billionaire H-Version 60R LCTR",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Black Box ZBB60 LCTR",
-    "maxTension": 41
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Black Box ZBB60",
-    "maxTension": 41
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Compact ZC60",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia SteelHead 600-R",
-    "maxTension": 54
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman ZM Ranger Z60",
-    "maxTension": 78
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman ZM-3 Z60",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman ZM-4 Z60",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Imperial R600",
-    "maxTension": 96
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Imperial MMXXII R600",
-    "maxTension": 96
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Minister CS 60",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Minister NGT LD60",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman ZM-Steelness ZMS60",
-    "maxTension": 91.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Minister CS SG60 Purple",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Minister CS SG60 Red",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Minister CS PG60 Orange",
-    "maxTension": 116.6
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Minister CS SR60 Green",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Minister CS LD60 Blue ",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Minister CS ES60 Pearl",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Minister CS ES60 Yellow",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman ZM Monster LD60",
-    "maxTension": 90
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Billionaire 50R",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Black Box ZBB50",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Compact ZC50",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia SteelHead 500-R",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Winner Round II",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman ZM-3 Z50",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman ZM-4 Z50",
-    "maxTension": 69
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman ZM-Steelness ZMS50",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Minister NGT LD50",
-    "maxTension": 92
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Zodiac 500-R2",
-    "maxTension": 29
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Zodiac 500-R2 L-CTR",
-    "maxTension": 29
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Aquatica Castmaster LGR1973 MC",
-    "maxTension": 75
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Aquatica Castmaster LGR1973 ME",
-    "maxTension": 75
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Tama SAL5000",
-    "maxTension": 106
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Compact ZC40",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Magellan 400",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Spider 400-R2",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman ZM-3 Z40",
-    "maxTension": 63
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman ZM-4 Z40",
-    "maxTension": 63
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Minister Phantom LWC20",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Minister 2000",
-    "maxTension": 54
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "SAT Simplex 400",
-    "maxTension": 33
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Taiga C 40",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Tera L-LD 40",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Taiga LTD C 40 2S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Reef Albacore 40 DS",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Venga C 40 2S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Reef Argus 30",
-    "maxTension": 65
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Isinga C-LW 30",
-    "maxTension": 64
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Isinga C-LW 30LC",
-    "maxTension": 64
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Narga C-LW 30",
-    "maxTension": 33
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Reef Oriental 30",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "SAT Seagull 30",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "SAT Simplex 300",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "SAT Simplex 300LC ",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia SteelHead C-30",
-    "maxTension": 54
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Winner Trolling 30",
-    "maxTension": 16
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Winner Trolling 30LC",
-    "maxTension": 16
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Billionaire CNV 30 MS",
-    "maxTension": 88
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Taiga C 30",
-    "maxTension": 109
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Reef Palomar 30",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "SAT Cardinal 30",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "SAT Cardinal 30 2S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Tera L-LD 30",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Reef Tongar 30 DS",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "SAT Triumph 30 2S",
-    "maxTension": 405
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Venga C 30 2S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Altitude 20 DLC",
-    "maxTension": 53
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Reef Argus 20",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Reef Argus 20LC",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "SAT Halubut 20",
-    "maxTension": 40
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "SAT Halubut 20 2S",
-    "maxTension": 40
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Isinga C-LW 20",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Isinga C-LW 20LC",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Narga C-LW 20",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "SAT Seagull 20",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "SAT Simplex 200",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia SteelHead C-20",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Winner Trolling 20",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Zodiac C-20",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Billionaire CNV 20",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "SAT Oriental 20",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "SAT Rigal 20 2S",
-    "maxTension": 74
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Taiga C 20",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "SAT Cardinal 20",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "SAT Cardinal 20 2S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Reef Palomar 20",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Tera L-LD 20",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Reef Tongar 20",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Taiga LTD C 20 2S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Reef Albacore 20",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Venga C 20 2S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "SAT Triumph 20 2S",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zeiman Altitude 10 DLC",
-    "maxTension": 46
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Reef Argus 10",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Trident Billionaire CNV 10",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Isinga C-LW 10",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Isinga C-LW 10LC",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Beluga Narga C-LW 10",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Reef Palomar 10",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia SteelHead C-10",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Express Fishing Winner Trolling 10",
-    "maxTension": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Syberia Zodiac C-10",
-    "maxTension": 0
-  },
-  {
     "equipmentType": "渔轮",
-    "equipmentName": "SAT Cardinal 10",
-    "maxTension": 0
+    "equipmentName": "Tagara II 6000",
+    "lockTension": 45.89,
+    "panelTension": 18.1,
+    "price": 6299.9
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "SAT Triumph 10 2S",
-    "maxTension": 0
+    "equipmentName": "P-Series GS 40S",
+    "lockTension": 33.33,
+    "panelTension": 14.5,
+    "price": 3888
   }
 ]
