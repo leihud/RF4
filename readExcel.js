@@ -16,13 +16,6 @@ if (jsonData.length > 0) {
   console.log('原始字段名:', headers);
 }
 
-const typeMap = {
-  '楸肩': '鱼竿',
-  '娓旇疆': '渔轮',
-  '鍏戝舰': '主线',
-  '鍙戝舰': '引线'
-};
-
 const equipmentData = jsonData.map(item => {
   const keys = Object.keys(item);
   let type = '';
@@ -31,24 +24,23 @@ const equipmentData = jsonData.map(item => {
   let panelTension = 0;
   let price = 0;
   
-  keys.forEach(key => {
-    const value = item[key];
-    if (key.includes('绫诲') || key.includes('类型')) {
-      type = typeMap[value] || value;
-    } else if (key.includes('鍚嶇') || key.includes('名称')) {
-      name = value;
-    } else if (key.includes('閿佽') || key.includes('锁轮')) {
-      lockTension = value === '-' ? 0 : parseFloat(value);
-    } else if (key.includes('闈㈣') || key.includes('面板')) {
-      panelTension = value === '-' ? 0 : parseFloat(value);
-    } else if (key.includes('浠锋') || key.includes('价格')) {
-      price = value === '-' ? 0 : parseFloat(value);
-    } else if (key.includes('鍔?') || key.includes('拉力')) {
-      if (lockTension === 0) {
-        lockTension = value === '-' ? 0 : parseFloat(value);
-      }
+  if (keys.length >= 4) {
+    const typeValue = item[keys[0]];
+    if (typeValue && typeValue.charCodeAt(0) === 40060) type = '鱼竿';
+    else if (typeValue && typeValue.charCodeAt(0) === 28180) type = '渔轮';
+    else type = typeValue;
+    
+    name = item[keys[1]];
+    
+    if (keys.length >= 5) {
+      lockTension = item[keys[2]] === '-' || item[keys[2]] === '' ? 0 : parseFloat(item[keys[2]]);
+      panelTension = item[keys[3]] === '-' || item[keys[3]] === '' ? 0 : parseFloat(item[keys[3]]);
+      price = item[keys[4]] === '-' || item[keys[4]] === '' ? 0 : parseFloat(item[keys[4]]);
+    } else {
+      panelTension = item[keys[2]] === '-' || item[keys[2]] === '' ? 0 : parseFloat(item[keys[2]]);
+      price = item[keys[3]] === '-' || item[keys[3]] === '' ? 0 : parseFloat(item[keys[3]]);
     }
-  });
+  }
   
   return {
     equipmentType: type,

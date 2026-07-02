@@ -43,13 +43,6 @@
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Mechta Carp 380",
-    "lockTension": 0,
-    "panelTension": 35,
-    "price": 0
-  },
-  {
-    "equipmentType": "鱼竿",
     "equipmentName": "Fortuna Carp 360M",
     "lockTension": 0,
     "panelTension": 31.2,
@@ -61,13 +54,6 @@
     "lockTension": 0,
     "panelTension": 35.5,
     "price": 1763.26
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Fortuna Carp 360XH",
-    "lockTension": 0,
-    "panelTension": 39,
-    "price": 0
   },
   {
     "equipmentType": "鱼竿",
@@ -285,20 +271,6 @@
     "lockTension": 0,
     "panelTension": 75,
     "price": 18685.22
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Legacy Ti  12-3.75",
-    "lockTension": 0,
-    "panelTension": 76,
-    "price": 0
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Legacy Ti  13-4.00",
-    "lockTension": 0,
-    "panelTension": 78,
-    "price": 0
   },
   {
     "equipmentType": "鱼竿",
@@ -2738,13 +2710,6 @@
   },
   {
     "equipmentType": "鱼竿",
-    "equipmentName": "Palmar FD150",
-    "lockTension": 0,
-    "panelTension": 12.5,
-    "price": 0
-  },
-  {
-    "equipmentType": "鱼竿",
     "equipmentName": "Fantazia FD350",
     "lockTension": 0,
     "panelTension": 14,
@@ -2763,13 +2728,6 @@
     "lockTension": 0,
     "panelTension": 14,
     "price": 334.74
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Fantazia FD410",
-    "lockTension": 0,
-    "panelTension": 14,
-    "price": 0
   },
   {
     "equipmentType": "鱼竿",
@@ -2931,13 +2889,6 @@
     "lockTension": 0,
     "panelTension": 32.3,
     "price": 2006.04
-  },
-  {
-    "equipmentType": "鱼竿",
-    "equipmentName": "Wingate FF120H",
-    "lockTension": 0,
-    "panelTension": 33,
-    "price": 0
   },
   {
     "equipmentType": "鱼竿",
@@ -8496,5 +8447,19 @@
     "lockTension": 290,
     "panelTension": 26.3,
     "price": 39950.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Electro Raptor 20",
+    "lockTension": 368,
+    "panelTension": 31.7,
+    "price": 71988.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Electro Raptor 40",
+    "lockTension": 401,
+    "panelTension": 38.1,
+    "price": 119870.8
   }
 ]
