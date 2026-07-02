@@ -4351,70 +4351,70 @@
     "equipmentName": "Аtаmаn L4",
     "lockTension": 0,
     "panelTension": 5,
-    "price": 848
+    "price": 848.6
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Аtаmаn L5",
     "lockTension": 0,
     "panelTension": 5,
-    "price": 898
+    "price": 898.6
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Аtаmаn L6",
     "lockTension": 0,
     "panelTension": 5,
-    "price": 948
+    "price": 948.6
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Аtаmаn L7",
     "lockTension": 0,
     "panelTension": 5,
-    "price": 998
+    "price": 998.6
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Аtаmаn L8",
     "lockTension": 0,
     "panelTension": 5,
-    "price": 1103
+    "price": 1103.36
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Аtаmаn UL4",
     "lockTension": 0,
-    "panelTension": 3,
-    "price": 848
+    "panelTension": 3.1,
+    "price": 848.6
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Аtаmаn UL5",
     "lockTension": 0,
-    "panelTension": 3,
-    "price": 898
+    "panelTension": 3.1,
+    "price": 898.6
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Аtаmаn UL6",
     "lockTension": 0,
-    "panelTension": 3,
-    "price": 948
+    "panelTension": 3.1,
+    "price": 948.6
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Аtаmаn UL7",
     "lockTension": 0,
-    "panelTension": 3,
-    "price": 998
+    "panelTension": 3.1,
+    "price": 998.6
   },
   {
     "equipmentType": "鱼竿",
     "equipmentName": "Аtаmаn UL8",
     "lockTension": 0,
-    "panelTension": 3,
-    "price": 1103
+    "panelTension": 3.1,
+    "price": 1103.36
   },
   {
     "equipmentType": "鱼竿",
@@ -5391,353 +5391,234 @@
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Profisher",
-    "lockTension": 8.03,
-    "panelTension": 3.2,
-    "price": 139.9
+    "equipmentName": "Albacore 20",
+    "lockTension": 205,
+    "panelTension": 23.6,
+    "price": 44479
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Optimus",
-    "lockTension": 6.16,
-    "panelTension": 3.6,
-    "price": 181.6
+    "equipmentName": "Albacore 40 DS",
+    "lockTension": 205,
+    "panelTension": 30.8,
+    "price": 61982
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Winner 2 LP",
-    "lockTension": 13.04,
-    "panelTension": 4.5,
-    "price": 679.5
+    "equipmentName": "Altitude 10 DLC",
+    "lockTension": 46,
+    "panelTension": 11,
+    "price": 3189.5
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Energy",
-    "lockTension": 12.29,
-    "panelTension": 4.1,
-    "price": 769.8
+    "equipmentName": "Altitude 20 DLC",
+    "lockTension": 53.37,
+    "panelTension": 12.7,
+    "price": 4387.7
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Riva 2",
-    "lockTension": 19.51,
-    "panelTension": 4.8,
-    "price": 1049.5
+    "equipmentName": "Argus 10",
+    "lockTension": 61.96,
+    "panelTension": 10.9,
+    "price": 3790.5
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Black Bird 2",
-    "lockTension": 25.81,
-    "panelTension": 5,
-    "price": 1297.5
+    "equipmentName": "Argus 20",
+    "lockTension": 64.49,
+    "panelTension": 11.8,
+    "price": 4590.5
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "SportPro X2",
-    "lockTension": 23.02,
-    "panelTension": 5.2,
-    "price": 1298.5
+    "equipmentName": "Argus 20LC",
+    "lockTension": 64.49,
+    "panelTension": 11.8,
+    "price": 4858.5
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Thunderbolt",
-    "lockTension": 21.76,
-    "panelTension": 5.4,
-    "price": 1699.7
+    "equipmentName": "Argus 30",
+    "lockTension": 64.97,
+    "panelTension": 12.7,
+    "price": 5189.5
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Nitro 2",
-    "lockTension": 21.49,
-    "panelTension": 5.7,
-    "price": 1798.8
+    "equipmentName": "Billionaire CNV 10",
+    "lockTension": 78.86,
+    "panelTension": 18,
+    "price": 10879.5
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "T-Tech STT-HSR",
-    "lockTension": 30.21,
-    "panelTension": 6.3,
-    "price": 2098.6
+    "equipmentName": "Billionaire CNV 20",
+    "lockTension": 79.54,
+    "panelTension": 20,
+    "price": 14949.8
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "T-Tech STT-R",
-    "lockTension": 30.21,
-    "panelTension": 6.3,
-    "price": 2098.6
+    "equipmentName": "Billionaire CNV 30 MS",
+    "lockTension": 86.51,
+    "panelTension": 21.7,
+    "price": 19978.5
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Charger 2",
-    "lockTension": 28.93,
-    "panelTension": 6.8,
-    "price": 2498.8
+    "equipmentName": "Borealica 20 DS",
+    "lockTension": 205,
+    "panelTension": 30.8,
+    "price": 68998
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Silver Bird 2",
-    "lockTension": 26.68,
-    "panelTension": 7.3,
-    "price": 2595.7
+    "equipmentName": "Borealica 30 DS",
+    "lockTension": 450,
+    "panelTension": 34,
+    "price": 78998.5
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Spectrum",
-    "lockTension": 31.93,
-    "panelTension": 7.3,
-    "price": 2.998
+    "equipmentName": "Borealica 40 DS",
+    "lockTension": 450,
+    "panelTension": 35.4,
+    "price": 86988.5
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Pro Bird 2",
-    "lockTension": 34.54,
-    "panelTension": 7.7,
-    "price": 3108.7
+    "equipmentName": "Cardinal 10",
+    "lockTension": 104.39,
+    "panelTension": 20,
+    "price": 16479
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Zero 2 Z",
-    "lockTension": 43.41,
-    "panelTension": 7.7,
-    "price": 3589.5
+    "equipmentName": "Cardinal 20",
+    "lockTension": 133.84,
+    "panelTension": 21.8,
+    "price": 24588
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Jet-Series JS-R",
-    "lockTension": 38.72,
-    "panelTension": 7.3,
-    "price": 0
+    "equipmentName": "Cardinal 20 2S",
+    "lockTension": 130.23,
+    "panelTension": 21.8,
+    "price": 25289
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "奥拉夫HS-LP",
-    "lockTension": 34.65,
-    "panelTension": 8.6,
-    "price": 6398.6
+    "equipmentName": "Cardinal 30",
+    "lockTension": 167.89,
+    "panelTension": 22.7,
+    "price": 31084.7
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Jet-Bullet LP",
-    "lockTension": 31.91,
-    "panelTension": 8.2,
-    "price": 7543.24
+    "equipmentName": "Cardinal 30 2S",
+    "lockTension": 152.5,
+    "panelTension": 22.7,
+    "price": 33979.8
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "岩浆XHS-LP",
-    "lockTension": 32,
-    "panelTension": 8.9,
-    "price": 8599.6
+    "equipmentName": "Electro Raptor 20",
+    "lockTension": 368,
+    "panelTension": 31.7,
+    "price": 71988.6
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Mayor 2 TMC-R",
-    "lockTension": 27.9,
-    "panelTension": 7.3,
-    "price": 3809.5
+    "equipmentName": "Electro Raptor 40",
+    "lockTension": 401,
+    "panelTension": 38.1,
+    "price": 119870.8
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Zero GS ZG-R",
-    "lockTension": 56.56,
-    "panelTension": 9,
-    "price": 4377.1
+    "equipmentName": "Electro Raptor 20 7-Years",
+    "lockTension": 0,
+    "panelTension": 368,
+    "price": 31.7
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Pillar LP 2 TPC-R",
-    "lockTension": 38.9,
-    "panelTension": 8.2,
-    "price": 4848.7
+    "equipmentName": "Electro Raptor 40 7-Years",
+    "lockTension": 0,
+    "panelTension": 401,
+    "price": 38.1
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Pillar LP 2 TPC-R-HS",
-    "lockTension": 38.9,
-    "panelTension": 8.2,
-    "price": 4848.7
+    "equipmentName": "Electro Raptor 20 Amethyst",
+    "lockTension": 0,
+    "panelTension": 368,
+    "price": 31.7
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Jet-Series JSG",
-    "lockTension": 31.91,
-    "panelTension": 8.6,
-    "price": 5886.74
+    "equipmentName": "Electro Raptor 40 Amethyst",
+    "lockTension": 0,
+    "panelTension": 401,
+    "price": 38.1
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Admiral LP",
-    "lockTension": 44.45,
-    "panelTension": 9,
-    "price": 9493.17
+    "equipmentName": "Electro Raptor 20 Emerald",
+    "lockTension": 0,
+    "panelTension": 368,
+    "price": 31.7
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Jet-Series JSX JSXHS-R",
-    "lockTension": 34.92,
-    "panelTension": 9,
-    "price": 10939.5
+    "equipmentName": "Electro Raptor 40 Emerald",
+    "lockTension": 0,
+    "panelTension": 401,
+    "price": 38.1
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Jet-Series JSX JSX-R",
-    "lockTension": 34.92,
-    "panelTension": 9,
-    "price": 10939.5
+    "equipmentName": "Electro Raptor 20 Emperor",
+    "lockTension": 0,
+    "panelTension": 368,
+    "price": 31.7
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "JSX Inferno LP",
-    "lockTension": 31.38,
-    "panelTension": 9.5,
-    "price": 17878.92
+    "equipmentName": "Electro Raptor 40 Emperor",
+    "lockTension": 0,
+    "panelTension": 401,
+    "price": 38.1
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "岩浆XHS-LP 九周年纪念版",
-    "lockTension": 35,
-    "panelTension": 9,
-    "price": 0
+    "equipmentName": "Electro Raptor 20 Gold",
+    "lockTension": 0,
+    "panelTension": 368,
+    "price": 31.7
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Jet-Series ULX LP",
-    "lockTension": 36.59,
-    "panelTension": 9.5,
-    "price": 0
+    "equipmentName": "Electro Raptor 40 Gold",
+    "lockTension": 0,
+    "panelTension": 401,
+    "price": 38.1
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Polestar ELT",
-    "lockTension": 40.51,
-    "panelTension": 8.6,
-    "price": 0
+    "equipmentName": "Halibut 20",
+    "lockTension": 41.59,
+    "panelTension": 12.7,
+    "price": 3589.7
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Winner NG LP-HS",
-    "lockTension": 13.56,
-    "panelTension": 4.5,
-    "price": 299.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Alfa Pro LP",
-    "lockTension": 33.49,
-    "panelTension": 7.8,
-    "price": 3295.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Skipper LP-R",
-    "lockTension": 43,
-    "panelTension": 9,
-    "price": 9497.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Winner Trolling 10",
-    "lockTension": 10.84,
-    "panelTension": 5.5,
-    "price": 349.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Winner Trolling 20",
-    "lockTension": 10.84,
-    "panelTension": 5.5,
-    "price": 349.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Winner Trolling 30",
-    "lockTension": 10.84,
-    "panelTension": 5.5,
-    "price": 349.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Winner Trolling 30LC",
-    "lockTension": 10.84,
-    "panelTension": 5.5,
-    "price": 349.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zodiac C C-10",
-    "lockTension": 26.7,
-    "panelTension": 8,
-    "price": 1098.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zodiac C C-20",
-    "lockTension": 26.7,
-    "panelTension": 8,
-    "price": 1098.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Simplex 200",
-    "lockTension": 28.77,
-    "panelTension": 8.2,
-    "price": 1188.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Simplex 300",
-    "lockTension": 28.77,
-    "panelTension": 8.2,
-    "price": 1188.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Simplex 300LC",
-    "lockTension": 28.77,
-    "panelTension": 8.2,
-    "price": 1188.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Simplex 400",
-    "lockTension": 28.77,
-    "panelTension": 8.2,
-    "price": 1188.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Narga C-LW Narga C-LW 10",
-    "lockTension": 27.65,
-    "panelTension": 8.2,
-    "price": 1189.6
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Narga C-LW Narga C-LW 20",
-    "lockTension": 27.65,
-    "panelTension": 8.2,
-    "price": 1189.6
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Narga C-LW Narga C-LW 30",
-    "lockTension": 27.65,
-    "panelTension": 8.2,
-    "price": 1189.6
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Seagull Seagull 20",
-    "lockTension": 36.54,
-    "panelTension": 10,
-    "price": 1988.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Seagull Seagull 30",
-    "lockTension": 36.54,
-    "panelTension": 10,
-    "price": 1988.8
+    "equipmentName": "Halibut 20 2S",
+    "lockTension": 40.71,
+    "panelTension": 12.7,
+    "price": 3989.8
   },
   {
     "equipmentType": "渔轮",
@@ -5749,37 +5630,30 @@
   {
     "equipmentType": "渔轮",
     "equipmentName": "Hamra C-LW 20",
-    "lockTension": 38.75,
-    "panelTension": 10.9,
-    "price": 2498.8
+    "lockTension": 45.93,
+    "panelTension": 11.8,
+    "price": 3098.7
   },
   {
     "equipmentType": "渔轮",
     "equipmentName": "Hamra C-LW 20LC",
-    "lockTension": 38.75,
-    "panelTension": 10.9,
-    "price": 2498.8
+    "lockTension": 45.93,
+    "panelTension": 11.8,
+    "price": 3398.9
   },
   {
     "equipmentType": "渔轮",
     "equipmentName": "Hamra C-LW 30",
-    "lockTension": 38.75,
-    "panelTension": 10.9,
-    "price": 2498.8
+    "lockTension": 52,
+    "panelTension": 12.7,
+    "price": 4198.6
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Altitude Altitude 10 DLC",
-    "lockTension": 46,
-    "panelTension": 11,
-    "price": 3189.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Altitude Altitude 20 DLC",
-    "lockTension": 46,
-    "panelTension": 11,
-    "price": 3189.5
+    "equipmentName": "Imperial C 40 2S",
+    "lockTension": 205,
+    "panelTension": 32.6,
+    "price": 74993.7
   },
   {
     "equipmentType": "渔轮",
@@ -5793,98 +5667,56 @@
     "equipmentName": "Isinga C-LW 10LC",
     "lockTension": 48.11,
     "panelTension": 11.8,
-    "price": 3385.3
+    "price": 3594.6
   },
   {
     "equipmentType": "渔轮",
     "equipmentName": "Isinga C-LW 20",
-    "lockTension": 48.11,
-    "panelTension": 11.8,
-    "price": 3385.3
+    "lockTension": 55,
+    "panelTension": 12.7,
+    "price": 4193.4
   },
   {
     "equipmentType": "渔轮",
     "equipmentName": "Isinga C-LW 20LC",
-    "lockTension": 48.11,
-    "panelTension": 11.8,
-    "price": 3385.3
+    "lockTension": 55,
+    "panelTension": 12.7,
+    "price": 4496.7
   },
   {
     "equipmentType": "渔轮",
     "equipmentName": "Isinga C-LW 30",
-    "lockTension": 48.11,
-    "panelTension": 11.8,
-    "price": 3385.3
+    "lockTension": 63.83,
+    "panelTension": 14.5,
+    "price": 5994.5
   },
   {
     "equipmentType": "渔轮",
     "equipmentName": "Isinga C-LW 30LC",
-    "lockTension": 48.11,
-    "panelTension": 11.8,
-    "price": 3385.3
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Halibut Halibut 20",
-    "lockTension": 41.59,
-    "panelTension": 12.7,
-    "price": 3589.7
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Halibut Halibut 20 2S",
-    "lockTension": 41.59,
-    "panelTension": 12.7,
-    "price": 3589.7
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Argus Argus 10",
-    "lockTension": 61.96,
-    "panelTension": 10.9,
-    "price": 3790.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Argus Argus 20",
-    "lockTension": 61.96,
-    "panelTension": 10.9,
-    "price": 3790.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Argus Argus 20LC",
-    "lockTension": 61.96,
-    "panelTension": 10.9,
-    "price": 3790.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Argus Argus 30",
-    "lockTension": 61.96,
-    "panelTension": 10.9,
-    "price": 3790.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "SteelHead C C-10",
-    "lockTension": 47.42,
+    "lockTension": 63.83,
     "panelTension": 14.5,
-    "price": 5389.5
+    "price": 6297.5
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "SteelHead C C-20",
-    "lockTension": 47.42,
-    "panelTension": 14.5,
-    "price": 5389.5
+    "equipmentName": "Narga C-LW 10",
+    "lockTension": 27.65,
+    "panelTension": 8.2,
+    "price": 1189.6
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "SteelHead C C-30",
-    "lockTension": 47.42,
-    "panelTension": 14.5,
-    "price": 5389.5
+    "equipmentName": "Narga C-LW 20",
+    "lockTension": 29.6,
+    "panelTension": 9,
+    "price": 1347.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Narga C-LW 20",
+    "lockTension": 33.22,
+    "panelTension": 10,
+    "price": 1889.9
   },
   {
     "equipmentType": "渔轮",
@@ -5897,85 +5729,8 @@
     "equipmentType": "渔轮",
     "equipmentName": "Oriental 30",
     "lockTension": 87.1,
-    "panelTension": 14.5,
-    "price": 8188.7
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Rigal",
-    "lockTension": 74,
-    "panelTension": 16.3,
-    "price": 8799
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Taiga C 20",
-    "lockTension": 94.44,
-    "panelTension": 15.4,
-    "price": 9693.4
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Taiga C 30",
-    "lockTension": 94.44,
-    "panelTension": 15.4,
-    "price": 9693.4
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Taiga C 40",
-    "lockTension": 94.44,
-    "panelTension": 15.4,
-    "price": 9693.4
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Billionaire CNV 10",
-    "lockTension": 78.86,
-    "panelTension": 18,
-    "price": 10879.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Billionaire CNV 20",
-    "lockTension": 78.86,
-    "panelTension": 18,
-    "price": 10879.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Billionaire CNV 30 MS",
-    "lockTension": 78.86,
-    "panelTension": 18,
-    "price": 10879.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Tera C-LW 20",
-    "lockTension": 104.7,
-    "panelTension": 18.1,
-    "price": 12978.7
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Tera C-LW 30",
-    "lockTension": 104.7,
-    "panelTension": 18.1,
-    "price": 12978.7
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Tera C-LW 30LC",
-    "lockTension": 104.7,
-    "panelTension": 18.1,
-    "price": 12978.7
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Tera C-LW 40",
-    "lockTension": 104.7,
-    "panelTension": 18.1,
-    "price": 12978.7
+    "panelTension": 15.9,
+    "price": 9388.7
   },
   {
     "equipmentType": "渔轮",
@@ -5987,51 +5742,156 @@
   {
     "equipmentType": "渔轮",
     "equipmentName": "Palomar 20",
-    "lockTension": 122.37,
-    "panelTension": 17.2,
-    "price": 13987.5
+    "lockTension": 133.3,
+    "panelTension": 18.1,
+    "price": 16785
   },
   {
     "equipmentType": "渔轮",
     "equipmentName": "Palomar 30",
-    "lockTension": 122.37,
+    "lockTension": 133.6,
+    "panelTension": 19,
+    "price": 18484.7
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Rigal 20 2S",
+    "lockTension": 74,
+    "panelTension": 16.3,
+    "price": 8799
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Seagull 20",
+    "lockTension": 36.54,
+    "panelTension": 10,
+    "price": 1988.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Seagull 30",
+    "lockTension": 37.22,
+    "panelTension": 11.8,
+    "price": 2689.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Simplex 200",
+    "lockTension": 28.77,
+    "panelTension": 8.2,
+    "price": 1188.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Simplex 300",
+    "lockTension": 31.98,
+    "panelTension": 9,
+    "price": 1388.65
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Simplex 300LC",
+    "lockTension": 31.98,
+    "panelTension": 9,
+    "price": 1579
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Simplex 400",
+    "lockTension": 33.75,
+    "panelTension": 10,
+    "price": 1989.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "SteelHead C-10",
+    "lockTension": 47.42,
+    "panelTension": 14.5,
+    "price": 5389.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "SteelHead C-20",
+    "lockTension": 49.67,
+    "panelTension": 16,
+    "price": 6279
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "SteelHead C-30",
+    "lockTension": 54.12,
     "panelTension": 17.2,
-    "price": 13987.5
+    "price": 8979.8
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Cardinal 10",
-    "lockTension": 104.39,
-    "panelTension": 20,
-    "price": 16479
+    "equipmentName": "Taiga C 20",
+    "lockTension": 94.44,
+    "panelTension": 15.4,
+    "price": 9693.4
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Cardinal 20",
-    "lockTension": 104.39,
-    "panelTension": 20,
-    "price": 16479
+    "equipmentName": "Taiga C 30",
+    "lockTension": 109.46,
+    "panelTension": 15.4,
+    "price": 10494
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Cardinal 20 2S",
-    "lockTension": 104.39,
-    "panelTension": 20,
-    "price": 16479
+    "equipmentName": "Taiga C 40",
+    "lockTension": 136,
+    "panelTension": 17.2,
+    "price": 15590
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Cardinal 30",
-    "lockTension": 104.39,
-    "panelTension": 20,
-    "price": 16479
+    "equipmentName": "Taiga C 30 2S 7-Anniversary",
+    "lockTension": 0,
+    "panelTension": 109.5,
+    "price": 15.4
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Cardinal 30 2S",
-    "lockTension": 104.39,
-    "panelTension": 20,
-    "price": 16479
+    "equipmentName": "Taiga LTD C 20 2S",
+    "lockTension": 205,
+    "panelTension": 22.7,
+    "price": 38983
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Taiga LTD C 40 2S",
+    "lockTension": 205,
+    "panelTension": 24.5,
+    "price": 42986
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Tera C-LW 20",
+    "lockTension": 104.7,
+    "panelTension": 18.1,
+    "price": 12978.7
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Tera C-LW 30",
+    "lockTension": 131,
+    "panelTension": 19,
+    "price": 17499
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Tera C-LW 30LC",
+    "lockTension": 131,
+    "panelTension": 19,
+    "price": 17999
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Tera C-LW 40",
+    "lockTension": 147.61,
+    "panelTension": 20.9,
+    "price": 24997.5
   },
   {
     "equipmentType": "渔轮",
@@ -6043,261 +5903,37 @@
   {
     "equipmentType": "渔轮",
     "equipmentName": "Tera L-LD 30",
-    "lockTension": 121.9,
-    "panelTension": 19,
-    "price": 16983
+    "lockTension": 142.77,
+    "panelTension": 20.9,
+    "price": 23984
   },
   {
     "equipmentType": "渔轮",
     "equipmentName": "Tera L-LD 40",
-    "lockTension": 121.9,
-    "panelTension": 19,
-    "price": 16983
+    "lockTension": 157.72,
+    "panelTension": 21.8,
+    "price": 29987
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Tongar 20",
+    "equipmentName": "【停产】Tongar 20",
     "lockTension": 173.25,
     "panelTension": 19,
     "price": 25984
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Tongar 20 DS",
+    "equipmentName": "【停产】Tongar 20 DS",
     "lockTension": 173.25,
     "panelTension": 19,
-    "price": 25984
+    "price": 27982
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Tongar 30 DS",
-    "lockTension": 173.25,
-    "panelTension": 19,
-    "price": 25984
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Taiga LTD C 2S 20 2S",
+    "equipmentName": "【停产】Tongar 30 DS",
     "lockTension": 205,
-    "panelTension": 22.7,
-    "price": 38983
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Taiga LTD C 2S 40 2S",
-    "lockTension": 205,
-    "panelTension": 22.7,
-    "price": 38983
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Albacore 20",
-    "lockTension": 205,
-    "panelTension": 23.6,
-    "price": 44479
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Albacore 40 DS",
-    "lockTension": 205,
-    "panelTension": 23.6,
-    "price": 44479
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Venga C 2S C20 2S",
-    "lockTension": 205,
-    "panelTension": 29,
-    "price": 44486
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Venga C 2S C30 2S",
-    "lockTension": 205,
-    "panelTension": 29,
-    "price": 44486
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Venga C 2S C40 2S",
-    "lockTension": 205,
-    "panelTension": 29,
-    "price": 44486
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Triumph 2S 10 2S",
-    "lockTension": 205,
-    "panelTension": 30.8,
-    "price": 53588.6
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Triumph 2S 20 2S",
-    "lockTension": 205,
-    "panelTension": 30.8,
-    "price": 53588.6
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Triumph 2S 30 2S",
-    "lockTension": 205,
-    "panelTension": 30.8,
-    "price": 53588.6
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Borealica 20 DS",
-    "lockTension": 205,
-    "panelTension": 30.8,
-    "price": 68998
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Borealica 30 DS",
-    "lockTension": 205,
-    "panelTension": 30.8,
-    "price": 68998
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Borealica 40 DS",
-    "lockTension": 205,
-    "panelTension": 30.8,
-    "price": 68998
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Taiga C 2S 7-Anniversary",
-    "lockTension": 109.5,
-    "panelTension": 15.4,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Triumph Silver 2S 10 2S",
-    "lockTension": 205,
-    "panelTension": 30.8,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Triumph Silver 2S 20 2S",
-    "lockTension": 205,
-    "panelTension": 30.8,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Triumph Silver 2S 30 2S",
-    "lockTension": 205,
-    "panelTension": 30.8,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Electro Raptor Amethyst 20 Amethyst",
-    "lockTension": 368,
-    "panelTension": 31.7,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Electro Raptor Amethyst 40 Amethyst",
-    "lockTension": 368,
-    "panelTension": 31.7,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Electro Raptor Emerald 20 Emerald",
-    "lockTension": 368,
-    "panelTension": 31.7,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Electro Raptor Emerald 40 Emerald",
-    "lockTension": 368,
-    "panelTension": 31.7,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Electro Raptor Emperor 20 Emperor",
-    "lockTension": 368,
-    "panelTension": 31.7,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Electro Raptor Emperor 40 Emperor",
-    "lockTension": 368,
-    "panelTension": 31.7,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Electro Raptor Gold 20 Gold",
-    "lockTension": 368,
-    "panelTension": 31.7,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Electro Raptor Gold 40 Gold",
-    "lockTension": 368,
-    "panelTension": 31.7,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Electro Raptor 7-Years",
-    "lockTension": 368,
-    "panelTension": 31.7,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "电动猛禽 红龙 Raptor 20",
-    "lockTension": 368,
-    "panelTension": 31.7,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "电动猛禽 红龙 Raptor 40",
-    "lockTension": 368,
-    "panelTension": 31.7,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "电动猛禽 FT 20 FT",
-    "lockTension": 368,
-    "panelTension": 31.7,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "电动猛禽 FT 40 FT",
-    "lockTension": 368,
-    "panelTension": 31.7,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "东方贵族 F20",
-    "lockTension": 90.38,
-    "panelTension": 15.9,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "东方贵族 F30",
-    "lockTension": 90.38,
-    "panelTension": 15.9,
-    "price": 0
+    "panelTension": 21.8,
+    "price": 37985
   },
   {
     "equipmentType": "渔轮",
@@ -6309,2074 +5945,198 @@
   {
     "equipmentType": "渔轮",
     "equipmentName": "Tongar 2Gen 20 DS",
-    "lockTension": 163.24,
+    "lockTension": 166.25,
     "panelTension": 19,
-    "price": 25984.2
+    "price": 27982.4
   },
   {
     "equipmentType": "渔轮",
     "equipmentName": "Tongar 2Gen 30 DS",
-    "lockTension": 163.24,
-    "panelTension": 19,
-    "price": 25984.2
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Triumph 2S 八周年纪念版",
-    "lockTension": 400,
-    "panelTension": 33.6,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "文加C 2S 九周年纪念版",
     "lockTension": 205,
-    "panelTension": 32.6,
-    "price": 0
+    "panelTension": 21.8,
+    "price": 37985.3
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "电动猛禽 九周年纪念版 20-9",
-    "lockTension": 368,
-    "panelTension": 31.7,
-    "price": 0
+    "equipmentName": "Triumph 10 2S",
+    "lockTension": 205,
+    "panelTension": 30.8,
+    "price": 53588.6
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "电动猛禽 九周年纪念版 40-9",
-    "lockTension": 368,
-    "panelTension": 31.7,
-    "price": 0
+    "equipmentName": "Triumph 20 2S",
+    "lockTension": 205,
+    "panelTension": 31.8,
+    "price": 62679.4
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Spark 2 2000s",
-    "lockTension": 3.4,
-    "panelTension": 3.2,
-    "price": 8.5
+    "equipmentName": "Triumph 30 2S",
+    "lockTension": 405,
+    "panelTension": 33.6,
+    "price": 69986.9
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Spark 2 3000s",
-    "lockTension": 3.4,
-    "panelTension": 3.2,
-    "price": 8.5
+    "equipmentName": "Triumph 30 2S 8-Anniversary",
+    "lockTension": 0,
+    "panelTension": 400,
+    "price": 33.6
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "LIbra 2 2000S",
-    "lockTension": 4.1,
-    "panelTension": 3.3,
+    "equipmentName": "Triumph Silver 10 2S",
+    "lockTension": 0,
+    "panelTension": 205,
+    "price": 30.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Triumph Silver 20 2S",
+    "lockTension": 0,
+    "panelTension": 205,
     "price": 31.8
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "LIbra 2 3000S",
-    "lockTension": 4.1,
-    "panelTension": 3.3,
-    "price": 31.8
+    "equipmentName": "Triumph Silver 30 2S",
+    "lockTension": 0,
+    "panelTension": 405,
+    "price": 33.6
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Hydra Smart 2",
-    "lockTension": 5.4,
-    "panelTension": 3.4,
-    "price": 58.5
+    "equipmentName": "Venga C 20 2S",
+    "lockTension": 205,
+    "panelTension": 29,
+    "price": 44486
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Lacerti 2",
-    "lockTension": 4.95,
-    "panelTension": 3.8,
-    "price": 98.5
+    "equipmentName": "Venga C 30 2S",
+    "lockTension": 300,
+    "panelTension": 29,
+    "price": 49783.3
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Lacerti-S 2",
-    "lockTension": 4.95,
-    "panelTension": 4.2,
-    "price": 138
+    "equipmentName": "Venga C 40 2S",
+    "lockTension": 205,
+    "panelTension": 30.8,
+    "price": 57680
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Lagoon-HP 2 2000S",
-    "lockTension": 5,
-    "panelTension": 3.5,
-    "price": 69.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Lagoon-HP 2 4000S",
-    "lockTension": 5,
-    "panelTension": 3.5,
-    "price": 69.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Lagoon 1000S",
-    "lockTension": 3.8,
-    "panelTension": 1.8,
-    "price": 89.95
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Lagoon 3000S",
-    "lockTension": 3.8,
-    "panelTension": 1.8,
-    "price": 89.95
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Hydra G2",
-    "lockTension": 5.88,
-    "panelTension": 5.2,
-    "price": 184.2
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Element 1000",
-    "lockTension": 4,
-    "panelTension": 2,
-    "price": 129
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Element 2000",
-    "lockTension": 4,
-    "panelTension": 2,
-    "price": 129
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Element 3000",
-    "lockTension": 4,
-    "panelTension": 2,
-    "price": 129
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Element 4000",
-    "lockTension": 4,
-    "panelTension": 2,
-    "price": 129
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Element PRO 1000",
-    "lockTension": 4.92,
-    "panelTension": 2,
-    "price": 151.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Element PRO 2000",
-    "lockTension": 4.92,
-    "panelTension": 2,
-    "price": 151.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Element PRO 3000",
-    "lockTension": 4.92,
-    "panelTension": 2,
-    "price": 151.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Element PRO 4000",
-    "lockTension": 4.92,
-    "panelTension": 2,
-    "price": 151.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Adriatica 3000S",
-    "lockTension": 6.87,
-    "panelTension": 5.4,
-    "price": 249
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Adriatica 5000S",
-    "lockTension": 6.87,
-    "panelTension": 5.4,
-    "price": 249
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Dragon 30s",
-    "lockTension": 6.72,
-    "panelTension": 5.8,
-    "price": 362.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Dragon 40s",
-    "lockTension": 6.72,
-    "panelTension": 5.8,
-    "price": 362.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Pride 2000S",
-    "lockTension": 4,
-    "panelTension": 4,
-    "price": 298.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Pride 4000S",
-    "lockTension": 4,
-    "panelTension": 4,
-    "price": 298.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Pride 6000S",
-    "lockTension": 4,
-    "panelTension": 4,
-    "price": 298.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Pegasus 10s",
-    "lockTension": 4.97,
-    "panelTension": 2.3,
-    "price": 258.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Pegasus 30s",
-    "lockTension": 4.97,
-    "panelTension": 2.3,
-    "price": 258.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Hercules G2 Hercules G2 20s",
-    "lockTension": 6.94,
-    "panelTension": 3.7,
-    "price": 459.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Hercules G2 Hercules G2 40s",
-    "lockTension": 6.94,
-    "panelTension": 3.7,
-    "price": 459.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Proton 2000",
-    "lockTension": 9.55,
-    "panelTension": 3.6,
-    "price": 395
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Proton 4000",
-    "lockTension": 9.55,
-    "panelTension": 3.6,
-    "price": 395
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Proton 6000",
-    "lockTension": 9.55,
-    "panelTension": 3.6,
-    "price": 395
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sirius",
-    "lockTension": 8.15,
-    "panelTension": 3.6,
-    "price": 418
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "EasySpin",
-    "lockTension": 5.12,
-    "panelTension": 3.2,
-    "price": 399
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Pulsar 2000",
-    "lockTension": 11.05,
-    "panelTension": 3.8,
-    "price": 599.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Pulsar 4000",
-    "lockTension": 11.05,
-    "panelTension": 3.8,
-    "price": 599.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Pulsar 6000",
-    "lockTension": 11.05,
-    "panelTension": 3.8,
-    "price": 599.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Meteor",
-    "lockTension": 16,
-    "panelTension": 7.7,
-    "price": 698
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Super Cast",
-    "lockTension": 16,
-    "panelTension": 8.2,
-    "price": 698
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Horizon 2 2000s",
-    "lockTension": 12.51,
-    "panelTension": 3.8,
-    "price": 688
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Horizon 2 3000s",
-    "lockTension": 12.51,
-    "panelTension": 3.8,
-    "price": 688
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Horizon 2 4000s",
-    "lockTension": 12.51,
-    "panelTension": 3.8,
-    "price": 688
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sabre 40s",
-    "lockTension": 13,
-    "panelTension": 9,
-    "price": 786.9
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Sabre 60s",
-    "lockTension": 13,
-    "panelTension": 9,
-    "price": 786.9
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Bird 2",
-    "lockTension": 13.24,
-    "panelTension": 3.6,
-    "price": 798.4
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Mosquito 2",
-    "lockTension": 17.06,
-    "panelTension": 8.6,
-    "price": 847.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Bird 2 GS 10S",
-    "lockTension": 5.52,
-    "panelTension": 3.4,
-    "price": 559.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Bird 2 GS 30S",
-    "lockTension": 5.52,
-    "panelTension": 3.4,
-    "price": 559.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Gold 30s",
-    "lockTension": 16.82,
-    "panelTension": 8,
-    "price": 995
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Gold 60s",
-    "lockTension": 16.82,
-    "panelTension": 8,
-    "price": 995
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Gold 80s",
-    "lockTension": 16.82,
-    "panelTension": 8,
-    "price": 995
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Alfa 1000",
-    "lockTension": 5.77,
-    "panelTension": 3.6,
-    "price": 650.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Alfa 2000",
-    "lockTension": 5.77,
-    "panelTension": 3.6,
-    "price": 650.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Alfa 4000",
-    "lockTension": 5.77,
-    "panelTension": 3.6,
-    "price": 650.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Alfa 6000",
-    "lockTension": 5.77,
-    "panelTension": 3.6,
-    "price": 650.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Alfa 8000",
-    "lockTension": 5.77,
-    "panelTension": 3.6,
-    "price": 650.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Bird 2 GSX 10S",
-    "lockTension": 5.91,
-    "panelTension": 4,
-    "price": 852.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Bird 2 GSX 20S",
-    "lockTension": 5.91,
-    "panelTension": 4,
-    "price": 852.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Bird 2 GSX 30S",
-    "lockTension": 5.91,
-    "panelTension": 4,
-    "price": 852.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Bird 2 GSX 40S",
-    "lockTension": 5.91,
-    "panelTension": 4,
-    "price": 852.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Commandor 2 20S",
-    "lockTension": 10,
-    "panelTension": 6,
-    "price": 1980
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Commandor 2 30S",
-    "lockTension": 10,
-    "panelTension": 6,
-    "price": 1980
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Commandor 2 40S",
-    "lockTension": 10,
-    "panelTension": 6,
-    "price": 1980
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Commandor 2 60S",
-    "lockTension": 10,
-    "panelTension": 6,
-    "price": 1980
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Conquest 2 2000s",
-    "lockTension": 13.54,
+    "equipmentName": "Winner Trolling 10",
+    "lockTension": 10.84,
     "panelTension": 5.5,
-    "price": 1590.8
+    "price": 349.8
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Conquest 2 4000s",
-    "lockTension": 13.54,
-    "panelTension": 5.5,
-    "price": 1590.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Narga Narga 2000",
-    "lockTension": 16.66,
-    "panelTension": 5.5,
-    "price": 1620.9
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Narga Narga 4000",
-    "lockTension": 16.66,
-    "panelTension": 5.5,
-    "price": 1620.9
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Narga Narga 6000",
-    "lockTension": 16.66,
-    "panelTension": 5.5,
-    "price": 1620.9
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Narga Narga 8000",
-    "lockTension": 16.66,
-    "panelTension": 5.5,
-    "price": 1620.9
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Titan",
-    "lockTension": 27.5,
-    "panelTension": 12.7,
-    "price": 1795.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Corsair S 10S",
-    "lockTension": 7.29,
-    "panelTension": 4.8,
-    "price": 1498.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Corsair S 20S",
-    "lockTension": 7.29,
-    "panelTension": 4.8,
-    "price": 1498.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Corsair S 30S",
-    "lockTension": 7.29,
-    "panelTension": 4.8,
-    "price": 1498.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Overlord 3 10S",
-    "lockTension": 8.51,
-    "panelTension": 5,
-    "price": 2500
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Overlord 3 20S",
-    "lockTension": 8.51,
-    "panelTension": 5,
-    "price": 2500
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Commandor GS 40S",
-    "lockTension": 23.71,
-    "panelTension": 12.7,
-    "price": 2610.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Commandor GS 60S",
-    "lockTension": 23.71,
-    "panelTension": 12.7,
-    "price": 2610.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Everest ll 4000s",
-    "lockTension": 30.16,
-    "panelTension": 13,
-    "price": 2719
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Everest ll 6000s",
-    "lockTension": 30.16,
-    "panelTension": 13,
-    "price": 2719
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Everest ll 8000s",
-    "lockTension": 30.16,
-    "panelTension": 13,
-    "price": 2719
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Caliber HSV",
-    "lockTension": 30.24,
-    "panelTension": 15.4,
-    "price": 2884.7
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Mayor LTD 2 3000s",
-    "lockTension": 31.38,
-    "panelTension": 13.6,
-    "price": 2988.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Mayor LTD 2 4000s",
-    "lockTension": 31.38,
-    "panelTension": 13.6,
-    "price": 2988.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Mayor LTD 2 6000s",
-    "lockTension": 31.38,
-    "panelTension": 13.6,
-    "price": 2988.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Overlord 3B 10S",
-    "lockTension": 8.49,
-    "panelTension": 5.5,
-    "price": 2999.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Overlord 3B 20S",
-    "lockTension": 8.49,
-    "panelTension": 5.5,
-    "price": 2999.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Mayor 2 2000s",
-    "lockTension": 17.95,
-    "panelTension": 7.2,
-    "price": 3129.9
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Mayor 2 4000s",
-    "lockTension": 17.95,
-    "panelTension": 7.2,
-    "price": 3129.9
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Z-Series 2 10S",
-    "lockTension": 7.88,
-    "panelTension": 6,
-    "price": 3597.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Z-Series 2 20S",
-    "lockTension": 7.88,
-    "panelTension": 6,
-    "price": 3597.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Z-Series 2 30S",
-    "lockTension": 7.88,
-    "panelTension": 6,
-    "price": 3597.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Z-Series 2 40S",
-    "lockTension": 7.88,
-    "panelTension": 6,
-    "price": 3597.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Z-Series 2 60S",
-    "lockTension": 7.88,
-    "panelTension": 6,
-    "price": 3597.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Narga Super 7",
-    "lockTension": 47,
-    "panelTension": 15.4,
-    "price": 3899.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Admiral 1000s",
-    "lockTension": 9,
-    "panelTension": 6.3,
-    "price": 4053.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Admiral 2000s",
-    "lockTension": 9,
-    "panelTension": 6.3,
-    "price": 4053.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Admiral 4000s",
-    "lockTension": 9,
-    "panelTension": 6.3,
-    "price": 4053.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Admiral 6000s",
-    "lockTension": 9,
-    "panelTension": 6.3,
-    "price": 4053.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Admiral 8000s",
-    "lockTension": 9,
-    "panelTension": 6.3,
-    "price": 4053.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Overlord 3E 10S",
-    "lockTension": 8.49,
+    "equipmentName": "Winner Trolling 20",
+    "lockTension": 12.52,
     "panelTension": 6.4,
-    "price": 4499.8
+    "price": 589.5
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Overlord 3E 20S",
-    "lockTension": 8.49,
-    "panelTension": 6.4,
-    "price": 4499.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "P-Series 2 10S",
-    "lockTension": 7.19,
-    "panelTension": 6.5,
-    "price": 4628
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "P-Series 2 20S",
-    "lockTension": 7.19,
-    "panelTension": 6.5,
-    "price": 4628
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "P-Series 2 30S",
-    "lockTension": 7.19,
-    "panelTension": 6.5,
-    "price": 4628
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "P-Series 2 40S",
-    "lockTension": 7.19,
-    "panelTension": 6.5,
-    "price": 4628
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "P-Series 2 60S",
-    "lockTension": 7.19,
-    "panelTension": 6.5,
-    "price": 4628
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Azimut Azimut 4000",
-    "lockTension": 37.56,
-    "panelTension": 15.4,
-    "price": 4698.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Azimut Azimut 6000",
-    "lockTension": 37.56,
-    "panelTension": 15.4,
-    "price": 4698.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Azimut Azimut 8000",
-    "lockTension": 37.56,
-    "panelTension": 15.4,
-    "price": 4698.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Azimut Azimut 10000",
-    "lockTension": 37.56,
-    "panelTension": 15.4,
-    "price": 4698.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Azimut Blue 4000",
-    "lockTension": 37.56,
-    "panelTension": 15.4,
-    "price": 4698.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Azimut Blue 6000",
-    "lockTension": 37.56,
-    "panelTension": 15.4,
-    "price": 4698.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Azimut Blue 8000",
-    "lockTension": 37.56,
-    "panelTension": 15.4,
-    "price": 4698.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Azimut Blue 10000",
-    "lockTension": 37.56,
-    "panelTension": 15.4,
-    "price": 4698.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Tagara 4000",
-    "lockTension": 39.64,
-    "panelTension": 16.3,
-    "price": 5075.88
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Tagara 6000",
-    "lockTension": 39.64,
-    "panelTension": 16.3,
-    "price": 5075.88
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Tagara 8000",
-    "lockTension": 39.64,
-    "panelTension": 16.3,
-    "price": 5075.88
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Tagara 10000",
-    "lockTension": 39.64,
-    "panelTension": 16.3,
-    "price": 5075.88
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Evia 6000",
-    "lockTension": 38.3,
-    "panelTension": 17.2,
-    "price": 5198.95
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Evia 8000",
-    "lockTension": 38.3,
-    "panelTension": 17.2,
-    "price": 5198.95
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Caliber",
-    "lockTension": 37.74,
-    "panelTension": 17.2,
-    "price": 5312.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Overlord 3BS 10S",
-    "lockTension": 9.55,
+    "equipmentName": "Winner Trolling 30",
+    "lockTension": 15,
     "panelTension": 7.3,
-    "price": 5599.8
+    "price": 778.9
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Overlord 3BS 20S",
-    "lockTension": 9.55,
+    "equipmentName": "Winner Trolling 30LC",
+    "lockTension": 15,
     "panelTension": 7.3,
-    "price": 5599.8
+    "price": 857.9
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "JSX S 10S",
-    "lockTension": 9,
-    "panelTension": 7.7,
-    "price": 6143.75
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "JSX S 20S",
-    "lockTension": 9,
-    "panelTension": 7.7,
-    "price": 6143.75
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Overlord 3GS 10S",
-    "lockTension": 10.02,
-    "panelTension": 7.7,
-    "price": 6499.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Overlord 3GS 20S",
-    "lockTension": 10.02,
-    "panelTension": 7.7,
-    "price": 6499.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "JSX Inferno S 10S",
-    "lockTension": 11.04,
-    "panelTension": 8.2,
-    "price": 6723
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "JSX Inferno S 20S",
-    "lockTension": 11.04,
-    "panelTension": 8.2,
-    "price": 6723
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Overlord 3RS 10S",
-    "lockTension": 12.02,
-    "panelTension": 8.2,
-    "price": 7500
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Overlord 3RS 20S",
-    "lockTension": 12.02,
-    "panelTension": 8.2,
-    "price": 7500
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "SG8000",
-    "lockTension": 51.14,
-    "panelTension": 19.5,
-    "price": 9987.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Everest 24",
-    "lockTension": 52,
-    "panelTension": 22.7,
-    "price": 11320.36
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Venga Venga 6000",
-    "lockTension": 69.66,
-    "panelTension": 22.6,
-    "price": 18790.96
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Venga Venga 8000",
-    "lockTension": 69.66,
-    "panelTension": 22.6,
-    "price": 18790.96
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Venga Venga 10000",
-    "lockTension": 69.66,
-    "panelTension": 22.6,
-    "price": 18790.96
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Megara",
-    "lockTension": 71.76,
-    "panelTension": 25.4,
-    "price": 22471.96
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Goliaf 10000",
-    "lockTension": 112,
-    "panelTension": 30.8,
-    "price": 31499.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Goliaf 20000",
-    "lockTension": 112,
-    "panelTension": 30.8,
-    "price": 31499.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Goliaf 30000",
-    "lockTension": 112,
-    "panelTension": 30.8,
-    "price": 31499.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Turion SW Turion SW 8000",
-    "lockTension": 110.68,
-    "panelTension": 30.8,
-    "price": 32500
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Turion SW Turion SW 10000",
-    "lockTension": 110.68,
-    "panelTension": 30.8,
-    "price": 32500
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Turion SW Turion SW 20000",
-    "lockTension": 110.68,
-    "panelTension": 30.8,
-    "price": 32500
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Turion SW Turion SW 30000",
-    "lockTension": 110.68,
-    "panelTension": 30.8,
-    "price": 32500
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "阿尔法 天镜",
-    "lockTension": 38.2,
-    "panelTension": 14.5,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "精锐 HSV 渡鸦",
-    "lockTension": 32,
-    "panelTension": 15.9,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "SG8000 翡翠绿",
-    "lockTension": 51.14,
-    "panelTension": 19.5,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Venga Black Venga Black 6000",
-    "lockTension": 69.66,
-    "panelTension": 22.6,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Venga Black Venga Black 8000",
-    "lockTension": 69.66,
-    "panelTension": 22.6,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Venga Black Venga Black 10000",
-    "lockTension": 69.66,
-    "panelTension": 22.6,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Venga Platinum 6000",
-    "lockTension": 69.66,
-    "panelTension": 22.6,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Venga Platinum 8000",
-    "lockTension": 69.66,
-    "panelTension": 22.6,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Venga Platinum 10000",
-    "lockTension": 69.66,
-    "panelTension": 22.6,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Azimut 7Y",
-    "lockTension": 55.7,
-    "panelTension": 27.2,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Turion SW 7-Years",
-    "lockTension": 128.5,
-    "panelTension": 36.3,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Chronica",
-    "lockTension": 72.1,
-    "panelTension": 19,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Venga 2025",
-    "lockTension": 111.1,
-    "panelTension": 31.7,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Lacerti NG",
-    "lockTension": 5.39,
-    "panelTension": 3.8,
-    "price": 58.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Lacerti-SX NG",
-    "lockTension": 6.07,
-    "panelTension": 4.2,
-    "price": 118
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "塔加拉 II 3000 SHS",
-    "lockTension": 39.76,
-    "panelTension": 16.3,
-    "price": 4998.9
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "塔加拉 II 6000",
-    "lockTension": 39.76,
-    "panelTension": 16.3,
-    "price": 4998.9
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "塔加拉 II 8000",
-    "lockTension": 39.76,
-    "panelTension": 16.3,
-    "price": 4998.9
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "塔加拉 II 10000",
-    "lockTension": 39.76,
-    "panelTension": 16.3,
-    "price": 4998.9
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "塔加拉 II 八周年纪念版",
-    "lockTension": 27.2,
-    "panelTension": 27.2,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "巨兽 II 1000",
-    "lockTension": 11.41,
-    "panelTension": 8.6,
-    "price": 7899.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "巨兽 II 2000",
-    "lockTension": 11.41,
-    "panelTension": 8.6,
-    "price": 7899.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "巨兽 II 3000",
-    "lockTension": 11.41,
-    "panelTension": 8.6,
-    "price": 7899.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "巨兽 II 6000",
-    "lockTension": 11.41,
-    "panelTension": 8.6,
-    "price": 7899.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "巨兽 II 8000",
-    "lockTension": 11.41,
-    "panelTension": 8.6,
-    "price": 7899.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "狂怒 Furia 10000",
-    "lockTension": 118.27,
-    "panelTension": 34.9,
-    "price": 40999.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "狂怒 Furia 10000 SHS",
-    "lockTension": 118.27,
-    "panelTension": 34.9,
-    "price": 40999.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "狂怒 Furia 20000",
-    "lockTension": 118.27,
-    "panelTension": 34.9,
-    "price": 40999.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "狂怒 Furia 30000",
-    "lockTension": 118.27,
-    "panelTension": 34.9,
-    "price": 40999.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "狂怒  八周年纪念版",
-    "lockTension": 132.79,
-    "panelTension": 38.6,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "霸主 3 八周年纪念版 10S",
-    "lockTension": 5,
-    "panelTension": 5,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "霸主 3 八周年纪念版 20S",
-    "lockTension": 5,
-    "panelTension": 5,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "时轮 II 6000",
-    "lockTension": 72.63,
-    "panelTension": 20.4,
-    "price": 10899.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "时轮 II 6000 LE-B",
-    "lockTension": 72.63,
-    "panelTension": 20.4,
-    "price": 10899.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "时轮 II 6000 LE-G",
-    "lockTension": 72.63,
-    "panelTension": 20.4,
-    "price": 10899.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "时轮 II 八周年纪念版",
-    "lockTension": 72.63,
-    "panelTension": 20.4,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Overlord 656",
-    "lockTension": 58.7,
-    "panelTension": 18.7,
-    "price": 6099.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Velara 1000",
-    "lockTension": 7.74,
-    "panelTension": 4.8,
-    "price": 1749.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Velara 3000",
-    "lockTension": 7.74,
-    "panelTension": 4.8,
-    "price": 1749.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Velara 6000",
-    "lockTension": 7.74,
-    "panelTension": 4.8,
-    "price": 1749.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Velara 8000",
-    "lockTension": 7.74,
-    "panelTension": 4.8,
-    "price": 1749.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Mayor III 1000S",
-    "lockTension": 9.65,
-    "panelTension": 7.5,
-    "price": 5795.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Mayor III 2000S",
-    "lockTension": 9.65,
-    "panelTension": 7.5,
-    "price": 5795.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Mayor III 3000S",
-    "lockTension": 9.65,
-    "panelTension": 7.5,
-    "price": 5795.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Admiral II 4000s",
-    "lockTension": 43.16,
-    "panelTension": 17.7,
-    "price": 5649.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Admiral II 6000s",
-    "lockTension": 43.16,
-    "panelTension": 17.7,
-    "price": 5649.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Admiral II 8000s",
-    "lockTension": 43.16,
-    "panelTension": 17.7,
-    "price": 5649.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Admiral II 10000",
-    "lockTension": 43.16,
-    "panelTension": 17.7,
-    "price": 5649.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Venga II 6000",
-    "lockTension": 71.2,
-    "panelTension": 22.7,
-    "price": 18899.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Venga II 8000 SHS",
-    "lockTension": 71.2,
-    "panelTension": 22.7,
-    "price": 18899.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Venga II 10000",
-    "lockTension": 71.2,
-    "panelTension": 22.7,
-    "price": 18899.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Venga II 30000",
-    "lockTension": 71.2,
-    "panelTension": 22.7,
-    "price": 18899.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Velara 幻彩 6000",
-    "lockTension": 38.98,
-    "panelTension": 14.5,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Velara 幻彩 8000",
-    "lockTension": 38.98,
-    "panelTension": 14.5,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Natora Supercarp",
-    "lockTension": 36.96,
-    "panelTension": 15,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "AdmiralⅡ尊享 6000s",
-    "lockTension": 59.23,
-    "panelTension": 22,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "AdmiralⅡ尊享 10000s",
-    "lockTension": 59.23,
-    "panelTension": 22,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Venga 经典 6000",
-    "lockTension": 69.66,
-    "panelTension": 22.6,
-    "price": 18790.96
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Venga 经典 10000",
-    "lockTension": 69.66,
-    "panelTension": 22.6,
-    "price": 18790.96
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "VengaⅡ首发版",
-    "lockTension": 158.06,
-    "panelTension": 34.9,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Venga 终章",
-    "lockTension": 98.1,
-    "panelTension": 31.7,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "地平线 III 1000S",
-    "lockTension": 8.27,
-    "panelTension": 4.6,
-    "price": 1099.6
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "地平线 III 2000S",
-    "lockTension": 8.27,
-    "panelTension": 4.6,
-    "price": 1099.6
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "地平线 III 3000S",
-    "lockTension": 8.27,
-    "panelTension": 4.6,
-    "price": 1099.6
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "地平线 III 6000S",
-    "lockTension": 8.27,
-    "panelTension": 4.6,
-    "price": 1099.6
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "猎人 Hunter 40s HS",
-    "lockTension": 32.45,
-    "panelTension": 14.2,
-    "price": 2998.6
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "猎人 Hunter 60s",
-    "lockTension": 32.45,
-    "panelTension": 14.2,
-    "price": 2998.6
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "猎人 Hunter 80s",
-    "lockTension": 32.45,
-    "panelTension": 14.2,
-    "price": 2998.6
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Everest III 4000s",
-    "lockTension": 30.55,
-    "panelTension": 14.5,
-    "price": 3298.9
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Everest III 6000s",
-    "lockTension": 30.55,
-    "panelTension": 14.5,
-    "price": 3298.9
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Everest III 8000s",
-    "lockTension": 30.55,
-    "panelTension": 14.5,
-    "price": 3298.9
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "奥拉夫 Olaf SP 10",
-    "lockTension": 16.98,
-    "panelTension": 6.7,
-    "price": 4498.9
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "奥拉夫 Olaf SP 20",
-    "lockTension": 16.98,
-    "panelTension": 6.7,
-    "price": 4498.9
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "奥拉夫 Olaf SP 30",
-    "lockTension": 16.98,
-    "panelTension": 6.7,
-    "price": 4498.9
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "奥拉夫 Olaf SP 60",
-    "lockTension": 16.98,
-    "panelTension": 6.7,
-    "price": 4498.9
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "飞行员 SP 1000",
-    "lockTension": 27,
-    "panelTension": 9.1,
-    "price": 11899.6
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "飞行员 SP 2000",
-    "lockTension": 27,
-    "panelTension": 9.1,
-    "price": 11899.6
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "飞行员 SP 3000",
-    "lockTension": 27,
-    "panelTension": 9.1,
-    "price": 11899.6
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "奥拉夫斯塔克",
-    "lockTension": 71.78,
-    "panelTension": 28.2,
-    "price": 23898.9
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Horizon III 九周年纪念版",
-    "lockTension": 28.9,
-    "panelTension": 12,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "猎人 Hunter 九周年纪念版 60S",
-    "lockTension": 43.55,
-    "panelTension": 16,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "猎人 Hunter 九周年纪念版 80S",
-    "lockTension": 43.55,
-    "panelTension": 16,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "飞行员 周年纪念版",
-    "lockTension": 28.9,
-    "panelTension": 9.5,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "文加 II 超九 10000",
-    "lockTension": 108.3,
-    "panelTension": 34,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "文加 II 超九 30000",
-    "lockTension": 108.3,
-    "panelTension": 34,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Z Winner Round ll",
-    "lockTension": 10.2,
-    "panelTension": 5.5,
-    "price": 249
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Magellan",
-    "lockTension": 13.84,
-    "panelTension": 6.3,
-    "price": 399
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Spider R2",
-    "lockTension": 17.51,
-    "panelTension": 7.5,
-    "price": 499
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Zodiac R2 500-R2",
-    "lockTension": 29,
+    "equipmentName": "Zodiac C-10",
+    "lockTension": 26.7,
     "panelTension": 8,
-    "price": 799
+    "price": 1098.5
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Zodiac R2 500-R2 L-CTR",
-    "lockTension": 29,
-    "panelTension": 8,
-    "price": 799
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Compact ZC40",
-    "lockTension": 30.67,
-    "panelTension": 8.6,
-    "price": 899
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Compact ZC50",
-    "lockTension": 30.67,
-    "panelTension": 8.6,
-    "price": 899
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Compact ZC60",
-    "lockTension": 30.67,
-    "panelTension": 8.6,
-    "price": 899
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Black Box ZBB50",
-    "lockTension": 37.14,
+    "equipmentName": "Zodiac C-20",
+    "lockTension": 25.32,
     "panelTension": 9,
-    "price": 1159.8
+    "price": 1289.5
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Black Box ZBB60",
-    "lockTension": 37.14,
-    "panelTension": 9,
-    "price": 1159.8
+    "equipmentName": "Oriental Noble F20",
+    "lockTension": 0,
+    "panelTension": 90.38,
+    "price": 15.9
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Black Box ZBB60 LCTR",
-    "lockTension": 37.14,
-    "panelTension": 9,
-    "price": 1159.8
+    "equipmentName": "Oriental Noble F30",
+    "lockTension": 0,
+    "panelTension": 100.8,
+    "price": 17.2
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Billionaire 50R",
-    "lockTension": 56.82,
-    "panelTension": 11,
-    "price": 2298.5
+    "equipmentName": "Venga C 40 2S 9-Anniversary",
+    "lockTension": 0,
+    "panelTension": 205,
+    "price": 32.6
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Billionaire 60R",
-    "lockTension": 56.82,
-    "panelTension": 11,
-    "price": 2298.5
+    "equipmentName": "Electro Raptor 20 FT",
+    "lockTension": 0,
+    "panelTension": 368,
+    "price": 31.7
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Steelhead 500-R",
-    "lockTension": 39.75,
-    "panelTension": 12.5,
-    "price": 2357.6
+    "equipmentName": "Electro Raptor 40 FT",
+    "lockTension": 0,
+    "panelTension": 401.79,
+    "price": 38.1
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Steelhead 600-R",
-    "lockTension": 39.75,
-    "panelTension": 12.5,
-    "price": 2357.6
+    "equipmentName": "Electro Raptor 20 9-Years",
+    "lockTension": 0,
+    "panelTension": 368,
+    "price": 31.7
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "ZM-3 Z40",
-    "lockTension": 49.58,
-    "panelTension": 11,
-    "price": 2498.8
+    "equipmentName": "Electro Raptor 40 9-Years",
+    "lockTension": 0,
+    "panelTension": 401.79,
+    "price": 38.1
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "ZM-3 Z50",
-    "lockTension": 49.58,
-    "panelTension": 11,
-    "price": 2498.8
+    "equipmentName": "Electro Raptor 20 Dragon Edition",
+    "lockTension": 0,
+    "panelTension": 368,
+    "price": 31.7
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "ZM-3 Z60",
-    "lockTension": 49.58,
-    "panelTension": 11,
-    "price": 2498.8
+    "equipmentName": "Electro Raptor 40 Dragon Edition",
+    "lockTension": 0,
+    "panelTension": 401.79,
+    "price": 38.1
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "ZM-4 Z40",
-    "lockTension": 63.75,
-    "panelTension": 12.7,
-    "price": 4096.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "ZM-4 Z50",
-    "lockTension": 63.75,
-    "panelTension": 12.7,
-    "price": 4096.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "ZM-4 Z60",
-    "lockTension": 63.75,
-    "panelTension": 12.7,
-    "price": 4096.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "ZM Ranger Z60",
-    "lockTension": 78,
-    "panelTension": 15.9,
-    "price": 6298.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "ZM Ranger Z70",
-    "lockTension": 78,
-    "panelTension": 15.9,
-    "price": 6298.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Billionaire HV 60R",
-    "lockTension": 79,
-    "panelTension": 18,
-    "price": 7509.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Billionaire HV 60R LCTR",
-    "lockTension": 79,
-    "panelTension": 18,
-    "price": 7509.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "﻿﻿Billionaire 60R-H款-新年版",
-    "lockTension": 79,
-    "panelTension": 18,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "ZM-Steelness ",
-    "lockTension": 82.99,
-    "panelTension": 17.2,
-    "price": 7785
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "ZM-Steelness ",
-    "lockTension": 82.99,
-    "panelTension": 17.2,
-    "price": 7785
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Imperial R605",
-    "lockTension": 99.41,
-    "panelTension": 16.3,
-    "price": 9116.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Minister CS",
-    "lockTension": 99.68,
-    "panelTension": 17.2,
-    "price": 9699.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "ZM-3 Spear",
-    "lockTension": 97.45,
-    "panelTension": 19,
-    "price": 11432.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Minister NGT LD50",
-    "lockTension": 92,
-    "panelTension": 19,
-    "price": 11498.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Minister NGT LD60",
-    "lockTension": 92,
-    "panelTension": 19,
-    "price": 11498.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Minister CS SG SG60 Purple",
-    "lockTension": 111,
-    "panelTension": 18.1,
-    "price": 11999.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Minister CS SG SG60 Red",
-    "lockTension": 111,
-    "panelTension": 18.1,
-    "price": 11999.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Minister CS SR",
-    "lockTension": 103.5,
-    "panelTension": 19,
-    "price": 12799.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Minister CS PG",
-    "lockTension": 116.64,
-    "panelTension": 19,
-    "price": 13998.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Minister CS LD",
-    "lockTension": 116.64,
-    "panelTension": 20,
-    "price": 14998.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "ZM Monster",
-    "lockTension": 90.17,
-    "panelTension": 20.9,
-    "price": 15318.2
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Centauri ZC70",
-    "lockTension": 117.4,
-    "panelTension": 20.4,
-    "price": 15998.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Centauri ZC80",
-    "lockTension": 117.4,
-    "panelTension": 20.4,
-    "price": 15998.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Centauri ZC80 LCTR",
-    "lockTension": 117.4,
-    "panelTension": 20.4,
-    "price": 15998.5
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Classic SG",
-    "lockTension": 114.77,
-    "panelTension": 23.5,
-    "price": 16595
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Rocket Jet SG SG70",
-    "lockTension": 136,
-    "panelTension": 27.2,
-    "price": 23998.4
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Rocket Jet SG SG80",
-    "lockTension": 136,
-    "panelTension": 27.2,
-    "price": 23998.4
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Phantom Super LWC",
-    "lockTension": 63.74,
-    "panelTension": 11,
-    "price": 24445
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Minister CS ES ES60 Pearl",
-    "lockTension": 143.56,
+    "equipmentName": "California 40",
+    "lockTension": 290,
     "panelTension": 26.3,
-    "price": 26998
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Minister CS ES ES60 Yellow",
-    "lockTension": 143.56,
-    "panelTension": 26.3,
-    "price": 26998
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Imperial R605 Electrum",
-    "lockTension": 105.35,
-    "panelTension": 18.1,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Imperial R605 Magnesium",
-    "lockTension": 105.35,
-    "panelTension": 18.1,
-    "price": 0.42
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Imperial R605 Rose gold",
-    "lockTension": 105.35,
-    "panelTension": 18.1,
-    "price": 0.42
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Phantom Super LWC 7-Years",
-    "lockTension": 63.7,
-    "panelTension": 11,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Rocket Jet SG 7-Years",
-    "lockTension": 146,
-    "panelTension": 30.8,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Rocket Jet SG Desert Sand",
-    "lockTension": 147.5,
-    "panelTension": 30.8,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "ZM-4 8-Years ZM-4 40 8-Years",
-    "lockTension": 63.65,
-    "panelTension": 12.7,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "ZM-4 8-Years ZM-4 60 8-Years",
-    "lockTension": 63.65,
-    "panelTension": 12.7,
-    "price": 0
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Model De Luxe",
-    "lockTension": 24.24,
-    "panelTension": 9,
-    "price": 789.8
-  },
-  {
-    "equipmentType": "渔轮",
-    "equipmentName": "Pelengas",
-    "lockTension": 11.71,
-    "panelTension": 5.5,
-    "price": 1249.49
+    "price": 39950.8
   },
   {
     "equipmentType": "渔轮",
@@ -8387,13 +6147,6 @@
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "型号 827",
-    "lockTension": 44.36,
-    "panelTension": 16.5,
-    "price": 4498.5
-  },
-  {
-    "equipmentType": "渔轮",
     "equipmentName": "Full Metal 60",
     "lockTension": 49.15,
     "panelTension": 18.2,
@@ -8401,10 +6154,10 @@
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Silver 80",
-    "lockTension": 67.04,
-    "panelTension": 23.6,
-    "price": 13998.8
+    "equipmentName": "Model De Luxe 430S",
+    "lockTension": 24.24,
+    "panelTension": 9,
+    "price": 789.8
   },
   {
     "equipmentType": "渔轮",
@@ -8415,10 +6168,24 @@
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Minister",
-    "lockTension": 54.54,
-    "panelTension": 8.6,
-    "price": 2125.82
+    "equipmentName": "Pelengas",
+    "lockTension": 11.71,
+    "panelTension": 5.5,
+    "price": 1249.49
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Silver 80",
+    "lockTension": 67.04,
+    "panelTension": 23.6,
+    "price": 13998.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "型号 827",
+    "lockTension": 44.36,
+    "panelTension": 16.5,
+    "price": 4498.5
   },
   {
     "equipmentType": "渔轮",
@@ -8436,6 +6203,13 @@
   },
   {
     "equipmentType": "渔轮",
+    "equipmentName": "Minister 2000",
+    "lockTension": 54.54,
+    "panelTension": 8.6,
+    "price": 2125.82
+  },
+  {
+    "equipmentType": "渔轮",
     "equipmentName": "SAL5000",
     "lockTension": 106.1,
     "panelTension": 18.2,
@@ -8443,23 +6217,2368 @@
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "California",
-    "lockTension": 290,
+    "equipmentName": "【停产】Admiral LP-R PG",
+    "lockTension": 44.45,
+    "panelTension": 9,
+    "price": 9493.17
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Alfa Pro  系列 5款颜色",
+    "lockTension": 33.49,
+    "panelTension": 7.8,
+    "price": 3295.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Black Bird 2 LS-R",
+    "lockTension": 25.81,
+    "panelTension": 5,
+    "price": 1297.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Charger 2 TC-R",
+    "lockTension": 28.93,
+    "panelTension": 6.8,
+    "price": 2498.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Energy SNB-R",
+    "lockTension": 12.29,
+    "panelTension": 4.1,
+    "price": 769.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Energy SNB-R",
+    "lockTension": 0,
+    "panelTension": 4.1,
+    "price": 769.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "JSX Inferno LP-R",
+    "lockTension": 31.38,
+    "panelTension": 9.5,
+    "price": 17878.92
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Jet-Bullet LP HS-R",
+    "lockTension": 31.91,
+    "panelTension": 8.2,
+    "price": 7543.24
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Jet-Series JS-R",
+    "lockTension": 0,
+    "panelTension": 38.72,
+    "price": 7.3
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Jet-Series JSGHS-R",
+    "lockTension": 31.91,
+    "panelTension": 8.6,
+    "price": 5886.74
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Jet-Series JSG-R",
+    "lockTension": 34.56,
+    "panelTension": 8.6,
+    "price": 5886.74
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Jet-Series JSXHS-R",
+    "lockTension": 34.92,
+    "panelTension": 9,
+    "price": 10939.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Jet-Series JSX-R",
+    "lockTension": 36.69,
+    "panelTension": 9,
+    "price": 10939.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Jet-Series ULX LP-R",
+    "lockTension": 0,
+    "panelTension": 36.59,
+    "price": 9.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Mayor 2 TMC-R",
+    "lockTension": 27.9,
+    "panelTension": 7.3,
+    "price": 3809.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Nitro 2 TN-R",
+    "lockTension": 21.49,
+    "panelTension": 5.7,
+    "price": 1798.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Optimus",
+    "lockTension": 6.16,
+    "panelTension": 3.6,
+    "price": 181.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Pillar 2 TPC-R",
+    "lockTension": 38.9,
+    "panelTension": 8.2,
+    "price": 4848.7
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Pillar 2 TPC-R-HS",
+    "lockTension": 36.74,
+    "panelTension": 8.2,
+    "price": 4848.7
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Polestar ELT LP-R",
+    "lockTension": 0,
+    "panelTension": 40.51,
+    "price": 8.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Pro Bird 2 MS-R",
+    "lockTension": 34.54,
+    "panelTension": 7.7,
+    "price": 3108.7
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Profisher",
+    "lockTension": 8.03,
+    "panelTension": 3.2,
+    "price": 139.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Riva 2 MS-R",
+    "lockTension": 19.51,
+    "panelTension": 4.8,
+    "price": 1049.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Riva 2 MS-R",
+    "lockTension": 0,
+    "panelTension": 4.8,
+    "price": 1049.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Silver Bird 2 LS-R",
+    "lockTension": 26.68,
+    "panelTension": 7.3,
+    "price": 2595.7
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Skipper LP-R HS",
+    "lockTension": 43,
+    "panelTension": 9,
+    "price": 9497.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Spectrum TSH-R",
+    "lockTension": 31.93,
+    "panelTension": 7.3,
+    "price": 2998.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "SportPro X2 MS-R",
+    "lockTension": 23.02,
+    "panelTension": 5.2,
+    "price": 1298.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "T-Tech STT-HSR",
+    "lockTension": 30.21,
+    "panelTension": 6.3,
+    "price": 2098.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "T-Tech STT-R",
+    "lockTension": 29.68,
+    "panelTension": 6.3,
+    "price": 1998.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Thunderbolt SSP HS-R",
+    "lockTension": 21.76,
+    "panelTension": 5.4,
+    "price": 1699.7
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "【停产】Winner 2 LP",
+    "lockTension": 13.04,
+    "panelTension": 4.5,
+    "price": 679.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Winner 2 LP",
+    "lockTension": 0,
+    "panelTension": 4.5,
+    "price": 679.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Winner NG LP-HS",
+    "lockTension": 13.56,
+    "panelTension": 4.5,
+    "price": 299.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Zero 2 ZHS-R",
+    "lockTension": 43.41,
+    "panelTension": 7.7,
+    "price": 3589.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Zero 2 Z-R",
+    "lockTension": 44.59,
+    "panelTension": 7.7,
+    "price": 3489.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Zero GS ZG-R",
+    "lockTension": 56.56,
+    "panelTension": 9,
+    "price": 4377.1
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Olaf HS-LP",
+    "lockTension": 34.65,
+    "panelTension": 8.6,
+    "price": 6398.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Magma XHS-LP",
+    "lockTension": 32,
+    "panelTension": 8.9,
+    "price": 8599.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Magma XHS-LP 9-Years",
+    "lockTension": 0,
+    "panelTension": 35,
+    "price": 9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Admiral 1000s",
+    "lockTension": 9,
+    "panelTension": 6.3,
+    "price": 4053.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Admiral 2000s",
+    "lockTension": 17.7,
+    "panelTension": 8.2,
+    "price": 4283
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Admiral 4000s",
+    "lockTension": 42.86,
+    "panelTension": 17.2,
+    "price": 5675.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Admiral 6000s",
+    "lockTension": 47.86,
+    "panelTension": 20.8,
+    "price": 11568.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Admiral 8000s",
+    "lockTension": 58.48,
+    "panelTension": 23.5,
+    "price": 15328
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Admiral II 4000S",
+    "lockTension": 43.16,
+    "panelTension": 17.7,
+    "price": 5649.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Admiral II 6000S",
+    "lockTension": 57.45,
+    "panelTension": 21.1,
+    "price": 12098.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Admiral II 8000S",
+    "lockTension": 66.95,
+    "panelTension": 23.6,
+    "price": 15098.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Admiral II 10000S",
+    "lockTension": 76.42,
+    "panelTension": 29,
+    "price": 25195.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "AdmiralⅡ6000S Superior",
+    "lockTension": 0,
+    "panelTension": 59.23,
+    "price": 22
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "AdmiralⅡ10000S Superior",
+    "lockTension": 0,
+    "panelTension": 79.87,
+    "price": 30
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Adriatica 3000S",
+    "lockTension": 6.87,
+    "panelTension": 5.4,
+    "price": 249
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Adriatica 5000S",
+    "lockTension": 14,
+    "panelTension": 7.5,
+    "price": 449.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Alfa 1000",
+    "lockTension": 5.77,
+    "panelTension": 3.6,
+    "price": 650.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Alfa 2000",
+    "lockTension": 11.87,
+    "panelTension": 4,
+    "price": 1051
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Alfa 4000",
+    "lockTension": 16.96,
+    "panelTension": 9,
+    "price": 1201
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Alfa 6000",
+    "lockTension": 31.56,
+    "panelTension": 13.5,
+    "price": 1887.7
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Alfa 8000",
+    "lockTension": 38,
+    "panelTension": 14.5,
+    "price": 2391
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Azimut 4000",
+    "lockTension": 37.56,
+    "panelTension": 15.4,
+    "price": 4698.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Azimut 6000",
+    "lockTension": 43.68,
+    "panelTension": 19,
+    "price": 6899.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Azimut 8000",
+    "lockTension": 49.63,
+    "panelTension": 23.6,
+    "price": 15899.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Azimut 10000",
+    "lockTension": 55,
+    "panelTension": 27.2,
+    "price": 21599.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "【停产】Azimut 10K-7Y",
+    "lockTension": 0,
+    "panelTension": 55.7,
+    "price": 27.2
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Azimut Blue 4000",
+    "lockTension": 37.56,
+    "panelTension": 15.4,
+    "price": 4698.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Azimut Blue 6000",
+    "lockTension": 43.68,
+    "panelTension": 19,
+    "price": 6899.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Azimut Blue 8000",
+    "lockTension": 49.63,
+    "panelTension": 23.6,
+    "price": 15899.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Azimut Blue 10000",
+    "lockTension": 55,
+    "panelTension": 27.2,
+    "price": 21599.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "【停产】Bestia 1000",
+    "lockTension": 10,
+    "panelTension": 7.2,
+    "price": 5486.65
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "【停产】Bestia 2000",
+    "lockTension": 22.49,
+    "panelTension": 9,
+    "price": 6685.14
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "【停产】Bestia 3000",
+    "lockTension": 42.44,
+    "panelTension": 17.2,
+    "price": 7552.79
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "【停产】Bestia 4000",
+    "lockTension": 45.9,
+    "panelTension": 18.1,
+    "price": 8099.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "【停产】Bestia 6000",
+    "lockTension": 55.5,
+    "panelTension": 19,
+    "price": 9117
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "【停产】Bestia 8000",
+    "lockTension": 68,
+    "panelTension": 24.5,
+    "price": 16604
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Bird 2 20S",
+    "lockTension": 13.24,
+    "panelTension": 3.6,
+    "price": 798.4
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Bird 2 GS 10S",
+    "lockTension": 5.52,
+    "panelTension": 3.4,
+    "price": 559.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Bird 2 GS 30S",
+    "lockTension": 18.5,
+    "panelTension": 8.2,
+    "price": 869.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Bird 2 GSX 10S",
+    "lockTension": 5.91,
+    "panelTension": 4,
+    "price": 852.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Bird 2 GSX 20S",
+    "lockTension": 13.13,
+    "panelTension": 5,
+    "price": 1511
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Bird 2 GSX 30S",
+    "lockTension": 16.57,
+    "panelTension": 8.6,
+    "price": 1098.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Bird 2 GSX 40S",
+    "lockTension": 17.94,
+    "panelTension": 9.5,
+    "price": 1373.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Caliber 80 SLC",
+    "lockTension": 37.74,
+    "panelTension": 17.2,
+    "price": 5312.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Caliber HSV 80 SLC",
+    "lockTension": 30.24,
+    "panelTension": 15.4,
+    "price": 2884.7
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Chronica 6000",
+    "lockTension": 0,
+    "panelTension": 72.1,
+    "price": 19
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Commandor 2 20S",
+    "lockTension": 10,
+    "panelTension": 6,
+    "price": 1980
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Commandor 2 30S",
+    "lockTension": 18.6,
+    "panelTension": 10.8,
+    "price": 1498.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Commandor 2 40S",
+    "lockTension": 30.12,
+    "panelTension": 12,
+    "price": 1698.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Commandor 2 60S",
+    "lockTension": 30.12,
+    "panelTension": 13.4,
+    "price": 1949.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Commandor GS 40S",
+    "lockTension": 23.71,
+    "panelTension": 12.7,
+    "price": 2610.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Commandor GS 60S",
+    "lockTension": 36.31,
+    "panelTension": 14.5,
+    "price": 3198.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Conquest II 2000s 停产",
+    "lockTension": 13.54,
+    "panelTension": 5.5,
+    "price": 1590.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Conquest II 4000s 停产",
+    "lockTension": 29.9,
+    "panelTension": 12.7,
+    "price": 2290.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Corsair 10S",
+    "lockTension": 7.29,
+    "panelTension": 4.8,
+    "price": 1498.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Corsair 20S",
+    "lockTension": 17.62,
+    "panelTension": 6.1,
+    "price": 2098.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Corsair 30S",
+    "lockTension": 22.04,
+    "panelTension": 10.8,
+    "price": 1919.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Dragon 30s",
+    "lockTension": 6.72,
+    "panelTension": 5.8,
+    "price": 362.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Dragon 40s",
+    "lockTension": 9.95,
+    "panelTension": 5.8,
+    "price": 362.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "EasySpin 1000s",
+    "lockTension": 5.12,
+    "panelTension": 3.2,
+    "price": 399
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Element 1000",
+    "lockTension": 4,
+    "panelTension": 2,
+    "price": 129
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Element 2000",
+    "lockTension": 5.79,
+    "panelTension": 3.6,
+    "price": 129
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Element 3000",
+    "lockTension": 7.96,
+    "panelTension": 5.4,
+    "price": 249
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Element 4000",
+    "lockTension": 9.53,
+    "panelTension": 5.4,
+    "price": 249
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Element PRO 1000",
+    "lockTension": 4.92,
+    "panelTension": 2,
+    "price": 151.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Element PRO 2000",
+    "lockTension": 7.48,
+    "panelTension": 3.6,
+    "price": 191.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Element PRO 3000",
+    "lockTension": 9.93,
+    "panelTension": 5.4,
+    "price": 349.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Element PRO 4000",
+    "lockTension": 11,
+    "panelTension": 6.4,
+    "price": 379.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Everest-24 8000s",
+    "lockTension": 52,
+    "panelTension": 22.7,
+    "price": 11320.36
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Everest III 4000S",
+    "lockTension": 30.55,
+    "panelTension": 14.5,
+    "price": 3298.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Everest III 6000S",
+    "lockTension": 39.27,
+    "panelTension": 17,
+    "price": 4998.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Everest III 8000S",
+    "lockTension": 48.66,
+    "panelTension": 22,
+    "price": 11298.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Everest ll 4000s 【停产】",
+    "lockTension": 30.16,
+    "panelTension": 13,
+    "price": 2719
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Everest ll 6000s【停产】",
+    "lockTension": 35.16,
+    "panelTension": 16.3,
+    "price": 5080.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Everest ll 8000s【停产】",
+    "lockTension": 44.62,
+    "panelTension": 22,
+    "price": 11320
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Evia 6000",
+    "lockTension": 38.3,
+    "panelTension": 17.2,
+    "price": 5198.95
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Evia 8000",
+    "lockTension": 41.7,
+    "panelTension": 18.1,
+    "price": 8474.55
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Gold 30s",
+    "lockTension": 16.82,
+    "panelTension": 8,
+    "price": 995
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Gold 60s",
+    "lockTension": 28.35,
+    "panelTension": 14,
+    "price": 1846.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Gold 80s",
+    "lockTension": 34.58,
+    "panelTension": 14,
+    "price": 2186
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Goliaf 10000",
+    "lockTension": 112,
+    "panelTension": 30.8,
+    "price": 31499.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Goliaf 20000",
+    "lockTension": 106,
+    "panelTension": 31.8,
+    "price": 33198.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Goliaf 30000",
+    "lockTension": 120,
+    "panelTension": 33.6,
+    "price": 39798.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Hercules G2 20s",
+    "lockTension": 6.94,
+    "panelTension": 3.7,
+    "price": 459.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Hercules G2 40s",
+    "lockTension": 10.15,
+    "panelTension": 6.8,
+    "price": 459.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Horizon 2 2000s 停产",
+    "lockTension": 12.51,
+    "panelTension": 3.8,
+    "price": 688
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Horizon 2 3000s 停产",
+    "lockTension": 18.8,
+    "panelTension": 7.7,
+    "price": 748.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Horizon 2 4000s 停产",
+    "lockTension": 17.91,
+    "panelTension": 8.2,
+    "price": 768.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Horizon III 3000S 9-Anniversary",
+    "lockTension": 0,
+    "panelTension": 28.9,
+    "price": 12
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Hydra G2 30s",
+    "lockTension": 5.88,
+    "panelTension": 5.2,
+    "price": 184.2
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Hydra Smart 2 25S",
+    "lockTension": 5.4,
+    "panelTension": 3.4,
+    "price": 58.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "JSX Inferno 10S",
+    "lockTension": 11.04,
+    "panelTension": 8.2,
+    "price": 6723
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "JSX Inferno 20S",
+    "lockTension": 22.45,
+    "panelTension": 10,
+    "price": 11556.39
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "JSX 10S",
+    "lockTension": 9,
+    "panelTension": 7.7,
+    "price": 6143.75
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "JSX 20S",
+    "lockTension": 20.84,
+    "panelTension": 9.5,
+    "price": 9119.25
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "LIbra 2 2000S",
+    "lockTension": 4.1,
+    "panelTension": 3.3,
+    "price": 31.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "LIbra 2 3000S",
+    "lockTension": 4.5,
+    "panelTension": 3.3,
+    "price": 32.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "【停产】Lacerti 2 4000S",
+    "lockTension": 4.95,
+    "panelTension": 3.8,
+    "price": 98.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Lacerti NG 4000",
+    "lockTension": 5.39,
+    "panelTension": 3.8,
+    "price": 58.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "【停产】Lacerti-S 2 4000S",
+    "lockTension": 4.95,
+    "panelTension": 4.2,
+    "price": 138
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Lacerti-SX NG 4000",
+    "lockTension": 6.07,
+    "panelTension": 4.2,
+    "price": 118
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Lagoon 1000S",
+    "lockTension": 3.8,
+    "panelTension": 1.8,
+    "price": 89.95
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Lagoon 3000S",
+    "lockTension": 5.44,
+    "panelTension": 5.4,
+    "price": 178
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Lagoon-HP 2 2000S",
+    "lockTension": 5,
+    "panelTension": 3.5,
+    "price": 69.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Lagoon-HP 2 4000S",
+    "lockTension": 8.04,
+    "panelTension": 5.4,
+    "price": 228.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Mayor 2 2000s",
+    "lockTension": 17.95,
+    "panelTension": 7.2,
+    "price": 3129.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Mayor 2 4000s",
+    "lockTension": 31.6,
+    "panelTension": 14,
+    "price": 3129.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Mayor III 1000S",
+    "lockTension": 9.65,
+    "panelTension": 7.5,
+    "price": 5795.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Mayor III 2000S",
+    "lockTension": 19.7,
+    "panelTension": 9.3,
+    "price": 7595.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Mayor III 3000S",
+    "lockTension": 35,
+    "panelTension": 15.9,
+    "price": 4195.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Mayor LTD 2 3000s",
+    "lockTension": 31.38,
+    "panelTension": 13.6,
+    "price": 2988.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Mayor LTD 2 4000s",
+    "lockTension": 34.03,
+    "panelTension": 15.4,
+    "price": 3988.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Mayor LTD 2 6000s",
+    "lockTension": 43.52,
+    "panelTension": 19,
+    "price": 9198.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Megara 8000",
+    "lockTension": 71.76,
+    "panelTension": 25.4,
+    "price": 22471.96
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Meteor 30s",
+    "lockTension": 16,
+    "panelTension": 7.7,
+    "price": 698
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Mosquito 2 3000s 停产",
+    "lockTension": 17.06,
+    "panelTension": 8.6,
+    "price": 847.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Narga 2000",
+    "lockTension": 16.66,
+    "panelTension": 5.5,
+    "price": 1620.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Narga 4000",
+    "lockTension": 27.33,
+    "panelTension": 11.7,
+    "price": 1620.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Narga 6000",
+    "lockTension": 35.86,
+    "panelTension": 13.6,
+    "price": 1984.63
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Narga 8000",
+    "lockTension": 42.38,
+    "panelTension": 14.5,
+    "price": 3490.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "【停产】Narga 8000 Super 7",
+    "lockTension": 47,
+    "panelTension": 15.4,
+    "price": 3899.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Natora 1000",
+    "lockTension": 5.8,
+    "panelTension": 5,
+    "price": 1948.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Natora 2000",
+    "lockTension": 16.24,
+    "panelTension": 6.3,
+    "price": 2348.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Natora 3000",
+    "lockTension": 28.58,
+    "panelTension": 11.3,
+    "price": 2348.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Natora 4000",
+    "lockTension": 35.49,
+    "panelTension": 12.7,
+    "price": 2498.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Natora 6000",
+    "lockTension": 37.43,
+    "panelTension": 15,
+    "price": 3115.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Natora 8000",
+    "lockTension": 43.76,
+    "panelTension": 18.1,
+    "price": 7084.7
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Natora 6000 Supercarp",
+    "lockTension": 0,
+    "panelTension": 36.96,
+    "price": 15
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Overlord 3 10S",
+    "lockTension": 8.51,
+    "panelTension": 5,
+    "price": 2500
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Overlord 3 20S",
+    "lockTension": 18.66,
+    "panelTension": 6.4,
+    "price": 2800
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Overlord 3B 10S",
+    "lockTension": 8.49,
+    "panelTension": 5.5,
+    "price": 2999.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Overlord 3B 20S",
+    "lockTension": 19.6,
+    "panelTension": 7,
+    "price": 3499.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Overlord 3BS 10S",
+    "lockTension": 9.55,
+    "panelTension": 7.3,
+    "price": 5599.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Overlord 3BS 20S",
+    "lockTension": 20.95,
+    "panelTension": 9.1,
+    "price": 6499.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Overlord 3E 10S",
+    "lockTension": 8.49,
+    "panelTension": 6.4,
+    "price": 4499.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Overlord 3E 20S",
+    "lockTension": 20.36,
+    "panelTension": 8.4,
+    "price": 5199.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Overlord 3GS 10S",
+    "lockTension": 10.02,
+    "panelTension": 7.7,
+    "price": 6499.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Overlord 3GS 20S",
+    "lockTension": 23.06,
+    "panelTension": 9.5,
+    "price": 9599.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Overlord 3RS 10S",
+    "lockTension": 12.02,
+    "panelTension": 8.2,
+    "price": 7500
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Overlord 3RS 20S",
+    "lockTension": 25.95,
+    "panelTension": 10,
+    "price": 11998.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Overlord 656",
+    "lockTension": 58.7,
+    "panelTension": 18.7,
+    "price": 6099.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Overlord 656 | 霸主656",
+    "lockTension": 58.7,
+    "panelTension": 18.7,
+    "price": 6099.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "P-Series 2 GS 10S 【停产】",
+    "lockTension": 7.19,
+    "panelTension": 6.5,
+    "price": 4628
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "P-Series 2 GS 20S 【停产】",
+    "lockTension": 17.05,
+    "panelTension": 8.6,
+    "price": 4628
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "P-Series 2 GS 30S 【停产】",
+    "lockTension": 25.32,
+    "panelTension": 16.3,
+    "price": 4628
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "P-Series 2 GS 40S 【停产】",
+    "lockTension": 29.95,
+    "panelTension": 16.3,
+    "price": 4705
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "P-Series 2 GS 60S 【停产】",
+    "lockTension": 47,
+    "panelTension": 18.4,
+    "price": 7782
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Pegasus 10s",
+    "lockTension": 4.97,
+    "panelTension": 2.3,
+    "price": 258.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Pegasus 30s",
+    "lockTension": 8.81,
+    "panelTension": 5.8,
+    "price": 398.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Pride 2000S",
+    "lockTension": 0,
+    "panelTension": 4,
+    "price": 298.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Pride 4000S",
+    "lockTension": 9.43,
+    "panelTension": 7.5,
+    "price": 479.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Pride 6000S",
+    "lockTension": 17.26,
+    "panelTension": 7.5,
+    "price": 532.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Proton 2000",
+    "lockTension": 9.55,
+    "panelTension": 3.6,
+    "price": 395
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Proton 4000",
+    "lockTension": 13.8,
+    "panelTension": 7.2,
+    "price": 529
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Proton 6000",
+    "lockTension": 17,
+    "panelTension": 8.1,
+    "price": 630
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Pulsar 2000",
+    "lockTension": 11.05,
+    "panelTension": 3.8,
+    "price": 599.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Pulsar 4000",
+    "lockTension": 15,
+    "panelTension": 8.6,
+    "price": 745
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Pulsar 6000",
+    "lockTension": 24,
+    "panelTension": 9.5,
+    "price": 1249.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "SG8000 Ultra Power",
+    "lockTension": 51.14,
+    "panelTension": 19.5,
+    "price": 9987.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "SG8000 Ultra Power Emerald",
+    "lockTension": 0,
+    "panelTension": 51.14,
+    "price": 19.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Sabre 40s",
+    "lockTension": 13,
+    "panelTension": 9,
+    "price": 786.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Sabre 60s",
+    "lockTension": 21.68,
+    "panelTension": 9.9,
+    "price": 1159.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Sirius 20s",
+    "lockTension": 8.15,
+    "panelTension": 3.6,
+    "price": 418
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Spark 2 2000s",
+    "lockTension": 3.4,
+    "panelTension": 3.2,
+    "price": 8.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Spark 2 3000s",
+    "lockTension": 3.77,
+    "panelTension": 3.2,
+    "price": 9.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Super Cast 6000s",
+    "lockTension": 16,
+    "panelTension": 8.2,
+    "price": 698
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "【停产】Tagara 4000",
+    "lockTension": 39.64,
+    "panelTension": 16.3,
+    "price": 5075.88
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "【停产】Tagara 6000",
+    "lockTension": 45.1,
+    "panelTension": 18.1,
+    "price": 6009.81
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "【停产】Tagara 8000",
+    "lockTension": 53.87,
+    "panelTension": 22.6,
+    "price": 14655.31
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "【停产】Tagara 10000",
+    "lockTension": 62,
     "panelTension": 26.3,
-    "price": 39950.8
+    "price": 20771.87
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Electro Raptor 20",
-    "lockTension": 368,
+    "equipmentName": "Titan 8000",
+    "lockTension": 27.5,
+    "panelTension": 12.7,
+    "price": 1795.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Turion SW 8000",
+    "lockTension": 110.68,
+    "panelTension": 30.8,
+    "price": 32500
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Turion SW 10000",
+    "lockTension": 114.29,
+    "panelTension": 34.5,
+    "price": 45800
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Turion SW 20000",
+    "lockTension": 120.19,
+    "panelTension": 35.4,
+    "price": 49800
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Turion SW 30000",
+    "lockTension": 127.94,
+    "panelTension": 36.3,
+    "price": 56799
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "【停产】Turion SW 30000 7-Years",
+    "lockTension": 0,
+    "panelTension": 128.5,
+    "price": 36.3
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Velara 1000",
+    "lockTension": 7.74,
+    "panelTension": 4.8,
+    "price": 1749.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Velara 3000",
+    "lockTension": 30.55,
+    "panelTension": 12.7,
+    "price": 1949.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Velara 6000",
+    "lockTension": 38.98,
+    "panelTension": 14.5,
+    "price": 2549.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Velara 8000",
+    "lockTension": 41.89,
+    "panelTension": 17.5,
+    "price": 5498.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Velara 6000 Mystique",
+    "lockTension": 0,
+    "panelTension": 38.98,
+    "price": 14.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Velara 8000 Mystique",
+    "lockTension": 0,
+    "panelTension": 41.78,
+    "price": 17.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "【停产】Venga 6000",
+    "lockTension": 69.66,
+    "panelTension": 22.6,
+    "price": 18790.96
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "【停产】Venga 8000",
+    "lockTension": 83.98,
+    "panelTension": 27.2,
+    "price": 23001.67
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "【停产】Venga 10000",
+    "lockTension": 99,
     "panelTension": 31.7,
-    "price": 71988.6
+    "price": 32721.57
   },
   {
     "equipmentType": "渔轮",
-    "equipmentName": "Electro Raptor 40",
-    "lockTension": 401,
-    "panelTension": 38.1,
-    "price": 119870.8
+    "equipmentName": "Venga MMXXV 10000",
+    "lockTension": 0,
+    "panelTension": 111.1,
+    "price": 31.7
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Venga Black 6000",
+    "lockTension": 0,
+    "panelTension": 69.66,
+    "price": 22.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Venga Black 8000",
+    "lockTension": 0,
+    "panelTension": 83.98,
+    "price": 27.2
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Venga Black 10000",
+    "lockTension": 0,
+    "panelTension": 99,
+    "price": 31.7
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Venga II 6000",
+    "lockTension": 71.2,
+    "panelTension": 22.7,
+    "price": 18899.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Venga II 8000 SHS",
+    "lockTension": 80.25,
+    "panelTension": 30,
+    "price": 26899.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Venga II 10000",
+    "lockTension": 108.31,
+    "panelTension": 32.7,
+    "price": 34499.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Venga II 30000",
+    "lockTension": 144.12,
+    "panelTension": 34.9,
+    "price": 48499.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Venga Platinum 6000",
+    "lockTension": 0,
+    "panelTension": 69.66,
+    "price": 22.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Venga Platinum 8000",
+    "lockTension": 0,
+    "panelTension": 83.98,
+    "price": 27.2
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Venga Platinum 10000",
+    "lockTension": 0,
+    "panelTension": 99,
+    "price": 31.7
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Venga 10000 Final",
+    "lockTension": 0,
+    "panelTension": 99,
+    "price": 31.7
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Venga Classic 6000",
+    "lockTension": 69.66,
+    "panelTension": 22.6,
+    "price": 18790.96
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Venga Classic 10000",
+    "lockTension": 99,
+    "panelTension": 31.7,
+    "price": 32721.57
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "VengaⅡ30000 First Edition",
+    "lockTension": 0,
+    "panelTension": 158.06,
+    "price": 34.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Z-Series 2 10S",
+    "lockTension": 7.88,
+    "panelTension": 6,
+    "price": 3597.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Z-Series 2 20S",
+    "lockTension": 16.45,
+    "panelTension": 8.2,
+    "price": 3897.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Z-Series 2 30S",
+    "lockTension": 22.97,
+    "panelTension": 15.7,
+    "price": 3897.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Z-Series 2 40S",
+    "lockTension": 28.18,
+    "panelTension": 15.7,
+    "price": 3997.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Z-Series 2 60S",
+    "lockTension": 45.1,
+    "panelTension": 17.7,
+    "price": 5697.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Horizon III 1000S",
+    "lockTension": 8.27,
+    "panelTension": 4.6,
+    "price": 1099.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Horizon III 2000S",
+    "lockTension": 12,
+    "panelTension": 5.4,
+    "price": 1299.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Horizon III 3000S",
+    "lockTension": 24.9,
+    "panelTension": 12,
+    "price": 1699.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Horizon III 6000S",
+    "lockTension": 38.22,
+    "panelTension": 15.6,
+    "price": 3998.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Tagara II 3000 SHS",
+    "lockTension": 39.76,
+    "panelTension": 16.3,
+    "price": 4998.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Tagara II 6000",
+    "lockTension": 45.89,
+    "panelTension": 18.1,
+    "price": 6299.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Tagara II 8000",
+    "lockTension": 57.06,
+    "panelTension": 22.6,
+    "price": 14655.3
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Tagara II 10000",
+    "lockTension": 62.45,
+    "panelTension": 26.3,
+    "price": 21871.87
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Olaf SP 10",
+    "lockTension": 16.98,
+    "panelTension": 6.7,
+    "price": 4498.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Olaf SP 20",
+    "lockTension": 24.78,
+    "panelTension": 8.9,
+    "price": 5698.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Olaf SP 30",
+    "lockTension": 40.9,
+    "panelTension": 17.6,
+    "price": 7398.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Olaf SP 60",
+    "lockTension": 51.5,
+    "panelTension": 18.6,
+    "price": 7899.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Olaf Stark SP-SWG 100",
+    "lockTension": 71.78,
+    "panelTension": 28.2,
+    "price": 23898.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Bestia II 1000 SHS",
+    "lockTension": 11.41,
+    "panelTension": 8.6,
+    "price": 7899.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Bestia II 2000 SHS",
+    "lockTension": 24.25,
+    "panelTension": 10.8,
+    "price": 13499.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Bestia II 3000 SHS",
+    "lockTension": 43.84,
+    "panelTension": 17.2,
+    "price": 7998.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Bestia II 6000 SHS",
+    "lockTension": 54.6,
+    "panelTension": 19.9,
+    "price": 9488.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Bestia II 8000 SHS",
+    "lockTension": 66.7,
+    "panelTension": 24.5,
+    "price": 16603.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Venga II 10000 Super 9",
+    "lockTension": 0,
+    "panelTension": 108.3,
+    "price": 34
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Venga II 30000 Super 9",
+    "lockTension": 0,
+    "panelTension": 144,
+    "price": 36.7
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Chronica II 6000",
+    "lockTension": 72.63,
+    "panelTension": 20.4,
+    "price": 10899.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Chronica II 6000 LE-B",
+    "lockTension": 0,
+    "panelTension": 72.63,
+    "price": 20.4
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Chronica II 6000 LE-G",
+    "lockTension": 0,
+    "panelTension": 72.63,
+    "price": 20.4
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Chronica II 6000 Super 8",
+    "lockTension": 0,
+    "panelTension": 72.63,
+    "price": 20.4
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Furia 10000",
+    "lockTension": 118.27,
+    "panelTension": 34.9,
+    "price": 40999.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Furia 10000 SHS",
+    "lockTension": 104.74,
+    "panelTension": 34,
+    "price": 37498.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Furia 20000",
+    "lockTension": 128.53,
+    "panelTension": 36.7,
+    "price": 51498.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Furia 30000",
+    "lockTension": 132.79,
+    "panelTension": 38.6,
+    "price": 66989
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Furia 30000 8-Anniversary",
+    "lockTension": 0,
+    "panelTension": 132.79,
+    "price": 38.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Hunter 40S HS",
+    "lockTension": 32.45,
+    "panelTension": 14.2,
+    "price": 2998.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Hunter 60S",
+    "lockTension": 43.55,
+    "panelTension": 16,
+    "price": 4498.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Hunter 80S",
+    "lockTension": 49.13,
+    "panelTension": 18.5,
+    "price": 7499.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Hunter 60S 9-Years",
+    "lockTension": 0,
+    "panelTension": 43.55,
+    "price": 16
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Hunter 80S 9-Years",
+    "lockTension": 0,
+    "panelTension": 49.13,
+    "price": 18.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Caliber HSV 80 SLC Raven",
+    "lockTension": 0,
+    "panelTension": 32,
+    "price": 15.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Alfa 8000 Celestia",
+    "lockTension": 0,
+    "panelTension": 38.2,
+    "price": 14.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Aviator SP 1000 XHS",
+    "lockTension": 27,
+    "panelTension": 9.1,
+    "price": 11899.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Aviator SP 2000 XHS",
+    "lockTension": 36,
+    "panelTension": 11.3,
+    "price": 14899.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Aviator SP 3000 XHS",
+    "lockTension": 47,
+    "panelTension": 18.2,
+    "price": 11899.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Aviator SP 1000 XHS 9-Years",
+    "lockTension": 0,
+    "panelTension": 28.9,
+    "price": 9.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Billionaire 50R",
+    "lockTension": 56.82,
+    "panelTension": 11,
+    "price": 2298.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Billionaire 60R",
+    "lockTension": 71.05,
+    "panelTension": 13.6,
+    "price": 3796.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Billionaire H-Version 60R",
+    "lockTension": 79,
+    "panelTension": 18,
+    "price": 7509.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Billionaire H-Version 60R LCTR",
+    "lockTension": 79,
+    "panelTension": 18,
+    "price": 7804.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Black Box ZBB50",
+    "lockTension": 37.14,
+    "panelTension": 9,
+    "price": 1159.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Black Box ZBB60",
+    "lockTension": 40,
+    "panelTension": 11,
+    "price": 1570.46
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Black Box ZBB60 LCTR",
+    "lockTension": 40,
+    "panelTension": 11,
+    "price": 1691
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Centauri ZC70",
+    "lockTension": 117.4,
+    "panelTension": 20.4,
+    "price": 15998.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Centauri ZC80",
+    "lockTension": 125.85,
+    "panelTension": 23.5,
+    "price": 20948
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Centauri ZC80 LCTR",
+    "lockTension": 125.85,
+    "panelTension": 23.5,
+    "price": 21674
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Classic SG70",
+    "lockTension": 114.77,
+    "panelTension": 23.5,
+    "price": 16595
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Compact ZC40",
+    "lockTension": 30.67,
+    "panelTension": 8.6,
+    "price": 899
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Compact ZC50",
+    "lockTension": 33.42,
+    "panelTension": 8.6,
+    "price": 949
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Compact ZC60",
+    "lockTension": 35.08,
+    "panelTension": 9,
+    "price": 1124.2
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Imperial R605",
+    "lockTension": 99.41,
+    "panelTension": 16.3,
+    "price": 9116.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Imperial R605 Electrum",
+    "lockTension": 0,
+    "panelTension": 105.35,
+    "price": 18.1
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Imperial R605 Magnesium",
+    "lockTension": 105.35,
+    "panelTension": 18.1,
+    "price": 0.42
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Imperial R605 Rose gold",
+    "lockTension": 105.35,
+    "panelTension": 18.1,
+    "price": 0.42
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Magellan 400",
+    "lockTension": 13.84,
+    "panelTension": 6.3,
+    "price": 399
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Minister CS 60",
+    "lockTension": 99.68,
+    "panelTension": 17.2,
+    "price": 9699.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Minister CS ES60 Pearl",
+    "lockTension": 143.56,
+    "panelTension": 26.3,
+    "price": 26998
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Minister CS ES60 Yellow",
+    "lockTension": 0,
+    "panelTension": 143.56,
+    "price": 26.3
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Minister CS LD60 Blue",
+    "lockTension": 116.64,
+    "panelTension": 20,
+    "price": 14998.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Minister CS PG60 Orange",
+    "lockTension": 116.64,
+    "panelTension": 19,
+    "price": 13998.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Minister CS SG60 Purple",
+    "lockTension": 111,
+    "panelTension": 18.1,
+    "price": 11999.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Minister CS SG60 Red",
+    "lockTension": 111,
+    "panelTension": 18.1,
+    "price": 11999.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Minister CS SR60 Green",
+    "lockTension": 103.5,
+    "panelTension": 19,
+    "price": 12799.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Minister NGT LD50",
+    "lockTension": 92,
+    "panelTension": 19,
+    "price": 11498.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Minister NGT LD60",
+    "lockTension": 97.75,
+    "panelTension": 20,
+    "price": 13424.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Phantom Super LWC20",
+    "lockTension": 63.74,
+    "panelTension": 11,
+    "price": 24445
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "【限定】Phantom Super LWC20 7-Years",
+    "lockTension": 0,
+    "panelTension": 63.7,
+    "price": 11
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Rocket Jet SG70",
+    "lockTension": 136,
+    "panelTension": 27.2,
+    "price": 23998.4
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Rocket Jet SG80",
+    "lockTension": 147.5,
+    "panelTension": 30.8,
+    "price": 31989.4
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "【停产】Rocket Jet SG80 7-Years",
+    "lockTension": 0,
+    "panelTension": 146,
+    "price": 30.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Rocket Jet SG80 Desert Sand",
+    "lockTension": 0,
+    "panelTension": 147.5,
+    "price": 30.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Spider 400-R2",
+    "lockTension": 17.51,
+    "panelTension": 7.5,
+    "price": 499
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Steelhead 500-R",
+    "lockTension": 39.75,
+    "panelTension": 12.5,
+    "price": 2357.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Steelhead 600-R",
+    "lockTension": 54.5,
+    "panelTension": 16,
+    "price": 4710.9
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Winner Round ll",
+    "lockTension": 10.2,
+    "panelTension": 5.5,
+    "price": 249
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "ZM Monster LD60",
+    "lockTension": 90.17,
+    "panelTension": 20.9,
+    "price": 15318.2
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "ZM Ranger Z60",
+    "lockTension": 78,
+    "panelTension": 15.9,
+    "price": 6298.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "ZM Ranger Z70",
+    "lockTension": 88.19,
+    "panelTension": 18.1,
+    "price": 9976.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "ZM-3 Z40",
+    "lockTension": 49.58,
+    "panelTension": 11,
+    "price": 2498.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "ZM-3 Z50",
+    "lockTension": 51.97,
+    "panelTension": 12.7,
+    "price": 2988.5
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "ZM-3 Z60",
+    "lockTension": 56.19,
+    "panelTension": 12.7,
+    "price": 3407.7
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "ZM-3 Spear SG70",
+    "lockTension": 97.45,
+    "panelTension": 19,
+    "price": 11432.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "ZM-4 Z40",
+    "lockTension": 69,
+    "panelTension": 12.7,
+    "price": 4096.8
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "ZM-4 Z50",
+    "lockTension": 68,
+    "panelTension": 15,
+    "price": 4598.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "ZM-4 Z60",
+    "lockTension": 74.19,
+    "panelTension": 15,
+    "price": 5536.6
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "ZM-4 40 8-Years",
+    "lockTension": 0,
+    "panelTension": 63.65,
+    "price": 12.7
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "ZM-4 60 8-Years",
+    "lockTension": 0,
+    "panelTension": 76.08,
+    "price": 15
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "ZM-Steelness ZMS50",
+    "lockTension": 82.99,
+    "panelTension": 17.2,
+    "price": 7785
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "ZM-Steelness ZMS60",
+    "lockTension": 91.84,
+    "panelTension": 17.2,
+    "price": 8499.7
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Zodiac 500-R2",
+    "lockTension": 29,
+    "panelTension": 8,
+    "price": 799
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Zodiac 500-R2 L-CTR",
+    "lockTension": 29,
+    "panelTension": 8,
+    "price": 869
+  },
+  {
+    "equipmentType": "渔轮",
+    "equipmentName": "Billionaire 60R-H款-新年版",
+    "lockTension": 0,
+    "panelTension": 79,
+    "price": 18
   }
 ]
