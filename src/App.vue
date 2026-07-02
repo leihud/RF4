@@ -155,7 +155,7 @@
               >
                 <span class="dropdown-name">{{ equipment.equipmentName }}</span>
                 <span class="dropdown-tension">{{ equipment.panelTension }} kN</span>
-                <span v-if="equipment.price > 0" class="dropdown-price">¥{{ equipment.price }}</span>
+                <span class="dropdown-price">{{ equipment.price > 0 ? '¥' + equipment.price : '' }}</span>
               </div>
               <div v-if="filteredEquipment.length === 0" class="dropdown-empty">
                 未找到匹配的装备
