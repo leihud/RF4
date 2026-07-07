@@ -1,7 +1,9 @@
 const XLSX = require('xlsx');
 const path = require('path');
 const fs = require('fs');
-
+/**
+ * node readExcel.js           更新json文件
+ */
 const excelPath = path.join(__dirname, '装备参数表.xlsx');
 const workbook = XLSX.readFile(excelPath);
 
