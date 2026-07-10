@@ -7,7 +7,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 /**
  * node readExcel.js   将 装备参数表.xlsx 转换为 public/equipment.json
  */
-const excelPath = join(__dirname, '装备参数表.xlsx')
+const excelPath = join(__dirname, 'RF4_constants.xlsx')
 const workbook = XLSX.readFile(excelPath)
 
 const sheetName = workbook.SheetNames[0]

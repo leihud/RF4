@@ -34,7 +34,17 @@
       </div>
     </div>
 
-    <div class="compare-content">
+    <div v-if="isLoading" class="loading-wrapper">
+      <div class="loading-spinner"></div>
+      <span class="loading-text">正在加载装备数据...</span>
+    </div>
+
+    <div v-if="dataLoadError" class="error-wrapper">
+      <span class="error-icon">❌</span>
+      <span class="error-text">装备对比数据加载失败，请刷新页面重试</span>
+    </div>
+
+    <div v-if="!isLoading && !dataLoadError" class="compare-content">
       <div class="equipment-list">
         <h3>装备列表(点击添加到对比)</h3>
         <div class="list-container">
@@ -115,7 +125,6 @@
 <script>
 import { searchAndRankEquipment } from '../utils/search.js'
 
-// 表格行配置:label=列名,field=数据字段,highlight=是否高亮最大值
 const COMPARE_ROWS = {
   rod: [
     { label: '强度', field: 'strengthKg', highlight: true },
@@ -166,14 +175,29 @@ export default {
       typeOptions: TYPE_OPTIONS,
       compareType: 'rod',
       searchQuery: '',
+      debouncedSearchQuery: '',
       selectedCategory: '',
       rodData: [],
       reelData: [],
-      compareEquipmentList: []
+      compareEquipmentList: [],
+      isLoading: false,
+      dataLoadError: false,
+      searchTimeout: null
     }
   },
   mounted() {
     this.loadData()
+  },
+  beforeUnmount() {
+    if (this.searchTimeout) clearTimeout(this.searchTimeout)
+  },
+  watch: {
+    searchQuery(val) {
+      if (this.searchTimeout) clearTimeout(this.searchTimeout)
+      this.searchTimeout = setTimeout(() => {
+        this.debouncedSearchQuery = val
+      }, 200)
+    }
   },
   computed: {
     categories() {
@@ -186,8 +210,7 @@ export default {
       if (this.selectedCategory) {
         filtered = filtered.filter(item => item.category === this.selectedCategory)
       }
-      filtered = searchAndRankEquipment(filtered, this.searchQuery, ['model', 'equipmentName'])
-      // 去重(同 model 多次出现时只保留第一条)
+      filtered = searchAndRankEquipment(filtered, this.debouncedSearchQuery, ['model', 'equipmentName'])
       const seen = new Set()
       return filtered.filter(item => {
         const key = this.getItemKey(item)
@@ -199,9 +222,6 @@ export default {
     currentCompareRows() {
       return COMPARE_ROWS[this.compareType] || []
     },
-    /**
-     * 预计算每行最大值,避免模板里 N×M² 的 getMaxValue 重复调用
-     */
     fieldMaxValues() {
       const result = {}
       for (const row of this.currentCompareRows) {
@@ -218,6 +238,8 @@ export default {
   },
   methods: {
     async loadData() {
+      this.isLoading = true
+      this.dataLoadError = false
       try {
         const [rodResponse, reelResponse] = await Promise.all([
           fetch('/rod_compare.json'),
@@ -230,6 +252,9 @@ export default {
         this.reelData = await reelResponse.json()
       } catch (error) {
         console.error('加载数据失败:', error)
+        this.dataLoadError = true
+      } finally {
+        this.isLoading = false
       }
     },
     switchType(type) {
@@ -403,6 +428,47 @@ export default {
 
 .category-select:hover {
   border-color: #1565c0;
+}
+
+.loading-wrapper,
+.error-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  margin-bottom: 20px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #1565c0;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  margin-top: 15px;
+  color: #666;
+  font-size: 14px;
+}
+
+.error-icon {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
+.error-text {
+  color: #c62828;
+  font-size: 16px;
+  font-weight: 500;
 }
 
 .compare-content {

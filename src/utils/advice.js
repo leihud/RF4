@@ -5,11 +5,10 @@ import {
 } from './tension.js'
 import { FRICTION_TIP_HIGH, FRICTION_TIP_LOW, CALC_RULES } from '../constants/equipment.js'
 
-// 建议等级
 export const ADVICE_LEVEL = {
-  OPTIMAL: 'optimal',   // ✅
-  WARNING: 'warning',   // ⚠️
-  DANGER: 'danger'      // ❌
+  OPTIMAL: 'optimal',
+  WARNING: 'warning',
+  DANGER: 'danger'
 }
 
 const LEVEL_PREFIX = {
@@ -18,10 +17,6 @@ const LEVEL_PREFIX = {
   [ADVICE_LEVEL.DANGER]: '❌'
 }
 
-/**
- * 汇总各项实际拉力,作为建议生成的输入
- * tension utils 返回字符串,此处统一 parseFloat
- */
 export function buildTensionContext({
   rod,
   reel,
@@ -30,11 +25,11 @@ export function buildTensionContext({
   friction,
   calcRule
 }) {
-  const rodTension = rod ? parseFloat(calculateActualPanelTension(rod, calcRule, friction)) : 0
-  const reelLockTension = reel ? parseFloat(calculateActualLockTension(reel, calcRule)) : 0
-  const reelPanelTension = reel ? parseFloat(calculateActualPanelTension(reel, calcRule, friction)) : 0
-  const mainLineTension = mainLine.maxTension > 0 ? parseFloat(calculateCustomActualTension(mainLine)) : 0
-  const leaderTension = leader.maxTension > 0 ? parseFloat(calculateCustomActualTension(leader)) : 0
+  const rodTension = rod ? calculateActualPanelTension(rod, calcRule, friction) : 0
+  const reelLockTension = reel ? calculateActualLockTension(reel, calcRule) : 0
+  const reelPanelTension = reel ? calculateActualPanelTension(reel, calcRule, friction) : 0
+  const mainLineTension = mainLine.maxTension > 0 ? calculateCustomActualTension(mainLine) : 0
+  const leaderTension = leader.maxTension > 0 ? calculateCustomActualTension(leader) : 0
   return {
     rodTension,
     reelLockTension,
@@ -49,7 +44,6 @@ function hasRodReelAndMain(ctx) {
   return ctx.rodTension > 0 && ctx.reelPanelTension > 0 && ctx.mainLineTension > 0
 }
 
-// 生成单条建议(常态:看 panel)
 function buildNormalAdvice(ctx) {
   const { rodTension, reelPanelTension, mainLineTension, leaderTension } = ctx
 
@@ -87,7 +81,6 @@ function buildNormalAdvice(ctx) {
   return { level: ADVICE_LEVEL.DANGER, text: '致命危险!鱼竿拉力为最小,中大鱼直接爆竿,请调整配置。' }
 }
 
-// 生成单条建议(锁轮:看 lock)
 function buildLockAdvice(ctx) {
   const { rodTension, reelLockTension, mainLineTension, leaderTension } = ctx
 
@@ -137,10 +130,6 @@ function buildFrictionTip(ctx) {
   return null
 }
 
-/**
- * 汇总所有建议
- * @returns {{ level: string, sections: Array<{ title: string, items: Array<{level,text}> }> } | null}
- */
 export function buildAdvice(input) {
   const ctx = buildTensionContext(input)
   const nothingConfigured =
@@ -171,7 +160,6 @@ export function buildAdvice(input) {
     }
   }
 
-  // 汇总最高严重等级
   const allLevels = sections.flatMap(s => s.items.map(i => i.level))
   let overall = ADVICE_LEVEL.OPTIMAL
   if (allLevels.includes(ADVICE_LEVEL.DANGER)) overall = ADVICE_LEVEL.DANGER
@@ -180,5 +168,4 @@ export function buildAdvice(input) {
   return { level: overall, sections }
 }
 
-// 暴露给模板用,避免 magic string
 export const ADVICE_PREFIX = LEVEL_PREFIX

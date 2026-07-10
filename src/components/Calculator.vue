@@ -25,6 +25,11 @@
       装备数据加载失败,已使用内置示例数据,请检查 public/equipment.json
     </div>
 
+    <div v-if="isLoading" class="loading-wrapper">
+      <div class="loading-spinner"></div>
+      <span class="loading-text">正在加载装备数据...</span>
+    </div>
+
     <div class="equipment-selector" :class="{ disabled: !calculationRule }">
       <h2>选择装备类型</h2>
       <div class="type-buttons">
@@ -58,7 +63,7 @@
                 />
                 <span class="input-unit">%</span>
                 <span class="actual-tension">
-                  实际拉力:{{ calculateCustomActualTension(customEquipment[type]) }} kN
+                  实际拉力:{{ formatTension(calculateCustomActualTension(customEquipment[type])) }} kN
                 </span>
               </div>
             </template>
@@ -105,18 +110,18 @@
                     @change="onFrictionChange"
                     placeholder="0"
                     min="0"
-                    :max="FRICTION_GUIDE_MAX"
+                    :max="frictionMax"
                   />
                   <span class="friction-unit">{{ frictionPercent }}%</span>
                 </span>
                 <span v-if="type === '鱼竿'" class="actual-tension">
-                  实际面板拉力:{{ actualPanelTensionMap[type] }} kN
+                  实际面板拉力:{{ formatTension(actualPanelTensionMap[type]) }} kN
                 </span>
                 <span v-if="type === '渔轮'" class="actual-panel-tension">
-                  实际面板拉力:{{ actualPanelTensionMap[type] }} kN
+                  实际面板拉力:{{ formatTension(actualPanelTensionMap[type]) }} kN
                 </span>
                 <span v-if="type === '渔轮'" class="actual-tension">
-                  实际锁轮拉力:{{ actualLockTensionMap[type] }} kN
+                  实际锁轮拉力:{{ formatTension(actualLockTensionMap[type]) }} kN
                 </span>
                 <button class="clear-btn" @click.stop="clearEquipmentByType(type)">×</button>
               </template>
@@ -193,14 +198,14 @@
         </div>
         <div class="summary-row">
           <span class="summary-label">最小锁轮拉力限制:</span>
-          <span class="summary-value">{{ minTension }} kN</span>
+          <span class="summary-value">{{ formatTension(minTension) }} kN</span>
         </div>
         <div class="summary-row">
           <span class="summary-label">装备总价值:</span>
           <span class="summary-value">¥{{ equipmentTotalPrice }}</span>
         </div>
         <div v-if="equipmentAdvice" class="advice-section">
-          <div class="advice-title">锁轮建议</div>
+          <div class="advice-title">装备建议</div>
           <div
             v-for="(section, si) in equipmentAdvice.sections"
             :key="si"
@@ -228,13 +233,15 @@ import {
   SEARCHABLE_TYPES,
   CALC_RULE_OPTIONS,
   DEFAULT_FRICTION,
-  FRICTION_GUIDE_MAX
+  CALC_RULES
 } from '../constants/equipment.js'
 import {
   calculateActualLockTension,
   calculateActualPanelTension,
   calculateCustomActualTension,
-  clampFriction
+  clampFriction,
+  getFrictionMax,
+  formatTension
 } from '../utils/tension.js'
 import { buildAdvice, ADVICE_PREFIX } from '../utils/advice.js'
 
@@ -245,6 +252,7 @@ export default {
       selectedType: null,
       equipmentData: [],
       dataLoadError: false,
+      isLoading: false,
       customEquipment: {
         '主线': { maxTension: 0, wear: 0 },
         '引线': { maxTension: 0, wear: 0 }
@@ -253,13 +261,14 @@ export default {
       selectedEquipmentList: [],
       calculationRule: '',
       searchQuery: '',
+      debouncedSearchQuery: '',
       isDropdownOpen: false,
       minTensionFilter: '',
       maxTensionFilter: '',
-      // 暴露给模板使用的常量
+      searchTimeout: null,
       CALC_RULE_OPTIONS,
       ADVICE_PREFIX,
-      FRICTION_GUIDE_MAX
+      formatTension
     }
   },
   mounted() {
@@ -268,17 +277,32 @@ export default {
   },
   beforeUnmount() {
     document.removeEventListener('click', this.handleClickOutside)
+    if (this.searchTimeout) clearTimeout(this.searchTimeout)
+  },
+  watch: {
+    searchQuery(val) {
+      if (this.searchTimeout) clearTimeout(this.searchTimeout)
+      this.searchTimeout = setTimeout(() => {
+        this.debouncedSearchQuery = val
+      }, 200)
+    },
+    calculationRule(val) {
+      if (val) {
+        this.friction = clampFriction(this.friction, val)
+      }
+    }
   },
   computed: {
     equipmentTypes() {
       return EQUIPMENT_TYPES
     },
-    frictionPercent() {
-      return Math.round((this.friction / FRICTION_GUIDE_MAX) * 100)
+    frictionMax() {
+      return getFrictionMax(this.calculationRule)
     },
-    /**
-     * 将已选装备按 type 索引,模板 O(1) 访问
-     */
+    frictionPercent() {
+      if (!this.calculationRule) return 0
+      return Math.round((this.friction / this.frictionMax) * 100)
+    },
     selectedEquipmentMap() {
       const map = {}
       for (const item of this.selectedEquipmentList) {
@@ -312,8 +336,8 @@ export default {
       const equipment = this.equipmentData.filter(item => item.equipmentType === this.selectedType)
       let filtered = equipment
 
-      if (this.searchQuery.trim()) {
-        const q = this.searchQuery.toLowerCase()
+      if (this.debouncedSearchQuery.trim()) {
+        const q = this.debouncedSearchQuery.toLowerCase()
         filtered = filtered.filter(item => item.equipmentName.toLowerCase().includes(q))
       }
 
@@ -381,6 +405,7 @@ export default {
       return SEARCHABLE_TYPES.includes(type)
     },
     async loadEquipmentData() {
+      this.isLoading = true
       try {
         const response = await fetch('/equipment.json')
         if (!response.ok) throw new Error(`HTTP ${response.status}`)
@@ -394,13 +419,15 @@ export default {
           { equipmentType: '主线', equipmentName: 'CAIHONG100', maxTension: 60 },
           { equipmentType: '引线', equipmentName: 'NINONG23', maxTension: 60 }
         ]
+      } finally {
+        this.isLoading = false
       }
     },
     calculateCustomActualTension(item) {
       return calculateCustomActualTension(item)
     },
     onFrictionChange(event) {
-      this.friction = clampFriction(parseFloat(event.target.value))
+      this.friction = clampFriction(parseFloat(event.target.value), this.calculationRule)
     },
     selectType(type) {
       this.selectedType = type
@@ -415,7 +442,6 @@ export default {
       )
       const next = { ...equipment, wear: 0 }
       if (existingIndex >= 0) {
-        // 保留已有磨损度
         next.wear = this.selectedEquipmentList[existingIndex].wear || 0
         this.selectedEquipmentList.splice(existingIndex, 1, next)
       } else {
@@ -528,6 +554,35 @@ h2 {
   border-radius: 8px;
   margin-bottom: 15px;
   font-weight: bold;
+}
+
+.loading-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  margin-bottom: 20px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #42b983;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  margin-top: 15px;
+  color: #666;
+  font-size: 14px;
 }
 
 .equipment-selector {
