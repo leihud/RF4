@@ -6,17 +6,13 @@
     </div>
 
     <div class="compare-type-selector">
-      <button 
-        :class="['type-btn', { active: compareType === 'rod' }]"
-        @click="switchType('rod')"
+      <button
+        v-for="opt in typeOptions"
+        :key="opt.value"
+        :class="['type-btn', { active: compareType === opt.value }]"
+        @click="switchType(opt.value)"
       >
-        鱼竿对比
-      </button>
-      <button 
-        :class="['type-btn', { active: compareType === 'reel' }]"
-        @click="switchType('reel')"
-      >
-        渔轮对比
+        {{ opt.label }}
       </button>
     </div>
 
@@ -40,18 +36,22 @@
 
     <div class="compare-content">
       <div class="equipment-list">
-        <h3>装备列表（点击添加到对比）</h3>
+        <h3>装备列表(点击添加到对比)</h3>
         <div class="list-container">
           <div
-            v-for="(equipment, index) in filteredEquipment"
-            :key="index"
+            v-for="equipment in filteredEquipment"
+            :key="getItemKey(equipment)"
             :class="['equipment-item', { selected: isInCompareList(equipment) }]"
             @click="toggleCompareItem(equipment)"
           >
             <span class="equipment-category-tag">{{ equipment.category }}</span>
             <span class="equipment-name">{{ equipment.model || equipment.equipmentName }}</span>
-            <span v-if="compareType === 'rod'" class="equipment-strength">强度: {{ equipment.strengthKg }}</span>
-            <span v-if="compareType === 'reel'" class="equipment-strength">锁轮: {{ equipment.lockTension }}</span>
+            <span v-if="compareType === 'rod'" class="equipment-strength">
+              强度: {{ equipment.strengthKg }}
+            </span>
+            <span v-else class="equipment-strength">
+              锁轮: {{ equipment.lockTension }}
+            </span>
           </div>
           <div v-if="filteredEquipment.length === 0" class="list-empty">
             未找到匹配的装备
@@ -67,334 +67,37 @@
         <div class="compare-table">
           <div class="compare-row compare-header-row">
             <div class="compare-cell compare-label-cell">参数</div>
-            <div 
-              v-for="equipment in compareEquipmentList" 
-              :key="equipment.equipmentName"
+            <div
+              v-for="equipment in compareEquipmentList"
+              :key="getItemKey(equipment)"
               class="compare-cell compare-equipment-cell"
             >
               <div class="equipment-header">
                 <span class="equipment-name">{{ equipment.model || equipment.equipmentName }}</span>
-                <button class="remove-btn" @click.stop="removeCompareItem(compareEquipmentList.indexOf(equipment))">×</button>
+                <button
+                  class="remove-btn"
+                  aria-label="移除对比项"
+                  @click.stop="removeCompareItem(equipment)"
+                >×</button>
               </div>
               <span class="equipment-category">{{ equipment.subCategory || equipment.category }}</span>
             </div>
           </div>
-          
-          <template v-if="compareType === 'rod'">
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">强度</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                :class="['compare-cell', { 'max-value': isMaxValue(equipment, 'strengthKg') }]"
-              >
-                {{ equipment.strengthKg }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">长度</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                :class="['compare-cell', { 'max-value': isMaxValue(equipment, 'lengthM') }]"
-              >
-                {{ equipment.lengthM }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">质量</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                :class="['compare-cell', { 'max-value': isMaxValue(equipment, 'weightG') }]"
-              >
-                {{ equipment.weightG }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">测试</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                :class="['compare-cell', { 'max-value': isMaxValue(equipment, 'testG') }]"
-              >
-                {{ equipment.testG }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">灵敏度</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                :class="['compare-cell', { 'max-value': isMaxValue(equipment, 'sensitivity') }]"
-              >
-                {{ equipment.sensitivity }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">硬度</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                class="compare-cell"
-              >
-                {{ equipment.hardness }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">形式</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                class="compare-cell"
-              >
-                {{ equipment.form }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">结构</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                class="compare-cell"
-              >
-                {{ equipment.structure }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">能力</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                class="compare-cell"
-              >
-                {{ equipment.ability || '-' }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">评级</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                class="compare-cell"
-              >
-                {{ equipment.rating }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">等级要求</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                class="compare-cell"
-              >
-                Lv.{{ equipment.levelReq }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">金币</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                class="compare-cell"
-              >
-                {{ equipment.goldPrice }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">银币</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                class="compare-cell"
-              >
-                {{ equipment.silverPrice }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">适配重</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                class="compare-cell"
-              >
-                {{ equipment.adaptWeight || '-' }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">描述</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                class="compare-cell"
-              >
-                {{ equipment.description || '-' }}
-              </div>
-            </div>
-          </template>
 
-          <template v-if="compareType === 'reel'">
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">锁轮拉力</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                :class="['compare-cell', { 'max-value': isMaxValue(equipment, 'lockTension') }]"
-              >
-                {{ equipment.lockTension }}
-              </div>
+          <div
+            v-for="row in currentCompareRows"
+            :key="row.field"
+            class="compare-row"
+          >
+            <div class="compare-cell compare-label-cell">{{ row.label }}</div>
+            <div
+              v-for="equipment in compareEquipmentList"
+              :key="getItemKey(equipment)"
+              :class="['compare-cell', { 'max-value': row.highlight && isFieldMax(equipment, row.field) }]"
+            >
+              {{ formatCellValue(equipment, row) }}
             </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">摩擦制动力</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                :class="['compare-cell', { 'max-value': isMaxValue(equipment, 'frictionForce') }]"
-              >
-                {{ equipment.frictionForce }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">传动比</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                :class="['compare-cell', { 'max-value': isMaxValue(equipment, 'transmissionRatio') }]"
-              >
-                {{ equipment.transmissionRatio }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">回线速度</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                :class="['compare-cell', { 'max-value': isMaxValue(equipment, 'lineSpeed') }]"
-              >
-                {{ equipment.lineSpeed }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">收线速度</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                :class="['compare-cell', { 'max-value': isMaxValue(equipment, 'windingSpeed') }]"
-              >
-                {{ equipment.windingSpeed }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">大小</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                class="compare-cell"
-              >
-                {{ equipment.size }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">形式</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                class="compare-cell"
-              >
-                {{ equipment.form }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">测试</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                class="compare-cell"
-              >
-                {{ equipment.test }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">评级</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                class="compare-cell"
-              >
-                {{ equipment.rating }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">等级要求</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                class="compare-cell"
-              >
-                Lv.{{ equipment.levelReq }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">线轴容量</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                class="compare-cell"
-              >
-                {{ equipment.spoolCapacity || '-' }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">适配重</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                class="compare-cell"
-              >
-                {{ equipment.adaptWeight || '-' }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">防海水</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                class="compare-cell"
-              >
-                {{ equipment.saltwaterResistant || '-' }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">金币</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                class="compare-cell"
-              >
-                {{ equipment.goldPrice }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">银币</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                class="compare-cell"
-              >
-                {{ equipment.silverPrice }}
-              </div>
-            </div>
-            <div class="compare-row">
-              <div class="compare-cell compare-label-cell">描述</div>
-              <div 
-                v-for="equipment in compareEquipmentList" 
-                :key="equipment.equipmentName"
-                class="compare-cell"
-              >
-                {{ equipment.description || '-' }}
-              </div>
-            </div>
-          </template>
+          </div>
         </div>
       </div>
 
@@ -410,11 +113,57 @@
 </template>
 
 <script>
+import { searchAndRankEquipment } from '../utils/search.js'
+
+// 表格行配置:label=列名,field=数据字段,highlight=是否高亮最大值
+const COMPARE_ROWS = {
+  rod: [
+    { label: '强度', field: 'strengthKg', highlight: true },
+    { label: '长度', field: 'lengthM', highlight: true },
+    { label: '质量', field: 'weightG', highlight: true },
+    { label: '测试', field: 'testG', highlight: true },
+    { label: '灵敏度', field: 'sensitivity', highlight: true },
+    { label: '硬度', field: 'hardness' },
+    { label: '形式', field: 'form' },
+    { label: '结构', field: 'structure' },
+    { label: '能力', field: 'ability', fallback: '-' },
+    { label: '评级', field: 'rating' },
+    { label: '等级要求', field: 'levelReq', format: v => `Lv.${v}` },
+    { label: '金币', field: 'goldPrice' },
+    { label: '银币', field: 'silverPrice' },
+    { label: '适配重', field: 'adaptWeight', fallback: '-' },
+    { label: '描述', field: 'description', fallback: '-' }
+  ],
+  reel: [
+    { label: '锁轮拉力', field: 'lockTension', highlight: true },
+    { label: '摩擦制动力', field: 'frictionForce', highlight: true },
+    { label: '传动比', field: 'transmissionRatio', highlight: true },
+    { label: '回线速度', field: 'lineSpeed', highlight: true },
+    { label: '收线速度', field: 'windingSpeed', highlight: true },
+    { label: '大小', field: 'size' },
+    { label: '形式', field: 'form' },
+    { label: '测试', field: 'test' },
+    { label: '评级', field: 'rating' },
+    { label: '等级要求', field: 'levelReq', format: v => `Lv.${v}` },
+    { label: '线轴容量', field: 'spoolCapacity', fallback: '-' },
+    { label: '适配重', field: 'adaptWeight', fallback: '-' },
+    { label: '防海水', field: 'saltwaterResistant', fallback: '-' },
+    { label: '金币', field: 'goldPrice' },
+    { label: '银币', field: 'silverPrice' },
+    { label: '描述', field: 'description', fallback: '-' }
+  ]
+}
+
+const TYPE_OPTIONS = [
+  { value: 'rod', label: '鱼竿对比' },
+  { value: 'reel', label: '渔轮对比' }
+]
+
 export default {
   name: 'ComparePage',
-  emits: ['back'],
   data() {
     return {
+      typeOptions: TYPE_OPTIONS,
       compareType: 'rod',
       searchQuery: '',
       selectedCategory: '',
@@ -429,71 +178,42 @@ export default {
   computed: {
     categories() {
       const data = this.compareType === 'rod' ? this.rodData : this.reelData
-      const cats = [...new Set(data.map(item => item.category).filter(c => c))]
-      return cats.sort()
+      return [...new Set(data.map(item => item.category).filter(Boolean))].sort()
     },
     filteredEquipment() {
       const data = this.compareType === 'rod' ? this.rodData : this.reelData
-      let filtered = [...data]
-
+      let filtered = data
       if (this.selectedCategory) {
         filtered = filtered.filter(item => item.category === this.selectedCategory)
       }
-
-      if (this.searchQuery.trim()) {
-        const query = this.searchQuery.trim().toLowerCase()
-        
-        filtered = filtered.filter(item => {
-          const model = (item.model || '').toLowerCase()
-          const name = (item.equipmentName || '').toLowerCase()
-          
-          const regex = new RegExp(`(?:^|\\s|_|-)${query}(?:$|\\s|_|-)`, 'i')
-          const hasExactMatch = regex.test(item.model || '') || regex.test(item.equipmentName || '')
-          const hasPrefix = model.startsWith(query) || name.startsWith(query)
-          const hasSubstring = model.includes(query) || name.includes(query)
-          
-          return hasExactMatch || hasPrefix || hasSubstring
-        })
-
-        filtered.sort((a, b) => {
-          const aModel = (a.model || '').toLowerCase()
-          const bModel = (b.model || '').toLowerCase()
-          const aName = (a.equipmentName || '').toLowerCase()
-          const bName = (b.equipmentName || '').toLowerCase()
-
-          const aExactMatch = aModel === query || aName === query
-          const bExactMatch = bModel === query || bName === query
-          
-          if (aExactMatch && !bExactMatch) return -1
-          if (!aExactMatch && bExactMatch) return 1
-
-          const aStartsWith = aModel.startsWith(query) || aName.startsWith(query)
-          const bStartsWith = bModel.startsWith(query) || bName.startsWith(query)
-          
-          if (aStartsWith && !bStartsWith) return -1
-          if (!aStartsWith && bStartsWith) return 1
-
-          const aWordMatch = new RegExp(`(?:^|\\s|_|-)${query}(?:$|\\s|_|-)`, 'i').test(a.model || '') ||
-                              new RegExp(`(?:^|\\s|_|-)${query}(?:$|\\s|_|-)`, 'i').test(a.equipmentName || '')
-          const bWordMatch = new RegExp(`(?:^|\\s|_|-)${query}(?:$|\\s|_|-)`, 'i').test(b.model || '') ||
-                              new RegExp(`(?:^|\\s|_|-)${query}(?:$|\\s|_|-)`, 'i').test(b.equipmentName || '')
-          
-          if (aWordMatch && !bWordMatch) return -1
-          if (!aWordMatch && bWordMatch) return 1
-
-          return 0
-        })
-      }
-
+      filtered = searchAndRankEquipment(filtered, this.searchQuery, ['model', 'equipmentName'])
+      // 去重(同 model 多次出现时只保留第一条)
       const seen = new Set()
-      filtered = filtered.filter(item => {
-        const key = item.model || item.equipmentName
+      return filtered.filter(item => {
+        const key = this.getItemKey(item)
         if (seen.has(key)) return false
         seen.add(key)
         return true
       })
-
-      return filtered
+    },
+    currentCompareRows() {
+      return COMPARE_ROWS[this.compareType] || []
+    },
+    /**
+     * 预计算每行最大值,避免模板里 N×M² 的 getMaxValue 重复调用
+     */
+    fieldMaxValues() {
+      const result = {}
+      for (const row of this.currentCompareRows) {
+        if (!row.highlight) continue
+        let max = -Infinity
+        for (const eq of this.compareEquipmentList) {
+          const v = parseFloat(eq[row.field])
+          if (!Number.isNaN(v) && v > max) max = v
+        }
+        result[row.field] = max === -Infinity ? null : max
+      }
+      return result
     }
   },
   methods: {
@@ -503,6 +223,9 @@ export default {
           fetch('/rod_compare.json'),
           fetch('/reel_compare.json')
         ])
+        if (!rodResponse.ok || !reelResponse.ok) {
+          throw new Error('装备对比数据加载失败')
+        }
         this.rodData = await rodResponse.json()
         this.reelData = await reelResponse.json()
       } catch (error) {
@@ -510,6 +233,7 @@ export default {
       }
     },
     switchType(type) {
+      if (this.compareType === type) return
       this.compareType = type
       this.compareEquipmentList = []
       this.searchQuery = ''
@@ -524,35 +248,38 @@ export default {
       if (index >= 0) {
         this.compareEquipmentList.splice(index, 1)
       } else {
-        this.compareEquipmentList.push({...equipment})
+        this.compareEquipmentList.push({ ...equipment })
       }
     },
     isInCompareList(equipment) {
       const key = this.getItemKey(equipment)
       return this.compareEquipmentList.some(item => this.getItemKey(item) === key)
     },
-    getMaxValue(field) {
-      if (!this.compareEquipmentList.length) return null
-      let max = -Infinity
-      this.compareEquipmentList.forEach(item => {
-        const value = parseFloat(item[field])
-        if (!isNaN(value) && value > max) {
-          max = value
-        }
-      })
-      return max === -Infinity ? null : max
+    isFieldMax(equipment, field) {
+      const max = this.fieldMaxValues[field]
+      if (max === null || max === undefined) return false
+      const v = parseFloat(equipment[field])
+      return !Number.isNaN(v) && v === max
     },
-    isMaxValue(equipment, field) {
-      const max = this.getMaxValue(field)
-      if (max === null) return false
-      const value = parseFloat(equipment[field])
-      return !isNaN(value) && value === max
+    formatValue(value, fallback = '-') {
+      if (value === null || value === undefined || value === '') return fallback
+      return value
+    },
+    formatCellValue(equipment, row) {
+      const raw = equipment[row.field]
+      if (raw === null || raw === undefined || raw === '') {
+        return row.fallback || '-'
+      }
+      if (typeof row.format === 'function') return row.format(raw)
+      return raw
     },
     clearCompareList() {
       this.compareEquipmentList = []
     },
-    removeCompareItem(index) {
-      this.compareEquipmentList.splice(index, 1)
+    removeCompareItem(equipment) {
+      const key = this.getItemKey(equipment)
+      const index = this.compareEquipmentList.findIndex(item => this.getItemKey(item) === key)
+      if (index >= 0) this.compareEquipmentList.splice(index, 1)
     },
     goBack() {
       this.$router.push('/')
@@ -956,19 +683,19 @@ export default {
   .compare-content {
     flex-direction: column;
   }
-  
+
   .equipment-list {
     width: 100%;
   }
-  
+
   .list-container {
     max-height: 300px;
   }
-  
+
   .compare-header h1 {
     font-size: 22px;
   }
-  
+
   .type-btn {
     padding: 8px 20px;
     font-size: 14px;
