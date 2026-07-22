@@ -77,9 +77,6 @@
                   <span class="selected-tension">
                     面板拉力:{{ selectedEquipmentMap[type].panelTension || selectedEquipmentMap[type].lockTension }} kN
                   </span>
-                  <span v-if="selectedEquipmentMap[type].price > 0" class="selected-price">
-                    价格:¥{{ selectedEquipmentMap[type].price }}
-                  </span>
                 </template>
                 <template v-else>
                   <span class="selected-tension">
@@ -173,7 +170,7 @@
               >
                 <span class="dropdown-name">{{ equipment.model || equipment.equipmentName }}</span>
                 <span class="dropdown-tension">{{ equipment.panelTension }} kN</span>
-                <span class="dropdown-price">{{ equipment.price > 0 ? '¥' + equipment.price : '' }}</span>
+                <span v-if="equipment.equipmentType !== '鱼竿'" class="dropdown-price">{{ equipment.price > 0 ? '¥' + equipment.price : '' }}</span>
               </div>
               <div v-if="filteredEquipment.length === 0" class="dropdown-empty">
                 未找到匹配的装备
