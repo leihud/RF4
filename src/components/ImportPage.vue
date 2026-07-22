@@ -23,23 +23,13 @@
       <div class="import-section">
         <h2>下载导入模板</h2>
         <div class="template-download">
-          <a 
-            v-if="importType === '鱼竿'" 
-            href="/import_template_rod.json" 
-            download="import_template_rod.json"
+          <button 
             class="download-btn"
+            @click="downloadTemplate"
           >
-            📥 下载鱼竿导入模板
-          </a>
-          <a 
-            v-else 
-            href="/import_template_reel.json" 
-            download="import_template_reel.json"
-            class="download-btn"
-          >
-            📥 下载渔轮导入模板
-          </a>
-          <p class="template-hint">模板包含完整字段定义，请按照模板格式填写数据</p>
+            📥 下载{{ importType === '鱼竿' ? '鱼竿' : '渔轮' }}导入模板
+          </button>
+          <p class="template-hint">模板包含完整字段定义，请按照模板格式填写数据，字段为中文</p>
         </div>
       </div>
 
@@ -49,7 +39,7 @@
           <input
             type="file"
             ref="fileInput"
-            accept=".json"
+            accept=".xlsx,.xls"
             class="file-input"
             @change="handleFileSelect"
           />
@@ -63,13 +53,26 @@
           >
             <span class="upload-icon">{{ selectedFile ? '📁' : '📤' }}</span>
             <span class="upload-text">
-              {{ selectedFile ? selectedFile.name : '点击或拖拽上传 JSON 文件' }}
+              {{ selectedFile ? selectedFile.name : '点击或拖拽上传 Excel 文件' }}
             </span>
-            <span class="upload-hint">支持 .json 格式</span>
+            <span class="upload-hint">支持 .xlsx, .xls 格式</span>
           </div>
           <div v-if="fileContent" class="file-preview">
-            <h3>文件内容预览</h3>
-            <pre class="preview-content">{{ filePreview }}</pre>
+            <h3>文件内容预览（前3行）</h3>
+            <div class="preview-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th v-for="(header, index) in previewHeaders" :key="index">{{ header }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, rowIndex) in previewData" :key="rowIndex">
+                    <td v-for="(cell, cellIndex) in row" :key="cellIndex">{{ cell || '' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -114,6 +117,120 @@
 </template>
 
 <script>
+import XLSX from 'xlsx'
+
+const ROD_FIELD_MAP = {
+  '装备名称': 'equipmentName',
+  '类型': 'equipmentType',
+  '分类': 'category',
+  '子分类': 'subCategory',
+  '型号': 'model',
+  '描述': 'description',
+  '强度(kg)': 'strengthKg',
+  '形状': 'form',
+  '测试(g)': 'testG',
+  '灵敏度': 'sensitivity',
+  '硬度': 'hardness',
+  '等级需求': 'levelReq',
+  '结构': 'structure',
+  '能力': 'ability',
+  '评级': 'rating',
+  '重量(g)': 'weightG',
+  '适配重量': 'adaptWeight',
+  '适配重量(g)': 'adaptWeightG',
+  '金币价格': 'goldPrice',
+  '银币价格': 'silverPrice',
+  '长度(m)': 'lengthM'
+}
+
+const REEL_FIELD_MAP = {
+  '装备名称': 'equipmentName',
+  '类型': 'equipmentType',
+  '分类': 'category',
+  '子分类': 'subCategory',
+  '型号': 'model',
+  '描述': 'description',
+  '传动比': 'transmissionRatio',
+  '传动比星级': 'transmissionRatioStar',
+  '发动机功率': 'enginePower',
+  '出线速度': 'lineSpeed',
+  '出线速度星级': 'lineSpeedStar',
+  '尺寸': 'size',
+  '形状': 'form',
+  '摩擦值': 'frictionForce',
+  '摩擦值星级': 'frictionForceStar',
+  '收线速度': 'windingSpeed',
+  '测试': 'test',
+  '测试星级': 'testStar',
+  '等级需求': 'levelReq',
+  '线杯容量': 'spoolCapacity',
+  '获取方式': 'obtainMethod',
+  '评级': 'rating',
+  '适配重量': 'adaptWeight',
+  '适配重量星级': 'adaptWeightStar',
+  '金币价格': 'goldPrice',
+  '银币价格': 'silverPrice',
+  '锁轮拉力': 'lockTension',
+  '锁轮拉力星级': 'lockTensionStar',
+  '防盐性': 'saltwaterResistant'
+}
+
+const ROD_DEFAULT_ROW = {
+  '装备名称': '示例鱼竿名称',
+  '类型': '鱼竿',
+  '分类': '海竿',
+  '子分类': '',
+  '型号': 'TEST-001',
+  '描述': '',
+  '强度(kg)': '5.0',
+  '形状': '',
+  '测试(g)': '100',
+  '灵敏度': '5',
+  '硬度': '',
+  '等级需求': '10',
+  '结构': '',
+  '能力': '',
+  '评级': '',
+  '重量(g)': '150',
+  '适配重量': '',
+  '适配重量(g)': '0',
+  '金币价格': '',
+  '银币价格': '1000',
+  '长度(m)': '2.4'
+}
+
+const REEL_DEFAULT_ROW = {
+  '装备名称': '示例渔轮名称',
+  '类型': '渔轮',
+  '分类': '纺车轮',
+  '子分类': '',
+  '型号': 'TEST-REEL-001',
+  '描述': '',
+  '传动比': '5.2:1',
+  '传动比星级': '3',
+  '发动机功率': '',
+  '出线速度': '',
+  '出线速度星级': '0',
+  '尺寸': '',
+  '形状': '',
+  '摩擦值': '10',
+  '摩擦值星级': '5',
+  '收线速度': '',
+  '测试': '',
+  '测试星级': '0',
+  '等级需求': '8',
+  '线杯容量': '',
+  '获取方式': '',
+  '评级': '',
+  '适配重量': '',
+  '适配重量星级': '0',
+  '金币价格': '',
+  '银币价格': '2000',
+  '锁轮拉力': '5.0',
+  '锁轮拉力星级': '3',
+  '防盐性': ''
+}
+
 export default {
   name: 'ImportPage',
   data() {
@@ -125,6 +242,9 @@ export default {
       importType: '鱼竿',
       selectedFile: null,
       fileContent: null,
+      parsedData: null,
+      previewHeaders: [],
+      previewData: [],
       password: '',
       passwordError: '',
       isDragOver: false,
@@ -133,26 +253,11 @@ export default {
     }
   },
   computed: {
-    filePreview() {
-      if (!this.fileContent) return ''
-      try {
-        const data = JSON.parse(this.fileContent)
-        return JSON.stringify(data.slice(0, 3), null, 2) + (data.length > 3 ? '\n...' : '')
-      } catch {
-        return '文件格式错误，请上传有效的 JSON 文件'
-      }
-    },
     canImport() {
       return this.selectedFile && this.password && !this.isImporting && this.isValidFile
     },
     isValidFile() {
-      if (!this.fileContent) return false
-      try {
-        const data = JSON.parse(this.fileContent)
-        return Array.isArray(data) && data.length > 0
-      } catch {
-        return false
-      }
+      return this.parsedData && this.parsedData.length > 0
     }
   },
   methods: {
@@ -171,18 +276,75 @@ export default {
     handleDrop(event) {
       this.isDragOver = false
       const file = event.dataTransfer.files[0]
-      if (file && file.name.endsWith('.json')) {
+      if (file && (file.name.endsWith('.xlsx') || file.name.endsWith('.xls'))) {
         this.readFile(file)
       }
     },
     readFile(file) {
       const reader = new FileReader()
       reader.onload = (e) => {
-        this.selectedFile = file
-        this.fileContent = e.target.result
-        this.importResult = null
+        try {
+          const data = new Uint8Array(e.target.result)
+          const workbook = XLSX.read(data, { type: 'array' })
+          const sheetName = workbook.SheetNames[0]
+          const worksheet = workbook.Sheets[sheetName]
+          const jsonData = XLSX.utils.sheet_to_json(worksheet)
+          
+          this.selectedFile = file
+          this.fileContent = jsonData
+          this.parsedData = this.convertToEnglishKeys(jsonData)
+          this.updatePreview(jsonData)
+          this.importResult = null
+        } catch (error) {
+          console.error('解析 Excel 文件失败:', error)
+          this.parsedData = null
+          this.previewHeaders = []
+          this.previewData = []
+          this.importResult = {
+            success: false,
+            message: '解析 Excel 文件失败：' + error.message
+          }
+        }
       }
-      reader.readAsText(file)
+      reader.readAsArrayBuffer(file)
+    },
+    convertToEnglishKeys(data) {
+      const fieldMap = this.importType === '鱼竿' ? ROD_FIELD_MAP : REEL_FIELD_MAP
+      return data.map(row => {
+        const converted = {}
+        for (const [chineseKey, englishKey] of Object.entries(fieldMap)) {
+          if (row[chineseKey] !== undefined) {
+            converted[englishKey] = row[chineseKey]
+          }
+        }
+        return converted
+      })
+    },
+    updatePreview(jsonData) {
+      if (!jsonData || jsonData.length === 0) {
+        this.previewHeaders = []
+        this.previewData = []
+        return
+      }
+      
+      const headers = Object.keys(jsonData[0])
+      this.previewHeaders = headers
+      this.previewData = jsonData.slice(0, 3).map(row => 
+        headers.map(header => row[header])
+      )
+    },
+    downloadTemplate() {
+      const fieldMap = this.importType === '鱼竿' ? ROD_FIELD_MAP : REEL_FIELD_MAP
+      const defaultRow = this.importType === '鱼竿' ? ROD_DEFAULT_ROW : REEL_DEFAULT_ROW
+      
+      const headers = Object.keys(fieldMap)
+      const data = [headers, Object.values(defaultRow)]
+      
+      const worksheet = XLSX.utils.aoa_to_sheet(data)
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, this.importType + '数据')
+      
+      XLSX.writeFile(workbook, `${this.importType}导入模板.xlsx`)
     },
     async handleImport() {
       if (!this.canImport) return
@@ -192,8 +354,6 @@ export default {
       this.importResult = null
 
       try {
-        const data = JSON.parse(this.fileContent)
-        
         const response = await fetch('/api/import_data', {
           method: 'POST',
           headers: {
@@ -202,7 +362,7 @@ export default {
           body: JSON.stringify({
             password: this.password,
             type: this.importType,
-            data: data
+            data: this.parsedData
           })
         })
 
@@ -217,6 +377,9 @@ export default {
           this.password = ''
           this.selectedFile = null
           this.fileContent = null
+          this.parsedData = null
+          this.previewHeaders = []
+          this.previewData = []
         }
       } catch (error) {
         this.importResult = {
@@ -324,6 +487,8 @@ export default {
   font-size: 16px;
   transition: all 0.3s;
   text-align: center;
+  border: none;
+  cursor: pointer;
 }
 
 .download-btn:hover {
@@ -393,6 +558,7 @@ export default {
   background-color: #f8f9fa;
   border-radius: 8px;
   padding: 15px;
+  overflow-x: auto;
 }
 
 .file-preview h3 {
@@ -401,13 +567,30 @@ export default {
   margin-bottom: 10px;
 }
 
-.preview-content {
+.preview-table table {
+  width: 100%;
+  border-collapse: collapse;
   font-size: 12px;
-  color: #333;
-  white-space: pre-wrap;
-  word-break: break-all;
-  max-height: 200px;
-  overflow-y: auto;
+}
+
+.preview-table th,
+.preview-table td {
+  border: 1px solid #ddd;
+  padding: 6px 8px;
+  text-align: left;
+}
+
+.preview-table th {
+  background-color: #e3f2fd;
+  font-weight: bold;
+  color: #1565c0;
+}
+
+.preview-table td {
+  white-space: nowrap;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .password-section {
@@ -547,6 +730,10 @@ export default {
   .result-detail {
     flex-direction: column;
     gap: 10px;
+  }
+
+  .preview-table td {
+    max-width: 100px;
   }
 }
 </style>
