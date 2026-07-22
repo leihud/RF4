@@ -1,23 +1,3 @@
-function buildSearchQuery(tableName, category, q) {
-  let query = `SELECT * FROM ${tableName}`
-  const params = []
-  
-  if (category) {
-    query += ' WHERE category = ?'
-    params.push(category)
-  }
-  
-  if (q && !category) {
-    query += ' WHERE model LIKE ? OR equipmentName LIKE ?'
-    params.push(`%${q}%`, `%${q}%`)
-  } else if (q && category) {
-    query += ' AND (model LIKE ? OR equipmentName LIKE ?)'
-    params.push(`%${q}%`, `%${q}%`)
-  }
-  
-  return { query, params }
-}
-
 function jsonResponse(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -30,21 +10,31 @@ function jsonResponse(data, status = 200) {
   })
 }
 
-function errorResponse(error) {
-  return jsonResponse({ error: error.message }, 500)
-}
-
 export async function onRequestGet(context) {
   const { request, env } = context
   const url = new URL(request.url)
+  const searchQuery = url.searchParams.get('q')
   const category = url.searchParams.get('category')
-  const q = url.searchParams.get('q')
   
   try {
-    const { query, params } = buildSearchQuery('reels', category, q)
-    const result = await env.DB.prepare(query).bind(...params).all()
-    return jsonResponse(result.results)
+    const result = await env.DB.prepare('SELECT * FROM reels').all()
+    let results = result.results
+    
+    if (category) {
+      results = results.filter(item => item.category === category)
+    }
+    
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase()
+      results = results.filter(item => 
+        (item.equipmentName && item.equipmentName.toLowerCase().includes(q)) ||
+        (item.model && item.model.toLowerCase().includes(q))
+      ).slice(0, 50)
+    }
+    
+    return jsonResponse(results)
   } catch (error) {
-    return errorResponse(error)
+    console.error('Database query error:', error)
+    return jsonResponse([])
   }
 }

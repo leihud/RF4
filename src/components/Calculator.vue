@@ -69,7 +69,7 @@
             </template>
             <template v-else>
               <template v-if="selectedEquipmentMap[type]">
-                <span class="selected-name">{{ selectedEquipmentMap[type].equipmentName }}</span>
+                  <span class="selected-name">{{ selectedEquipmentMap[type].model || selectedEquipmentMap[type].equipmentName }}</span>
                 <template v-if="type === '鱼竿'">
                   <span class="selected-tension">
                     面板拉力:{{ selectedEquipmentMap[type].panelTension || selectedEquipmentMap[type].lockTension }} kN
@@ -164,11 +164,11 @@
             <div v-if="isDropdownOpen" class="dropdown-list">
               <div
                 v-for="equipment in filteredEquipment"
-                :key="equipment.equipmentName"
+                :key="equipment.model || equipment.equipmentName"
                 class="dropdown-item"
                 @click.stop="selectEquipment(equipment)"
               >
-                <span class="dropdown-name">{{ equipment.equipmentName }}</span>
+                <span class="dropdown-name">{{ equipment.model || equipment.equipmentName }}</span>
                 <span class="dropdown-tension">{{ equipment.panelTension }} kN</span>
                 <span class="dropdown-price">{{ equipment.price > 0 ? '¥' + equipment.price : '' }}</span>
               </div>
@@ -338,7 +338,10 @@ export default {
 
       if (this.debouncedSearchQuery.trim()) {
         const q = this.debouncedSearchQuery.toLowerCase()
-        filtered = filtered.filter(item => item.equipmentName.toLowerCase().includes(q))
+        filtered = filtered.filter(item => 
+          (item.equipmentName && item.equipmentName.toLowerCase().includes(q)) ||
+          (item.model && item.model.toLowerCase().includes(q))
+        )
       }
 
       const min = parseFloat(this.minTensionFilter) || 0
@@ -351,8 +354,8 @@ export default {
       return !!(this.selectedEquipmentMap['鱼竿'] && this.selectedEquipmentMap['渔轮'])
     },
     equipmentSummaryText() {
-      const rodName = this.selectedEquipmentMap['鱼竿']?.equipmentName || '未选择'
-      const reelName = this.selectedEquipmentMap['渔轮']?.equipmentName || '未选择'
+      const rodName = this.selectedEquipmentMap['鱼竿']?.model || this.selectedEquipmentMap['鱼竿']?.equipmentName || '未选择'
+      const reelName = this.selectedEquipmentMap['渔轮']?.model || this.selectedEquipmentMap['渔轮']?.equipmentName || '未选择'
       const mainLine = this.customEquipment['主线']
       const leader = this.customEquipment['引线']
       const fmt = (t) => (t.maxTension > 0 ? `${t.label}(${t.value.maxTension}kN)` : '未设置')
