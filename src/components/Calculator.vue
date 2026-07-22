@@ -468,19 +468,22 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e3f2fd;
 }
 
 h1 {
-  color: #42b983;
+  color: #1565c0;
+  font-size: 28px;
   margin: 0;
 }
 
 .compare-nav-btn {
-  padding: 8px 20px;
-  border: 2px solid #2196f3;
+  padding: 10px 24px;
+  border: 2px solid #1565c0;
   background-color: white;
-  color: #2196f3;
+  color: #1565c0;
   border-radius: 20px;
   cursor: pointer;
   font-size: 14px;
@@ -498,10 +501,10 @@ h1 {
 }
 
 .import-nav-btn {
-  padding: 8px 20px;
-  border: 2px solid #ff9800;
+  padding: 10px 24px;
+  border: 2px solid #1565c0;
   background-color: white;
-  color: #ff9800;
+  color: #1565c0;
   border-radius: 20px;
   cursor: pointer;
   font-size: 14px;
