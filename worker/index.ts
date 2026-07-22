@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 
 export interface Env {
-  DB: D1Database
+  DB: import('@cloudflare/workers-types').D1Database
 }
 
 const app = new Hono<{ Bindings: Env }>()
@@ -10,9 +10,12 @@ const app = new Hono<{ Bindings: Env }>()
 app.use('/api/*', cors())
 
 async function initDatabase(db: D1Database) {
-  const countResult = await db.prepare('SELECT COUNT(*) as count FROM equipment').first()
-  if (countResult && (countResult as any).count > 0) {
-    return
+  try {
+    const countResult = await db.prepare('SELECT COUNT(*) as count FROM equipment').first()
+    if (countResult && (countResult as any).count > 0) {
+      return
+    }
+  } catch {
   }
 
   await db.prepare(`
