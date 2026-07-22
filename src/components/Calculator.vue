@@ -1,5 +1,21 @@
 <template>
   <div class="app">
+    <div v-if="showDisclaimer" class="disclaimer-overlay" @click="closeDisclaimer">
+      <div class="disclaimer-modal" @click.stop>
+        <div class="disclaimer-header">
+          <h3>免责声明</h3>
+          <button class="disclaimer-close" @click="closeDisclaimer">×</button>
+        </div>
+        <div class="disclaimer-content">
+          <p>本网站提供的装备计算器及参数对比工具仅供个人使用，非商业盈利行为。</p>
+          <p>所有装备数据仅供参考，实际数值请以游戏内为准。</p>
+          <p>使用本网站即表示您同意上述条款。</p>
+        </div>
+        <div class="disclaimer-footer">
+          <button class="disclaimer-accept" @click="closeDisclaimer">我知道了</button>
+        </div>
+      </div>
+    </div>
     <div class="header">
       <h1>装备计算器</h1>
       <div class="header-buttons">
@@ -227,6 +243,7 @@ export default {
       equipmentData: [],
       dataLoadError: false,
       isLoading: false,
+      showDisclaimer: false,
       customEquipment: {
         '主线': { maxTension: 0, wear: 0 },
         '引线': { maxTension: 0, wear: 0 }
@@ -247,6 +264,7 @@ export default {
   mounted() {
     this.loadEquipmentData()
     document.addEventListener('click', this.handleClickOutside)
+    this.showDisclaimer = true
   },
   beforeUnmount() {
     document.removeEventListener('click', this.handleClickOutside)
@@ -437,6 +455,9 @@ export default {
     },
     goToImport() {
       this.$router.push('/import')
+    },
+    closeDisclaimer() {
+      this.showDisclaimer = false
     }
   }
 }
@@ -1202,5 +1223,100 @@ h2 {
   .tension-input {
     width: 45px;
   }
+}
+
+.disclaimer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.disclaimer-modal {
+  background-color: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.disclaimer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background-color: #e3f2fd;
+  border-bottom: 1px solid #bbdefb;
+}
+
+.disclaimer-header h3 {
+  margin: 0;
+  color: #1565c0;
+  font-size: 18px;
+}
+
+.disclaimer-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.disclaimer-close:hover {
+  color: #1565c0;
+}
+
+.disclaimer-content {
+  padding: 24px;
+}
+
+.disclaimer-content p {
+  margin: 0 0 12px 0;
+  color: #333;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.disclaimer-content p:last-child {
+  margin-bottom: 0;
+}
+
+.disclaimer-footer {
+  padding: 16px 24px;
+  background-color: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.disclaimer-accept {
+  padding: 10px 32px;
+  background-color: #1565c0;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.disclaimer-accept:hover {
+  background-color: #0d47a1;
 }
 </style>
