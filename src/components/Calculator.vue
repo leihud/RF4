@@ -617,13 +617,14 @@ h2 {
 .type-item {
   display: flex;
   align-items: center;
-  padding: 18px 25px;
+  padding: 12px 20px;
   border: 2px solid #ddd;
   background-color: white;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  gap: 20px;
+  gap: 12px;
+  flex-wrap: nowrap;
 }
 
 .type-item:hover {
@@ -645,10 +646,11 @@ h2 {
 
 .type-value {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 15px;
+  gap: 10px;
   flex: 1;
+  overflow: hidden;
 }
 
 .placeholder {
@@ -659,42 +661,47 @@ h2 {
 .selected-name {
   font-weight: bold;
   color: #2c3e50;
-  font-size: 14px;
-  min-width: 150px;
+  font-size: 13px;
+  min-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .selected-tension {
   color: #9b59b6;
-  margin-left: 10px;
-  padding: 4px 10px;
+  padding: 2px 8px;
   background-color: #f5f0fa;
   border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
 }
 
 .selected-price {
   color: #e67e22;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: bold;
+  white-space: nowrap;
 }
 
 .friction-input-wrapper {
   display: flex;
   align-items: center;
-  gap: 5px;
-  margin-left: 10px;
+  gap: 4px;
+  white-space: nowrap;
 }
 
 .friction-label {
-  font-size: 14px;
+  font-size: 12px;
   color: #666;
 }
 
 .friction-input {
-  width: 50px;
-  padding: 4px 8px;
+  width: 45px;
+  padding: 2px 6px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 12px;
   text-align: center;
 }
 
@@ -941,21 +948,21 @@ h2 {
 .wear-input-wrapper {
   display: flex;
   align-items: center;
-  gap: 5px;
-  margin-left: 10px;
+  gap: 4px;
+  white-space: nowrap;
 }
 
 .wear-label {
-  font-size: 14px;
+  font-size: 12px;
   color: #666;
 }
 
 .wear-input {
-  width: 50px;
-  padding: 4px 8px;
+  width: 45px;
+  padding: 2px 6px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 12px;
   text-align: center;
 }
 
