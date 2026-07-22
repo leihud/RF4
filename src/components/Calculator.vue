@@ -407,9 +407,13 @@ export default {
     async loadEquipmentData() {
       this.isLoading = true
       try {
-        const response = await fetch('/equipment.json')
+        const response = await fetch('/api/equipment')
         if (!response.ok) throw new Error(`HTTP ${response.status}`)
-        this.equipmentData = await response.json()
+        const data = await response.json()
+        this.equipmentData = data.map(item => ({
+          ...item,
+          maxTension: item.panelTension
+        }))
       } catch (error) {
         console.error('加载装备数据失败:', error)
         this.dataLoadError = true

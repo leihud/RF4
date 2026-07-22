@@ -8,14 +8,26 @@
     "build": "vite build",
     "preview": "vite preview",
     "data:equipment": "node readExcel.js",
-    "data:encyclopedia": "node readEncyclopedia.js"
+    "data:encyclopedia": "node readEncyclopedia.js",
+    "data:migrate": "node scripts/generate_migration.js",
+    "dev:worker": "wrangler dev",
+    "deploy": "wrangler deploy"
   },
-  "keywords": ["rf4", "fishing", "calculator"],
+  "keywords": [
+    "rf4",
+    "fishing",
+    "calculator"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.7",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "hono": "^4.12.31",
+    "sql.js": "^1.14.1",
     "vite": "^8.1.0",
+    "wrangler": "^4.113.0",
     "xlsx": "^0.18.5"
   },
   "dependencies": {

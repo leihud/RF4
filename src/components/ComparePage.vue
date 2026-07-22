@@ -108,6 +108,17 @@
               {{ formatCellValue(equipment, row) }}
             </div>
           </div>
+
+          <div v-for="row in costEffectivenessRows" :key="row.field" class="compare-row">
+            <div class="compare-cell compare-label-cell">{{ row.label }}</div>
+            <div
+              v-for="equipment in compareEquipmentList"
+              :key="getItemKey(equipment)"
+              :class="['compare-cell', { 'max-value': isBestCostEffectiveness(equipment, row.field) }]"
+            >
+              {{ formatCostEffectiveness(equipment, row.field) }}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -222,28 +233,60 @@ export default {
     currentCompareRows() {
       return COMPARE_ROWS[this.compareType] || []
     },
+    costEffectivenessRows() {
+      if (this.compareEquipmentList.length === 0) return []
+      if (this.compareType === 'rod') {
+        return [{ label: '强度性价比(每100银币)', field: 'strengthKg' }]
+      }
+      return [
+        { label: '锁轮拉力性价比(每100银币)', field: 'lockTension' },
+        { label: '摩擦制动力性价比(每100银币)', field: 'frictionForce' }
+      ]
+    },
     fieldMaxValues() {
       const result = {}
       for (const row of this.currentCompareRows) {
         if (!row.highlight) continue
         let max = -Infinity
         for (const eq of this.compareEquipmentList) {
-          const v = parseFloat(eq[row.field])
+          const v = this.extractNumber(eq[row.field])
           if (!Number.isNaN(v) && v > max) max = v
         }
         result[row.field] = max === -Infinity ? null : max
       }
       return result
+    },
+    costEffectivenessValues() {
+      const result = {}
+      const fields = this.compareType === 'rod' ? ['strengthKg'] : ['lockTension', 'frictionForce']
+      for (const field of fields) {
+        let max = -Infinity
+        for (const eq of this.compareEquipmentList) {
+          const price = this.extractNumber(eq.silverPrice)
+          const value = this.extractNumber(eq[field])
+          if (!Number.isNaN(price) && price > 0 && !Number.isNaN(value) && value > 0) {
+            const ce = (value / price) * 100
+            if (ce > max) max = ce
+          }
+        }
+        result[field] = max === -Infinity ? null : max
+      }
+      return result
     }
   },
   methods: {
+    extractNumber(str) {
+      if (str == null) return NaN
+      const match = String(str).match(/[\d.]+/)
+      return match ? parseFloat(match[0]) : NaN
+    },
     async loadData() {
       this.isLoading = true
       this.dataLoadError = false
       try {
         const [rodResponse, reelResponse] = await Promise.all([
-          fetch('/rod_compare.json'),
-          fetch('/reel_compare.json')
+          fetch('/api/rods'),
+          fetch('/api/reels')
         ])
         if (!rodResponse.ok || !reelResponse.ok) {
           throw new Error('装备对比数据加载失败')
@@ -283,7 +326,7 @@ export default {
     isFieldMax(equipment, field) {
       const max = this.fieldMaxValues[field]
       if (max === null || max === undefined) return false
-      const v = parseFloat(equipment[field])
+      const v = this.extractNumber(equipment[field])
       return !Number.isNaN(v) && v === max
     },
     formatValue(value, fallback = '-') {
@@ -308,6 +351,24 @@ export default {
     },
     goBack() {
       this.$router.push('/')
+    },
+    formatCostEffectiveness(equipment, field) {
+      const price = this.extractNumber(equipment.silverPrice)
+      const value = this.extractNumber(equipment[field])
+      if (Number.isNaN(price) || price <= 0 || Number.isNaN(value) || value <= 0) {
+        return '-'
+      }
+      return ((value / price) * 100).toFixed(4)
+    },
+    isBestCostEffectiveness(equipment, field) {
+      const max = this.costEffectivenessValues[field]
+      if (max === null || max === undefined) return false
+      const price = this.extractNumber(equipment.silverPrice)
+      const value = this.extractNumber(equipment[field])
+      if (Number.isNaN(price) || price <= 0 || Number.isNaN(value) || value <= 0) {
+        return false
+      }
+      return Math.abs(((value / price) * 100) - max) < 0.0001
     }
   }
 }
