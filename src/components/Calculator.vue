@@ -158,7 +158,7 @@
               />
               <span class="tension-filter-unit">kN</span>
             </div>
-            <div v-if="isDropdownOpen" class="dropdown-list" ref="dropdownListRef" @scroll="handleDropdownScroll">
+            <div v-if="isDropdownOpen" class="dropdown-list">
               <div
                 v-for="equipment in filteredEquipment"
                 :key="equipment.model || equipment.equipmentName"
@@ -170,12 +170,6 @@
               </div>
               <div v-if="filteredEquipment.length === 0" class="dropdown-empty">
                 未找到匹配的装备
-              </div>
-              <div v-if="isScrollLoading && filteredEquipment.length > 0" class="dropdown-loading">
-                加载中...
-              </div>
-              <div v-if="!isScrollLoading && !equipmentHasMore && filteredEquipment.length > 0" class="dropdown-no-more">
-                已加载全部
               </div>
             </div>
           </div>
@@ -201,10 +195,6 @@
         <div class="summary-row">
           <span class="summary-label">最小锁轮拉力限制:</span>
           <span class="summary-value">{{ formatTension(minTension) }} kN</span>
-        </div>
-        <div class="summary-row">
-          <span class="summary-label">装备总价值:</span>
-          <span class="summary-value">¥{{ equipmentTotalPrice }}</span>
         </div>
       </div>
     </div>
@@ -236,10 +226,7 @@ export default {
       selectedType: null,
       equipmentData: [],
       dataLoadError: false,
-      isInitialLoading: false,
-      isScrollLoading: false,
-      equipmentOffset: 0,
-      equipmentHasMore: true,
+      isLoading: false,
       customEquipment: {
         '主线': { maxTension: 0, wear: 0 },
         '引线': { maxTension: 0, wear: 0 }
@@ -352,13 +339,6 @@ export default {
         fmt({ label: '引线', value: leader })
       ].join(' + ')
     },
-    equipmentTotalPrice() {
-      let total = 0
-      for (const item of this.selectedEquipmentList) {
-        if (item.price > 0) total += item.price
-      }
-      return total
-    },
     minTension() {
       const tensions = []
       const rodT = this.actualPanelTensionMap['鱼竿']
@@ -384,25 +364,20 @@ export default {
       return SEARCHABLE_TYPES.includes(type)
     },
     async loadEquipmentData() {
-      this.equipmentOffset = 0
-      this.equipmentHasMore = true
       this.equipmentData = []
-      this.isInitialLoading = true
+      this.isLoading = true
       try {
-        const response = await fetch(`/api/equipment?limit=10&offset=${this.equipmentOffset}`)
+        const response = await fetch('/api/equipment')
         if (!response.ok) {
           const errorText = await response.text()
           console.error('API响应错误:', response.status, errorText)
           throw new Error(`HTTP ${response.status}: ${errorText}`)
         }
         const result = await response.json()
-        const newData = result.data.map(item => ({
+        this.equipmentData = result.map(item => ({
           ...item,
           maxTension: item.panelTension
         }))
-        this.equipmentData = [...this.equipmentData, ...newData]
-        this.equipmentOffset += newData.length
-        this.equipmentHasMore = result.hasMore || false
         console.log('装备数据加载成功:', this.equipmentData.length, '条')
       } catch (error) {
         console.error('加载装备数据失败:', error)
@@ -414,32 +389,7 @@ export default {
           { equipmentType: '引线', equipmentName: 'NINONG23', maxTension: 60 }
         ]
       } finally {
-        this.isInitialLoading = false
-      }
-    },
-    async loadMoreEquipment() {
-      if (!this.equipmentHasMore || this.isScrollLoading) return
-      this.isScrollLoading = true
-      try {
-        const response = await fetch(`/api/equipment?limit=10&offset=${this.equipmentOffset}`)
-        if (!response.ok) {
-          const errorText = await response.text()
-          console.error('API响应错误:', response.status, errorText)
-          throw new Error(`HTTP ${response.status}: ${errorText}`)
-        }
-        const result = await response.json()
-        const newData = result.data.map(item => ({
-          ...item,
-          maxTension: item.panelTension
-        }))
-        this.equipmentData = [...this.equipmentData, ...newData]
-        this.equipmentOffset += newData.length
-        this.equipmentHasMore = result.hasMore || false
-        console.log('装备数据加载成功:', this.equipmentData.length, '条')
-      } catch (error) {
-        console.error('加载装备数据失败:', error)
-      } finally {
-        this.isScrollLoading = false
+        this.isLoading = false
       }
     },
     calculateCustomActualTension(item) {
@@ -487,12 +437,6 @@ export default {
     },
     goToImport() {
       this.$router.push('/import')
-    },
-    handleDropdownScroll(event) {
-      const target = event.target
-      if (target.scrollTop + target.clientHeight >= target.scrollHeight - 50) {
-        this.loadMoreEquipment()
-      }
     }
   }
 }
@@ -500,9 +444,9 @@ export default {
 
 <style scoped>
 .app {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 30px;
   width: 100%;
 }
 
@@ -659,13 +603,13 @@ h2 {
 .type-item {
   display: flex;
   align-items: center;
-  padding: 12px 20px;
+  padding: 16px 24px;
   border: 2px solid #ddd;
   background-color: white;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  gap: 12px;
+  gap: 20px;
   flex-wrap: nowrap;
 }
 
@@ -690,7 +634,7 @@ h2 {
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
-  gap: 10px;
+  gap: 16px;
   flex: 1;
   overflow: hidden;
 }
@@ -703,8 +647,9 @@ h2 {
 .selected-name {
   font-weight: bold;
   color: #2c3e50;
-  font-size: 13px;
-  min-width: 140px;
+  font-size: 14px;
+  min-width: 200px;
+  max-width: 350px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -712,10 +657,10 @@ h2 {
 
 .selected-tension {
   color: #9b59b6;
-  padding: 2px 8px;
+  padding: 4px 12px;
   background-color: #f5f0fa;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 13px;
   white-space: nowrap;
 }
 
@@ -739,11 +684,11 @@ h2 {
 }
 
 .friction-input {
-  width: 45px;
-  padding: 2px 6px;
+  width: 60px;
+  padding: 4px 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 13px;
   text-align: center;
 }
 
@@ -1014,11 +959,11 @@ h2 {
 }
 
 .wear-input {
-  width: 45px;
-  padding: 2px 6px;
+  width: 60px;
+  padding: 4px 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 13px;
   text-align: center;
 }
 
