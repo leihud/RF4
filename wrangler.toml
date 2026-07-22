@@ -1,5 +1,4 @@
 name = "rf4-worker"
-main = "./worker/index.ts"
 compatibility_date = "2025-07-01"
 
 [[d1_databases]]
@@ -10,3 +9,7 @@ migrations_dir = "./migrations"
 
 [dev]
 port = 8787
+
+[pages]
+build_command = "npm run build"
+dest_dir = "dist"
