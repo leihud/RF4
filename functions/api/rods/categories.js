@@ -1,10 +1,8 @@
 export async function onRequestGet(context) {
-  const response = await fetch('https://raw.githubusercontent.com/leihud/RF4/main/public/rod_compare.json')
-  const data = await response.json()
+  const { env } = context
   
-  const categories = [...new Set(data.filter(item => item.category).map(item => item.category))].sort()
-  
-  return new Response(JSON.stringify(categories), {
-    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+  const result = await env.DB.prepare('SELECT DISTINCT category FROM rods WHERE category IS NOT NULL ORDER BY category').all()
+  return new Response(JSON.stringify(result.results.map(r => r.category)), {
+    headers: { 'Content-Type': 'application/json' }
   })
 }

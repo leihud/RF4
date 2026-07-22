@@ -1,21 +1,19 @@
 export async function onRequestGet(context) {
-  const { request } = context
+  const { request, env } = context
   const url = new URL(request.url)
   const q = url.searchParams.get('q') || ''
   const type = url.searchParams.get('type')
   
-  const response = await fetch('https://raw.githubusercontent.com/leihud/RF4/main/public/equipment.json')
-  let data = await response.json()
+  let query = 'SELECT * FROM equipment WHERE equipmentName LIKE ?'
+  const params = [`%${q}%`]
   
-  data = data.filter(item => {
-    const matchName = item.equipmentName && item.equipmentName.includes(q)
-    if (type) {
-      return matchName && item.equipmentType === type
-    }
-    return matchName
-  })
+  if (type) {
+    query += ' AND equipmentType = ?'
+    params.push(type)
+  }
   
-  return new Response(JSON.stringify(data), {
-    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+  const result = await env.DB.prepare(query).bind(...params).all()
+  return new Response(JSON.stringify(result.results), {
+    headers: { 'Content-Type': 'application/json' }
   })
 }
