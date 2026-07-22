@@ -161,7 +161,7 @@
               />
               <span class="tension-filter-unit">kN</span>
             </div>
-            <div v-if="isDropdownOpen" class="dropdown-list">
+            <div v-if="isDropdownOpen" class="dropdown-list" ref="dropdownListRef" @scroll="handleDropdownScroll">
               <div
                 v-for="equipment in filteredEquipment"
                 :key="equipment.model || equipment.equipmentName"
@@ -174,6 +174,12 @@
               </div>
               <div v-if="filteredEquipment.length === 0" class="dropdown-empty">
                 未找到匹配的装备
+              </div>
+              <div v-if="isLoading && filteredEquipment.length > 0" class="dropdown-loading">
+                加载中...
+              </div>
+              <div v-if="!isLoading && !equipmentHasMore && filteredEquipment.length > 0" class="dropdown-no-more">
+                已加载全部
               </div>
             </div>
           </div>
@@ -235,13 +241,15 @@ export default {
       equipmentData: [],
       dataLoadError: false,
       isLoading: false,
+      equipmentOffset: 0,
+      equipmentHasMore: true,
       customEquipment: {
         '主线': { maxTension: 0, wear: 0 },
         '引线': { maxTension: 0, wear: 0 }
       },
       friction: DEFAULT_FRICTION,
       selectedEquipmentList: [],
-      calculationRule: '',
+      calculationRule: CALC_RULES.GUIDE,
       searchQuery: '',
       debouncedSearchQuery: '',
       isDropdownOpen: false,
@@ -379,20 +387,30 @@ export default {
       return SEARCHABLE_TYPES.includes(type)
     },
     async loadEquipmentData() {
+      this.equipmentOffset = 0
+      this.equipmentHasMore = true
+      this.equipmentData = []
+      await this.loadMoreEquipment()
+    },
+    async loadMoreEquipment() {
+      if (!this.equipmentHasMore || this.isLoading) return
       this.isLoading = true
       try {
-        const response = await fetch('/api/equipment')
+        const response = await fetch(`/api/equipment?limit=10&offset=${this.equipmentOffset}`)
         if (!response.ok) {
           const errorText = await response.text()
           console.error('API响应错误:', response.status, errorText)
           throw new Error(`HTTP ${response.status}: ${errorText}`)
         }
-        const data = await response.json()
-        console.log('装备数据加载成功:', data.length, '条')
-        this.equipmentData = data.map(item => ({
+        const result = await response.json()
+        const newData = result.data.map(item => ({
           ...item,
           maxTension: item.panelTension
         }))
+        this.equipmentData = [...this.equipmentData, ...newData]
+        this.equipmentOffset += newData.length
+        this.equipmentHasMore = result.hasMore || false
+        console.log('装备数据加载成功:', this.equipmentData.length, '条')
       } catch (error) {
         console.error('加载装备数据失败:', error)
         this.dataLoadError = true
@@ -451,6 +469,12 @@ export default {
     },
     goToImport() {
       this.$router.push('/import')
+    },
+    handleDropdownScroll(event) {
+      const target = event.target
+      if (target.scrollTop + target.clientHeight >= target.scrollHeight - 50) {
+        this.loadMoreEquipment()
+      }
     }
   }
 }
@@ -943,6 +967,20 @@ h2 {
   text-align: center;
   color: #999;
   font-size: 14px;
+}
+
+.dropdown-loading {
+  padding: 10px;
+  text-align: center;
+  color: #1565c0;
+  font-size: 13px;
+}
+
+.dropdown-no-more {
+  padding: 10px;
+  text-align: center;
+  color: #999;
+  font-size: 13px;
 }
 
 .wear-input-wrapper {
