@@ -408,8 +408,13 @@ export default {
       this.isLoading = true
       try {
         const response = await fetch('/api/equipment')
-        if (!response.ok) throw new Error(`HTTP ${response.status}`)
+        if (!response.ok) {
+          const errorText = await response.text()
+          console.error('API响应错误:', response.status, errorText)
+          throw new Error(`HTTP ${response.status}: ${errorText}`)
+        }
         const data = await response.json()
+        console.log('装备数据加载成功:', data.length, '条')
         this.equipmentData = data.map(item => ({
           ...item,
           maxTension: item.panelTension

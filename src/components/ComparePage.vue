@@ -288,11 +288,19 @@ export default {
           fetch('/api/rods'),
           fetch('/api/reels')
         ])
-        if (!rodResponse.ok || !reelResponse.ok) {
-          throw new Error('装备对比数据加载失败')
+        if (!rodResponse.ok) {
+          const errorText = await rodResponse.text()
+          console.error('鱼竿API响应错误:', rodResponse.status, errorText)
+          throw new Error(`鱼竿API HTTP ${rodResponse.status}: ${errorText}`)
+        }
+        if (!reelResponse.ok) {
+          const errorText = await reelResponse.text()
+          console.error('渔轮API响应错误:', reelResponse.status, errorText)
+          throw new Error(`渔轮API HTTP ${reelResponse.status}: ${errorText}`)
         }
         this.rodData = await rodResponse.json()
         this.reelData = await reelResponse.json()
+        console.log('装备对比数据加载成功:', this.rodData.length, '条鱼竿,', this.reelData.length, '条渔轮')
       } catch (error) {
         console.error('加载数据失败:', error)
         this.dataLoadError = true
