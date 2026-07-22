@@ -22,7 +22,7 @@
     </div>
 
     <div v-if="dataLoadError" class="rule-warning" style="background-color: #ffebee; color: #c62828;">
-      装备数据加载失败,已使用内置示例数据,请检查 public/equipment.json
+      装备数据加载失败
     </div>
 
     <div v-if="isLoading" class="loading-wrapper">
