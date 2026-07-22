@@ -212,6 +212,21 @@
           <span class="summary-label">最小锁轮拉力限制:</span>
           <span class="summary-value">{{ formatTension(minTension) }} kN</span>
         </div>
+        <div v-for="item in selectedEquipmentList" :key="item.equipmentType" class="summary-row price-row">
+          <span class="summary-label">{{ item.equipmentType }}价格:</span>
+          <span class="summary-value">
+            <span v-if="item.silverPrice" class="silver-price">💰{{ item.silverPrice }}</span>
+            <span v-if="item.goldPrice" class="gold-price">💰💰{{ item.goldPrice }}</span>
+            <span v-if="!item.silverPrice && !item.goldPrice">无</span>
+          </span>
+        </div>
+        <div class="summary-row total-price-row">
+          <span class="summary-label">总价格:</span>
+          <span class="summary-value">
+            <span v-if="totalSilverPrice" class="silver-price">💰{{ totalSilverPrice }}</span>
+            <span v-if="totalGoldPrice" class="gold-price">💰💰{{ totalGoldPrice }}</span>
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -356,6 +371,18 @@ export default {
         fmt({ label: '主线', value: mainLine }),
         fmt({ label: '引线', value: leader })
       ].join(' + ')
+    },
+    totalSilverPrice() {
+      return this.selectedEquipmentList.reduce((sum, item) => {
+        const price = parseFloat(item.silverPrice) || 0
+        return sum + price
+      }, 0)
+    },
+    totalGoldPrice() {
+      return this.selectedEquipmentList.reduce((sum, item) => {
+        const price = parseFloat(item.goldPrice) || 0
+        return sum + price
+      }, 0)
     },
     minTension() {
       const tensions = []
@@ -761,6 +788,34 @@ h2 {
   font-size: 16px;
   flex: 1;
   text-align: right;
+}
+
+.price-row {
+  background-color: #f8fafc;
+}
+
+.total-price-row {
+  background-color: #fffbeb;
+  font-size: 18px;
+}
+
+.total-price-row .summary-label {
+  font-size: 18px;
+  color: #d97706;
+}
+
+.total-price-row .summary-value {
+  font-size: 18px;
+  color: #d97706;
+}
+
+.silver-price {
+  margin-right: 12px;
+  color: #94a3b8;
+}
+
+.gold-price {
+  color: #eab308;
 }
 
 .custom-input-group {
