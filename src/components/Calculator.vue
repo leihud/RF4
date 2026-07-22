@@ -28,7 +28,7 @@
       装备数据加载失败
     </div>
 
-    <div v-if="isLoading" class="loading-wrapper">
+    <div v-if="isInitialLoading && equipmentData.length === 0" class="loading-wrapper">
       <div class="loading-spinner"></div>
       <span class="loading-text">正在加载装备数据...</span>
     </div>
@@ -171,10 +171,10 @@
               <div v-if="filteredEquipment.length === 0" class="dropdown-empty">
                 未找到匹配的装备
               </div>
-              <div v-if="isLoading && filteredEquipment.length > 0" class="dropdown-loading">
+              <div v-if="isScrollLoading && filteredEquipment.length > 0" class="dropdown-loading">
                 加载中...
               </div>
-              <div v-if="!isLoading && !equipmentHasMore && filteredEquipment.length > 0" class="dropdown-no-more">
+              <div v-if="!isScrollLoading && !equipmentHasMore && filteredEquipment.length > 0" class="dropdown-no-more">
                 已加载全部
               </div>
             </div>
@@ -236,7 +236,8 @@ export default {
       selectedType: null,
       equipmentData: [],
       dataLoadError: false,
-      isLoading: false,
+      isInitialLoading: false,
+      isScrollLoading: false,
       equipmentOffset: 0,
       equipmentHasMore: true,
       customEquipment: {
@@ -386,11 +387,7 @@ export default {
       this.equipmentOffset = 0
       this.equipmentHasMore = true
       this.equipmentData = []
-      await this.loadMoreEquipment()
-    },
-    async loadMoreEquipment() {
-      if (!this.equipmentHasMore || this.isLoading) return
-      this.isLoading = true
+      this.isInitialLoading = true
       try {
         const response = await fetch(`/api/equipment?limit=10&offset=${this.equipmentOffset}`)
         if (!response.ok) {
@@ -417,7 +414,32 @@ export default {
           { equipmentType: '引线', equipmentName: 'NINONG23', maxTension: 60 }
         ]
       } finally {
-        this.isLoading = false
+        this.isInitialLoading = false
+      }
+    },
+    async loadMoreEquipment() {
+      if (!this.equipmentHasMore || this.isScrollLoading) return
+      this.isScrollLoading = true
+      try {
+        const response = await fetch(`/api/equipment?limit=10&offset=${this.equipmentOffset}`)
+        if (!response.ok) {
+          const errorText = await response.text()
+          console.error('API响应错误:', response.status, errorText)
+          throw new Error(`HTTP ${response.status}: ${errorText}`)
+        }
+        const result = await response.json()
+        const newData = result.data.map(item => ({
+          ...item,
+          maxTension: item.panelTension
+        }))
+        this.equipmentData = [...this.equipmentData, ...newData]
+        this.equipmentOffset += newData.length
+        this.equipmentHasMore = result.hasMore || false
+        console.log('装备数据加载成功:', this.equipmentData.length, '条')
+      } catch (error) {
+        console.error('加载装备数据失败:', error)
+      } finally {
+        this.isScrollLoading = false
       }
     },
     calculateCustomActualTension(item) {
@@ -936,8 +958,8 @@ h2 {
   font-size: 14px;
   color: #2c3e50;
   overflow: hidden;
-  white-space: normal;
-  word-break: break-all;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .dropdown-tension {

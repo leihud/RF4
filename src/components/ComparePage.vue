@@ -34,7 +34,7 @@
       </div>
     </div>
 
-    <div v-if="isLoading" class="loading-wrapper">
+    <div v-if="isInitialLoading && rodData.length === 0 && reelData.length === 0" class="loading-wrapper">
       <div class="loading-spinner"></div>
       <span class="loading-text">正在加载装备数据...</span>
     </div>
@@ -44,7 +44,7 @@
       <span class="error-text">装备对比数据加载失败，请刷新页面重试</span>
     </div>
 
-    <div v-if="!isLoading && !dataLoadError" class="compare-content">
+    <div v-if="!isInitialLoading && !dataLoadError" class="compare-content">
       <div class="equipment-list">
         <h3>装备列表(点击添加到对比)</h3>
         <div class="list-container" @scroll="handleListScroll">
@@ -66,10 +66,10 @@
           <div v-if="filteredEquipment.length === 0" class="list-empty">
             未找到匹配的装备
           </div>
-          <div v-if="isLoading" class="list-loading">
+          <div v-if="isScrollLoading" class="list-loading">
             加载中...
           </div>
-          <div v-if="!isLoading && !hasMoreData && filteredEquipment.length > 0" class="list-no-more">
+          <div v-if="!isScrollLoading && !hasMoreData && filteredEquipment.length > 0" class="list-no-more">
             已加载全部
           </div>
         </div>
@@ -193,7 +193,8 @@ export default {
       rodData: [],
       reelData: [],
       compareEquipmentList: [],
-      isLoading: false,
+      isInitialLoading: false,
+      isScrollLoading: false,
       dataLoadError: false,
       searchTimeout: null,
       rodOffset: 0,
@@ -296,11 +297,7 @@ export default {
       this.reelHasMore = true
       this.rodData = []
       this.reelData = []
-      await this.loadMoreData()
-    },
-    async loadMoreData() {
-      if (this.isLoading) return
-      this.isLoading = true
+      this.isInitialLoading = true
       this.dataLoadError = false
       try {
         const requests = []
@@ -345,7 +342,55 @@ export default {
         console.error('加载数据失败:', error)
         this.dataLoadError = true
       } finally {
-        this.isLoading = false
+        this.isInitialLoading = false
+      }
+    },
+    async loadMoreData() {
+      if (this.isScrollLoading) return
+      this.isScrollLoading = true
+      try {
+        const requests = []
+        if (this.rodHasMore) {
+          requests.push(fetch(`/api/rods?limit=10&offset=${this.rodOffset}`))
+        }
+        if (this.reelHasMore) {
+          requests.push(fetch(`/api/reels?limit=10&offset=${this.reelOffset}`))
+        }
+        
+        const responses = await Promise.all(requests)
+        let index = 0
+        
+        if (this.rodHasMore) {
+          const rodResponse = responses[index++]
+          if (!rodResponse.ok) {
+            const errorText = await rodResponse.text()
+            console.error('鱼竿API响应错误:', rodResponse.status, errorText)
+            throw new Error(`鱼竿API HTTP ${rodResponse.status}: ${errorText}`)
+          }
+          const rodResult = await rodResponse.json()
+          this.rodData = [...this.rodData, ...rodResult.data]
+          this.rodOffset += rodResult.data.length
+          this.rodHasMore = rodResult.hasMore || false
+        }
+        
+        if (this.reelHasMore) {
+          const reelResponse = responses[index++]
+          if (!reelResponse.ok) {
+            const errorText = await reelResponse.text()
+            console.error('渔轮API响应错误:', reelResponse.status, errorText)
+            throw new Error(`渔轮API HTTP ${reelResponse.status}: ${errorText}`)
+          }
+          const reelResult = await reelResponse.json()
+          this.reelData = [...this.reelData, ...reelResult.data]
+          this.reelOffset += reelResult.data.length
+          this.reelHasMore = reelResult.hasMore || false
+        }
+        
+        console.log('装备对比数据加载成功:', this.rodData.length, '条鱼竿,', this.reelData.length, '条渔轮')
+      } catch (error) {
+        console.error('加载数据失败:', error)
+      } finally {
+        this.isScrollLoading = false
       }
     },
     switchType(type) {
