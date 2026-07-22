@@ -1,27 +1,25 @@
 export async function onRequestGet(context) {
-  const { request, env } = context
+  const { request } = context
   const url = new URL(request.url)
   const category = url.searchParams.get('category')
-  const q = url.searchParams.get('q')
+  const q = url.searchParams.get('q') || ''
   
-  let query = 'SELECT * FROM rods'
-  const params = []
+  const response = await fetch('https://raw.githubusercontent.com/leihud/RF4/main/public/rod_compare.json')
+  let data = await response.json()
   
   if (category) {
-    query += ' WHERE category = ?'
-    params.push(category)
+    data = data.filter(item => item.category === category)
   }
   
-  if (q && !category) {
-    query += ' WHERE model LIKE ? OR equipmentName LIKE ?'
-    params.push(`%${q}%`, `%${q}%`)
-  } else if (q && category) {
-    query += ' AND (model LIKE ? OR equipmentName LIKE ?)'
-    params.push(`%${q}%`, `%${q}%`)
+  if (q) {
+    data = data.filter(item => {
+      const matchModel = item.model && item.model.includes(q)
+      const matchName = item.equipmentName && item.equipmentName.includes(q)
+      return matchModel || matchName
+    })
   }
   
-  const result = await env.DB.prepare(query).bind(...params).all()
-  return new Response(JSON.stringify(result.results), {
-    headers: { 'Content-Type': 'application/json' }
+  return new Response(JSON.stringify(data), {
+    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
   })
 }

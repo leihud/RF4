@@ -1,18 +1,16 @@
 export async function onRequestGet(context) {
-  const { request, env } = context
+  const { request } = context
   const url = new URL(request.url)
   const type = url.searchParams.get('type')
   
-  let query = 'SELECT * FROM equipment'
-  const params = []
+  const response = await fetch('https://raw.githubusercontent.com/leihud/RF4/main/public/equipment.json')
+  let data = await response.json()
   
   if (type) {
-    query += ' WHERE equipmentType = ?'
-    params.push(type)
+    data = data.filter(item => item.equipmentType === type)
   }
   
-  const result = await env.DB.prepare(query).bind(...params).all()
-  return new Response(JSON.stringify(result.results), {
-    headers: { 'Content-Type': 'application/json' }
+  return new Response(JSON.stringify(data), {
+    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
   })
 }
