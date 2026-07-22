@@ -1,7 +1,7 @@
 <template>
   <div class="compare-page">
     <div class="compare-header">
-      <h1>装备参数对比，个人使用非盈利商业行为</h1>
+      <h1>参数对比</h1>
       <button class="back-btn" @click="goBack">返回计算器</button>
     </div>
 

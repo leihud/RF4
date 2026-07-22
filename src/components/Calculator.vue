@@ -1,9 +1,9 @@
 <template>
   <div class="app">
     <div class="header">
-      <h1>装备计算器(个人使用非盈利商业行为)</h1>
+      <h1>装备计算器</h1>
       <div class="header-buttons">
-        <button class="compare-nav-btn" @click="goToCompare">装备参数对比</button>
+        <button class="compare-nav-btn" @click="goToCompare">参数对比</button>
         <button class="import-nav-btn" @click="goToImport">数据导入</button>
       </div>
     </div>
