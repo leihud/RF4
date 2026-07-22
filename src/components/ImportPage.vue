@@ -117,7 +117,7 @@
 </template>
 
 <script>
-import XLSX from 'xlsx'
+import * as XLSX from 'xlsx'
 
 const ROD_FIELD_MAP = {
   '装备名称': 'equipmentName',
