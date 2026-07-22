@@ -156,25 +156,12 @@
               />
               <span class="search-icon">🔍</span>
             </div>
-            <div v-if="isDropdownOpen" class="tension-filter-wrapper">
-              <input
-                type="number"
-                class="tension-filter-input"
-                v-model="minTensionFilter"
-                placeholder="最小拉力"
-                min="0"
-              />
-              <span class="tension-filter-separator">-</span>
-              <input
-                type="number"
-                class="tension-filter-input"
-                v-model="maxTensionFilter"
-                placeholder="最大拉力"
-                min="0"
-              />
-              <span class="tension-filter-unit">kN</span>
+            <div v-if="isDropdownOpen && categoryOptions.length > 0" class="category-filter-header">
+              <button class="category-toggle-btn" @click.stop="showCategoryFilter = !showCategoryFilter">
+                {{ showCategoryFilter ? '▼' : '▲' }} 装备类型
+              </button>
             </div>
-            <div v-if="isDropdownOpen && categoryOptions.length > 0" class="category-filter-wrapper">
+            <div v-if="isDropdownOpen && showCategoryFilter && categoryOptions.length > 0" class="category-filter-wrapper">
               <button
                 v-for="cat in categoryOptions"
                 :key="cat"
@@ -279,9 +266,8 @@ export default {
       searchQuery: '',
       debouncedSearchQuery: '',
       isDropdownOpen: false,
-      minTensionFilter: '',
-      maxTensionFilter: '',
       selectedCategory: '',
+      showCategoryFilter: false,
       searchTimeout: null,
       CALC_RULE_OPTIONS,
       formatTension
@@ -369,10 +355,6 @@ export default {
           (item.model && item.model.toLowerCase().includes(q))
         )
       }
-
-      const min = parseFloat(this.minTensionFilter) || 0
-      const max = parseFloat(this.maxTensionFilter) || Infinity
-      filtered = filtered.filter(item => item.panelTension >= min && item.panelTension <= max)
 
       return [...filtered].sort((a, b) => a.panelTension - b.panelTension)
     },
@@ -482,8 +464,6 @@ export default {
         this.selectedEquipmentList.push(next)
       }
       this.searchQuery = ''
-      this.minTensionFilter = ''
-      this.maxTensionFilter = ''
       this.isDropdownOpen = false
       this.selectedType = null
     },
@@ -925,36 +905,25 @@ h2 {
   font-size: 16px;
 }
 
-.tension-filter-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 10px 15px;
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #eee;
+.category-filter-header {
+  padding: 8px 15px;
+  background-color: #f0fdf4;
+  border-bottom: 1px solid #dcfce7;
 }
 
-.tension-filter-input {
-  width: 80px;
-  padding: 4px 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+.category-toggle-btn {
+  padding: 4px 12px;
+  border: none;
+  background-color: transparent;
+  color: #16a34a;
   font-size: 13px;
-  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.tension-filter-input:focus {
-  outline: none;
-  border-color: #42b983;
-}
-
-.tension-filter-separator {
-  color: #999;
-}
-
-.tension-filter-unit {
-  font-size: 13px;
-  color: #666;
+.category-toggle-btn:hover {
+  color: #22c55e;
 }
 
 .category-filter-wrapper {
