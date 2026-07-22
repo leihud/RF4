@@ -55,7 +55,7 @@
                   min="0"
                 />
                 <span class="input-unit">kN</span>
-                <span class="input-label">磨损度:</span>
+                <span class="input-label">磨损:</span>
                 <input
                   type="number"
                   class="wear-input"
@@ -75,22 +75,22 @@
                   <span class="selected-name">{{ selectedEquipmentMap[type].model || selectedEquipmentMap[type].equipmentName }}</span>
                 <template v-if="type === '鱼竿'">
                   <span class="selected-tension">
-                    面板拉力:{{ selectedEquipmentMap[type].panelTension || selectedEquipmentMap[type].lockTension }} kN
+                    拉力:{{ selectedEquipmentMap[type].panelTension || selectedEquipmentMap[type].lockTension }} kN
                   </span>
                 </template>
                 <template v-else>
                   <span class="selected-tension">
-                    面板拉力:{{ selectedEquipmentMap[type].panelTension || selectedEquipmentMap[type].lockTension || 0 }} kN
+                    面板:{{ selectedEquipmentMap[type].panelTension || selectedEquipmentMap[type].lockTension || 0 }} kN
                   </span>
                   <span class="selected-tension">
-                    锁轮拉力:{{ selectedEquipmentMap[type].lockTension }} kN
+                    锁轮:{{ selectedEquipmentMap[type].lockTension }} kN
                   </span>
                   <span v-if="selectedEquipmentMap[type].price > 0" class="selected-price">
                     价格:¥{{ selectedEquipmentMap[type].price }}
                   </span>
                 </template>
                 <div class="wear-input-wrapper">
-                  <span class="wear-label">磨损度:</span>
+                  <span class="wear-label">磨损:</span>
                   <input
                     type="number"
                     class="wear-input"
@@ -102,7 +102,7 @@
                   <span class="wear-unit">%</span>
                 </div>
                 <span v-if="type === '渔轮'" class="friction-input-wrapper">
-                  <span class="friction-label">摩擦值:</span>
+                  <span class="friction-label">摩擦:</span>
                   <input
                     type="number"
                     class="friction-input"
@@ -115,13 +115,13 @@
                   <span class="friction-unit">{{ frictionPercent }}%</span>
                 </span>
                 <span v-if="type === '鱼竿'" class="actual-tension">
-                  实际面板拉力:{{ formatTension(actualPanelTensionMap[type]) }} kN
+                  实际拉力:{{ formatTension(actualPanelTensionMap[type]) }} kN
                 </span>
                 <span v-if="type === '渔轮'" class="actual-panel-tension">
-                  实际面板拉力:{{ formatTension(actualPanelTensionMap[type]) }} kN
+                  实际拉力:{{ formatTension(actualPanelTensionMap[type]) }} kN
                 </span>
                 <span v-if="type === '渔轮'" class="actual-tension">
-                  实际锁轮拉力:{{ formatTension(actualLockTensionMap[type]) }} kN
+                  实际锁轮:{{ formatTension(actualLockTensionMap[type]) }} kN
                 </span>
                 <button class="clear-btn" @click.stop="clearEquipmentByType(type)">×</button>
               </template>
