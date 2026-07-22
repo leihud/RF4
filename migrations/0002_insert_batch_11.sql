@@ -1,0 +1,56 @@
+-- Migration: Insert batch 11
+
+BEGIN TRANSACTION;
+
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Versus JF70H', 0, 39.5, 3180.06);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Versus JF77XH', 0, 40.5, 3298.34);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Legend JXF70H', 0, 46, 5652.02);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Legend JXF70XH', 0, 49.3, 5652.02);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Barracuda JB JSF60MH', 0, 60.8, 5702.32);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Barracuda JB JSF68H', 0, 61.9, 6193.38);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Barracuda JB JSF68XH', 0, 62.4, 6193.38);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Muskie Strike JSF60H', 0, 49.7, 8171.54);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Muskie Strike JSF60XH', 0, 54.1, 8171.54);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Muskie Strike JSXF68XH', 0, 48.2, 8549.17);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Advent J-F68H', 0, 50, 8194.03);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Advent J-F68HH', 0, 52, 8194.03);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Advent J-F70HHH', 0, 54, 8571.75);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ultima J-F68MH', 0, 72, 18661.81);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ultima J-F70H', 0, 77, 19476.01);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ultima J-F71HH', 0, 84, 20157.27);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ultima J-F72HHH', 0, 88, 21115.14);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Sensiv Bolognese II SB13', 0, 3.8, 59);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Sensiv Bolognese II SB16', 0, 3.8, 65);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Sensiv Bolognese II SB23', 0, 3.8, 71);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Siren Bolognese SB13', 0, 5.3, 133);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Siren Bolognese SB20', 0, 5.3, 148);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'S-Eagle Bolognese SB15', 0, 6.2, 175);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'S-Eagle Bolognese SB20', 0, 6.2, 184);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'S-Eagle Bolognese SB25', 0, 6.2, 199);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'KingMaster Bolognese KB16', 0, 6.2, 352);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'KingMaster Bolognese KB20', 0, 6.2, 364);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'KingMaster Bolognese KB26', 0, 6.2, 385);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Pomor Ryazanka SK6', 0, 9.1, 995);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Linear Bolognese 400', 0, 8.1, 455);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Linear Bolognese 500', 0, 8.1, 477);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Linear Bolognese 600', 0, 8.1, 490);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Linear Bolognese 700', 0, 8.1, 511);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Genius Bolognese 400', 0, 4.9, 642);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Genius Bolognese 600', 0, 4.9, 685);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Fortuna Bolognese 500', 0, 4.7, 817);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Fortuna Bolognese 600', 0, 4.7, 859);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Fortuna Bolognese 700', 0, 4.7, 899);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Mechta Bolognese 5', 0, 10.5, 980);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Mechta Bolognese 6', 0, 10.5, 1078);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Mechta Bolognese 7', 0, 10.5, 1099);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Pomor Ryazanka SKS', 0, 16, 1589);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Model One Bolognese 500', 0, 10.3, 1277);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Model One Bolognese 700', 0, 10.3, 1460);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ethnic Bolognese 4', 0, 14, 1798);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ethnic Bolognese 6', 0, 14, 1919);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ethnic Bolognese 8', 0, 14, 2129);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Heritage BL 500', 0, 8, 1799);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Heritage BL 600', 0, 8, 1864);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Heritage BL 700', 0, 8, 1961);
+
+COMMIT;

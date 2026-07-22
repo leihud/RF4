@@ -1,0 +1,56 @@
+-- Migration: Insert batch 20
+
+BEGIN TRANSACTION;
+
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', '【停产】Azimut 10K-7Y', 0, 55.7, 27.2);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Azimut Blue 4000', 37.56, 15.4, 4698.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Azimut Blue 6000', 43.68, 19, 6899.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Azimut Blue 8000', 49.63, 23.6, 15899.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Azimut Blue 10000', 55, 27.2, 21599.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', '【停产】Bestia 1000', 10, 7.2, 5486.65);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', '【停产】Bestia 2000', 22.49, 9, 6685.14);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', '【停产】Bestia 3000', 42.44, 17.2, 7552.79);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', '【停产】Bestia 4000', 45.9, 18.1, 8099.9);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', '【停产】Bestia 6000', 55.5, 19, 9117);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', '【停产】Bestia 8000', 68, 24.5, 16604);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Bird 2 20S', 13.24, 3.6, 798.4);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Bird 2 GS 10S', 5.52, 3.4, 559.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Bird 2 GS 30S', 18.5, 8.2, 869.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Bird 2 GSX 10S', 5.91, 4, 852.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Bird 2 GSX 20S', 13.13, 5, 1511);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Bird 2 GSX 30S', 16.57, 8.6, 1098.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Bird 2 GSX 40S', 17.94, 9.5, 1373.9);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Caliber 80 SLC', 37.74, 17.2, 5312.5);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Caliber HSV 80 SLC', 30.24, 15.4, 2884.7);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Chronica 6000', 0, 72.1, 19);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Commandor 2 20S', 10, 6, 1980);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Commandor 2 30S', 18.6, 10.8, 1498.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Commandor 2 40S', 30.12, 12, 1698.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Commandor 2 60S', 30.12, 13.4, 1949.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Commandor GS 40S', 23.71, 12.7, 2610.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Commandor GS 60S', 36.31, 14.5, 3198.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Conquest II 2000s 停产', 13.54, 5.5, 1590.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Conquest II 4000s 停产', 29.9, 12.7, 2290.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Corsair 10S', 7.29, 4.8, 1498.5);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Corsair 20S', 17.62, 6.1, 2098.5);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Corsair 30S', 22.04, 10.8, 1919.6);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Dragon 30s', 6.72, 5.8, 362.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Dragon 40s', 9.95, 5.8, 362.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'EasySpin 1000s', 5.12, 3.2, 399);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Element 1000', 4, 2, 129);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Element 2000', 5.79, 3.6, 129);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Element 3000', 7.96, 5.4, 249);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Element 4000', 9.53, 5.4, 249);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Element PRO 1000', 4.92, 2, 151.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Element PRO 2000', 7.48, 3.6, 191.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Element PRO 3000', 9.93, 5.4, 349.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Element PRO 4000', 11, 6.4, 379.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Everest-24 8000s', 52, 22.7, 11320.36);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Everest III 4000S', 30.55, 14.5, 3298.9);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Everest III 6000S', 39.27, 17, 4998.9);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Everest III 8000S', 48.66, 22, 11298.9);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Everest ll 4000s 【停产】', 30.16, 13, 2719);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Everest ll 6000s【停产】', 35.16, 16.3, 5080.5);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('渔轮', 'Everest ll 8000s【停产】', 44.62, 22, 11320);
+
+COMMIT;

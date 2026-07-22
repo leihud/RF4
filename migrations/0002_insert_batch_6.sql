@@ -1,0 +1,56 @@
+-- Migration: Insert batch 6
+
+BEGIN TRANSACTION;
+
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Lait SSL78ML', 0, 11.5, 558.9);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Karelia SPM66L', 0, 10.2, 739.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Karelia SPM68ML', 0, 12, 746);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Karelia SPM78M', 0, 16, 749);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Inspiration S60UL', 0, 4.5, 799);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Inspiration S68UL', 0, 4.5, 808);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Inspiration S68L', 0, 12.1, 808);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Inspiration S78L', 0, 12.1, 814);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Inspiration S78ML', 0, 14, 814);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Mechta SF60MH', 0, 21, 919.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Mechta SF68ML', 0, 17, 919.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Mechta SM70UL', 0, 5.1, 929.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Mechta SM70L', 0, 13, 929.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Mechta SXF70MH', 0, 19, 929.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Mechta SF78MH', 0, 20, 939.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Mechta SXF78XH', 0, 23, 939.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Mechta SM88MH', 0, 17, 959.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Mechta SXF88H', 0, 21, 959.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Super Duty S78H', 0, 24.3, 998);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Super Duty S78MH', 0, 24, 1048);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Super Duty S88H', 0, 24.3, 1099);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Super Duty S88XH', 0, 30.5, 1649.4);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Model One S78L', 0, 15.7, 1254.9);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Model One S78M', 0, 23, 1233.27);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Model One S78ML', 0, 21.8, 1252.74);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Model One S88MH', 0, 25.5, 1276.54);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Model One S98H', 0, 35.4, 2248.3);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ventura SPF66ML', 0, 22, 1298.6);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ventura SPXF66MH', 0, 30, 1699);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ventura SPF70H', 0, 34.1, 1809.72);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ventura SPF70MH', 0, 31, 1765.84);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ventura SPXF70M', 0, 26, 1349.6);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Aeros SP60UL', 0, 6.5, 1559.65);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Aeros SP60ML', 0, 23.2, 1505.15);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Aeros SP68MH', 0, 27.6, 1339.65);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ethnic SPF66MH', 0, 26, 1405.9);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ethnic SPM68UL', 0, 7, 1898.74);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ethnic SPM78L', 0, 17, 1973.6);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ethnic SPF78MH', 0, 26, 1429.5);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ethnic SPXF78H', 0, 36.1, 2499.9);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ethnic SPF88MH', 0, 26, 1490.5);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ethnic SPM88MH', 0, 27, 1549.5);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ethnic SPXF98H', 0, 36.1, 2699.2);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Integra SPF66M', 0, 31.1, 1719.7);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Integra SPF66MH', 0, 33.3, 1798.7);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Integra SPF70ML', 0, 26, 2360.93);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Integra SPF70M', 0, 32.2, 1810.9);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Integra SPF70MH', 0, 33.3, 1849.9);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Integra SPF77M', 0, 32.2, 1910.2);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Cardena SPF60L', 0, 16, 2114.14);
+
+COMMIT;

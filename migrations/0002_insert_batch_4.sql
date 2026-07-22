@@ -1,0 +1,56 @@
+-- Migration: Insert batch 4
+
+BEGIN TRANSACTION;
+
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Barracuda CST CSSL78M', 0, 60.8, 4898.5);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Barracuda CST CSSL88MH', 0, 96.6, 8299.1);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Barracuda CST CSM88H', 0, 95, 7998.1);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Legend CF66UL', 0, 10.1, 5313);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Legend CF66L', 0, 16, 5080.52);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Legend CF66M', 0, 39.5, 5313);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Legend CF68ML', 0, 29, 5313);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Legend CF70M', 0, 39.5, 5382.88);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Legend CF70MH', 0, 41.5, 5382.88);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Legend CF77ML', 0, 29, 5441.16);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Legend CF77H', 0, 42, 5382.88);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Armada CST CSXF60UL', 0, 5.1, 6098.02);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Armada CST CSF60M', 0, 22.8, 6133.29);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Armada CST CSF60MH', 0, 22.8, 5882.31);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Armada CST CSXF60H', 0, 21.9, 6098.02);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Armada CST CSXF68M', 0, 22.8, 6227.4);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Armada CST CSF68MH', 0, 22.8, 6239.17);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Armada CST CSF68XH', 0, 25.7, 6239.17);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Rocket CM77M', 0, 78.6, 6298.1);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Rocket CM88MH', 0, 84, 6798.5);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Rocket CM88H', 0, 86.2, 6998.5);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Rocket CM88XH', 0, 89.9, 7298.6);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Black Edition CST CSF60MH', 0, 45, 6960.85);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Black Edition CST CSXF60H', 0, 43.7, 6990.52);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Black Edition CST CSF68M', 0, 45.7, 7275.83);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Black Edition CST CSM68MH', 0, 50.8, 7174.69);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Black Edition CST CSXF68M', 0, 45.7, 7198.47);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Black Edition CST CSF68XH', 0, 51.3, 7597.81);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Black Edition CST CSF78MH', 0, 45, 7789.36);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Vexillar CST-F66L', 0, 17.1, 9117.55);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Vexillar CST-F66MH', 0, 40, 9117.55);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Vexillar CST-F70UL', 0, 11.5, 9117.55);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Vexillar CST-F70H', 0, 42, 9117.55);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Aquilon CST-M68ULL', 0, 12, 11562.58);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Aquilon CST-M70UL', 0, 13, 12805.41);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Aquilon CST-M71L', 0, 20, 11562.58);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Trout Master CST-M60L', 0, 21, 12559.66);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Trout Master CST-M68L', 0, 25, 13309.5);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Trout Master CST-M71ML', 0, 50, 13937.43);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Trout Master CST-M82M', 0, 80, 14441.73);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Trout Master CST-M88MH', 0, 100, 16220.09);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ultima CST-M60UL', 0, 14, 17773.15);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ultima CST-M61L', 0, 36, 18973.15);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ultima CST-M68ML', 0, 60, 17773.15);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ultima CST-M75ML', 0, 62, 18807.82);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ultima CST-M77M', 0, 106, 19197.4);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ultima CST-M87H', 0, 125, 21802.02);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ultima CST-M88HH', 0, 136, 22957.76);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ultima CST-M100HH', 0, 142, 24861.16);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Corona S60L', 0, 3.9, 18.5);
+
+COMMIT;

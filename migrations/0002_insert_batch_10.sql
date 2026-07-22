@@ -1,0 +1,56 @@
+-- Migration: Insert batch 10
+
+BEGIN TRANSACTION;
+
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Sport Match 3.9', 0, 14, 1415.24);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Sport Match 4.4', 0, 14, 1438.03);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Model One Match M140MH', 0, 16.2, 1659.98);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Model One Match M140XH', 0, 16.9, 1711.58);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ethnic Match 340MH', 0, 18, 1992.52);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ethnic Match 380MH', 0, 18, 2108.17);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ethnic Match 420H', 0, 20, 2222.94);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Elementary Match 390', 0, 19.5, 2068.81);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Elementary Match 420', 0, 19.5, 2126.7);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Inventer Match 300', 0, 12.8, 2330.38);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Inventer Match 330', 0, 12.8, 2413.74);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Inventer Match 360', 0, 12.8, 2469.39);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Borray Match 390', 0, 14.2, 3509.47);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Borray Match 420', 0, 23.9, 3691.66);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Borray Match 450', 0, 23.9, 3975.41);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Falcon Match 360', 0, 42.6, 4475.83);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Falcon Match 390', 0, 42.6, 4713.52);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Falcon Match 390XH', 0, 44.1, 4826.57);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Rebellion Match 390H', 0, 41.2, 5458.34);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Rebellion Match 420H', 0, 41.2, 5664.5);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Rebellion Match 450LC', 0, 35, 6286.57);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Raven Match 320', 0, 18, 5711.99);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Raven Match 340', 0, 36, 5834.51);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Raven Match 360', 0, 40, 5834.51);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Shooting Match 420', 0, 52, 6559.65);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Shooting Match 450', 0, 58, 6931.24);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Plasma Match 320', 0, 22, 7692.51);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Plasma Match 340', 0, 34, 7692.51);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Plasma Match 380', 0, 54, 8068.43);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Plasma Match 420', 0, 54, 8393.29);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Monster Match 320', 0, 31.5, 11756.8);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Monster Match 360', 0, 50, 12145.91);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Monster Match 400', 0, 58, 14767.83);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Monster Match 440', 0, 65, 16694.61);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Heavy Jerk C70XH', 0, 15.4, 390.6);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Heavy Jerk C80XH', 0, 13.1, 417.9);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Mechta JXF70XH', 0, 23, 775.85);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Super Duty JR60XH', 0, 27.7, 939.75);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Super Duty JR68XH', 0, 28.5, 984.9);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Fortuna Jerk J60H', 0, 23.9, 1192.92);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Fortuna Jerk J60Xh', 0, 30.5, 1306.29);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Karelia Jerk JXF66H', 0, 32.1, 1440.54);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Karelia Jerk JXF70XH', 0, 34.1, 1463.33);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Model One Jerk J60H', 0, 35, 1654.25);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Model One Jerk J60XH', 0, 39.4, 1654.25);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Model One Jerk J68XH', 0, 40.1, 1715.03);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ethnic Jerk JF66H', 0, 43.1, 2537.35);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ethnic Jerk JXF70H', 0, 44.3, 2595.78);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Ethnic Jerk JXF70XH', 0, 45.2, 2654.28);
+INSERT OR IGNORE INTO equipment (equipmentType, equipmentName, lockTension, panelTension, price) VALUES ('鱼竿', 'Versus JF70MH', 0, 38, 3180.06);
+
+COMMIT;

@@ -1,4 +1,4 @@
-name = "rf4-worker"
+name = "rf4"
 compatibility_date = "2025-07-01"
 
 [[d1_databases]]
@@ -7,9 +7,7 @@ database_name = "rf4"
 database_id = "bead5b3b-5a98-4fd3-82fa-c63115544ccd"
 migrations_dir = "./migrations"
 
-[dev]
-port = 8787
-
 [pages]
+project_name = "rf4-cxt"
 build_command = "npm run build"
-dest_dir = "dist"
+pages_build_output_dir = "dist"
