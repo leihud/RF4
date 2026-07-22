@@ -1,0 +1,33 @@
+[
+  {
+    "equipmentName": "示例渔轮名称",
+    "equipmentType": "渔轮",
+    "category": "纺车轮",
+    "subCategory": "Shimano",
+    "model": "Shimano Stradic 3000",
+    "description": "渔轮描述信息",
+    "transmissionRatio": "6.0:1",
+    "transmissionRatioStar": 0,
+    "enginePower": "",
+    "lineSpeed": "60m/s",
+    "lineSpeedStar": 0,
+    "size": "3000",
+    "form": "纺车轮",
+    "frictionForce": "5kg",
+    "frictionForceStar": 0,
+    "windingSpeed": "",
+    "test": "",
+    "testStar": 0,
+    "levelReq": "10",
+    "spoolCapacity": "200m/0.25mm",
+    "obtainMethod": "商店购买",
+    "rating": "",
+    "adaptWeight": "5-20g",
+    "adaptWeightStar": 0,
+    "goldPrice": "10.00",
+    "silverPrice": "1200.00",
+    "lockTension": "10",
+    "lockTensionStar": 0,
+    "saltwaterResistant": "否"
+  }
+]

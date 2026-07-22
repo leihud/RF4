@@ -7,6 +7,9 @@ database_name = "rf4"
 database_id = "bead5b3b-5a98-4fd3-82fa-c63115544ccd"
 migrations_dir = "./migrations"
 
+[vars]
+IMPORT_PASSWORD = "your_import_password_here"
+
 [pages]
 project_name = "rf4-cxt"
 build_command = "npm run build"

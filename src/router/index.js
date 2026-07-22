@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Calculator from '../components/Calculator.vue'
 import Compare from '../components/ComparePage.vue'
+import ImportPage from '../components/ImportPage.vue'
 
 const routes = [
   {
@@ -12,6 +13,11 @@ const routes = [
     path: '/compare',
     name: 'Compare',
     component: Compare
+  },
+  {
+    path: '/import',
+    name: 'Import',
+    component: ImportPage
   }
 ]
 

@@ -1,8 +1,11 @@
 <template>
   <div class="app">
     <div class="header">
-      <h1>最大拉力磨损计算器(非盈利商业行为,个人使用)</h1>
-      <button class="compare-nav-btn" @click="goToCompare">装备参数对比</button>
+      <h1>装备计算器(个人使用非盈利商业行为)</h1>
+      <div class="header-buttons">
+        <button class="compare-nav-btn" @click="goToCompare">装备参数对比</button>
+        <button class="import-nav-btn" @click="goToImport">数据导入</button>
+      </div>
     </div>
 
     <div class="rule-selector">
@@ -204,23 +207,6 @@
           <span class="summary-label">装备总价值:</span>
           <span class="summary-value">¥{{ equipmentTotalPrice }}</span>
         </div>
-        <div v-if="equipmentAdvice" class="advice-section">
-          <div class="advice-title">装备建议</div>
-          <div
-            v-for="(section, si) in equipmentAdvice.sections"
-            :key="si"
-            class="advice-block"
-          >
-            <div class="advice-block-title">{{ section.title }}</div>
-            <div
-              v-for="(item, ii) in section.items"
-              :key="ii"
-              :class="['advice-item', `advice-${item.level}`]"
-            >
-              <pre class="advice-text">{{ ADVICE_PREFIX[item.level] }} {{ item.text }}</pre>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -243,7 +229,6 @@ import {
   getFrictionMax,
   formatTension
 } from '../utils/tension.js'
-import { buildAdvice, ADVICE_PREFIX } from '../utils/advice.js'
 
 export default {
   name: 'Calculator',
@@ -267,7 +252,6 @@ export default {
       maxTensionFilter: '',
       searchTimeout: null,
       CALC_RULE_OPTIONS,
-      ADVICE_PREFIX,
       formatTension
     }
   },
@@ -388,16 +372,6 @@ export default {
         : 0
       if (leaderT > 0) tensions.push(leaderT)
       return tensions.length ? Math.min(...tensions) : 0
-    },
-    equipmentAdvice() {
-      return buildAdvice({
-        rod: this.selectedEquipmentMap['鱼竿'],
-        reel: this.selectedEquipmentMap['渔轮'],
-        mainLine: this.customEquipment['主线'],
-        leader: this.customEquipment['引线'],
-        friction: this.friction,
-        calcRule: this.calculationRule
-      })
     }
   },
   methods: {
@@ -477,6 +451,9 @@ export default {
     },
     goToCompare() {
       this.$router.push('/compare')
+    },
+    goToImport() {
+      this.$router.push('/import')
     }
   }
 }
@@ -516,6 +493,27 @@ h1 {
 
 .compare-nav-btn:hover {
   background-color: #e3f2fd;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.import-nav-btn {
+  padding: 8px 20px;
+  border: 2px solid #ff9800;
+  background-color: white;
+  color: #ff9800;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.import-nav-btn:hover {
+  background-color: #fff3e0;
 }
 
 h2 {
@@ -748,72 +746,6 @@ h2 {
   font-size: 16px;
   flex: 1;
   text-align: right;
-}
-
-.advice-section {
-  margin-top: 20px;
-  padding: 15px;
-  border-radius: 8px;
-  background-color: #f8f9fa;
-  border-left: 4px solid #42b983;
-}
-
-.advice-title {
-  font-weight: bold;
-  color: #2c3e50;
-  margin-bottom: 10px;
-  font-size: 16px;
-}
-
-.advice-block {
-  margin-bottom: 12px;
-}
-
-.advice-block:last-child {
-  margin-bottom: 0;
-}
-
-.advice-block-title {
-  font-size: 13px;
-  color: #555;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.advice-item {
-  padding: 12px;
-  border-radius: 4px;
-  background-color: white;
-  color: #27ae60;
-  font-size: 15px;
-  line-height: 1.6;
-  margin-bottom: 6px;
-}
-
-.advice-item.advice-warning {
-  background-color: #fff3cd;
-  color: #856404;
-  border-left: 4px solid #ffc107;
-}
-
-.advice-item.advice-danger {
-  background-color: #ffebee;
-  color: #c62828;
-  border-left: 4px solid #e53935;
-}
-
-.advice-item.advice-optimal {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-  border-left: 4px solid #43a047;
-}
-
-.advice-text {
-  margin: 0;
-  white-space: pre-wrap;
-  font-family: inherit;
-  font-size: 15px;
-  line-height: 1.8;
 }
 
 .custom-input-group {
