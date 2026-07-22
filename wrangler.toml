@@ -1,4 +1,4 @@
-name = "rf4-worker"
+name = "rf4"
 main = "./worker/index.ts"
 compatibility_date = "2025-07-01"
 
