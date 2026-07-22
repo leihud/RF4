@@ -174,6 +174,16 @@
               />
               <span class="tension-filter-unit">kN</span>
             </div>
+            <div v-if="isDropdownOpen && categoryOptions.length > 0" class="category-filter-wrapper">
+              <button
+                v-for="cat in categoryOptions"
+                :key="cat"
+                :class="['category-filter-btn', { active: selectedCategory === cat }]"
+                @click.stop="selectedCategory = cat"
+              >
+                {{ cat }}
+              </button>
+            </div>
             <div v-if="isDropdownOpen" class="dropdown-list">
               <div
                 v-for="equipment in filteredEquipment"
@@ -271,6 +281,7 @@ export default {
       isDropdownOpen: false,
       minTensionFilter: '',
       maxTensionFilter: '',
+      selectedCategory: '',
       searchTimeout: null,
       CALC_RULE_OPTIONS,
       formatTension
@@ -338,9 +349,18 @@ export default {
       }
       return map
     },
+    categoryOptions() {
+      const equipment = this.equipmentData.filter(item => item.equipmentType === this.selectedType)
+      const categories = [...new Set(equipment.map(item => item.category))].filter(Boolean)
+      return ['全部', ...categories]
+    },
     filteredEquipment() {
       const equipment = this.equipmentData.filter(item => item.equipmentType === this.selectedType)
       let filtered = equipment
+
+      if (this.selectedCategory && this.selectedCategory !== '全部') {
+        filtered = filtered.filter(item => item.category === this.selectedCategory)
+      }
 
       if (this.debouncedSearchQuery.trim()) {
         const q = this.debouncedSearchQuery.toLowerCase()
@@ -935,6 +955,36 @@ h2 {
 .tension-filter-unit {
   font-size: 13px;
   color: #666;
+}
+
+.category-filter-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 15px;
+  background-color: #f0fdf4;
+  border-bottom: 1px solid #dcfce7;
+}
+
+.category-filter-btn {
+  padding: 4px 12px;
+  border: 1px solid #bbf7d0;
+  background-color: white;
+  color: #16a34a;
+  border-radius: 16px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.category-filter-btn:hover {
+  background-color: #dcfce7;
+}
+
+.category-filter-btn.active {
+  background-color: #22c55e;
+  color: white;
+  border-color: #22c55e;
 }
 
 .dropdown-list {
