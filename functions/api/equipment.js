@@ -24,6 +24,7 @@ export async function onRequestGet(context) {
   const { request, env } = context
   const url = new URL(request.url)
   const type = url.searchParams.get('type')
+  const searchQuery = url.searchParams.get('q')
   
   try {
     let results = []
@@ -60,7 +61,7 @@ export async function onRequestGet(context) {
         model: row.model,
         category: row.category,
         subCategory: row.subCategory,
-        panelTension: extractNumber(row.frictionForce),
+        panelTension: extractNumber(row.frictionForce) || extractNumber(row.lockTension),
         lockTension: extractNumber(row.lockTension),
         price: extractNumber(row.silverPrice),
         lockTensionValue: row.lockTension,
