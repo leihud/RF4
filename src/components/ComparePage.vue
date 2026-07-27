@@ -167,8 +167,8 @@ const COMPARE_ROWS = {
     { label: '能力', field: 'ability', fallback: '-' },
     { label: '评级', field: 'rating' },
     { label: '等级要求', field: 'levelReq', format: v => `Lv.${v}` },
-    { label: '银币价格', field: 'silverPrice', fallback: '-' },
-    { label: '金币价格', field: 'goldPrice', fallback: '-' },
+    { label: '银币价格', field: 'silverPrice', fallback: '-', format: v => `银币：${v}` },
+    { label: '金币价格', field: 'goldPrice', fallback: '-', format: v => `金币：${v}` },
     { label: '描述', field: 'description', fallback: '-' }
   ],
   reel: [
@@ -193,8 +193,8 @@ const COMPARE_ROWS = {
     { label: '等级要求', field: 'levelReq', format: v => `Lv.${v}` },
     { label: '线轴容量', field: 'spoolCapacity', fallback: '-' },
     { label: '防海水', field: 'saltwaterResistant', fallback: '-' },
-    { label: '银币价格', field: 'silverPrice', fallback: '-' },
-    { label: '金币价格', field: 'goldPrice', fallback: '-' },
+    { label: '银币价格', field: 'silverPrice', fallback: '-', format: v => `银币：${v}` },
+    { label: '金币价格', field: 'goldPrice', fallback: '-', format: v => `金币：${v}` },
     { label: '描述', field: 'description', fallback: '-' }
   ]
 }

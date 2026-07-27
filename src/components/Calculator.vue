@@ -236,16 +236,16 @@
         <div v-for="item in selectedEquipmentList" :key="item.equipmentType" class="summary-row price-row">
           <span class="summary-label">{{ item.equipmentType }}价格:</span>
           <span class="summary-value">
-            <span v-if="item.silverPrice" class="silver-price">{{ formatPrice(item.silverPrice, 2) }} 银币</span>
-            <span v-if="item.goldPrice" class="gold-price">{{ formatPrice(item.goldPrice, 2) }} 金币</span>
+            <span v-if="item.silverPrice" class="silver-price">银币：{{ formatPrice(item.silverPrice, 2) }}</span>
+            <span v-if="item.goldPrice" class="gold-price">金币：{{ formatPrice(item.goldPrice, 2) }}</span>
             <span v-if="!item.silverPrice && !item.goldPrice">无</span>
           </span>
         </div>
         <div class="summary-row total-price-row">
           <span class="summary-label">总价格:</span>
           <span class="summary-value">
-            <span v-if="totalSilverPrice" class="silver-price">{{ formatPrice(totalSilverPrice, 2) }} 银币</span>
-            <span v-if="totalGoldPrice" class="gold-price">{{ formatPrice(totalGoldPrice, 2) }} 金币</span>
+            <span v-if="totalSilverPrice" class="silver-price">银币：{{ formatPrice(totalSilverPrice, 2) }}</span>
+            <span v-if="totalGoldPrice" class="gold-price">金币：{{ formatPrice(totalGoldPrice, 2) }}</span>
           </span>
         </div>
       </div>
