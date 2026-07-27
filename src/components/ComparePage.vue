@@ -62,6 +62,12 @@
             <span v-else class="equipment-strength">
               锁轮: {{ equipment.lockTension }}
             </span>
+            <span
+              v-if="getMergedAdaptWeight(equipment)"
+              class="equipment-adapt-weight"
+            >
+              适配重: {{ getMergedAdaptWeight(equipment) }}
+            </span>
           </div>
           <div v-if="filteredEquipment.length === 0" class="list-empty">
             未找到匹配的装备
@@ -375,6 +381,27 @@ export default {
       }
       return this.extractNumber(equipment[row.field])
     },
+    /**
+     * 合并展示适配重（与Calculator.vue逻辑一致）
+     * - 鱼竿：优先 adaptWeight，其次 testG（数字自动加 g 单位）
+     * - 渔轮：优先 adaptWeight，其次 test
+     */
+    getMergedAdaptWeight(equipment) {
+      if (!equipment) return ''
+      if (equipment.adaptWeight != null && equipment.adaptWeight !== '') {
+        return equipment.adaptWeight
+      }
+      if (this.compareType === 'rod') {
+        if (equipment.testG != null && equipment.testG !== '' && equipment.testG !== 0) {
+          return typeof equipment.testG === 'number' ? `${equipment.testG} g` : equipment.testG
+        }
+      } else if (this.compareType === 'reel') {
+        if (equipment.test != null && equipment.test !== '') {
+          return equipment.test
+        }
+      }
+      return ''
+    },
     isFieldMax(equipment, row) {
       const key = row.key || row.field
       const max = this.fieldMaxValues[key]
@@ -664,6 +691,15 @@ export default {
 .equipment-strength {
   font-size: 12px;
   color: #1565c0;
+  font-weight: 600;
+  flex-shrink: 0;
+  white-space: nowrap;
+  margin-right: 12px;
+}
+
+.equipment-adapt-weight {
+  font-size: 12px;
+  color: #8e44ad;
   font-weight: 600;
   flex-shrink: 0;
   white-space: nowrap;
