@@ -44,7 +44,7 @@
       装备数据加载失败
     </div>
 
-    <div v-if="isInitialLoading && equipmentData.length === 0" class="loading-wrapper">
+    <div v-if="isLoading && equipmentData.length === 0" class="loading-wrapper">
       <div class="loading-spinner"></div>
       <span class="loading-text">正在加载装备数据...</span>
     </div>
@@ -469,21 +469,8 @@ export default {
       return rows
     },
     /**
-     * 从适配重文本中提取最大数值，用于判断合理性：
-     * 例："5-25g" → 25；"120 g" → 120；"未设置" → null
-     */
-    extractMaxWeight(text) {
-      if (!text) return null
-      // 对象禁止 String(obj) 隐式转换，先通过 safeToString 兜底
-      const cleaned = safeToString(text, '')
-      if (!cleaned) return null
-      const nums = cleaned.match(/[\d.]+/g)
-      if (!nums || nums.length === 0) return null
-      const numbers = nums.map(n => parseFloat(n)).filter(n => !Number.isNaN(n) && n > 0)
-      return numbers.length ? Math.max(...numbers) : null
-    },
-    /**
      * 适配重分析提示：判断鱼竿/渔轮适配重是否合理重叠
+     * （调用 methods 中的 this.extractMaxWeight() 来提取数值）
      */
     adaptWeightAnalysisHint() {
       const rodRow = this.summaryAdaptWeightRows.find(r => r.type === '鱼竿')
@@ -544,6 +531,21 @@ export default {
       const cleaned = String(str).replace(/,/g, '')
       const match = cleaned.match(/[\d.]+/)
       return match ? parseFloat(match[0]) : 0
+    },
+    /**
+     * 从适配重文本中提取最大数值，用于判断合理性：
+     * 例："5-25g" → 25；"120 g" → 120；"未设置" → null
+     * 【注意】必须定义为 methods 里的方法，被 computed 中的 adaptWeightAnalysisHint 通过 this.extractMaxWeight() 调用
+     */
+    extractMaxWeight(text) {
+      if (!text) return null
+      // 对象禁止 String(obj) 隐式转换，先通过 safeToString 兜底
+      const cleaned = safeToString(text, '')
+      if (!cleaned) return null
+      const nums = cleaned.match(/[\d.]+/g)
+      if (!nums || nums.length === 0) return null
+      const numbers = nums.map(n => parseFloat(n)).filter(n => !Number.isNaN(n) && n > 0)
+      return numbers.length ? Math.max(...numbers) : null
     },
     /**
      * 格式化金额显示：
@@ -673,23 +675,28 @@ export default {
       if (index >= 0) this.selectedEquipmentList.splice(index, 1)
     },
     handleClickOutside(event) {
+      // 组件已卸载或根元素未挂载，直接返回，避免 this.$el 非 HTMLElement
+      const el = this.$el
+      if (!el || typeof el.querySelector !== 'function' || typeof el.querySelectorAll !== 'function') {
+        return
+      }
       // 点击免责声明区域时不处理
       const disclaimers = document.querySelectorAll('.disclaimer-mask, .disclaimer-popup, .disclaimer-footer')
-      for (const el of disclaimers) {
-        if (el && el.contains(event.target)) return
+      for (const el2 of disclaimers) {
+        if (el2 && el2.contains && el2.contains(event.target)) return
       }
-      const activeRow = this.$el.querySelector('.type-item.active')
-      const selectBtns = this.$el.querySelectorAll('.select-btn')
+      const activeRow = el.querySelector('.type-item.active')
+      const selectBtns = el.querySelectorAll('.select-btn')
       // 点击在激活行（参数+搜索框+下拉）内部，不处理
-      if (activeRow && activeRow.contains(event.target)) return
+      if (activeRow && activeRow.contains && activeRow.contains(event.target)) return
       // 点击在其他行的更换装备按钮上（这些按钮会自己切 selectedType），不处理
       for (const btn of selectBtns) {
-        if (btn && btn.contains(event.target)) return
+        if (btn && btn.contains && btn.contains(event.target)) return
       }
       // 点击在类型 tab（.type-label）或输入控件上，不处理，避免误清空
-      const typeLabels = this.$el.querySelectorAll('.type-label, .custom-input-group input, .wear-input-wrapper input')
-      for (const el of typeLabels) {
-        if (el && el.contains(event.target)) return
+      const typeLabels = el.querySelectorAll('.type-label, .custom-input-group input, .wear-input-wrapper input')
+      for (const el2 of typeLabels) {
+        if (el2 && el2.contains && el2.contains(event.target)) return
       }
       // 其他点击都视为外部点击：收起下拉 + 恢复更换装备按钮
       this.isDropdownOpen = false
