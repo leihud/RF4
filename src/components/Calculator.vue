@@ -229,12 +229,6 @@
             {{ item.value || '未设置' }}
           </span>
         </div>
-        <div v-if="adaptWeightAnalysisHint" class="summary-row adapt-weight-hint-row">
-          <span class="summary-label">适配重分析:</span>
-          <span class="summary-value adapt-weight-hint" :class="adaptWeightHintClass">
-            {{ adaptWeightAnalysisHint }}
-          </span>
-        </div>
         <div v-for="item in selectedEquipmentList" :key="item.equipmentType" class="summary-row price-row">
           <span class="summary-label">{{ item.equipmentType }}价格:</span>
           <span class="summary-value">
@@ -273,7 +267,7 @@ import {
   formatTension
 } from '../utils/tension.js'
 import { searchAndRankEquipment } from '../utils/search.js'
-import { sanitizeEquipmentFields, sanitizeEquipmentList, safeToString } from '../utils/sanitize.js'
+import { sanitizeEquipmentFields, sanitizeEquipmentList } from '../utils/sanitize.js'
 
 export default {
   name: 'Calculator',
@@ -467,38 +461,6 @@ export default {
         })
       }
       return rows
-    },
-    /**
-     * 适配重分析提示：判断鱼竿/渔轮适配重是否合理重叠
-     * （调用 methods 中的 this.extractMaxWeight() 来提取数值）
-     */
-    adaptWeightAnalysisHint() {
-      const rodRow = this.summaryAdaptWeightRows.find(r => r.type === '鱼竿')
-      const reelRow = this.summaryAdaptWeightRows.find(r => r.type === '渔轮')
-      if (!rodRow || !reelRow) return ''
-      if (!rodRow.value && !reelRow.value) return ''
-      if (!rodRow.value) return '⚠ 鱼竿未维护适配重数据，无法判断组合适配合理性'
-      if (!reelRow.value) return '⚠ 渔轮未维护适配重数据，无法判断组合适配合理性'
-
-      const rodMax = this.extractMaxWeight(rodRow.value)
-      const reelMax = this.extractMaxWeight(reelRow.value)
-      if (rodMax == null || reelMax == null) {
-        return 'ℹ 无法从当前格式提取重量数值，请人工核对适配重范围'
-      }
-      const ratio = reelMax / rodMax
-      if (ratio < 0.5) return '⚠ 渔轮适配重上限明显偏轻，建议搭配更轻的鱼竿或更重型的渔轮'
-      if (ratio > 2.5) return '⚠ 渔轮适配重上限明显偏重，竿轮配重可能失衡'
-      return '✅ 鱼竿与渔轮的适配重范围匹配合理，竿轮配重协调性良好'
-    },
-    /**
-     * 适配重分析提示的样式等级（颜色区分）
-     */
-    adaptWeightHintClass() {
-      const hint = this.adaptWeightAnalysisHint
-      if (!hint) return ''
-      if (hint.startsWith('✅')) return 'hint-success'
-      if (hint.startsWith('⚠')) return 'hint-warning'
-      return 'hint-info'
     }
   },
   methods: {
@@ -531,21 +493,6 @@ export default {
       const cleaned = String(str).replace(/,/g, '')
       const match = cleaned.match(/[\d.]+/)
       return match ? parseFloat(match[0]) : 0
-    },
-    /**
-     * 从适配重文本中提取最大数值，用于判断合理性：
-     * 例："5-25g" → 25；"120 g" → 120；"未设置" → null
-     * 【注意】必须定义为 methods 里的方法，被 computed 中的 adaptWeightAnalysisHint 通过 this.extractMaxWeight() 调用
-     */
-    extractMaxWeight(text) {
-      if (!text) return null
-      // 对象禁止 String(obj) 隐式转换，先通过 safeToString 兜底
-      const cleaned = safeToString(text, '')
-      if (!cleaned) return null
-      const nums = cleaned.match(/[\d.]+/g)
-      if (!nums || nums.length === 0) return null
-      const numbers = nums.map(n => parseFloat(n)).filter(n => !Number.isNaN(n) && n > 0)
-      return numbers.length ? Math.max(...numbers) : null
     },
     /**
      * 格式化金额显示：
