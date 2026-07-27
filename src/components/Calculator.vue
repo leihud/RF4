@@ -212,16 +212,16 @@
         <div v-for="item in selectedEquipmentList" :key="item.equipmentType" class="summary-row price-row">
           <span class="summary-label">{{ item.equipmentType }}价格:</span>
           <span class="summary-value">
-            <span v-if="item.silverPrice" class="silver-price">💰{{ item.silverPrice }}</span>
-            <span v-if="item.goldPrice" class="gold-price">💰💰{{ item.goldPrice }}</span>
+            <span v-if="item.silverPrice" class="silver-price">{{ item.silverPrice }} 银币</span>
+            <span v-if="item.goldPrice" class="gold-price">{{ item.goldPrice }} 金币</span>
             <span v-if="!item.silverPrice && !item.goldPrice">无</span>
           </span>
         </div>
         <div class="summary-row total-price-row">
           <span class="summary-label">总价格:</span>
           <span class="summary-value">
-            <span v-if="totalSilverPrice" class="silver-price">💰{{ totalSilverPrice }}</span>
-            <span v-if="totalGoldPrice" class="gold-price">💰💰{{ totalGoldPrice }}</span>
+            <span v-if="totalSilverPrice" class="silver-price">{{ totalSilverPrice }} 银币</span>
+            <span v-if="totalGoldPrice" class="gold-price">{{ totalGoldPrice }} 金币</span>
           </span>
         </div>
       </div>
@@ -1323,7 +1323,7 @@ h2 {
   background-color: white;
   border-radius: 12px;
   width: 100%;
-  max-width: 500px;
+  max-width: 620px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   overflow: hidden;
 }
@@ -1332,7 +1332,7 @@ h2 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
+  padding: 20px 28px;
   background-color: #e3f2fd;
   border-bottom: 1px solid #bbdefb;
 }
@@ -1340,7 +1340,8 @@ h2 {
 .disclaimer-header h3 {
   margin: 0;
   color: #1565c0;
-  font-size: 18px;
+  font-size: 20px;
+  letter-spacing: 2px;
 }
 
 .disclaimer-close {
@@ -1362,14 +1363,19 @@ h2 {
 }
 
 .disclaimer-content {
-  padding: 24px;
+  padding: 28px 32px;
 }
 
 .disclaimer-content p {
-  margin: 0 0 12px 0;
+  margin: 0 0 18px 0;
   color: #333;
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: 15px;
+  line-height: 1.9;
+  text-align: justify;
+  text-justify: inter-ideograph;
+  text-indent: 2em;
+  widows: 3;
+  orphans: 3;
 }
 
 .disclaimer-content p:last-child {
@@ -1377,7 +1383,7 @@ h2 {
 }
 
 .disclaimer-footer {
-  padding: 16px 24px;
+  padding: 18px 32px;
   background-color: #f8fafc;
   border-top: 1px solid #e2e8f0;
   display: flex;
@@ -1385,15 +1391,16 @@ h2 {
 }
 
 .disclaimer-accept {
-  padding: 10px 32px;
+  padding: 12px 40px;
   background-color: #1565c0;
   color: white;
   border: none;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  letter-spacing: 2px;
 }
 
 .disclaimer-accept:hover {
