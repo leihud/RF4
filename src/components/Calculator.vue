@@ -129,7 +129,6 @@
                     min="0"
                     :max="toSafeNumber(frictionMax)"
                   />
-                  <span class="friction-unit">{{ toSafeNumber(frictionPercent) }}%</span>
                 </span>
                 <span v-if="type === '鱼竿'" class="actual-tension">
                   实际拉力:{{ formatTension(actualPanelTensionMap[type]) }} kN
@@ -857,6 +856,7 @@ h2 {
   gap: 16px;
   flex: 1;
   overflow: hidden;
+  white-space: nowrap;
 }
 
 .placeholder {
@@ -880,11 +880,12 @@ h2 {
   font-weight: bold;
   color: #2c3e50;
   font-size: 14px;
-  min-width: 200px;
-  max-width: 350px;
+  min-width: 140px;
+  max-width: 320px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex-shrink: 1;
 }
 
 .selected-tension {
@@ -1351,8 +1352,10 @@ h2 {
   }
 
   .type-value {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .search-dropdown {
@@ -1414,9 +1417,11 @@ h2 {
   }
 
   .type-value {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 6px;
     width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .custom-input-group {
