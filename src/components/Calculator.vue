@@ -1076,8 +1076,8 @@ h2 {
 
 .search-dropdown {
   position: relative;
-  min-width: 420px;
-  max-width: 560px;
+  /* 固定宽度，确保搜索框/装备类型筛选/结果下拉列表三部分永远等宽对齐，不随筛选按钮多少而缩放 */
+  width: 520px;
   flex: 0 0 auto;
 }
 
@@ -1351,8 +1351,10 @@ h2 {
   }
 
   .search-dropdown {
-    min-width: 360px;
-    max-width: 480px;
+    /* 中等屏也使用固定宽度，避免筛选按钮多少导致宽度缩放不一致 */
+    width: 440px;
+    min-width: auto;
+    max-width: none;
   }
 
   .summary-row {
