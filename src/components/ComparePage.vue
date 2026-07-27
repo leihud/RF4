@@ -56,18 +56,6 @@
           >
             <span class="equipment-category-tag">{{ equipment.category }}</span>
             <span class="equipment-name">{{ equipment.model || equipment.equipmentName }}</span>
-            <span v-if="compareType === 'rod'" class="equipment-strength">
-              强度: {{ equipment.strengthKg }}
-            </span>
-            <span v-else class="equipment-strength">
-              锁轮: {{ equipment.lockTension }}
-            </span>
-            <span
-              v-if="getMergedAdaptWeight(equipment)"
-              class="equipment-adapt-weight"
-            >
-              适配重: {{ getMergedAdaptWeight(equipment) }}
-            </span>
           </div>
           <div v-if="filteredEquipment.length === 0" class="list-empty">
             未找到匹配的装备
@@ -685,24 +673,7 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  margin-right: 12px;
-}
-
-.equipment-strength {
-  font-size: 12px;
-  color: #1565c0;
-  font-weight: 600;
-  flex-shrink: 0;
-  white-space: nowrap;
-  margin-right: 12px;
-}
-
-.equipment-adapt-weight {
-  font-size: 12px;
-  color: #8e44ad;
-  font-weight: 600;
-  flex-shrink: 0;
-  white-space: nowrap;
+  margin-right: 0;
 }
 
 .list-empty {
