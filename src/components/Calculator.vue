@@ -214,9 +214,29 @@
           <span class="summary-label">装备组合:</span>
           <span class="summary-value">{{ equipmentSummaryText }}</span>
         </div>
-        <div class="summary-row">
-          <span class="summary-label">最小锁轮拉力限制:</span>
-          <span class="summary-value">{{ formatTension(minTension) }} kN</span>
+        <div
+          v-for="item in minLockTensionRows"
+          :key="'lock-tension-' + item.type"
+          class="summary-row"
+        >
+          <span class="summary-label">{{ item.label }}:</span>
+          <span class="summary-value">{{ item.valueText }}</span>
+        </div>
+        <div class="summary-row" v-if="minLockTensionRows.length > 0">
+          <span class="summary-label">锁轮下最小拉力:</span>
+          <span class="summary-value tension-min-value">{{ formatTension(minLockTensionValue) }} kN</span>
+        </div>
+        <div
+          v-for="item in minPanelTensionRows"
+          :key="'panel-tension-' + item.type"
+          class="summary-row"
+        >
+          <span class="summary-label">{{ item.label }}:</span>
+          <span class="summary-value">{{ item.valueText }}</span>
+        </div>
+        <div class="summary-row" v-if="minPanelTensionRows.length > 0">
+          <span class="summary-label">常规下最小拉力:</span>
+          <span class="summary-value tension-min-value">{{ formatTension(minPanelTensionValue) }} kN</span>
         </div>
         <div
           v-for="item in summaryAdaptWeightRows"
@@ -337,7 +357,7 @@ export default {
     actualLockTensionMap() {
       const map = {}
       for (const item of this.selectedEquipmentList) {
-        if (item.equipmentType === '渔轮') {
+        if (item.equipmentType === '鱼竿' || item.equipmentType === '渔轮') {
           map[item.equipmentType] = calculateActualLockTension(item, this.calculationRule)
         }
       }
@@ -423,20 +443,109 @@ export default {
       }, 0)
     },
     minTension() {
-      const tensions = []
-      const rodT = this.actualPanelTensionMap['鱼竿']
-      if (rodT !== undefined) tensions.push(rodT)
-      const reelLockT = this.actualLockTensionMap['渔轮']
-      if (reelLockT !== undefined) tensions.push(reelLockT)
-      const mainT = this.customEquipment['主线'].maxTension > 0
-        ? calculateCustomActualTension(this.customEquipment['主线'])
-        : 0
-      if (mainT > 0) tensions.push(mainT)
-      const leaderT = this.customEquipment['引线'].maxTension > 0
-        ? calculateCustomActualTension(this.customEquipment['引线'])
-        : 0
-      if (leaderT > 0) tensions.push(leaderT)
-      return tensions.length ? Math.min(...tensions) : 0
+      // 兼容：旧 minTension 等价于锁轮下最小拉力
+      return this.minLockTensionValue
+    },
+    /**
+     * 锁轮下最小拉力：展示各部位实际锁轮拉力明细，再汇总最小值
+     * 数据来源：鱼竿(actualLock) + 渔轮(actualLock) + 主线(customActual) + 引线(customActual)
+     * 仅当该部位已选择/已录入有效值时才纳入明细
+     */
+    minLockTensionRows() {
+      const rows = []
+      const rod = this.selectedEquipmentMap['鱼竿']
+      if (rod && this.actualLockTensionMap['鱼竿'] != null) {
+        rows.push({
+          type: '鱼竿',
+          label: '鱼竿',
+          value: this.actualLockTensionMap['鱼竿'],
+          valueText: `${this.formatTension(this.actualLockTensionMap['鱼竿'])} kN`
+        })
+      }
+      const reel = this.selectedEquipmentMap['渔轮']
+      if (reel && this.actualLockTensionMap['渔轮'] != null) {
+        rows.push({
+          type: '渔轮',
+          label: '渔轮',
+          value: this.actualLockTensionMap['渔轮'],
+          valueText: `${this.formatTension(this.actualLockTensionMap['渔轮'])} kN`
+        })
+      }
+      const main = this.customEquipment && this.customEquipment['主线']
+      if (main && this.toSafeNumber(main.maxTension) > 0) {
+        const v = this.calculateCustomActualTension(main)
+        rows.push({
+          type: '主线',
+          label: '主线',
+          value: v,
+          valueText: `${this.formatTension(v)} kN`
+        })
+      }
+      const leader = this.customEquipment && this.customEquipment['引线']
+      if (leader && this.toSafeNumber(leader.maxTension) > 0) {
+        const v = this.calculateCustomActualTension(leader)
+        rows.push({
+          type: '引线',
+          label: '引线',
+          value: v,
+          valueText: `${this.formatTension(v)} kN`
+        })
+      }
+      return rows
+    },
+    minLockTensionValue() {
+      const vs = this.minLockTensionRows.map(r => this.toSafeNumber(r.value)).filter(n => n > 0)
+      return vs.length ? Math.min(...vs) : 0
+    },
+    /**
+     * 常规下最小拉力：用实际拉力对比
+     * 数据来源：鱼竿(actualPanel) + 渔轮(actualPanel含摩擦) + 主线(customActual) + 引线(customActual)
+     */
+    minPanelTensionRows() {
+      const rows = []
+      const rod = this.selectedEquipmentMap['鱼竿']
+      if (rod && this.actualPanelTensionMap['鱼竿'] != null) {
+        rows.push({
+          type: '鱼竿',
+          label: '鱼竿',
+          value: this.actualPanelTensionMap['鱼竿'],
+          valueText: `${this.formatTension(this.actualPanelTensionMap['鱼竿'])} kN`
+        })
+      }
+      const reel = this.selectedEquipmentMap['渔轮']
+      if (reel && this.actualPanelTensionMap['渔轮'] != null) {
+        rows.push({
+          type: '渔轮',
+          label: '渔轮',
+          value: this.actualPanelTensionMap['渔轮'],
+          valueText: `${this.formatTension(this.actualPanelTensionMap['渔轮'])} kN`
+        })
+      }
+      const main = this.customEquipment && this.customEquipment['主线']
+      if (main && this.toSafeNumber(main.maxTension) > 0) {
+        const v = this.calculateCustomActualTension(main)
+        rows.push({
+          type: '主线',
+          label: '主线',
+          value: v,
+          valueText: `${this.formatTension(v)} kN`
+        })
+      }
+      const leader = this.customEquipment && this.customEquipment['引线']
+      if (leader && this.toSafeNumber(leader.maxTension) > 0) {
+        const v = this.calculateCustomActualTension(leader)
+        rows.push({
+          type: '引线',
+          label: '引线',
+          value: v,
+          valueText: `${this.formatTension(v)} kN`
+        })
+      }
+      return rows
+    },
+    minPanelTensionValue() {
+      const vs = this.minPanelTensionRows.map(r => this.toSafeNumber(r.value)).filter(n => n > 0)
+      return vs.length ? Math.min(...vs) : 0
     },
     /**
      * 装备组合总览：鱼竿/渔轮各自的适配重展示行（合并后）
@@ -992,6 +1101,16 @@ h2 {
 .total-price-row .summary-value {
   font-size: 18px;
   color: #d97706;
+}
+
+/* 汇总最小拉力行：与 total-price-row 同样的高亮底色，强调是汇总值 */
+.summary-row:has(> .tension-min-value) {
+  background-color: #eff6ff;
+}
+
+.tension-min-value {
+  color: #1d4ed8;
+  font-weight: bold;
 }
 
 .silver-price {
