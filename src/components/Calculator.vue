@@ -376,13 +376,13 @@ export default {
     },
     totalSilverPrice() {
       return this.selectedEquipmentList.reduce((sum, item) => {
-        const price = parseFloat(item.silverPrice) || 0
+        const price = this.parsePrice(item.silverPrice)
         return sum + price
       }, 0)
     },
     totalGoldPrice() {
       return this.selectedEquipmentList.reduce((sum, item) => {
-        const price = parseFloat(item.goldPrice) || 0
+        const price = this.parsePrice(item.goldPrice)
         return sum + price
       }, 0)
     },
@@ -404,6 +404,12 @@ export default {
     }
   },
   methods: {
+    parsePrice(str) {
+      if (!str) return 0
+      const cleaned = String(str).replace(/,/g, '')
+      const match = cleaned.match(/[\d.]+/)
+      return match ? parseFloat(match[0]) : 0
+    },
     isCustomInputType(type) {
       return CUSTOM_INPUT_TYPES.includes(type)
     },

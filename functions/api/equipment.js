@@ -16,7 +16,8 @@ function errorResponse(error) {
 
 function extractNumber(str) {
   if (!str) return 0
-  const match = String(str).match(/[\d.]+/)
+  const cleaned = String(str).replace(/,/g, '')
+  const match = cleaned.match(/[\d.]+/)
   return match ? parseFloat(match[0]) : 0
 }
 

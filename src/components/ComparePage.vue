@@ -277,7 +277,8 @@ export default {
   methods: {
     extractNumber(str) {
       if (str == null) return NaN
-      const match = String(str).match(/[\d.]+/)
+      const cleaned = String(str).replace(/,/g, '')
+      const match = cleaned.match(/[\d.]+/)
       return match ? parseFloat(match[0]) : NaN
     },
     async loadData() {
