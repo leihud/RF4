@@ -32,8 +32,8 @@ export const FRICTION_FORUM_MAX = 30
 export const FRICTION_TIP_HIGH = 25
 export const FRICTION_TIP_LOW = 5
 
-// 默认摩擦值
-export const DEFAULT_FRICTION = 15
+// 默认摩擦值（宝典通用规则上限 = 29 / 论坛规则上限 = 30，取两者交集的最大值）
+export const DEFAULT_FRICTION = 29
 
 // readExcel.js 中通过汉字 charCode 区分鱼竿/渔轮
 // 鱼 = 40060, 渔 = 28180
