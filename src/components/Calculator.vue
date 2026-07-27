@@ -217,6 +217,22 @@
           <span class="summary-label">最小锁轮拉力限制:</span>
           <span class="summary-value">{{ formatTension(minTension) }} kN</span>
         </div>
+        <div
+          v-for="item in summaryAdaptWeightRows"
+          :key="'adapt-' + item.type"
+          class="summary-row"
+        >
+          <span class="summary-label">{{ item.label }}:</span>
+          <span class="summary-value" :class="{ 'empty-value': !item.value }">
+            {{ item.value || '未设置' }}
+          </span>
+        </div>
+        <div v-if="adaptWeightAnalysisHint" class="summary-row adapt-weight-hint-row">
+          <span class="summary-label">适配重分析:</span>
+          <span class="summary-value adapt-weight-hint" :class="adaptWeightHintClass">
+            {{ adaptWeightAnalysisHint }}
+          </span>
+        </div>
         <div v-for="item in selectedEquipmentList" :key="item.equipmentType" class="summary-row price-row">
           <span class="summary-label">{{ item.equipmentType }}价格:</span>
           <span class="summary-value">
@@ -408,6 +424,72 @@ export default {
         : 0
       if (leaderT > 0) tensions.push(leaderT)
       return tensions.length ? Math.min(...tensions) : 0
+    },
+    /**
+     * 装备组合总览：鱼竿/渔轮各自的适配重展示行（合并后）
+     */
+    summaryAdaptWeightRows() {
+      const rows = []
+      const rod = this.selectedEquipmentMap['鱼竿']
+      if (rod) {
+        rows.push({
+          type: '鱼竿',
+          label: '鱼竿适配重',
+          value: this.getMergedAdaptWeight(rod, '鱼竿')
+        })
+      }
+      const reel = this.selectedEquipmentMap['渔轮']
+      if (reel) {
+        rows.push({
+          type: '渔轮',
+          label: '渔轮适配重',
+          value: this.getMergedAdaptWeight(reel, '渔轮')
+        })
+      }
+      return rows
+    },
+    /**
+     * 从适配重文本中提取最大数值，用于判断合理性：
+     * 例："5-25g" → 25；"120 g" → 120；"未设置" → null
+     */
+    extractMaxWeight(text) {
+      if (!text) return null
+      const cleaned = String(text).replace(/,/g, '')
+      const nums = cleaned.match(/[\d.]+/g)
+      if (!nums || nums.length === 0) return null
+      const numbers = nums.map(n => parseFloat(n)).filter(n => !Number.isNaN(n) && n > 0)
+      return numbers.length ? Math.max(...numbers) : null
+    },
+    /**
+     * 适配重分析提示：判断鱼竿/渔轮适配重是否合理重叠
+     */
+    adaptWeightAnalysisHint() {
+      const rodRow = this.summaryAdaptWeightRows.find(r => r.type === '鱼竿')
+      const reelRow = this.summaryAdaptWeightRows.find(r => r.type === '渔轮')
+      if (!rodRow || !reelRow) return ''
+      if (!rodRow.value && !reelRow.value) return ''
+      if (!rodRow.value) return '⚠ 鱼竿未维护适配重数据，无法判断组合适配合理性'
+      if (!reelRow.value) return '⚠ 渔轮未维护适配重数据，无法判断组合适配合理性'
+
+      const rodMax = this.extractMaxWeight(rodRow.value)
+      const reelMax = this.extractMaxWeight(reelRow.value)
+      if (rodMax == null || reelMax == null) {
+        return 'ℹ 无法从当前格式提取重量数值，请人工核对适配重范围'
+      }
+      const ratio = reelMax / rodMax
+      if (ratio < 0.5) return '⚠ 渔轮适配重上限明显偏轻，建议搭配更轻的鱼竿或更重型的渔轮'
+      if (ratio > 2.5) return '⚠ 渔轮适配重上限明显偏重，竿轮配重可能失衡'
+      return '✅ 鱼竿与渔轮的适配重范围匹配合理，竿轮配重协调性良好'
+    },
+    /**
+     * 适配重分析提示的样式等级（颜色区分）
+     */
+    adaptWeightHintClass() {
+      const hint = this.adaptWeightAnalysisHint
+      if (!hint) return ''
+      if (hint.startsWith('✅')) return 'hint-success'
+      if (hint.startsWith('⚠')) return 'hint-warning'
+      return 'hint-info'
     }
   },
   methods: {
@@ -869,6 +951,36 @@ h2 {
 
 .gold-price {
   color: #eab308;
+}
+
+.adapt-weight-hint-row {
+  background-color: #f8f9fb;
+}
+
+.adapt-weight-hint {
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: normal;
+}
+
+.hint-success {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.hint-warning {
+  color: #e67e22;
+  font-weight: 600;
+}
+
+.hint-info {
+  color: #2980b9;
+  font-weight: 500;
+}
+
+.summary-value.empty-value {
+  color: #95a5a6;
+  font-weight: normal;
 }
 
 .custom-input-group {
