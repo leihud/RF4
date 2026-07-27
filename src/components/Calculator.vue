@@ -21,6 +21,7 @@
       <div class="header-buttons">
         <button class="compare-nav-btn" @click="goToCompare">参数对比</button>
         <button class="import-nav-btn" @click="goToImport">数据导入</button>
+        <button class="rf4-stat-btn" @click="openRf4Stat" rel="noopener noreferrer" target="_blank">RF4 数据站</button>
       </div>
     </div>
 
@@ -709,6 +710,12 @@ export default {
     goToImport() {
       this.$router.push('/import')
     },
+    openRf4Stat() {
+      // 打开 RF4 中文数据站（新标签页，noopener 防反跟踪，noreferrer 防来源泄露）
+      if (typeof window !== 'undefined' && typeof window.open === 'function') {
+        window.open('https://cn.rf4-stat.ru/', '_blank', 'noopener,noreferrer')
+      }
+    },
     closeDisclaimer() {
       this.showDisclaimer = false
     }
@@ -774,6 +781,24 @@ h1 {
 
 .import-nav-btn:hover {
   background-color: #fff3e0;
+}
+
+/* 顶部 header 第三个按钮：外链打开 RF4 中文数据站 */
+.rf4-stat-btn {
+  padding: 10px 24px;
+  border: 2px solid #2e7d32;
+  background-color: white;
+  color: #2e7d32;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.rf4-stat-btn:hover {
+  background-color: #e8f5e9;
 }
 
 h2 {
