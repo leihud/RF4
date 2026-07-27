@@ -96,14 +96,14 @@
 
           <div
             v-for="row in currentCompareRows"
-            :key="row.field"
+            :key="row.key || row.field || row.label"
             class="compare-row"
           >
             <div class="compare-cell compare-label-cell">{{ row.label }}</div>
             <div
               v-for="equipment in compareEquipmentList"
               :key="getItemKey(equipment)"
-              :class="['compare-cell', { 'max-value': row.highlight && isFieldMax(equipment, row.field) }]"
+              :class="['compare-cell', { 'max-value': row.highlight && isFieldMax(equipment, row) }]"
             >
               {{ formatCellValue(equipment, row) }}
             </div>
@@ -141,7 +141,19 @@ const COMPARE_ROWS = {
     { label: '强度', field: 'strengthKg', highlight: true },
     { label: '长度', field: 'lengthM', highlight: true },
     { label: '质量', field: 'weightG', highlight: true },
-    { label: '测试', field: 'testG', highlight: true },
+    {
+      label: '适配重',
+      key: 'adaptWeightMerged',
+      merge: ['adaptWeight', 'testG'],
+      format: (raw, equipment) => {
+        if (equipment.adaptWeight != null && equipment.adaptWeight !== '') return equipment.adaptWeight
+        if (equipment.testG != null && equipment.testG !== '' && equipment.testG !== 0) {
+          return typeof equipment.testG === 'number' ? `${equipment.testG} g` : equipment.testG
+        }
+        return '-'
+      },
+      highlight: true
+    },
     { label: '灵敏度', field: 'sensitivity', highlight: true },
     { label: '硬度', field: 'hardness' },
     { label: '形式', field: 'form' },
@@ -149,7 +161,6 @@ const COMPARE_ROWS = {
     { label: '能力', field: 'ability', fallback: '-' },
     { label: '评级', field: 'rating' },
     { label: '等级要求', field: 'levelReq', format: v => `Lv.${v}` },
-    { label: '适配重', field: 'adaptWeight', fallback: '-' },
     { label: '银币价格', field: 'silverPrice', fallback: '-' },
     { label: '金币价格', field: 'goldPrice', fallback: '-' },
     { label: '描述', field: 'description', fallback: '-' }
@@ -162,11 +173,19 @@ const COMPARE_ROWS = {
     { label: '收线速度', field: 'windingSpeed', highlight: true },
     { label: '大小', field: 'size' },
     { label: '形式', field: 'form' },
-    { label: '测试', field: 'test' },
+    {
+      label: '适配重',
+      key: 'adaptWeightMerged',
+      merge: ['adaptWeight', 'test'],
+      format: (raw, equipment) => {
+        if (equipment.adaptWeight != null && equipment.adaptWeight !== '') return equipment.adaptWeight
+        if (equipment.test != null && equipment.test !== '') return equipment.test
+        return '-'
+      }
+    },
     { label: '评级', field: 'rating' },
     { label: '等级要求', field: 'levelReq', format: v => `Lv.${v}` },
     { label: '线轴容量', field: 'spoolCapacity', fallback: '-' },
-    { label: '适配重', field: 'adaptWeight', fallback: '-' },
     { label: '防海水', field: 'saltwaterResistant', fallback: '-' },
     { label: '银币价格', field: 'silverPrice', fallback: '-' },
     { label: '金币价格', field: 'goldPrice', fallback: '-' },
@@ -247,12 +266,13 @@ export default {
       const result = {}
       for (const row of this.currentCompareRows) {
         if (!row.highlight) continue
+        const key = row.key || row.field
         let max = -Infinity
         for (const eq of this.compareEquipmentList) {
-          const v = this.extractNumber(eq[row.field])
+          const v = this.getRowNumericalValue(eq, row)
           if (!Number.isNaN(v) && v > max) max = v
         }
-        result[row.field] = max === -Infinity ? null : max
+        result[key] = max === -Infinity ? null : max
       }
       return result
     },
@@ -338,10 +358,28 @@ export default {
       const key = this.getItemKey(equipment)
       return this.compareEquipmentList.some(item => this.getItemKey(item) === key)
     },
-    isFieldMax(equipment, field) {
-      const max = this.fieldMaxValues[field]
+    /**
+     * 取行用于数值比较的有效值：
+     * - 合并行：按 merge 优先级 adaptWeight > testG/test 取数字
+     * - 普通字段：直接 extractNumber(equipment[row.field])
+     */
+    getRowNumericalValue(equipment, row) {
+      if (row.merge && row.merge.length) {
+        for (const f of row.merge) {
+          const raw = equipment[f]
+          if (raw == null || raw === '' || raw === 0) continue
+          const n = this.extractNumber(raw)
+          if (!Number.isNaN(n) && n > 0) return n
+        }
+        return NaN
+      }
+      return this.extractNumber(equipment[row.field])
+    },
+    isFieldMax(equipment, row) {
+      const key = row.key || row.field
+      const max = this.fieldMaxValues[key]
       if (max === null || max === undefined) return false
-      const v = this.extractNumber(equipment[field])
+      const v = this.getRowNumericalValue(equipment, row)
       return !Number.isNaN(v) && v === max
     },
     formatValue(value, fallback = '-') {
@@ -349,11 +387,16 @@ export default {
       return value
     },
     formatCellValue(equipment, row) {
+      // 合并行（适配重）优先走自定义 format，函数签名为 format(raw, equipment)
+      if (typeof row.format === 'function') {
+        const raw = equipment[row.field]
+        const formatted = row.format(raw, equipment)
+        if (formatted != null && formatted !== '') return formatted
+      }
       const raw = equipment[row.field]
       if (raw === null || raw === undefined || raw === '') {
         return row.fallback || '-'
       }
-      if (typeof row.format === 'function') return row.format(raw)
       return raw
     },
     clearCompareList() {
