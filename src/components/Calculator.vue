@@ -213,16 +213,16 @@
         <div v-for="item in selectedEquipmentList" :key="item.equipmentType" class="summary-row price-row">
           <span class="summary-label">{{ item.equipmentType }}价格:</span>
           <span class="summary-value">
-            <span v-if="item.silverPrice" class="silver-price">{{ item.silverPrice }} 银币</span>
-            <span v-if="item.goldPrice" class="gold-price">{{ item.goldPrice }} 金币</span>
+            <span v-if="item.silverPrice" class="silver-price">{{ formatPrice(item.silverPrice, 2) }} 银币</span>
+            <span v-if="item.goldPrice" class="gold-price">{{ formatPrice(item.goldPrice, 2) }} 金币</span>
             <span v-if="!item.silverPrice && !item.goldPrice">无</span>
           </span>
         </div>
         <div class="summary-row total-price-row">
           <span class="summary-label">总价格:</span>
           <span class="summary-value">
-            <span v-if="totalSilverPrice" class="silver-price">{{ totalSilverPrice }} 银币</span>
-            <span v-if="totalGoldPrice" class="gold-price">{{ totalGoldPrice }} 金币</span>
+            <span v-if="totalSilverPrice" class="silver-price">{{ formatPrice(totalSilverPrice, 2) }} 银币</span>
+            <span v-if="totalGoldPrice" class="gold-price">{{ formatPrice(totalGoldPrice, 2) }} 金币</span>
           </span>
         </div>
       </div>
@@ -409,6 +409,24 @@ export default {
       const cleaned = String(str).replace(/,/g, '')
       const match = cleaned.match(/[\d.]+/)
       return match ? parseFloat(match[0]) : 0
+    },
+    /**
+     * 格式化金额显示：
+     * 1. 修正浮点精度（通过 Math.round(x * 10^n) / 10^n 去除 62801.520000000004 这类误差
+     * 2. 固定小数位（银币默认2位，金币默认2位）
+     * 3. 添加千分位逗号
+     */
+    formatPrice(val, decimals = 2) {
+      if (val == null) return ''
+      const num = typeof val === 'number' ? val : this.parsePrice(val)
+      if (!isFinite(num)) return ''
+      const factor = Math.pow(10, decimals)
+      const fixed = Math.round(num * factor) / factor
+      // 固定小数位后再分千位，避免 40999.5 显示成 40,999.5
+      const str = fixed.toFixed(decimals)
+      const [intPart, decPart] = str.split('.')
+      const intWithCommas = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+      return decPart ? `${intWithCommas}.${decPart}` : intWithCommas
     },
     isCustomInputType(type) {
       return CUSTOM_INPUT_TYPES.includes(type)
