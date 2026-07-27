@@ -40,7 +40,7 @@ export async function onRequestGet(context) {
         category: row.category,
         subCategory: row.subCategory,
         panelTension: extractNumber(row.strengthKg),
-        lockTension: 0,
+        lockTension: extractNumber(row.strengthKg),
         price: extractNumber(row.silverPrice),
         strengthKg: row.strengthKg,
         form: row.form,
