@@ -54,8 +54,8 @@
             :class="['equipment-item', { selected: isInCompareList(equipment) }]"
             @click="toggleCompareItem(equipment)"
           >
-            <span class="equipment-category-tag">{{ equipment.category }}</span>
-            <span class="equipment-name">{{ equipment.model || equipment.equipmentName }}</span>
+            <span class="equipment-category-tag">{{ formatValue(equipment.category) }}</span>
+            <span class="equipment-name">{{ formatValue(equipment.model || equipment.equipmentName) }}</span>
           </div>
           <div v-if="filteredEquipment.length === 0" class="list-empty">
             未找到匹配的装备
@@ -77,14 +77,14 @@
               class="compare-cell compare-equipment-cell"
             >
               <div class="equipment-header">
-                <span class="equipment-name">{{ equipment.model || equipment.equipmentName }}</span>
+                <span class="equipment-name">{{ formatValue(equipment.model || equipment.equipmentName) }}</span>
                 <button
                   class="remove-btn"
                   aria-label="移除对比项"
                   @click.stop="removeCompareItem(equipment)"
                 >×</button>
               </div>
-              <span class="equipment-category">{{ equipment.subCategory || equipment.category }}</span>
+              <span class="equipment-category">{{ formatValue(equipment.subCategory || equipment.category) }}</span>
             </div>
           </div>
 
@@ -306,8 +306,20 @@ export default {
     }
   },
   methods: {
+    /**
+     * 安全转数值：对象一律兜底为 NaN，禁止隐式 toString 抛 Cannot convert object to primitive value
+     */
+    toSafeNumber(v, fallback = NaN) {
+      if (typeof v === 'number') return Number.isFinite(v) ? v : fallback
+      if (v == null) return fallback
+      if (typeof v === 'object') return fallback
+      const n = Number(v)
+      return Number.isFinite(n) ? n : fallback
+    },
     extractNumber(str) {
       if (str == null) return NaN
+      // 对象直接返回 NaN，避免 String(obj) 隐式转换报错
+      if (typeof str === 'object') return NaN
       const cleaned = String(str).replace(/,/g, '')
       const match = cleaned.match(/[\d.]+/)
       return match ? parseFloat(match[0]) : NaN
@@ -429,6 +441,8 @@ export default {
     },
     formatValue(value, fallback = '-') {
       if (value === null || value === undefined || value === '') return fallback
+      // 对象禁止直接返回：避免 Vue 模板 {{ obj }} 隐式 toString 抛 Cannot convert object to primitive value
+      if (typeof value === 'object') return fallback
       return value
     },
     formatCellValue(equipment, row) {
@@ -437,7 +451,10 @@ export default {
         // merge行可能没有 row.field，传 undefined 即可，format 内部直接使用 equipment 读取所需字段
         const raw = row.field ? equipment[row.field] : undefined
         const formatted = row.format(raw, equipment)
-        if (formatted != null && formatted !== '') return formatted
+        if (formatted != null && formatted !== '') {
+          // format 返回对象时兜底 fallback
+          return typeof formatted === 'object' ? (row.fallback || '-') : formatted
+        }
       }
       // 普通字段行
       if (row.field) {
@@ -445,12 +462,15 @@ export default {
         if (raw === null || raw === undefined || raw === '') {
           return row.fallback || '-'
         }
+        // 对象禁止直接返回：避免隐式 toString 报错
+        if (typeof raw === 'object') return row.fallback || '-'
         return raw
       }
       // merge行且无 format 返回值（如自定义format返回空）
       if (row.merge && row.merge.length) {
         const merged = this.getMergedAdaptWeight(equipment)
-        return merged || (row.fallback || '-')
+        if (merged != null && merged !== '' && typeof merged !== 'object') return merged
+        return row.fallback || '-'
       }
       return row.fallback || '-'
     },
@@ -466,6 +486,7 @@ export default {
       this.$router.push('/')
     },
     formatCostEffectiveness(equipment, field) {
+      if (!equipment) return '-'
       const price = this.extractNumber(equipment.silverPrice)
       const value = this.extractNumber(equipment[field])
       if (Number.isNaN(price) || price <= 0 || Number.isNaN(value) || value <= 0) {
@@ -474,6 +495,7 @@ export default {
       return ((value / price) * 100).toFixed(4)
     },
     isBestCostEffectiveness(equipment, field) {
+      if (!equipment) return false
       const max = this.costEffectivenessValues[field]
       if (max === null || max === undefined) return false
       const price = this.extractNumber(equipment.silverPrice)

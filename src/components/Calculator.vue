@@ -91,19 +91,19 @@
                   <span
                     v-if="selectedEquipmentMap[type].category || selectedEquipmentMap[type].subCategory"
                     class="selected-category-tag"
-                  >{{ selectedEquipmentMap[type].category || selectedEquipmentMap[type].subCategory }}</span>
-                  <span class="selected-name">{{ selectedEquipmentMap[type].model || selectedEquipmentMap[type].equipmentName }}</span>
+                  >{{ toSafeDisplay(selectedEquipmentMap[type].category || selectedEquipmentMap[type].subCategory) }}</span>
+                  <span class="selected-name">{{ toSafeDisplay(selectedEquipmentMap[type].model || selectedEquipmentMap[type].equipmentName) }}</span>
                 <template v-if="type === '鱼竿'">
                   <span class="selected-tension">
-                    拉力:{{ selectedEquipmentMap[type].panelTension || selectedEquipmentMap[type].lockTension }} kN
+                    拉力:{{ toSafeNumber(selectedEquipmentMap[type].panelTension || selectedEquipmentMap[type].lockTension) }} kN
                   </span>
                 </template>
                 <template v-else>
                   <span class="selected-tension">
-                    面板:{{ selectedEquipmentMap[type].panelTension || selectedEquipmentMap[type].lockTension || 0 }} kN
+                    面板:{{ toSafeNumber(selectedEquipmentMap[type].panelTension || selectedEquipmentMap[type].lockTension || 0) }} kN
                   </span>
                   <span class="selected-tension">
-                    锁轮:{{ selectedEquipmentMap[type].lockTension }} kN
+                    锁轮:{{ toSafeNumber(selectedEquipmentMap[type].lockTension) }} kN
                   </span>
                 </template>
                 <div class="wear-input-wrapper">
@@ -123,13 +123,13 @@
                   <input
                     type="number"
                     class="friction-input"
-                    :value="friction"
+                    :value="toSafeNumber(friction)"
                     @change="onFrictionChange"
                     placeholder="0"
                     min="0"
-                    :max="frictionMax"
+                    :max="toSafeNumber(frictionMax)"
                   />
-                  <span class="friction-unit">{{ frictionPercent }}%</span>
+                  <span class="friction-unit">{{ toSafeNumber(frictionPercent) }}%</span>
                 </span>
                 <span v-if="type === '鱼竿'" class="actual-tension">
                   实际拉力:{{ formatTension(actualPanelTensionMap[type]) }} kN
@@ -380,7 +380,12 @@ export default {
       if (this.debouncedSearchQuery.trim()) {
         filtered = searchAndRankEquipment(filtered, this.debouncedSearchQuery, ['model', 'equipmentName'])
       } else {
-        filtered = [...filtered].sort((a, b) => a.panelTension - b.panelTension)
+        // 强制 Number 转换，NaN 兜底 0，避免对象型数值参与减法抛 Cannot convert object to primitive value
+        filtered = [...filtered].sort((a, b) => {
+          const av = Number(a.panelTension)
+          const bv = Number(b.panelTension)
+          return (Number.isFinite(av) ? av : 0) - (Number.isFinite(bv) ? bv : 0)
+        })
       }
 
       return filtered
@@ -497,8 +502,32 @@ export default {
     }
   },
   methods: {
+    /**
+     * 安全转数值：对象/非数值一律兜底为 fallback（默认 0）
+     * 防止 "Cannot convert object to primitive value"
+     */
+    toSafeNumber(v, fallback = 0) {
+      if (typeof v === 'number') return Number.isFinite(v) ? v : fallback
+      if (v == null) return fallback
+      if (typeof v === 'object') return fallback
+      const n = Number(v)
+      return Number.isFinite(n) ? n : fallback
+    },
+    /**
+     * 安全显示值：若为对象（无法安全转字符串/数值），兜底为空或 fallback
+     * 防止模板 {{ obj }} 插值触发隐式 toString 报错
+     */
+    toSafeDisplay(v, fallback = '') {
+      if (typeof v === 'number') return String(v)
+      if (typeof v === 'string') return v
+      if (v == null) return fallback
+      if (typeof v === 'object') return fallback
+      try { return String(v) } catch (_) { return fallback }
+    },
     parsePrice(str) {
-      if (!str) return 0
+      if (str == null) return 0
+      // 对象直接兜底 0，禁止隐式转字符串报错
+      if (typeof str === 'object') return 0
       const cleaned = String(str).replace(/,/g, '')
       const match = cleaned.match(/[\d.]+/)
       return match ? parseFloat(match[0]) : 0
