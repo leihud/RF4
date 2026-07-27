@@ -523,27 +523,28 @@ export default {
     },
     /**
      * 合并展示适配重：
-     *  - 鱼竿：优先 adaptWeight，其次 testG（数字自动加 g 单位）
-     *  - 渔轮：优先 adaptWeight，其次 test
+     *  - 优先级 1：文本型 adaptWeight（范围描述，如 5-25g），鱼竿/渔轮通用
+     *  - 优先级 2：数字型 adaptWeightG（克重，自动加 g 单位），鱼竿/渔轮都可能维护此字段
+     *  - 优先级 3：鱼竿 testG / 渔轮 test（兜底）
      * 都为空返回 ''（调用方用 v-if 判断是否展示）
      */
     getMergedAdaptWeight(equipment, type) {
       if (!equipment) return ''
-      // 优先级 1：文本型 adaptWeight（范围描述，如 5-25g）
+      // 优先级 1：文本型 adaptWeight（范围描述，如 5-25g），鱼竿/渔轮通用
       if (equipment.adaptWeight != null && equipment.adaptWeight !== '') {
         return equipment.adaptWeight
       }
+      // 优先级 2：数字型 adaptWeightG（克重），鱼竿/渔轮都可能维护此字段
+      if (equipment.adaptWeightG != null && equipment.adaptWeightG !== '' && equipment.adaptWeightG !== 0) {
+        return typeof equipment.adaptWeightG === 'number' ? `${equipment.adaptWeightG} g` : equipment.adaptWeightG
+      }
       if (type === '鱼竿') {
-        // 优先级 2：鱼竿专有的 adaptWeightG 数字型（克重）
-        if (equipment.adaptWeightG != null && equipment.adaptWeightG !== '' && equipment.adaptWeightG !== 0) {
-          return typeof equipment.adaptWeightG === 'number' ? `${equipment.adaptWeightG} g` : equipment.adaptWeightG
-        }
-        // 优先级 3：测试克重 testG（兜底）
+        // 优先级 3：鱼竿测试克重 testG（兜底）
         if (equipment.testG != null && equipment.testG !== '' && equipment.testG !== 0) {
           return typeof equipment.testG === 'number' ? `${equipment.testG} g` : equipment.testG
         }
       } else if (type === '渔轮') {
-        // 优先级 2：渔轮测试文本 test（兜底）
+        // 优先级 3：渔轮测试文本 test（兜底）
         if (equipment.test != null && equipment.test !== '') {
           return equipment.test
         }

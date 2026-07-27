@@ -93,6 +93,7 @@ export async function onRequestGet(context) {
         spoolCapacity: row.spoolCapacity,
         obtainMethod: row.obtainMethod,
         adaptWeight: row.adaptWeight,
+        adaptWeightG: row.adaptWeightG,
         adaptWeightStar: row.adaptWeightStar,
         silverPrice: row.silverPrice,
         goldPrice: row.goldPrice,

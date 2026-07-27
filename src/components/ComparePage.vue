@@ -173,9 +173,12 @@ const COMPARE_ROWS = {
     {
       label: '适配重',
       key: 'adaptWeightMerged',
-      merge: ['adaptWeight', 'test'],
+      merge: ['adaptWeight', 'adaptWeightG', 'test'],
       format: (raw, equipment) => {
         if (equipment.adaptWeight != null && equipment.adaptWeight !== '') return equipment.adaptWeight
+        if (equipment.adaptWeightG != null && equipment.adaptWeightG !== '' && equipment.adaptWeightG !== 0) {
+          return typeof equipment.adaptWeightG === 'number' ? `${equipment.adaptWeightG} g` : equipment.adaptWeightG
+        }
         if (equipment.test != null && equipment.test !== '') return equipment.test
         return '-'
       }
@@ -374,22 +377,27 @@ export default {
     },
     /**
      * 合并展示适配重（与Calculator.vue逻辑一致）
-     * - 鱼竿：优先 adaptWeight，其次 adaptWeightG，再次 testG（数字自动加 g 单位）
-     * - 渔轮：优先 adaptWeight，其次 test
+     * - 优先级 1：文本型 adaptWeight（范围描述，如 5-25g），鱼竿/渔轮通用
+     * - 优先级 2：数字型 adaptWeightG（克重，自动加 g 单位），鱼竿/渔轮都可能维护此字段
+     * - 优先级 3：鱼竿 testG / 渔轮 test（兜底）
      */
     getMergedAdaptWeight(equipment) {
       if (!equipment) return ''
+      // 优先级 1：文本型 adaptWeight（范围描述，如 5-25g），鱼竿/渔轮通用
       if (equipment.adaptWeight != null && equipment.adaptWeight !== '') {
         return equipment.adaptWeight
       }
+      // 优先级 2：数字型 adaptWeightG（克重），鱼竿/渔轮都可能维护此字段
+      if (equipment.adaptWeightG != null && equipment.adaptWeightG !== '' && equipment.adaptWeightG !== 0) {
+        return typeof equipment.adaptWeightG === 'number' ? `${equipment.adaptWeightG} g` : equipment.adaptWeightG
+      }
       if (this.compareType === 'rod') {
-        if (equipment.adaptWeightG != null && equipment.adaptWeightG !== '' && equipment.adaptWeightG !== 0) {
-          return typeof equipment.adaptWeightG === 'number' ? `${equipment.adaptWeightG} g` : equipment.adaptWeightG
-        }
+        // 优先级 3：鱼竿测试克重 testG（兜底）
         if (equipment.testG != null && equipment.testG !== '' && equipment.testG !== 0) {
           return typeof equipment.testG === 'number' ? `${equipment.testG} g` : equipment.testG
         }
       } else if (this.compareType === 'reel') {
+        // 优先级 3：渔轮测试文本 test（兜底）
         if (equipment.test != null && equipment.test !== '') {
           return equipment.test
         }
@@ -410,15 +418,25 @@ export default {
     formatCellValue(equipment, row) {
       // 合并行（适配重）优先走自定义 format，函数签名为 format(raw, equipment)
       if (typeof row.format === 'function') {
-        const raw = equipment[row.field]
+        // merge行可能没有 row.field，传 undefined 即可，format 内部直接使用 equipment 读取所需字段
+        const raw = row.field ? equipment[row.field] : undefined
         const formatted = row.format(raw, equipment)
         if (formatted != null && formatted !== '') return formatted
       }
-      const raw = equipment[row.field]
-      if (raw === null || raw === undefined || raw === '') {
-        return row.fallback || '-'
+      // 普通字段行
+      if (row.field) {
+        const raw = equipment[row.field]
+        if (raw === null || raw === undefined || raw === '') {
+          return row.fallback || '-'
+        }
+        return raw
       }
-      return raw
+      // merge行且无 format 返回值（如自定义format返回空）
+      if (row.merge && row.merge.length) {
+        const merged = this.getMergedAdaptWeight(equipment)
+        return merged || (row.fallback || '-')
+      }
+      return row.fallback || '-'
     },
     clearCompareList() {
       this.compareEquipmentList = []
