@@ -607,10 +607,27 @@ export default {
       if (index >= 0) this.selectedEquipmentList.splice(index, 1)
     },
     handleClickOutside(event) {
-      const dropdown = this.$el.querySelector('.search-dropdown')
-      if (dropdown && !dropdown.contains(event.target)) {
-        this.isDropdownOpen = false
+      // 点击免责声明区域时不处理
+      const disclaimers = document.querySelectorAll('.disclaimer-mask, .disclaimer-popup, .disclaimer-footer')
+      for (const el of disclaimers) {
+        if (el && el.contains(event.target)) return
       }
+      const activeRow = this.$el.querySelector('.type-item.active')
+      const selectBtns = this.$el.querySelectorAll('.select-btn')
+      // 点击在激活行（参数+搜索框+下拉）内部，不处理
+      if (activeRow && activeRow.contains(event.target)) return
+      // 点击在其他行的更换装备按钮上（这些按钮会自己切 selectedType），不处理
+      for (const btn of selectBtns) {
+        if (btn && btn.contains(event.target)) return
+      }
+      // 点击在类型 tab（.type-label）或输入控件上，不处理，避免误清空
+      const typeLabels = this.$el.querySelectorAll('.type-label, .custom-input-group input, .wear-input-wrapper input')
+      for (const el of typeLabels) {
+        if (el && el.contains(event.target)) return
+      }
+      // 其他点击都视为外部点击：收起下拉 + 恢复更换装备按钮
+      this.isDropdownOpen = false
+      if (this.selectedType) this.selectedType = null
     },
     goToCompare() {
       this.$router.push('/compare')
@@ -1032,8 +1049,9 @@ h2 {
 
 .search-dropdown {
   position: relative;
-  min-width: 400px;
-  flex: 1;
+  min-width: 280px;
+  max-width: 380px;
+  flex: 0 0 auto;
 }
 
 .search-input-wrapper {
