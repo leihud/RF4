@@ -54,6 +54,7 @@ export async function onRequestGet(context) {
         weightG: row.weightG,
         adaptWeight: row.adaptWeight,
         adaptWeightG: row.adaptWeightG,
+        adaptWeightStar: row.adaptWeightStar,
         silverPrice: row.silverPrice,
         goldPrice: row.goldPrice,
         lengthM: row.lengthM,
