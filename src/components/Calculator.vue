@@ -262,16 +262,18 @@ import {
   DEFAULT_FRICTION,
   CALC_RULES
 } from '../constants/equipment.js'
+import { ROUTES } from '../constants/routes.js'
 import {
   calculateActualLockTension,
   calculateActualPanelTension,
   calculateCustomActualTension,
   clampFriction,
   getFrictionMax,
-  formatTension
+  formatTension,
+  buildMinTensionInfo
 } from '../utils/tension.js'
 import { searchAndRankEquipment } from '../utils/search.js'
-import { sanitizeEquipmentFields, sanitizeEquipmentList } from '../utils/sanitize.js'
+import { sanitizeEquipmentFields, sanitizeEquipmentList, safeToNumber, safeToString } from '../utils/sanitize.js'
 
 export default {
   name: 'Calculator',
@@ -433,66 +435,32 @@ export default {
     },
     /**
      * 锁轮下最小拉力（仅一行）：
-     * 对比鱼竿实际锁轮 / 渔轮实际锁轮 / 主线实际拉力 / 引线实际拉力
-     * 取最小的那一项：返回 { type, label, value, valueText }
-     * 未选择/未录入（value<=0 的项跳过不参与对比
+     * 对比鱼竿实际锁轮 / 渔轮实际锁轮 / 主线实际拉力 / 引线实际拉力，取最小
+     * 未选择/未录入（value<=0）的项跳过不参与
      */
     lockTensionMinInfo() {
-      const candidates = []
-      const rod = this.selectedEquipmentMap['鱼竿']
-      if (rod) {
-        const v = this.toSafeNumber(this.actualLockTensionMap['鱼竿'])
-        if (v > 0) candidates.push({ type: '鱼竿', label: '鱼竿', value: v })
-      }
-      const reel = this.selectedEquipmentMap['渔轮']
-      if (reel) {
-        const v = this.toSafeNumber(this.actualLockTensionMap['渔轮'])
-        if (v > 0) candidates.push({ type: '渔轮', label: '渔轮', value: v })
-      }
-      const main = this.customEquipment && this.customEquipment['主线']
-      if (main && this.toSafeNumber(main.maxTension) > 0) {
-        const v = this.calculateCustomActualTension(main)
-        if (v > 0) candidates.push({ type: '主线', label: '主线', value: v })
-      }
-      const leader = this.customEquipment && this.customEquipment['引线']
-      if (leader && this.toSafeNumber(leader.maxTension) > 0) {
-        const v = this.calculateCustomActualTension(leader)
-        if (v > 0) candidates.push({ type: '引线', label: '引线', value: v })
-      }
-      if (!candidates.length) return null
-      const min = candidates.reduce((a, b) => (b.value < a.value ? b : a))
-      return { ...min, valueText: `${this.formatTension(min.value)} kN` }
+      return buildMinTensionInfo(
+        this.selectedEquipmentMap,
+        this.actualLockTensionMap,
+        this.customEquipment,
+        this.calculateCustomActualTension,
+        this.toSafeNumber,
+        this.formatTension
+      )
     },
     /**
      * 常规下最小拉力（仅一行）：
-     * 对比鱼竿实际面板拉力 / 渔轮实际面板拉力（含摩擦） / 主线实际拉力 / 引线实际拉力
-     * 取最小的那一项：返回 { type, label, value, valueText }
+     * 对比鱼竿实际面板拉力 / 渔轮实际面板拉力（含摩擦） / 主线/引线实际拉力，取最小
      */
     panelTensionMinInfo() {
-      const candidates = []
-      const rod = this.selectedEquipmentMap['鱼竿']
-      if (rod) {
-        const v = this.toSafeNumber(this.actualPanelTensionMap['鱼竿'])
-        if (v > 0) candidates.push({ type: '鱼竿', label: '鱼竿', value: v })
-      }
-      const reel = this.selectedEquipmentMap['渔轮']
-      if (reel) {
-        const v = this.toSafeNumber(this.actualPanelTensionMap['渔轮'])
-        if (v > 0) candidates.push({ type: '渔轮', label: '渔轮', value: v })
-      }
-      const main = this.customEquipment && this.customEquipment['主线']
-      if (main && this.toSafeNumber(main.maxTension) > 0) {
-        const v = this.calculateCustomActualTension(main)
-        if (v > 0) candidates.push({ type: '主线', label: '主线', value: v })
-      }
-      const leader = this.customEquipment && this.customEquipment['引线']
-      if (leader && this.toSafeNumber(leader.maxTension) > 0) {
-        const v = this.calculateCustomActualTension(leader)
-        if (v > 0) candidates.push({ type: '引线', label: '引线', value: v })
-      }
-      if (!candidates.length) return null
-      const min = candidates.reduce((a, b) => (b.value < a.value ? b : a))
-      return { ...min, valueText: `${this.formatTension(min.value)} kN` }
+      return buildMinTensionInfo(
+        this.selectedEquipmentMap,
+        this.actualPanelTensionMap,
+        this.customEquipment,
+        this.calculateCustomActualTension,
+        this.toSafeNumber,
+        this.formatTension
+      )
     },
     /**
      * 装备组合总览：鱼竿/渔轮各自的适配重展示行（合并后）
@@ -520,26 +488,22 @@ export default {
   },
   methods: {
     /**
-     * 安全转数值：对象/非数值一律兜底为 fallback（默认 0）
-     * 防止 "Cannot convert object to primitive value"
+     * 安全转数值：薄包装 sanitize.js/safeToNumber
+     *  - 兜底 fallback（默认 0）
+     *  - 防止隐式转换报错（safeToNumber 内部会处理对象/字符串提取数字）
      */
     toSafeNumber(v, fallback = 0) {
-      if (typeof v === 'number') return Number.isFinite(v) ? v : fallback
-      if (v == null) return fallback
-      if (typeof v === 'object') return fallback
-      const n = Number(v)
-      return Number.isFinite(n) ? n : fallback
+      const n = safeToNumber(v, fallback)
+      return n == null ? fallback : n
     },
     /**
-     * 安全显示值：若为对象（无法安全转字符串/数值），兜底为空或 fallback
-     * 防止模板 {{ obj }} 插值触发隐式 toString 报错
+     * 安全显示值：薄包装 sanitize.js/safeToString
+     *  - 兜底 fallback（默认 ''）
+     *  - 防止模板插值对象触发隐式 toString 报错
      */
     toSafeDisplay(v, fallback = '') {
-      if (typeof v === 'number') return String(v)
-      if (typeof v === 'string') return v
-      if (v == null) return fallback
-      if (typeof v === 'object') return fallback
-      try { return String(v) } catch (_) { return fallback }
+      const s = safeToString(v, fallback)
+      return s == null ? fallback : s
     },
     parsePrice(str) {
       if (str == null) return 0
@@ -705,10 +669,10 @@ export default {
       if (this.selectedType) this.selectedType = null
     },
     goToCompare() {
-      this.$router.push('/compare')
+      this.$router.push(ROUTES.COMPARE)
     },
     goToImport() {
-      this.$router.push('/import')
+      this.$router.push(ROUTES.IMPORT)
     },
     openRf4Stat() {
       // 打开 RF4 中文数据站（新标签页，noopener 防反跟踪，noreferrer 防来源泄露）
