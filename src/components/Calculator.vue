@@ -179,6 +179,7 @@
                 @click.stop="selectEquipment(equipment)"
               >
                 <span class="dropdown-name">{{ equipment.model || equipment.equipmentName }}</span>
+                <span class="dropdown-category">{{ equipment.category || equipment.subCategory || '' }}</span>
                 <span class="dropdown-tension">{{ equipment.panelTension }} kN</span>
               </div>
               <div v-if="filteredEquipment.length === 0" class="dropdown-empty">
@@ -985,9 +986,20 @@ h2 {
 }
 
 .dropdown-item .dropdown-name {
+  flex: 1.4;
+  min-width: 0;
+  margin-right: 16px;
+}
+
+.dropdown-item .dropdown-category {
   flex: 1;
   min-width: 0;
-  margin-right: 20px;
+  font-size: 13px;
+  color: #7f8c8d;
+  margin-right: 16px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .dropdown-item:last-child {
@@ -999,9 +1011,18 @@ h2 {
 }
 
 .dropdown-name {
-  flex: 1;
+  flex: 1.4;
   font-size: 14px;
   color: #2c3e50;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.dropdown-category {
+  flex: 1;
+  font-size: 13px;
+  color: #7f8c8d;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -1011,18 +1032,18 @@ h2 {
   font-size: 13px;
   color: #42b983;
   font-weight: bold;
-  margin-left: 20px;
-  min-width: 60px;
+  min-width: 70px;
   text-align: right;
+  flex-shrink: 0;
 }
 
 .dropdown-price {
   font-size: 13px;
   color: #e74c3c;
   font-weight: bold;
-  margin-left: 20px;
-  min-width: 60px;
+  min-width: 70px;
   text-align: right;
+  flex-shrink: 0;
 }
 
 .dropdown-empty {
