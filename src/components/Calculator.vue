@@ -363,11 +363,13 @@ export default {
       return map
     },
     categoryOptions() {
+      if (!Array.isArray(this.equipmentData)) return ['全部']
       const equipment = this.equipmentData.filter(item => item.equipmentType === this.selectedType)
       const categories = [...new Set(equipment.map(item => item.category))].filter(Boolean)
       return ['全部', ...categories]
     },
     filteredEquipment() {
+      if (!Array.isArray(this.equipmentData)) return []
       const equipment = this.equipmentData.filter(item => item.equipmentType === this.selectedType)
       let filtered = equipment
 

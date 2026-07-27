@@ -238,10 +238,12 @@ export default {
   computed: {
     categories() {
       const data = this.compareType === 'rod' ? this.rodData : this.reelData
+      if (!Array.isArray(data)) return []
       return [...new Set(data.map(item => item.category).filter(Boolean))].sort()
     },
     filteredEquipment() {
       const data = this.compareType === 'rod' ? this.rodData : this.reelData
+      if (!Array.isArray(data)) return []
       let filtered = data
       if (this.selectedCategory) {
         filtered = filtered.filter(item => item.category === this.selectedCategory)
@@ -270,11 +272,13 @@ export default {
     },
     fieldMaxValues() {
       const result = {}
-      for (const row of this.currentCompareRows) {
+      const rows = Array.isArray(this.currentCompareRows) ? this.currentCompareRows : []
+      const eqs = Array.isArray(this.compareEquipmentList) ? this.compareEquipmentList : []
+      for (const row of rows) {
         if (!row.highlight) continue
         const key = row.key || row.field
         let max = -Infinity
-        for (const eq of this.compareEquipmentList) {
+        for (const eq of eqs) {
           const v = this.getRowNumericalValue(eq, row)
           if (!Number.isNaN(v) && v > max) max = v
         }
@@ -284,10 +288,11 @@ export default {
     },
     costEffectivenessValues() {
       const result = {}
+      const eqs = Array.isArray(this.compareEquipmentList) ? this.compareEquipmentList : []
       const fields = this.compareType === 'rod' ? ['strengthKg'] : ['lockTension', 'frictionForce']
       for (const field of fields) {
         let max = -Infinity
-        for (const eq of this.compareEquipmentList) {
+        for (const eq of eqs) {
           const price = this.extractNumber(eq.silverPrice)
           const value = this.extractNumber(eq[field])
           if (!Number.isNaN(price) && price > 0 && !Number.isNaN(value) && value > 0) {
