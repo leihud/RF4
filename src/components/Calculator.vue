@@ -529,14 +529,21 @@ export default {
      */
     getMergedAdaptWeight(equipment, type) {
       if (!equipment) return ''
+      // 优先级 1：文本型 adaptWeight（范围描述，如 5-25g）
       if (equipment.adaptWeight != null && equipment.adaptWeight !== '') {
         return equipment.adaptWeight
       }
       if (type === '鱼竿') {
+        // 优先级 2：鱼竿专有的 adaptWeightG 数字型（克重）
+        if (equipment.adaptWeightG != null && equipment.adaptWeightG !== '' && equipment.adaptWeightG !== 0) {
+          return typeof equipment.adaptWeightG === 'number' ? `${equipment.adaptWeightG} g` : equipment.adaptWeightG
+        }
+        // 优先级 3：测试克重 testG（兜底）
         if (equipment.testG != null && equipment.testG !== '' && equipment.testG !== 0) {
           return typeof equipment.testG === 'number' ? `${equipment.testG} g` : equipment.testG
         }
       } else if (type === '渔轮') {
+        // 优先级 2：渔轮测试文本 test（兜底）
         if (equipment.test != null && equipment.test !== '') {
           return equipment.test
         }

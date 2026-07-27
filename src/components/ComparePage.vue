@@ -138,9 +138,12 @@ const COMPARE_ROWS = {
     {
       label: '适配重',
       key: 'adaptWeightMerged',
-      merge: ['adaptWeight', 'testG'],
+      merge: ['adaptWeight', 'adaptWeightG', 'testG'],
       format: (raw, equipment) => {
         if (equipment.adaptWeight != null && equipment.adaptWeight !== '') return equipment.adaptWeight
+        if (equipment.adaptWeightG != null && equipment.adaptWeightG !== '' && equipment.adaptWeightG !== 0) {
+          return typeof equipment.adaptWeightG === 'number' ? `${equipment.adaptWeightG} g` : equipment.adaptWeightG
+        }
         if (equipment.testG != null && equipment.testG !== '' && equipment.testG !== 0) {
           return typeof equipment.testG === 'number' ? `${equipment.testG} g` : equipment.testG
         }
@@ -371,7 +374,7 @@ export default {
     },
     /**
      * 合并展示适配重（与Calculator.vue逻辑一致）
-     * - 鱼竿：优先 adaptWeight，其次 testG（数字自动加 g 单位）
+     * - 鱼竿：优先 adaptWeight，其次 adaptWeightG，再次 testG（数字自动加 g 单位）
      * - 渔轮：优先 adaptWeight，其次 test
      */
     getMergedAdaptWeight(equipment) {
@@ -380,6 +383,9 @@ export default {
         return equipment.adaptWeight
       }
       if (this.compareType === 'rod') {
+        if (equipment.adaptWeightG != null && equipment.adaptWeightG !== '' && equipment.adaptWeightG !== 0) {
+          return typeof equipment.adaptWeightG === 'number' ? `${equipment.adaptWeightG} g` : equipment.adaptWeightG
+        }
         if (equipment.testG != null && equipment.testG !== '' && equipment.testG !== 0) {
           return typeof equipment.testG === 'number' ? `${equipment.testG} g` : equipment.testG
         }
