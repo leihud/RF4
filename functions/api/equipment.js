@@ -76,6 +76,30 @@ export async function onRequestGet(context) {
       }))
       results = results.concat(reelsData)
     }
+
+    // 搜索过滤：同时支持原始匹配和归一化（去空格/分隔符）匹配
+    if (searchQuery && searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase()
+      const qNorm = q
+        .replace(/\s+/g, '')
+        .replace(/[-_/.,]/g, '')
+      results = results.filter(item => {
+        const fields = [item.model, item.equipmentName].filter(Boolean).map(String)
+        for (const f of fields) {
+          const low = f.toLowerCase()
+          const norm = low
+            .replace(/\s+/g, '')
+            .replace(/[-_/.,]/g, '')
+          if (low === q) return true
+          if (low.startsWith(q)) return true
+          if (qNorm && norm === qNorm) return true
+          if (qNorm && norm.startsWith(qNorm)) return true
+          if (qNorm && norm.includes(qNorm)) return true
+          if (low.includes(q)) return true
+        }
+        return false
+      })
+    }
     
     return jsonResponse(results)
   } catch (error) {

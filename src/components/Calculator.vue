@@ -246,6 +246,7 @@ import {
   getFrictionMax,
   formatTension
 } from '../utils/tension.js'
+import { searchAndRankEquipment } from '../utils/search.js'
 
 export default {
   name: 'Calculator',
@@ -349,14 +350,12 @@ export default {
       }
 
       if (this.debouncedSearchQuery.trim()) {
-        const q = this.debouncedSearchQuery.toLowerCase()
-        filtered = filtered.filter(item => 
-          (item.equipmentName && item.equipmentName.toLowerCase().includes(q)) ||
-          (item.model && item.model.toLowerCase().includes(q))
-        )
+        filtered = searchAndRankEquipment(filtered, this.debouncedSearchQuery, ['model', 'equipmentName'])
+      } else {
+        filtered = [...filtered].sort((a, b) => a.panelTension - b.panelTension)
       }
 
-      return [...filtered].sort((a, b) => a.panelTension - b.panelTension)
+      return filtered
     },
     allEquipmentSelected() {
       return !!(this.selectedEquipmentMap['鱼竿'] && this.selectedEquipmentMap['渔轮'])

@@ -10,6 +10,27 @@ function jsonResponse(data, status = 200) {
   })
 }
 
+function normalizeSearch(str) {
+  if (!str) return ''
+  return String(str)
+    .toLowerCase()
+    .replace(/\s+/g, '')
+    .replace(/[-_/.,]/g, '')
+}
+
+function matchSearch(field, q, qNorm) {
+  if (!field) return false
+  const low = String(field).toLowerCase()
+  const norm = normalizeSearch(field)
+  if (low === q) return true
+  if (low.startsWith(q)) return true
+  if (qNorm && norm === qNorm) return true
+  if (qNorm && norm.startsWith(qNorm)) return true
+  if (qNorm && norm.includes(qNorm)) return true
+  if (low.includes(q)) return true
+  return false
+}
+
 export async function onRequestGet(context) {
   const { request, env } = context
   const url = new URL(request.url)
@@ -24,12 +45,18 @@ export async function onRequestGet(context) {
       results = results.filter(item => item.category === category)
     }
     
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase()
-      results = results.filter(item => 
-        (item.equipmentName && item.equipmentName.toLowerCase().includes(q)) ||
-        (item.model && item.model.toLowerCase().includes(q))
-      ).slice(0, 50)
+    if (searchQuery && searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase()
+      const qNorm = normalizeSearch(q)
+      results = results.filter(item =>
+        matchSearch(item.model, q, qNorm) ||
+        matchSearch(item.equipmentName, q, qNorm)
+      )
+    }
+
+    // 搜索时最多返回 50 条；无搜索时全量返回
+    if (searchQuery && searchQuery.trim()) {
+      results = results.slice(0, 50)
     }
     
     return jsonResponse(results)
