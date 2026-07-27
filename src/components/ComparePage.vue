@@ -129,6 +129,7 @@
 
 <script>
 import { searchAndRankEquipment } from '../utils/search.js'
+import { sanitizeEquipmentFields, sanitizeEquipmentList } from '../utils/sanitize.js'
 
 const COMPARE_ROWS = {
   rod: [
@@ -239,7 +240,14 @@ export default {
     categories() {
       const data = this.compareType === 'rod' ? this.rodData : this.reelData
       if (!Array.isArray(data)) return []
-      return [...new Set(data.map(item => item.category).filter(Boolean))].sort()
+      // category 若为对象类型，String(category) 隐式转换会在 Array.sort 中抛错
+      return [...new Set(
+        data.map(item => this.formatValue(item.category, '')).filter(c => c && c !== '')
+      )].sort((a, b) => {
+        const sa = String(a)
+        const sb = String(b)
+        return sa < sb ? -1 : sa > sb ? 1 : 0
+      })
     },
     filteredEquipment() {
       const data = this.compareType === 'rod' ? this.rodData : this.reelData
@@ -347,8 +355,11 @@ export default {
           throw new Error(`渔轮API HTTP ${reelResponse.status}: ${errorText}`)
         }
         
-        this.rodData = await rodResponse.json()
-        this.reelData = await reelResponse.json()
+        // 【源头清洗】把所有对象字段 primitive 化，根除隐式转换报错
+        const rawRod = await rodResponse.json()
+        const rawReel = await reelResponse.json()
+        this.rodData = sanitizeEquipmentList(Array.isArray(rawRod) ? rawRod : [])
+        this.reelData = sanitizeEquipmentList(Array.isArray(rawReel) ? rawReel : [])
         
         console.log('装备对比数据加载成功:', this.rodData.length, '条鱼竿,', this.reelData.length, '条渔轮')
       } catch (error) {
@@ -366,15 +377,26 @@ export default {
       this.selectedCategory = ''
     },
     getItemKey(equipment) {
-      return equipment.model || equipment.equipmentName
+      if (!equipment) return ''
+      const m = equipment.model
+      const n = equipment.equipmentName
+      // 避免对象类型 model/equipmentName 导致 key 为对象
+      const pick = (v) => {
+        if (v == null) return ''
+        const t = typeof v
+        if (t === 'string' || t === 'number') return String(v)
+        return ''
+      }
+      return pick(m) || pick(n) || String(equipment.id || Math.random())
     },
     toggleCompareItem(equipment) {
-      const key = this.getItemKey(equipment)
+      const safe = sanitizeEquipmentFields(equipment || {})
+      const key = this.getItemKey(safe)
       const index = this.compareEquipmentList.findIndex(item => this.getItemKey(item) === key)
       if (index >= 0) {
         this.compareEquipmentList.splice(index, 1)
       } else {
-        this.compareEquipmentList.push({ ...equipment })
+        this.compareEquipmentList.push(safe)
       }
     },
     isInCompareList(equipment) {

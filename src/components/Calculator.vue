@@ -183,13 +183,13 @@
             </div>
             <div v-if="isDropdownOpen" class="dropdown-list">
               <div
-                v-for="equipment in filteredEquipment"
-                :key="equipment.model || equipment.equipmentName"
+                v-for="(equipment, eqIdx) in filteredEquipment"
+                :key="toSafeDisplay(equipment.model || equipment.equipmentName, String(equipment.id || eqIdx))"
                 class="dropdown-item"
                 @click.stop="selectEquipment(equipment)"
               >
-                <span class="dropdown-name">{{ equipment.model || equipment.equipmentName }}</span>
-                <span class="dropdown-category">{{ equipment.category || equipment.subCategory || '' }}</span>
+                <span class="dropdown-name">{{ toSafeDisplay(equipment.model || equipment.equipmentName, '-') }}</span>
+                <span class="dropdown-category">{{ toSafeDisplay(equipment.category || equipment.subCategory, '') }}</span>
               </div>
               <div v-if="filteredEquipment.length === 0" class="dropdown-empty">
                 未找到匹配的装备
@@ -273,6 +273,7 @@ import {
   formatTension
 } from '../utils/tension.js'
 import { searchAndRankEquipment } from '../utils/search.js'
+import { sanitizeEquipmentFields, sanitizeEquipmentList, safeToString } from '../utils/sanitize.js'
 
 export default {
   name: 'Calculator',
@@ -394,11 +395,21 @@ export default {
       return !!(this.selectedEquipmentMap['鱼竿'] && this.selectedEquipmentMap['渔轮'])
     },
     equipmentSummaryText() {
-      const rodName = this.selectedEquipmentMap['鱼竿']?.model || this.selectedEquipmentMap['鱼竿']?.equipmentName || '未选择'
-      const reelName = this.selectedEquipmentMap['渔轮']?.model || this.selectedEquipmentMap['渔轮']?.equipmentName || '未选择'
+      const rod = this.selectedEquipmentMap['鱼竿']
+      const reel = this.selectedEquipmentMap['渔轮']
+      const pickName = (eq) => {
+        if (!eq) return '未选择'
+        const s = this.toSafeDisplay(eq.model || eq.equipmentName, '')
+        return s || '未选择'
+      }
+      const rodName = pickName(rod)
+      const reelName = pickName(reel)
       const mainLine = this.customEquipment['主线']
       const leader = this.customEquipment['引线']
-      const fmt = (t) => (t.maxTension > 0 ? `${t.label}(${t.value.maxTension}kN)` : '未设置')
+      const fmt = (t) => {
+        const mt = this.toSafeNumber(t.value && t.value.maxTension, 0)
+        return mt > 0 ? `${this.toSafeDisplay(t.label || '')}(${mt}kN)` : '未设置'
+      }
       return [
         rodName,
         reelName,
@@ -463,7 +474,9 @@ export default {
      */
     extractMaxWeight(text) {
       if (!text) return null
-      const cleaned = String(text).replace(/,/g, '')
+      // 对象禁止 String(obj) 隐式转换，先通过 safeToString 兜底
+      const cleaned = safeToString(text, '')
+      if (!cleaned) return null
       const nums = cleaned.match(/[\d.]+/g)
       if (!nums || nums.length === 0) return null
       const numbers = nums.map(n => parseFloat(n)).filter(n => !Number.isNaN(n) && n > 0)
@@ -602,17 +615,22 @@ export default {
           throw new Error(`HTTP ${response.status}: ${errorText}`)
         }
         const result = await response.json()
-        this.equipmentData = result.map(item => ({
+        // 【源头清洗】把所有字段对象型转为 primitive，从入口根除
+        // "Cannot convert object to primitive value"
+        const sanitized = sanitizeEquipmentList(
+          Array.isArray(result) ? result : []
+        )
+        this.equipmentData = sanitized.map(item => ({
           ...item,
-          maxTension: item.panelTension
+          maxTension: item.panelTension ?? item.maxTension ?? null
         }))
         console.log('装备数据加载成功:', this.equipmentData.length, '条')
       } catch (error) {
         console.error('加载装备数据失败:', error)
         this.dataLoadError = true
         this.equipmentData = [
-          { equipmentType: '鱼竿', equipmentName: 'FD360', maxTension: 13 },
-          { equipmentType: '渔轮', equipmentName: 'TAII', maxTension: 64 },
+          { equipmentType: '鱼竿', equipmentName: 'FD360', maxTension: 13, panelTension: 13 },
+          { equipmentType: '渔轮', equipmentName: 'TAII', maxTension: 64, panelTension: 64, lockTension: 64 },
           { equipmentType: '主线', equipmentName: 'CAIHONG100', maxTension: 60 },
           { equipmentType: '引线', equipmentName: 'NINONG23', maxTension: 60 }
         ]
@@ -634,12 +652,14 @@ export default {
       this.isDropdownOpen = false
     },
     selectEquipment(equipment) {
+      // 【入口二次清洗】防止装备对象中残留未清洗的对象字段
+      const safe = sanitizeEquipmentFields(equipment || {})
       const existingIndex = this.selectedEquipmentList.findIndex(
-        item => item.equipmentType === equipment.equipmentType
+        item => item.equipmentType === safe.equipmentType
       )
-      const next = { ...equipment, wear: 0 }
+      const next = { ...safe, wear: 0 }
       if (existingIndex >= 0) {
-        next.wear = this.selectedEquipmentList[existingIndex].wear || 0
+        next.wear = this.toSafeNumber(this.selectedEquipmentList[existingIndex].wear, 0)
         this.selectedEquipmentList.splice(existingIndex, 1, next)
       } else {
         this.selectedEquipmentList.push(next)

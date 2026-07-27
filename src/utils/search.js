@@ -1,8 +1,20 @@
 /**
+ * 判断是否可安全做字符串操作：排除 null/undefined/对象/数组（对象
+ * 没有正确的 valueOf/toString 时，String(obj) 会抛 "Cannot convert
+ * object to primitive value"）
+ */
+function isStringable(v) {
+  if (v == null) return false
+  const t = typeof v
+  return t === 'string' || t === 'number' || t === 'boolean' || t === 'bigint' || t === 'symbol'
+}
+
+/**
  * 转义正则元字符
  */
 export function escapeRegExp(str) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  if (!isStringable(str)) return ''
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
 /**
@@ -10,6 +22,7 @@ export function escapeRegExp(str) {
  */
 export function buildWordBoundaryRegex(query, flags = 'i') {
   const escaped = escapeRegExp(query)
+  if (!escaped) return /(?!)/  // 永不匹配的空正则，避免 test 任何值
   return new RegExp(`(?:^|\\s|_|-)${escaped}(?:$|\\s|_|-)`, flags)
 }
 
@@ -21,7 +34,7 @@ export function buildWordBoundaryRegex(query, flags = 'i') {
  * 例："20 2S" → "202s"，"Admiral-2000S" → "admiral2000s"
  */
 export function normalizeForSearch(str) {
-  if (!str) return ''
+  if (!isStringable(str)) return ''
   return String(str)
     .toLowerCase()
     .replace(/\s+/g, '')
@@ -30,44 +43,30 @@ export function normalizeForSearch(str) {
 
 /**
  * 装备列表的搜索过滤 + 排序（支持去空格匹配）
- * 匹配优先级（从高到低）：
- *   3 = 原始字段精确匹配
- *   2 = 原始字段前缀匹配
- *   1 = 归一化后精确匹配（如"202S" == "20 2S"去空格后）
- *   0 = 归一化后前缀匹配
- *  -1 = 归一化后子串包含匹配
- *  -2 = 原始字段子串包含匹配（保底）
- *  -99 = 不匹配
- * @param {Array} data 原始数据
- * @param {string} query 搜索词
- * @param {string[]} nameFields 用于匹配的字段名列表
  */
 export function searchAndRankEquipment(data, query, nameFields = ['equipmentName', 'model']) {
+  if (!Array.isArray(data)) return []
   if (!query || !query.trim()) return data
   const q = query.trim().toLowerCase()
   const qNorm = normalizeForSearch(q)
   const wordRegex = buildWordBoundaryRegex(q)
 
   const score = (item) => {
+    if (!item || typeof item !== 'object') return -99
     for (const f of nameFields) {
-      const vRaw = (item[f] || '').toLowerCase()
-      const vNorm = normalizeForSearch(item[f])
+      const raw = item[f]
+      if (!isStringable(raw)) continue
+      const vRaw = String(raw).toLowerCase()
+      const vNorm = normalizeForSearch(raw)
 
       if (!vRaw && !vNorm) continue
 
-      // 3 分：原始精确
       if (vRaw === q) return 3
-      // 2 分：原始前缀
       if (vRaw.startsWith(q)) return 2
-      // 1 分：归一化精确（例："202s" == "20 2s" 归一化后）
       if (qNorm && vNorm === qNorm) return 1
-      // 0 分：归一化前缀
       if (qNorm && vNorm.startsWith(qNorm)) return 0
-      // -1 分：归一化子串包含
       if (qNorm && vNorm.includes(qNorm)) return -1
-      // -2 分：词边界
-      if (wordRegex.test(item[f] || '')) return -2
-      // -3 分：原始子串（保底）
+      if (wordRegex.test(raw)) return -2
       if (vRaw.includes(q)) return -3
     }
     return -99
