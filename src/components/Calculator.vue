@@ -88,12 +88,16 @@
               </div>
             </template>
             <template v-else>
-              <template v-if="selectedEquipmentMap[type]">
-                  <span
-                    v-if="selectedEquipmentMap[type].category || selectedEquipmentMap[type].subCategory"
-                    class="selected-category-tag"
-                  >{{ toSafeDisplay(selectedEquipmentMap[type].category || selectedEquipmentMap[type].subCategory) }}</span>
-                  <span class="selected-name">{{ toSafeDisplay(selectedEquipmentMap[type].model || selectedEquipmentMap[type].equipmentName) }}</span>
+                <template v-if="selectedEquipmentMap[type]">
+                    <span
+                      v-if="selectedEquipmentMap[type].category || selectedEquipmentMap[type].subCategory"
+                      class="selected-category-tag"
+                    >{{ toSafeDisplay(selectedEquipmentMap[type].category || selectedEquipmentMap[type].subCategory) }}</span>
+                    <span
+                      v-if="selectedEquipmentMap[type].ratingAlias && selectedEquipmentMap[type].ratingAlias !== '常规'"
+                      class="selected-rating-tag"
+                    >{{ toSafeDisplay(selectedEquipmentMap[type].ratingAlias) }}</span>
+                    <span class="selected-name">{{ toSafeDisplay(selectedEquipmentMap[type].model || selectedEquipmentMap[type].equipmentName) }}</span>
                 <template v-if="type === '鱼竿'">
                   <span class="selected-tension">
                     拉力:{{ toSafeNumber(selectedEquipmentMap[type].panelTension || selectedEquipmentMap[type].lockTension) }} kN
@@ -190,6 +194,10 @@
               >
                 <span class="dropdown-name">{{ toSafeDisplay(equipment.model || equipment.equipmentName, '-') }}</span>
                 <span class="dropdown-category">{{ toSafeDisplay(equipment.category || equipment.subCategory, '') }}</span>
+                <span
+                  v-if="equipment.ratingAlias && equipment.ratingAlias !== '常规'"
+                  class="dropdown-rating"
+                >{{ toSafeDisplay(equipment.ratingAlias) }}</span>
               </div>
               <div v-if="filteredEquipment.length === 0" class="dropdown-empty">
                 未找到匹配的装备
@@ -260,7 +268,8 @@ import {
   SEARCHABLE_TYPES,
   CALC_RULE_OPTIONS,
   DEFAULT_FRICTION,
-  CALC_RULES
+  CALC_RULES,
+  getRatingAlias
 } from '../constants/equipment.js'
 import { ROUTES } from '../constants/routes.js'
 import {
@@ -379,7 +388,11 @@ export default {
       }
 
       if (this.debouncedSearchQuery.trim()) {
-        filtered = searchAndRankEquipment(filtered, this.debouncedSearchQuery, ['model', 'equipmentName'])
+        filtered = searchAndRankEquipment(
+          filtered,
+          this.debouncedSearchQuery,
+          ['model', 'equipmentName', 'category', 'subCategory', 'ratingAlias']
+        )
       } else {
         // 强制 Number 转换，NaN 兜底 0，避免对象型数值参与减法抛 Cannot convert object to primitive value
         filtered = [...filtered].sort((a, b) => {
@@ -590,17 +603,18 @@ export default {
         )
         this.equipmentData = sanitized.map(item => ({
           ...item,
-          maxTension: item.panelTension ?? item.maxTension ?? null
+          maxTension: item.panelTension ?? item.maxTension ?? null,
+          ratingAlias: getRatingAlias(item.rating)
         }))
         console.log('装备数据加载成功:', this.equipmentData.length, '条')
       } catch (error) {
         console.error('加载装备数据失败:', error)
         this.dataLoadError = true
         this.equipmentData = [
-          { equipmentType: '鱼竿', equipmentName: 'FD360', maxTension: 13, panelTension: 13 },
-          { equipmentType: '渔轮', equipmentName: 'TAII', maxTension: 64, panelTension: 64, lockTension: 64 },
-          { equipmentType: '主线', equipmentName: 'CAIHONG100', maxTension: 60 },
-          { equipmentType: '引线', equipmentName: 'NINONG23', maxTension: 60 }
+          { equipmentType: '鱼竿', equipmentName: 'FD360', maxTension: 13, panelTension: 13, rating: 3, ratingAlias: getRatingAlias(3) },
+          { equipmentType: '渔轮', equipmentName: 'TAII', maxTension: 64, panelTension: 64, lockTension: 64, rating: 'S', ratingAlias: getRatingAlias('S') },
+          { equipmentType: '主线', equipmentName: 'CAIHONG100', maxTension: 60, rating: null, ratingAlias: getRatingAlias(null) },
+          { equipmentType: '引线', equipmentName: 'NINONG23', maxTension: 60, rating: null, ratingAlias: getRatingAlias(null) }
         ]
       } finally {
         this.isLoading = false
@@ -913,6 +927,18 @@ h2 {
   padding: 4px 12px;
   background-color: #e0f2fe;
   color: #0369a1;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.selected-rating-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  background-color: #fff7ed;
+  color: #c2410c;
   font-size: 12px;
   font-weight: 600;
   border-radius: 12px;
@@ -1286,6 +1312,24 @@ h2 {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.dropdown-rating {
+  flex: 0 0 auto;
+  min-width: 60px;
+  max-width: 100px;
+  padding: 4px 12px;
+  background-color: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-left: auto;
 }
 
 .dropdown-empty {
