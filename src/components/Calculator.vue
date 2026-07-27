@@ -136,6 +136,12 @@
                 <span v-if="type === '渔轮'" class="actual-tension">
                   实际锁轮:{{ formatTension(actualLockTensionMap[type]) }} kN
                 </span>
+                <span
+                  v-if="getMergedAdaptWeight(selectedEquipmentMap[type], type)"
+                  class="actual-tension adapt-weight-tag"
+                >
+                  适配重:{{ getMergedAdaptWeight(selectedEquipmentMap[type], type) }}
+                </span>
                 <button class="clear-btn" @click.stop="clearEquipmentByType(type)">×</button>
               </template>
               <span v-else class="placeholder">未选择</span>
@@ -427,6 +433,28 @@ export default {
       const [intPart, decPart] = str.split('.')
       const intWithCommas = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
       return decPart ? `${intWithCommas}.${decPart}` : intWithCommas
+    },
+    /**
+     * 合并展示适配重：
+     *  - 鱼竿：优先 adaptWeight，其次 testG（数字自动加 g 单位）
+     *  - 渔轮：优先 adaptWeight，其次 test
+     * 都为空返回 ''（调用方用 v-if 判断是否展示）
+     */
+    getMergedAdaptWeight(equipment, type) {
+      if (!equipment) return ''
+      if (equipment.adaptWeight != null && equipment.adaptWeight !== '') {
+        return equipment.adaptWeight
+      }
+      if (type === '鱼竿') {
+        if (equipment.testG != null && equipment.testG !== '' && equipment.testG !== 0) {
+          return typeof equipment.testG === 'number' ? `${equipment.testG} g` : equipment.testG
+        }
+      } else if (type === '渔轮') {
+        if (equipment.test != null && equipment.test !== '') {
+          return equipment.test
+        }
+      }
+      return ''
     },
     isCustomInputType(type) {
       return CUSTOM_INPUT_TYPES.includes(type)
@@ -1154,6 +1182,11 @@ h2 {
   border-radius: 4px;
   font-size: 14px;
   margin-left: 10px;
+}
+
+.adapt-weight-tag {
+  color: #8e44ad;
+  background-color: #f3e9fa;
 }
 
 @media (min-width: 768px) and (max-width: 1200px) {
