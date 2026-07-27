@@ -190,8 +190,6 @@
               >
                 <span class="dropdown-name">{{ equipment.model || equipment.equipmentName }}</span>
                 <span class="dropdown-category">{{ equipment.category || equipment.subCategory || '' }}</span>
-                <span class="dropdown-adapt-weight">{{ getMergedAdaptWeight(equipment, selectedType) || '—' }}</span>
-                <span class="dropdown-tension">{{ equipment.panelTension }} kN</span>
               </div>
               <div v-if="filteredEquipment.length === 0" class="dropdown-empty">
                 未找到匹配的装备
@@ -1078,8 +1076,8 @@ h2 {
 
 .search-dropdown {
   position: relative;
-  min-width: 280px;
-  max-width: 380px;
+  min-width: 420px;
+  max-width: 560px;
   flex: 0 0 auto;
 }
 
@@ -1185,38 +1183,11 @@ h2 {
 .dropdown-item {
   display: flex;
   align-items: center;
-  padding: 10px 15px;
+  padding: 12px 18px;
   cursor: pointer;
   border-bottom: 1px solid #f5f5f5;
   transition: background-color 0.2s;
-}
-
-.dropdown-item .dropdown-name {
-  flex: 1.4;
-  min-width: 0;
-  margin-right: 12px;
-}
-
-.dropdown-item .dropdown-category {
-  flex: 0.8;
-  min-width: 0;
-  font-size: 13px;
-  color: #7f8c8d;
-  margin-right: 12px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.dropdown-item .dropdown-adapt-weight {
-  flex: 1;
-  min-width: 0;
-  font-size: 13px;
-  color: #8e44ad;
-  margin-right: 12px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  gap: 18px;
 }
 
 .dropdown-item:last-child {
@@ -1228,48 +1199,33 @@ h2 {
 }
 
 .dropdown-name {
-  flex: 1.4;
-  font-size: 14px;
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 600;
   color: #2c3e50;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  line-height: 1.4;
+  /* 允许换行显示完整名称，不再强制单行省略 */
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .dropdown-category {
-  flex: 0.8;
+  flex: 0 0 auto;
+  min-width: 68px;
+  max-width: 120px;
+  padding: 4px 12px;
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+  border-radius: 14px;
   font-size: 13px;
-  color: #7f8c8d;
-  overflow: hidden;
+  font-weight: 500;
+  text-align: center;
   white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.dropdown-adapt-weight {
-  flex: 1;
-  font-size: 13px;
-  color: #8e44ad;
   overflow: hidden;
-  white-space: nowrap;
   text-overflow: ellipsis;
-}
-
-.dropdown-tension {
-  font-size: 13px;
-  color: #42b983;
-  font-weight: bold;
-  min-width: 70px;
-  text-align: right;
-  flex-shrink: 0;
-}
-
-.dropdown-price {
-  font-size: 13px;
-  color: #e74c3c;
-  font-weight: bold;
-  min-width: 70px;
-  text-align: right;
-  flex-shrink: 0;
 }
 
 .dropdown-empty {
@@ -1395,13 +1351,8 @@ h2 {
   }
 
   .search-dropdown {
-    min-width: 300px;
-  }
-
-  .dropdown-tension,
-  .dropdown-price {
-    margin-left: 15px;
-    min-width: 50px;
+    min-width: 360px;
+    max-width: 480px;
   }
 
   .summary-row {
@@ -1486,22 +1437,23 @@ h2 {
 
   .dropdown-item {
     flex-wrap: wrap;
-    padding: 8px 12px;
+    padding: 10px 14px;
+    gap: 10px;
   }
 
   .dropdown-name {
-    flex: 1;
+    flex: 1 1 100%;
     min-width: 100%;
+    font-size: 15px;
     margin-right: 0;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
   }
 
-  .dropdown-tension,
-  .dropdown-price {
-    margin-left: 0;
-    min-width: auto;
-    text-align: left;
-    margin-right: 15px;
+  .dropdown-category {
+    min-width: 56px;
+    max-width: 96px;
+    padding: 3px 10px;
+    font-size: 12px;
   }
 
   .selected-name {
