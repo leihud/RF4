@@ -88,6 +88,10 @@
             </template>
             <template v-else>
               <template v-if="selectedEquipmentMap[type]">
+                  <span
+                    v-if="selectedEquipmentMap[type].category || selectedEquipmentMap[type].subCategory"
+                    class="selected-category-tag"
+                  >{{ selectedEquipmentMap[type].category || selectedEquipmentMap[type].subCategory }}</span>
                   <span class="selected-name">{{ selectedEquipmentMap[type].model || selectedEquipmentMap[type].equipmentName }}</span>
                 <template v-if="type === '鱼竿'">
                   <span class="selected-tension">
@@ -842,6 +846,18 @@ h2 {
 .placeholder {
   color: #999;
   font-style: italic;
+}
+
+.selected-category-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  background-color: #e0f2fe;
+  color: #0369a1;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .selected-name {
