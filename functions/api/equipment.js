@@ -1,4 +1,4 @@
-import { jsonResponse, errorResponse, extractNumber, buildSearchWhere } from './_shared.js'
+import { jsonResponse, errorResponse, extractNumber, buildSearchWhere, SEARCH_FIELDS, NO_SEARCH_LIMIT } from './_shared.js'
 
 /** rods 表行 → 前端统一装备结构（鱼竿） */
 function mapRod(row) {
@@ -72,12 +72,15 @@ function mapReel(row) {
   }
 }
 
-/** 查询单表，搜索条件（model/equipmentName 模糊匹配）下推到 SQL */
+/** 查询单表，搜索条件（统一字段 SEARCH_FIELDS 模糊匹配）下推到 SQL */
 async function queryTable(db, table, searchQuery) {
   let sql = `SELECT * FROM ${table}`
   const binds = []
   if (searchQuery && searchQuery.trim()) {
-    sql += ` WHERE ${buildSearchWhere(['model', 'equipmentName'], searchQuery, binds)}`
+    sql += ` WHERE ${buildSearchWhere(SEARCH_FIELDS, searchQuery, binds)}`
+  } else {
+    // 无搜索时全量返回（带安全上限防数据膨胀失控）
+    sql += ` LIMIT ${NO_SEARCH_LIMIT}`
   }
   const result = await db.prepare(sql).bind(...binds).all()
   return result.results

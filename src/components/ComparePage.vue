@@ -128,8 +128,9 @@
 </template>
 
 <script>
-import { searchAndRankEquipment } from '../utils/search.js'
+import { searchAndRankEquipment, sortByPanelTension, EQUIPMENT_SEARCH_FIELDS } from '../utils/search.js'
 import { sanitizeEquipmentFields, sanitizeEquipmentList } from '../utils/sanitize.js'
+import { getRatingAlias } from '../constants/equipment.js'
 
 const COMPARE_ROWS = {
   rod: [
@@ -256,7 +257,13 @@ export default {
       if (this.selectedCategory) {
         filtered = filtered.filter(item => item.category === this.selectedCategory)
       }
-      filtered = searchAndRankEquipment(filtered, this.debouncedSearchQuery, ['model', 'equipmentName'])
+      if (this.debouncedSearchQuery.trim()) {
+        // 搜索字段与计算器统一（EQUIPMENT_SEARCH_FIELDS），支持按分类/评级别名搜索
+        filtered = searchAndRankEquipment(filtered, this.debouncedSearchQuery, EQUIPMENT_SEARCH_FIELDS)
+      } else {
+        // 无搜索词时与计算器下拉一致：按 panelTension 升序
+        filtered = sortByPanelTension(filtered)
+      }
       const seen = new Set()
       return filtered.filter(item => {
         const key = this.getItemKey(item)
@@ -358,8 +365,17 @@ export default {
         // 【源头清洗】把所有对象字段 primitive 化，根除隐式转换报错
         const rawRod = await rodResponse.json()
         const rawReel = await reelResponse.json()
-        this.rodData = sanitizeEquipmentList(Array.isArray(rawRod) ? rawRod : [])
-        this.reelData = sanitizeEquipmentList(Array.isArray(rawReel) ? rawReel : [])
+        // 补齐 ratingAlias（搜索用）与 panelTension（默认排序用），与计算器页的装备结构对齐
+        this.rodData = sanitizeEquipmentList(Array.isArray(rawRod) ? rawRod : []).map(item => ({
+          ...item,
+          ratingAlias: getRatingAlias(item.rating),
+          panelTension: this.extractNumber(item.strengthKg) || 0
+        }))
+        this.reelData = sanitizeEquipmentList(Array.isArray(rawReel) ? rawReel : []).map(item => ({
+          ...item,
+          ratingAlias: getRatingAlias(item.rating),
+          panelTension: this.extractNumber(item.frictionForce) || this.extractNumber(item.lockTension) || 0
+        }))
         
         console.log('装备对比数据加载成功:', this.rodData.length, '条鱼竿,', this.reelData.length, '条渔轮')
       } catch (error) {

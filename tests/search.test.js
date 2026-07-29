@@ -3,7 +3,9 @@ import {
   escapeRegExp,
   buildWordBoundaryRegex,
   normalizeForSearch,
-  searchAndRankEquipment
+  searchAndRankEquipment,
+  sortByPanelTension,
+  EQUIPMENT_SEARCH_FIELDS
 } from '../src/utils/search.js'
 
 describe('escapeRegExp', () => {
@@ -82,5 +84,59 @@ describe('searchAndRankEquipment', () => {
     const dirty = [{ model: {}, equipmentName: 'Admiral' }]
     const result = searchAndRankEquipment(dirty, 'admiral', ['model', 'equipmentName'])
     expect(result).toHaveLength(1)
+  })
+
+  it('数组含非对象项（null/undefined/字符串）时不抛异常且被过滤', () => {
+    const dirty = [null, undefined, 'oops', 42, { model: 'Admiral' }]
+    const result = searchAndRankEquipment(dirty, 'admiral', ['model'])
+    expect(result).toHaveLength(1)
+    expect(result[0].model).toBe('Admiral')
+  })
+
+  it('统一字段集支持按分类与评级别名搜索（计算器/对比页一致性保障）', () => {
+    const list = [
+      { model: 'Admiral 2000S', category: '纺车轮', ratingAlias: '稀有级' },
+      { model: 'Neptun', category: '水滴轮', ratingAlias: '常规' }
+    ]
+    // 按分类搜
+    const byCategory = searchAndRankEquipment(list, '纺车轮', EQUIPMENT_SEARCH_FIELDS)
+    expect(byCategory).toHaveLength(1)
+    expect(byCategory[0].model).toBe('Admiral 2000S')
+    // 按评级别名搜
+    const byRating = searchAndRankEquipment(list, '稀有', EQUIPMENT_SEARCH_FIELDS)
+    expect(byRating).toHaveLength(1)
+    expect(byRating[0].ratingAlias).toBe('稀有级')
+  })
+})
+
+describe('EQUIPMENT_SEARCH_FIELDS', () => {
+  it('字段集内容与顺序固定，且已冻结防篡改', () => {
+    expect(EQUIPMENT_SEARCH_FIELDS).toEqual(['model', 'equipmentName', 'category', 'subCategory', 'ratingAlias'])
+    expect(Object.isFrozen(EQUIPMENT_SEARCH_FIELDS)).toBe(true)
+  })
+})
+
+describe('sortByPanelTension', () => {
+  it('按 panelTension 升序排列', () => {
+    const list = [{ panelTension: 30 }, { panelTension: 10 }, { panelTension: 20 }]
+    expect(sortByPanelTension(list).map(i => i.panelTension)).toEqual([10, 20, 30])
+  })
+
+  it('不修改原数组', () => {
+    const list = [{ panelTension: 2 }, { panelTension: 1 }]
+    sortByPanelTension(list)
+    expect(list.map(i => i.panelTension)).toEqual([2, 1])
+  })
+
+  it('NaN/对象/缺失值兜底 0，不抛异常', () => {
+    const list = [{ panelTension: 5 }, { panelTension: {} }, {}, null, { panelTension: -1 }]
+    const sorted = sortByPanelTension(list)
+    expect(sorted[0].panelTension).toBe(-1)
+    expect(sorted[sorted.length - 1].panelTension).toBe(5)
+  })
+
+  it('非数组输入兜底空数组', () => {
+    expect(sortByPanelTension(null)).toEqual([])
+    expect(sortByPanelTension('x')).toEqual([])
   })
 })

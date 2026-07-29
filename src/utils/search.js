@@ -42,6 +42,29 @@ export function normalizeForSearch(str) {
 }
 
 /**
+ * 装备搜索的统一字段集：计算器与参数对比页共用，保证两处搜索语义一致。
+ * ratingAlias 是前端根据 rating 计算的中文别名（如“稀有级”），
+ * 需要在数据加载时用 getRatingAlias 先补齐该字段。
+ */
+export const EQUIPMENT_SEARCH_FIELDS = Object.freeze([
+  'model', 'equipmentName', 'category', 'subCategory', 'ratingAlias'
+])
+
+/**
+ * 无搜索词时的默认排序：按 panelTension 升序（NaN 兜底 0）。
+ * 计算器下拉与参数对比列表共用，保证两处默认展示顺序一致。
+ * 强制 Number 转换避免对象型数值参与减法抛 Cannot convert object to primitive value。
+ */
+export function sortByPanelTension(list) {
+  if (!Array.isArray(list)) return []
+  return [...list].sort((a, b) => {
+    const av = Number(a && a.panelTension)
+    const bv = Number(b && b.panelTension)
+    return (Number.isFinite(av) ? av : 0) - (Number.isFinite(bv) ? bv : 0)
+  })
+}
+
+/**
  * 装备列表的搜索过滤 + 排序（支持去空格匹配）
  */
 export function searchAndRankEquipment(data, query, nameFields = ['equipmentName', 'model']) {

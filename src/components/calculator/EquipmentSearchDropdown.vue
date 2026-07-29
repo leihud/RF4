@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { searchAndRankEquipment } from '../../utils/search.js'
+import { searchAndRankEquipment, sortByPanelTension, EQUIPMENT_SEARCH_FIELDS } from '../../utils/search.js'
 import { safeToString } from '../../utils/sanitize.js'
 
 /**
@@ -100,18 +100,10 @@ export default {
       }
 
       if (this.debouncedSearchQuery.trim()) {
-        filtered = searchAndRankEquipment(
-          filtered,
-          this.debouncedSearchQuery,
-          ['model', 'equipmentName', 'category', 'subCategory', 'ratingAlias']
-        )
+        // 搜索字段与参数对比页统一（EQUIPMENT_SEARCH_FIELDS），保证两处搜索语义一致
+        filtered = searchAndRankEquipment(filtered, this.debouncedSearchQuery, EQUIPMENT_SEARCH_FIELDS)
       } else {
-        // 强制 Number 转换，NaN 兜底 0，避免对象型数值参与减法抛 Cannot convert object to primitive value
-        filtered = [...filtered].sort((a, b) => {
-          const av = Number(a.panelTension)
-          const bv = Number(b.panelTension)
-          return (Number.isFinite(av) ? av : 0) - (Number.isFinite(bv) ? bv : 0)
-        })
+        filtered = sortByPanelTension(filtered)
       }
 
       return filtered

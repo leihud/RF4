@@ -1,4 +1,4 @@
-import { jsonResponse, buildSearchWhere } from './_shared.js'
+import { jsonResponse, buildSearchWhere, SEARCH_FIELDS, NO_SEARCH_LIMIT } from './_shared.js'
 
 export async function onRequestGet(context) {
   const { request, env } = context
@@ -16,13 +16,13 @@ export async function onRequestGet(context) {
     }
     const hasSearch = !!(searchQuery && searchQuery.trim())
     if (hasSearch) {
-      conds.push(buildSearchWhere(['model', 'equipmentName'], searchQuery, binds))
+      conds.push(buildSearchWhere(SEARCH_FIELDS, searchQuery, binds))
     }
 
     let sql = 'SELECT * FROM reels'
     if (conds.length) sql += ` WHERE ${conds.join(' AND ')}`
-    // 搜索时最多返回 50 条；无搜索时全量返回
-    if (hasSearch) sql += ' LIMIT 50'
+    // 搜索时最多返回 50 条；无搜索时全量返回（带安全上限防数据膨胀失控）
+    sql += hasSearch ? ' LIMIT 50' : ` LIMIT ${NO_SEARCH_LIMIT}`
 
     const result = await env.DB.prepare(sql).bind(...binds).all()
     return jsonResponse(result.results)

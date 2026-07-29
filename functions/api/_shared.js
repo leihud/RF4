@@ -41,6 +41,16 @@ export function normalizeSearch(str) {
     .replace(/[-_/.,]/g, '')
 }
 
+/**
+ * 后端统一的装备搜索字段（rods/reels/equipment 三个 API 共用）。
+ * 与前端 EQUIPMENT_SEARCH_FIELDS 对齐，但不含 ratingAlias：
+ * 它是前端根据 rating 计算的中文别名，数据库中不存在该列。
+ */
+export const SEARCH_FIELDS = Object.freeze(['model', 'equipmentName', 'category', 'subCategory'])
+
+/** 无搜索时的安全上限：防数据膨胀后单次全量返回失控（当前 rods≈780/reels≈460，余量充足） */
+export const NO_SEARCH_LIMIT = 5000
+
 /** 字段的 SQL 归一化表达式：LOWER + 去掉空格与 -_/., 分隔符（与 normalizeSearch 对齐） */
 function normalizedFieldSql(field) {
   let expr = `LOWER(${field})`
