@@ -1,5 +1,9 @@
 name = "rf4"
 compatibility_date = "2025-07-01"
+# Pages 项目名取自顶层 name（rf4，rf4-cxt 只是 pages.dev 域名前缀）；
+# pages_build_output_dir 必须放顶层，wrangler 才会把本文件识别为 Pages 配置。
+# 构建命令（npm run build）由 CF Dashboard 的 Git 集成配置控制，不在此文件中。
+pages_build_output_dir = "dist"
 
 [[d1_databases]]
 binding = "DB"
@@ -10,9 +14,3 @@ migrations_dir = "./migrations"
 # IMPORT_PASSWORD 不再放在明文 vars 中，改用 secret：
 #   生产环境：npx wrangler pages secret put IMPORT_PASSWORD --project-name rf4
 #   本地开发：在项目根目录创建 .dev.vars 文件，写入 IMPORT_PASSWORD=xxx（已加入 .gitignore）
-
-[pages]
-# 注意：Pages 项目名是 rf4（rf4-cxt 只是 pages.dev 域名前缀）
-project_name = "rf4"
-build_command = "npm run build"
-pages_build_output_dir = "dist"
