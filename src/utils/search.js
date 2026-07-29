@@ -43,11 +43,11 @@ export function normalizeForSearch(str) {
 
 /**
  * 装备搜索的统一字段集：计算器与参数对比页共用，保证两处搜索语义一致。
- * ratingAlias 是前端根据 rating 计算的中文别名（如“稀有级”），
- * 需要在数据加载时用 getRatingAlias 先补齐该字段。
+ * rating 是数据库原值；ratingAlias 是前端根据 rating 计算的中文别名（如“稀有级”），
+ * 需要在数据加载时用 getRatingAlias 先补齐该字段；两者都可搜。
  */
 export const EQUIPMENT_SEARCH_FIELDS = Object.freeze([
-  'model', 'equipmentName', 'category', 'subCategory', 'ratingAlias'
+  'model', 'equipmentName', 'category', 'subCategory', 'rating', 'ratingAlias'
 ])
 
 /**

@@ -93,10 +93,10 @@ describe('searchAndRankEquipment', () => {
     expect(result[0].model).toBe('Admiral')
   })
 
-  it('统一字段集支持按分类与评级别名搜索（计算器/对比页一致性保障）', () => {
+  it('统一字段集支持按分类、评级原值与评级别名搜索（计算器/对比页一致性保障）', () => {
     const list = [
-      { model: 'Admiral 2000S', category: '纺车轮', ratingAlias: '稀有级' },
-      { model: 'Neptun', category: '水滴轮', ratingAlias: '常规' }
+      { model: 'Admiral 2000S', category: '纺车轮', rating: 'S', ratingAlias: '稀有级' },
+      { model: 'Neptun', category: '水滴轮', rating: '', ratingAlias: '常规' }
     ]
     // 按分类搜
     const byCategory = searchAndRankEquipment(list, '纺车轮', EQUIPMENT_SEARCH_FIELDS)
@@ -106,12 +106,15 @@ describe('searchAndRankEquipment', () => {
     const byRating = searchAndRankEquipment(list, '稀有', EQUIPMENT_SEARCH_FIELDS)
     expect(byRating).toHaveLength(1)
     expect(byRating[0].ratingAlias).toBe('稀有级')
+    // 按数据库 rating 原值搜
+    const byRawRating = searchAndRankEquipment(list, 's', EQUIPMENT_SEARCH_FIELDS)
+    expect(byRawRating.some(item => item.rating === 'S')).toBe(true)
   })
 })
 
 describe('EQUIPMENT_SEARCH_FIELDS', () => {
   it('字段集内容与顺序固定，且已冻结防篡改', () => {
-    expect(EQUIPMENT_SEARCH_FIELDS).toEqual(['model', 'equipmentName', 'category', 'subCategory', 'ratingAlias'])
+    expect(EQUIPMENT_SEARCH_FIELDS).toEqual(['model', 'equipmentName', 'category', 'subCategory', 'rating', 'ratingAlias'])
     expect(Object.isFrozen(EQUIPMENT_SEARCH_FIELDS)).toBe(true)
   })
 })

@@ -55,6 +55,10 @@
             @click="toggleCompareItem(equipment)"
           >
             <span class="equipment-category-tag">{{ formatValue(equipment.category) }}</span>
+            <span
+              v-if="equipment.ratingAlias && equipment.ratingAlias !== '常规'"
+              class="equipment-rating-tag"
+            >{{ formatValue(equipment.ratingAlias) }}</span>
             <span class="equipment-name">{{ formatValue(equipment.model || equipment.equipmentName) }}</span>
           </div>
           <div v-if="filteredEquipment.length === 0" class="list-empty">
@@ -760,6 +764,19 @@ export default {
   color: white;
   background-color: #64b5f6;
   padding: 3px 8px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-right: 10px;
+  white-space: nowrap;
+}
+
+/* 评级标签：与计算器下拉的 dropdown-rating 同色系，展示数据库 rating 字段（经别名映射） */
+.equipment-rating-tag {
+  font-size: 11px;
+  color: #c2410c;
+  background-color: #fff7ed;
+  border: 1px solid #fed7aa;
+  padding: 2px 8px;
   border-radius: 4px;
   flex-shrink: 0;
   margin-right: 10px;

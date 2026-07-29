@@ -48,7 +48,7 @@ export const HANZI_CHARCODE = {
  *  - 当前 migrations 中 rods/reels 的 rating 字段多为空字符串（未维护），这里先给出一套
  *    覆盖常见取值的映射：支持数字 1~5 / 星级字符串 ⭐⭐⭐⭐⭐ / 或自定义字符串
  *    后续用户若在数据库里填入新的 rating 字符串，只需在下方 RATING_ALIAS 追加一对 key→value
- *  - 未命中任何映射、且 rawRating 非空（非 ''/null/undefined）：返回 `${rawRating}级` 兜底，
+ *  - 未命中任何映射、且 rawRating 非空（非 ''/null/undefined）：直接返回数据库原值兜底，
  *    避免以后填了新值前端显示空
  *  - rawRating 为空：返回 '常规'（不突出，不干扰大部分装备的默认展示）
  */
@@ -86,7 +86,7 @@ export const RATING_ALIAS = Object.freeze(
 
 /**
  * 把 rating 原始值（可能是数字 / 星级字符串 / 空）转成中文别名。
- * 保证不会返回 null/undefined；未命中映射时若原始值非空则走兜底。
+ * 保证不会返回 null/undefined；未命中映射时直接返回数据库原值（不再追加「级」后缀）。
  */
 export function getRatingAlias(rawRating) {
   if (rawRating == null) return '常规'
@@ -97,17 +97,17 @@ export function getRatingAlias(rawRating) {
     // 字符串数字 "3" → Number(trim) 作为 key 再查一次
     const asNum = Number(trim)
     if (Number.isFinite(asNum) && RATING_ALIAS[asNum] != null) return RATING_ALIAS[asNum]
-    // 都没命中：原始文本后面接「级」兜底，保证可搜索时能直接搜中文后缀匹配
-    return `${trim}级`
+    // 都没命中：直接展示数据库原值
+    return trim
   }
   if (typeof rawRating === 'number') {
     if (!Number.isFinite(rawRating)) return '常规'
     if (RATING_ALIAS[rawRating] != null) return RATING_ALIAS[rawRating]
-    return `${rawRating}级`
+    return String(rawRating)
   }
   if (typeof rawRating === 'bigint' || typeof rawRating === 'boolean') {
     if (RATING_ALIAS[rawRating] != null) return RATING_ALIAS[rawRating]
-    return `${String(rawRating)}级`
+    return String(rawRating)
   }
   return '常规'
 }
