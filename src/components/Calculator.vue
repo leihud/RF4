@@ -1,21 +1,6 @@
 <template>
   <div class="app">
-    <div v-if="showDisclaimer" class="disclaimer-overlay" @click="closeDisclaimer">
-      <div class="disclaimer-modal" @click.stop>
-        <div class="disclaimer-header">
-          <h3>免责声明</h3>
-          <button class="disclaimer-close" @click="closeDisclaimer">×</button>
-        </div>
-        <div class="disclaimer-content">
-          <p>本网站提供的装备计算器及参数对比工具仅供个人使用，非商业盈利行为。</p>
-          <p>所有装备数据仅供参考，实际数值请以游戏内为准。</p>
-          <p>使用本网站即表示您同意上述条款。</p>
-        </div>
-        <div class="disclaimer-footer">
-          <button class="disclaimer-accept" @click="closeDisclaimer">我知道了</button>
-        </div>
-      </div>
-    </div>
+    <DisclaimerModal v-if="showDisclaimer" @close="showDisclaimer = false" />
     <div class="header">
       <h1>装备计算器</h1>
       <div class="header-buttons">
@@ -156,54 +141,11 @@
             </template>
           </div>
 
-          <div
+          <EquipmentSearchDropdown
             v-if="isSearchableType(type) && selectedType === type"
-            class="search-dropdown"
-          >
-            <div class="search-input-wrapper">
-              <input
-                type="text"
-                class="search-input"
-                v-model="searchQuery"
-                placeholder="搜索装备名称..."
-                @click.stop="isDropdownOpen = !isDropdownOpen"
-              />
-              <span class="search-icon">🔍</span>
-            </div>
-            <div v-if="isDropdownOpen && categoryOptions.length > 0" class="category-filter-header">
-              <button class="category-toggle-btn" @click.stop="showCategoryFilter = !showCategoryFilter">
-                {{ showCategoryFilter ? '▼' : '▲' }} 装备类型
-              </button>
-            </div>
-            <div v-if="isDropdownOpen && showCategoryFilter && categoryOptions.length > 0" class="category-filter-wrapper">
-              <button
-                v-for="cat in categoryOptions"
-                :key="cat"
-                :class="['category-filter-btn', { active: selectedCategory === cat }]"
-                @click.stop="selectedCategory = cat"
-              >
-                {{ cat }}
-              </button>
-            </div>
-            <div v-if="isDropdownOpen" class="dropdown-list">
-              <div
-                v-for="(equipment, eqIdx) in filteredEquipment"
-                :key="toSafeDisplay(equipment.model || equipment.equipmentName, String(equipment.id || eqIdx))"
-                class="dropdown-item"
-                @click.stop="selectEquipment(equipment)"
-              >
-                <span class="dropdown-name">{{ toSafeDisplay(equipment.model || equipment.equipmentName, '-') }}</span>
-                <span class="dropdown-category">{{ toSafeDisplay(equipment.category || equipment.subCategory, '') }}</span>
-                <span
-                  v-if="equipment.ratingAlias && equipment.ratingAlias !== '常规'"
-                  class="dropdown-rating"
-                >{{ toSafeDisplay(equipment.ratingAlias) }}</span>
-              </div>
-              <div v-if="filteredEquipment.length === 0" class="dropdown-empty">
-                未找到匹配的装备
-              </div>
-            </div>
-          </div>
+            :equipment-list="equipmentOfSelectedType"
+            @select="selectEquipment"
+          />
 
           <button
             v-if="isSearchableType(type) && selectedType !== type"
@@ -216,48 +158,13 @@
       </div>
     </div>
 
-    <div v-if="allEquipmentSelected" class="summary-section">
-      <h2>装备组合总览</h2>
-      <div class="summary-card">
-        <div class="summary-row">
-          <span class="summary-label">装备组合:</span>
-          <span class="summary-value">{{ equipmentSummaryText }}</span>
-        </div>
-        <div class="summary-row" v-if="lockTensionMinInfo">
-          <span class="summary-label">锁轮下最小拉力:</span>
-          <span class="summary-value tension-min-value">{{ `${lockTensionMinInfo.label}: ${lockTensionMinInfo.valueText}` }}</span>
-        </div>
-        <div class="summary-row" v-if="panelTensionMinInfo">
-          <span class="summary-label">常规下最小拉力:</span>
-          <span class="summary-value tension-min-value">{{ `${panelTensionMinInfo.label}: ${panelTensionMinInfo.valueText}` }}</span>
-        </div>
-        <div
-          v-for="item in summaryAdaptWeightRows"
-          :key="'adapt-' + item.type"
-          class="summary-row"
-        >
-          <span class="summary-label">{{ item.label }}:</span>
-          <span class="summary-value" :class="{ 'empty-value': !item.value }">
-            {{ item.value || '未设置' }}
-          </span>
-        </div>
-        <div v-for="item in selectedEquipmentList" :key="item.equipmentType" class="summary-row price-row">
-          <span class="summary-label">{{ item.equipmentType }}价格:</span>
-          <span class="summary-value">
-            <span v-if="item.silverPrice" class="silver-price">银币：{{ formatPrice(item.silverPrice, 2) }}</span>
-            <span v-if="item.goldPrice" class="gold-price">金币：{{ formatPrice(item.goldPrice, 2) }}</span>
-            <span v-if="!item.silverPrice && !item.goldPrice">无</span>
-          </span>
-        </div>
-        <div class="summary-row total-price-row">
-          <span class="summary-label">总价格:</span>
-          <span class="summary-value">
-            <span v-if="totalSilverPrice" class="silver-price">银币：{{ formatPrice(totalSilverPrice, 2) }}</span>
-            <span v-if="totalGoldPrice" class="gold-price">金币：{{ formatPrice(totalGoldPrice, 2) }}</span>
-          </span>
-        </div>
-      </div>
-    </div>
+    <EquipmentSummary
+      v-if="allEquipmentSelected"
+      :selected-equipment-list="selectedEquipmentList"
+      :custom-equipment="customEquipment"
+      :actual-lock-tension-map="actualLockTensionMap"
+      :actual-panel-tension-map="actualPanelTensionMap"
+    />
   </div>
 </template>
 
@@ -278,14 +185,21 @@ import {
   calculateCustomActualTension,
   clampFriction,
   getFrictionMax,
-  formatTension,
-  buildMinTensionInfo
+  formatTension
 } from '../utils/tension.js'
-import { searchAndRankEquipment } from '../utils/search.js'
+import { getMergedAdaptWeight } from '../utils/display.js'
 import { sanitizeEquipmentFields, sanitizeEquipmentList, safeToNumber, safeToString } from '../utils/sanitize.js'
+import DisclaimerModal from './calculator/DisclaimerModal.vue'
+import EquipmentSearchDropdown from './calculator/EquipmentSearchDropdown.vue'
+import EquipmentSummary from './calculator/EquipmentSummary.vue'
 
 export default {
   name: 'Calculator',
+  components: {
+    DisclaimerModal,
+    EquipmentSearchDropdown,
+    EquipmentSummary
+  },
   data() {
     return {
       selectedType: null,
@@ -300,12 +214,6 @@ export default {
       friction: DEFAULT_FRICTION,
       selectedEquipmentList: [],
       calculationRule: CALC_RULES.GUIDE,
-      searchQuery: '',
-      debouncedSearchQuery: '',
-      isDropdownOpen: false,
-      selectedCategory: '',
-      showCategoryFilter: false,
-      searchTimeout: null,
       CALC_RULE_OPTIONS,
       formatTension
     }
@@ -317,15 +225,8 @@ export default {
   },
   beforeUnmount() {
     document.removeEventListener('click', this.handleClickOutside)
-    if (this.searchTimeout) clearTimeout(this.searchTimeout)
   },
   watch: {
-    searchQuery(val) {
-      if (this.searchTimeout) clearTimeout(this.searchTimeout)
-      this.searchTimeout = setTimeout(() => {
-        this.debouncedSearchQuery = val
-      }, 200)
-    },
     calculationRule(val) {
       if (val) {
         this.friction = clampFriction(this.friction, val)
@@ -338,10 +239,6 @@ export default {
     },
     frictionMax() {
       return getFrictionMax(this.calculationRule)
-    },
-    frictionPercent() {
-      if (!this.calculationRule) return 0
-      return Math.round((this.friction / this.frictionMax) * 100)
     },
     selectedEquipmentMap() {
       const map = {}
@@ -372,131 +269,13 @@ export default {
       }
       return map
     },
-    categoryOptions() {
-      if (!Array.isArray(this.equipmentData)) return ['全部']
-      const equipment = this.equipmentData.filter(item => item.equipmentType === this.selectedType)
-      const categories = [...new Set(equipment.map(item => item.category))].filter(Boolean)
-      return ['全部', ...categories]
-    },
-    filteredEquipment() {
+    /** 当前展开搜索的装备类型对应的装备列表（供下拉子组件使用） */
+    equipmentOfSelectedType() {
       if (!Array.isArray(this.equipmentData)) return []
-      const equipment = this.equipmentData.filter(item => item.equipmentType === this.selectedType)
-      let filtered = equipment
-
-      if (this.selectedCategory && this.selectedCategory !== '全部') {
-        filtered = filtered.filter(item => item.category === this.selectedCategory)
-      }
-
-      if (this.debouncedSearchQuery.trim()) {
-        filtered = searchAndRankEquipment(
-          filtered,
-          this.debouncedSearchQuery,
-          ['model', 'equipmentName', 'category', 'subCategory', 'ratingAlias']
-        )
-      } else {
-        // 强制 Number 转换，NaN 兜底 0，避免对象型数值参与减法抛 Cannot convert object to primitive value
-        filtered = [...filtered].sort((a, b) => {
-          const av = Number(a.panelTension)
-          const bv = Number(b.panelTension)
-          return (Number.isFinite(av) ? av : 0) - (Number.isFinite(bv) ? bv : 0)
-        })
-      }
-
-      return filtered
+      return this.equipmentData.filter(item => item.equipmentType === this.selectedType)
     },
     allEquipmentSelected() {
       return !!(this.selectedEquipmentMap['鱼竿'] && this.selectedEquipmentMap['渔轮'])
-    },
-    equipmentSummaryText() {
-      const rod = this.selectedEquipmentMap['鱼竿']
-      const reel = this.selectedEquipmentMap['渔轮']
-      const pickName = (eq) => {
-        if (!eq) return '未选择'
-        const s = this.toSafeDisplay(eq.model || eq.equipmentName, '')
-        return s || '未选择'
-      }
-      const rodName = pickName(rod)
-      const reelName = pickName(reel)
-      const mainLine = this.customEquipment['主线']
-      const leader = this.customEquipment['引线']
-      const fmt = (t) => {
-        const mt = this.toSafeNumber(t.value && t.value.maxTension, 0)
-        return mt > 0 ? `${this.toSafeDisplay(t.label || '')}(${mt}kN)` : '未设置'
-      }
-      return [
-        rodName,
-        reelName,
-        fmt({ label: '主线', value: mainLine }),
-        fmt({ label: '引线', value: leader })
-      ].join(' + ')
-    },
-    totalSilverPrice() {
-      return this.selectedEquipmentList.reduce((sum, item) => {
-        const price = this.parsePrice(item.silverPrice)
-        return sum + price
-      }, 0)
-    },
-    totalGoldPrice() {
-      return this.selectedEquipmentList.reduce((sum, item) => {
-        const price = this.parsePrice(item.goldPrice)
-        return sum + price
-      }, 0)
-    },
-    minTension() {
-      // 兼容：旧 minTension 等价于锁轮下最小拉力（返回值供其他位置使用）
-      return this.lockTensionMinInfo ? this.lockTensionMinInfo.value : 0
-    },
-    /**
-     * 锁轮下最小拉力（仅一行）：
-     * 对比鱼竿实际锁轮 / 渔轮实际锁轮 / 主线实际拉力 / 引线实际拉力，取最小
-     * 未选择/未录入（value<=0）的项跳过不参与
-     */
-    lockTensionMinInfo() {
-      return buildMinTensionInfo(
-        this.selectedEquipmentMap,
-        this.actualLockTensionMap,
-        this.customEquipment,
-        this.calculateCustomActualTension,
-        this.toSafeNumber,
-        this.formatTension
-      )
-    },
-    /**
-     * 常规下最小拉力（仅一行）：
-     * 对比鱼竿实际面板拉力 / 渔轮实际面板拉力（含摩擦） / 主线/引线实际拉力，取最小
-     */
-    panelTensionMinInfo() {
-      return buildMinTensionInfo(
-        this.selectedEquipmentMap,
-        this.actualPanelTensionMap,
-        this.customEquipment,
-        this.calculateCustomActualTension,
-        this.toSafeNumber,
-        this.formatTension
-      )
-    },
-    /**
-     * 装备组合总览：鱼竿/渔轮各自的适配重展示行（合并后）
-     */
-    summaryAdaptWeightRows() {
-      const rows = []
-      const rod = this.selectedEquipmentMap['鱼竿']
-      if (rod) {
-        rows.push({
-          type: '鱼竿',
-          label: '鱼竿适配重',
-          value: this.getMergedAdaptWeight(rod, '鱼竿')
-        })
-      }
-      const reel = this.selectedEquipmentMap['渔轮']
-      if (reel) {
-        rows.push({
-          type: '渔轮',
-          label: '渔轮适配重',
-          value: this.getMergedAdaptWeight(reel, '渔轮')
-        })
-      }
-      return rows
     }
   },
   methods: {
@@ -518,67 +297,7 @@ export default {
       const s = safeToString(v, fallback)
       return s == null ? fallback : s
     },
-    parsePrice(str) {
-      if (str == null) return 0
-      // 对象直接兜底 0，禁止隐式转字符串报错
-      if (typeof str === 'object') return 0
-      const cleaned = String(str).replace(/,/g, '')
-      const match = cleaned.match(/[\d.]+/)
-      return match ? parseFloat(match[0]) : 0
-    },
-    /**
-     * 格式化金额显示：
-     * 1. 修正浮点精度（通过 Math.round(x * 10^n) / 10^n 去除 62801.520000000004 这类误差
-     * 2. 固定小数位（银币默认2位，金币默认2位）
-     * 3. 添加千分位逗号
-     */
-    formatPrice(val, decimals = 2) {
-      if (val == null) return ''
-      const num = typeof val === 'number' ? val : this.parsePrice(val)
-      if (!isFinite(num)) return ''
-      const factor = Math.pow(10, decimals)
-      const fixed = Math.round(num * factor) / factor
-      // 固定小数位后再分千位，避免 40999.5 显示成 40,999.5
-      const str = fixed.toFixed(decimals)
-      const [intPart, decPart] = str.split('.')
-      const intWithCommas = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-      return decPart ? `${intWithCommas}.${decPart}` : intWithCommas
-    },
-    /**
-     * 合并展示适配重：
-     *  - 优先级 1：文本型 adaptWeight（范围描述，如 5-25g），竿/轮通用
-     *  - 优先级 2：适配重星级/补充 adaptWeightStar（文本/数字，不强制加单位），竿/轮通用
-     *  - 优先级 3：数字型 adaptWeightG（克重，自动加 g 单位），竿/轮通用
-     *  - 优先级 4：鱼竿 testG / 渔轮 test（兜底）
-     * 都为空返回 ''（调用方用 v-if 判断是否展示）
-     */
-    getMergedAdaptWeight(equipment, type) {
-      if (!equipment) return ''
-      // 优先级 1：文本型 adaptWeight（范围描述，如 5-25g），竿/轮通用
-      if (equipment.adaptWeight != null && equipment.adaptWeight !== '') {
-        return equipment.adaptWeight
-      }
-      // 优先级 2：适配重星级/补充 adaptWeightStar（文本/数字，原样展示）
-      if (equipment.adaptWeightStar != null && equipment.adaptWeightStar !== '' && equipment.adaptWeightStar !== 0) {
-        return equipment.adaptWeightStar
-      }
-      // 优先级 3：数字型 adaptWeightG（克重，自动加 g 单位），竿/轮通用
-      if (equipment.adaptWeightG != null && equipment.adaptWeightG !== '' && equipment.adaptWeightG !== 0) {
-        return typeof equipment.adaptWeightG === 'number' ? `${equipment.adaptWeightG} g` : equipment.adaptWeightG
-      }
-      if (type === '鱼竿') {
-        // 优先级 4：鱼竿测试克重 testG（兜底）
-        if (equipment.testG != null && equipment.testG !== '' && equipment.testG !== 0) {
-          return typeof equipment.testG === 'number' ? `${equipment.testG} g` : equipment.testG
-        }
-      } else if (type === '渔轮') {
-        // 优先级 4：渔轮测试文本 test（兜底）
-        if (equipment.test != null && equipment.test !== '') {
-          return equipment.test
-        }
-      }
-      return ''
-    },
+    getMergedAdaptWeight,
     isCustomInputType(type) {
       return CUSTOM_INPUT_TYPES.includes(type)
     },
@@ -608,14 +327,10 @@ export default {
         }))
         console.log('装备数据加载成功:', this.equipmentData.length, '条')
       } catch (error) {
+        // 加载失败只提示错误，不再注入演示用假数据（避免误导用户按假参数计算）
         console.error('加载装备数据失败:', error)
         this.dataLoadError = true
-        this.equipmentData = [
-          { equipmentType: '鱼竿', equipmentName: 'FD360', maxTension: 13, panelTension: 13, rating: 3, ratingAlias: getRatingAlias(3) },
-          { equipmentType: '渔轮', equipmentName: 'TAII', maxTension: 64, panelTension: 64, lockTension: 64, rating: 'S', ratingAlias: getRatingAlias('S') },
-          { equipmentType: '主线', equipmentName: 'CAIHONG100', maxTension: 60, rating: null, ratingAlias: getRatingAlias(null) },
-          { equipmentType: '引线', equipmentName: 'NINONG23', maxTension: 60, rating: null, ratingAlias: getRatingAlias(null) }
-        ]
+        this.equipmentData = []
       } finally {
         this.isLoading = false
       }
@@ -628,10 +343,6 @@ export default {
     },
     selectType(type) {
       this.selectedType = type
-      this.searchQuery = ''
-      this.minTensionFilter = ''
-      this.maxTensionFilter = ''
-      this.isDropdownOpen = false
     },
     selectEquipment(equipment) {
       // 【入口二次清洗】防止装备对象中残留未清洗的对象字段
@@ -646,8 +357,6 @@ export default {
       } else {
         this.selectedEquipmentList.push(next)
       }
-      this.searchQuery = ''
-      this.isDropdownOpen = false
       this.selectedType = null
     },
     clearEquipmentByType(type) {
@@ -678,8 +387,7 @@ export default {
       for (const el2 of typeLabels) {
         if (el2 && el2.contains && el2.contains(event.target)) return
       }
-      // 其他点击都视为外部点击：收起下拉 + 恢复更换装备按钮
-      this.isDropdownOpen = false
+      // 其他点击都视为外部点击：收起下拉（子组件随 selectedType 置空卸载）
       if (this.selectedType) this.selectedType = null
     },
     goToCompare() {
@@ -693,9 +401,6 @@ export default {
       if (typeof window !== 'undefined' && typeof window.open === 'function') {
         window.open('https://cn.rf4-stat.ru/', '_blank', 'noopener,noreferrer')
       }
-    },
-    closeDisclaimer() {
-      this.showDisclaimer = false
     }
   }
 }
@@ -967,13 +672,6 @@ h2 {
   white-space: nowrap;
 }
 
-.selected-price {
-  color: #e67e22;
-  font-size: 12px;
-  font-weight: bold;
-  white-space: nowrap;
-}
-
 .friction-input-wrapper {
   display: flex;
   align-items: center;
@@ -999,118 +697,6 @@ h2 {
   outline: none;
   border-color: #42b983;
   box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.3);
-}
-
-.friction-unit {
-  font-size: 14px;
-  color: #666;
-}
-
-.summary-section {
-  background-color: #e8f5e9;
-  padding: 20px;
-  border-radius: 8px;
-  border: 2px solid #42b983;
-}
-
-.summary-card {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-}
-
-.summary-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.summary-row:last-child {
-  border-bottom: none;
-}
-
-.summary-label {
-  font-weight: bold;
-  color: #2c3e50;
-  font-size: 16px;
-}
-
-.summary-value {
-  color: #42b983;
-  font-weight: bold;
-  font-size: 16px;
-  flex: 1;
-  text-align: right;
-}
-
-.price-row {
-  background-color: #f8fafc;
-}
-
-.total-price-row {
-  background-color: #fffbeb;
-  font-size: 18px;
-}
-
-.total-price-row .summary-label {
-  font-size: 18px;
-  color: #d97706;
-}
-
-.total-price-row .summary-value {
-  font-size: 18px;
-  color: #d97706;
-}
-
-/* 汇总最小拉力行：与 total-price-row 同样的高亮底色，强调是汇总值 */
-.summary-row:has(> .tension-min-value) {
-  background-color: #eff6ff;
-}
-
-.tension-min-value {
-  color: #1d4ed8;
-  font-weight: bold;
-}
-
-.silver-price {
-  margin-right: 12px;
-  color: #94a3b8;
-}
-
-.gold-price {
-  color: #eab308;
-}
-
-.adapt-weight-hint-row {
-  background-color: #f8f9fb;
-}
-
-.adapt-weight-hint {
-  font-size: 14px;
-  line-height: 1.5;
-  white-space: normal;
-}
-
-.hint-success {
-  color: #27ae60;
-  font-weight: 600;
-}
-
-.hint-warning {
-  color: #e67e22;
-  font-weight: 600;
-}
-
-.hint-info {
-  color: #2980b9;
-  font-weight: 500;
-}
-
-.summary-value.empty-value {
-  color: #95a5a6;
-  font-weight: normal;
 }
 
 .custom-input-group {
@@ -1158,199 +744,6 @@ h2 {
 .select-btn:hover {
   background-color: #42b983;
   color: white;
-}
-
-.search-dropdown {
-  position: relative;
-  /* 固定宽度，确保搜索框/装备类型筛选/结果下拉列表三部分永远等宽对齐，不随筛选按钮多少而缩放 */
-  width: 520px;
-  flex: 0 0 auto;
-}
-
-.search-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.search-input {
-  width: 100%;
-  padding: 8px 32px 8px 12px;
-  border: 1px solid #42b983;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #2c3e50;
-  background-color: white;
-  box-sizing: border-box;
-}
-
-.search-input:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.3);
-}
-
-.search-input::placeholder {
-  color: #999;
-}
-
-.search-icon {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 16px;
-}
-
-.category-filter-header {
-  padding: 8px 15px;
-  background-color: #f0fdf4;
-  border-bottom: 1px solid #dcfce7;
-}
-
-.category-toggle-btn {
-  padding: 4px 12px;
-  border: none;
-  background-color: transparent;
-  color: #16a34a;
-  font-size: 13px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.category-toggle-btn:hover {
-  color: #22c55e;
-}
-
-.category-filter-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding: 8px 15px;
-  background-color: #f0fdf4;
-  border-bottom: 1px solid #dcfce7;
-}
-
-.category-filter-btn {
-  padding: 4px 12px;
-  border: 1px solid #bbf7d0;
-  background-color: white;
-  color: #16a34a;
-  border-radius: 16px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.category-filter-btn:hover {
-  background-color: #dcfce7;
-}
-
-.category-filter-btn.active {
-  background-color: #22c55e;
-  color: white;
-  border-color: #22c55e;
-}
-
-.dropdown-list {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 100;
-}
-
-.dropdown-item {
-  display: flex;
-  align-items: center;
-  padding: 12px 18px;
-  cursor: pointer;
-  border-bottom: 1px solid #f5f5f5;
-  transition: background-color 0.2s;
-  gap: 18px;
-}
-
-.dropdown-item:last-child {
-  border-bottom: none;
-}
-
-.dropdown-item:hover {
-  background-color: #e8f5e9;
-}
-
-.dropdown-name {
-  flex: 1 1 auto;
-  min-width: 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: #2c3e50;
-  line-height: 1.4;
-  /* 允许换行显示完整名称，不再强制单行省略 */
-  white-space: normal;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-}
-
-.dropdown-category {
-  flex: 0 0 auto;
-  min-width: 68px;
-  max-width: 120px;
-  padding: 4px 12px;
-  background-color: #f0fdf4;
-  color: #166534;
-  border: 1px solid #bbf7d0;
-  border-radius: 14px;
-  font-size: 13px;
-  font-weight: 500;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.dropdown-rating {
-  flex: 0 0 auto;
-  min-width: 60px;
-  max-width: 100px;
-  padding: 4px 12px;
-  background-color: #fff7ed;
-  color: #c2410c;
-  border: 1px solid #fed7aa;
-  border-radius: 14px;
-  font-size: 13px;
-  font-weight: 500;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-left: auto;
-}
-
-.dropdown-empty {
-  padding: 15px;
-  text-align: center;
-  color: #999;
-  font-size: 14px;
-}
-
-.dropdown-loading {
-  padding: 10px;
-  text-align: center;
-  color: #1565c0;
-  font-size: 13px;
-}
-
-.dropdown-no-more {
-  padding: 10px;
-  text-align: center;
-  color: #999;
-  font-size: 13px;
 }
 
 .wear-input-wrapper {
@@ -1455,22 +848,6 @@ h2 {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-
-  .search-dropdown {
-    /* 中等屏也使用固定宽度，避免筛选按钮多少导致宽度缩放不一致 */
-    width: 440px;
-    min-width: auto;
-    max-width: none;
-  }
-
-  .summary-row {
-    padding: 12px 0;
-  }
-
-  .summary-label,
-  .summary-value {
-    font-size: 14px;
-  }
 }
 
 @media (max-width: 768px) {
@@ -1532,49 +909,11 @@ h2 {
     margin-left: 0;
   }
 
-  .search-dropdown {
-    min-width: 100%;
-    width: 100%;
-  }
-
-  .tension-filter-wrapper {
-    flex-wrap: wrap;
-  }
-
-  .tension-filter-input {
-    width: 70px;
-  }
-
-  .dropdown-item {
-    flex-wrap: wrap;
-    padding: 10px 14px;
-    gap: 10px;
-  }
-
-  .dropdown-name {
-    flex: 1 1 100%;
-    min-width: 100%;
-    font-size: 15px;
-    margin-right: 0;
-    margin-bottom: 2px;
-  }
-
-  .dropdown-category {
-    min-width: 56px;
-    max-width: 96px;
-    padding: 3px 10px;
-    font-size: 12px;
-  }
-
   .selected-name {
     min-width: 100%;
   }
 
   .selected-tension {
-    font-size: 12px;
-  }
-
-  .selected-price {
     font-size: 12px;
   }
 
@@ -1585,138 +924,10 @@ h2 {
     margin-left: 0;
   }
 
-  .summary-card {
-    padding: 15px;
-  }
-
-  .summary-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
-    padding: 10px 0;
-  }
-
-  .summary-label,
-  .summary-value {
-    font-size: 13px;
-  }
-
-  .summary-value {
-    text-align: left;
-    flex: none;
-  }
-
-  .advice-text {
-    font-size: 13px;
-    line-height: 1.6;
-  }
-
   .wear-input,
   .friction-input,
   .tension-input {
     width: 45px;
   }
-}
-
-.disclaimer-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-}
-
-.disclaimer-modal {
-  background-color: white;
-  border-radius: 12px;
-  width: 100%;
-  max-width: 620px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-}
-
-.disclaimer-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 28px;
-  background-color: #e3f2fd;
-  border-bottom: 1px solid #bbdefb;
-}
-
-.disclaimer-header h3 {
-  margin: 0;
-  color: #1565c0;
-  font-size: 20px;
-  letter-spacing: 2px;
-}
-
-.disclaimer-close {
-  background: none;
-  border: none;
-  font-size: 24px;
-  color: #666;
-  cursor: pointer;
-  padding: 0;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.disclaimer-close:hover {
-  color: #1565c0;
-}
-
-.disclaimer-content {
-  padding: 28px 32px;
-}
-
-.disclaimer-content p {
-  margin: 0 0 18px 0;
-  color: #333;
-  font-size: 15px;
-  line-height: 1.9;
-  text-align: justify;
-  text-justify: inter-ideograph;
-  text-indent: 2em;
-  widows: 3;
-  orphans: 3;
-}
-
-.disclaimer-content p:last-child {
-  margin-bottom: 0;
-}
-
-.disclaimer-footer {
-  padding: 18px 32px;
-  background-color: #f8fafc;
-  border-top: 1px solid #e2e8f0;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.disclaimer-accept {
-  padding: 12px 40px;
-  background-color: #1565c0;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 15px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  letter-spacing: 2px;
-}
-
-.disclaimer-accept:hover {
-  background-color: #0d47a1;
 }
 </style>

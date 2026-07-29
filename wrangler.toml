@@ -7,10 +7,12 @@ database_name = "rf4"
 database_id = "bead5b3b-5a98-4fd3-82fa-c63115544ccd"
 migrations_dir = "./migrations"
 
-[vars]
-IMPORT_PASSWORD = "your_import_password_here"
+# IMPORT_PASSWORD 不再放在明文 vars 中，改用 secret：
+#   生产环境：npx wrangler pages secret put IMPORT_PASSWORD --project-name rf4
+#   本地开发：在项目根目录创建 .dev.vars 文件，写入 IMPORT_PASSWORD=xxx（已加入 .gitignore）
 
 [pages]
-project_name = "rf4-cxt"
+# 注意：Pages 项目名是 rf4（rf4-cxt 只是 pages.dev 域名前缀）
+project_name = "rf4"
 build_command = "npm run build"
 pages_build_output_dir = "dist"

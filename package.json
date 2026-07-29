@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "deploy": "wrangler pages deploy dist"
   },
   "keywords": [
@@ -19,6 +21,7 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.7",
     "vite": "^8.1.0",
+    "vitest": "^4.1.10",
     "wrangler": "^4.113.0"
   },
   "dependencies": {
