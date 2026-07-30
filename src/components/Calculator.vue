@@ -145,6 +145,7 @@
             v-if="isSearchableType(type) && selectedType === type"
             :equipment-list="equipmentOfSelectedType"
             :equipment-filter="type === '渔轮' ? reelEquipmentFilter : null"
+            :empty-hint="type === '渔轮' && compatibleReelTypes !== null && compatibleReelTypes.length === 0 ? '当前鱼竿无法装备任何渔轮' : null"
             @select="selectEquipment"
           />
 
@@ -297,7 +298,7 @@ export default {
       return (item) => compatible.includes(item.category)
     },
     allEquipmentSelected() {
-      return !!(this.selectedEquipmentMap['鱼竿'] && this.selectedEquipmentMap['渔轮'])
+      return !!this.selectedEquipmentMap['鱼竿']
     }
   },
   methods: {

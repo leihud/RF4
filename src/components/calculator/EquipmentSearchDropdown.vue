@@ -40,7 +40,7 @@
         >{{ toSafeDisplay(equipment.ratingAlias) }}</span>
       </div>
       <div v-if="filteredEquipment.length === 0" class="dropdown-empty">
-        未找到匹配的装备
+        {{ emptyHint || '未找到匹配的装备' }}
       </div>
     </div>
   </div>
@@ -65,6 +65,11 @@ export default {
     /** 外部传入的过滤函数，用于过滤装备列表（如根据鱼竿类型过滤兼容渔轮） */
     equipmentFilter: {
       type: Function,
+      default: null
+    },
+    /** 自定义空状态提示文本，不传则显示默认「未找到匹配的装备」 */
+    emptyHint: {
+      type: String,
       default: null
     }
   },
