@@ -1,4 +1,4 @@
-import { jsonResponse } from './_shared.js'
+import { jsonResponse, clearEquipmentCache } from './_shared.js'
 
 function validatePassword(env, password) {
   const importPassword = env.IMPORT_PASSWORD
@@ -28,7 +28,7 @@ async function checkDuplicates(db, type, data) {
   return result.results.map(row => row.model)
 }
 
-const ROD_INSERT_SQL = `INSERT INTO rods (
+const ROD_INSERT_SQL = `INSERT OR REPLACE INTO rods (
   equipmentName, equipmentType, category, subCategory, model, description,
   strengthKg, form, testG, sensitivity, hardness, levelReq, structure, ability,
   rating, weightG, adaptWeight, adaptWeightG, goldPrice, silverPrice, lengthM
@@ -60,7 +60,7 @@ function bindRod(stmt, item) {
   )
 }
 
-const REEL_INSERT_SQL = `INSERT INTO reels (
+const REEL_INSERT_SQL = `INSERT OR REPLACE INTO reels (
   equipmentName, equipmentType, category, subCategory, model, description,
   transmissionRatio, transmissionRatioStar, enginePower, lineSpeed, lineSpeedStar,
   size, form, frictionForce, frictionForceStar, windingSpeed, test, testStar,
@@ -131,7 +131,7 @@ export async function onRequestPost(context) {
 
   try {
     const body = await request.json()
-    const { password, type, data } = body
+    const { password, type, data, upsert } = body
 
     const passwordValidation = validatePassword(env, password)
     if (!passwordValidation.valid) {
@@ -151,6 +151,22 @@ export async function onRequestPost(context) {
     }
 
     const db = env.DB
+
+    // upsert 模式：直接覆盖已有型号，跳过查重
+    if (upsert) {
+      const result = normalizedType === '鱼竿'
+        ? await importItems(db, data, ROD_INSERT_SQL, bindRod)
+        : await importItems(db, data, REEL_INSERT_SQL, bindReel)
+      await clearEquipmentCache()
+      return jsonResponse({
+        success: true,
+        message: `覆盖导入完成，成功${result.successCount}条，失败${result.failCount}条`,
+        mode: 'upsert',
+        ...result
+      })
+    }
+
+    // 普通模式：查重后插入
     const duplicates = await checkDuplicates(db, normalizedType, data)
 
     if (duplicates.length > 0) {
@@ -164,6 +180,9 @@ export async function onRequestPost(context) {
     const result = normalizedType === '鱼竿'
       ? await importItems(db, data, ROD_INSERT_SQL, bindRod)
       : await importItems(db, data, REEL_INSERT_SQL, bindReel)
+
+    // 导入成功后清除装备缓存，确保下次请求拿到最新数据
+    await clearEquipmentCache()
 
     return jsonResponse({
       success: true,

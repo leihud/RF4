@@ -70,7 +70,10 @@
       <div v-if="compareEquipmentList.length > 0" class="compare-panel">
         <div class="panel-header">
           <h3>对比面板 ({{ compareEquipmentList.length }})</h3>
-          <button class="clear-btn" @click="clearCompareList">清空</button>
+          <div class="panel-actions">
+            <button class="export-btn" @click="exportCompare" :disabled="compareEquipmentList.length === 0">导出文本</button>
+            <button class="clear-btn" @click="clearCompareList">清空</button>
+          </div>
         </div>
         <div class="compare-table">
           <div class="compare-row compare-header-row">
@@ -127,14 +130,15 @@
           <p>支持选择多个装备进行参数对比</p>
         </div>
       </div>
+      <div v-if="exportHint" class="export-hint-bar">{{ exportHint }}</div>
     </div>
   </div>
 </template>
 
 <script>
 import { searchAndRankEquipment, sortByPanelTension, EQUIPMENT_SEARCH_FIELDS } from '../utils/search.js'
-import { sanitizeEquipmentFields, sanitizeEquipmentList } from '../utils/sanitize.js'
-import { getRatingAlias } from '../constants/equipment.js'
+import { sanitizeEquipmentFields } from '../utils/sanitize.js'
+import { loadRodAndReelData } from '../utils/equipmentLoader.js'
 
 const COMPARE_ROWS = {
   rod: [
@@ -224,7 +228,8 @@ export default {
       compareEquipmentList: [],
       isLoading: false,
       dataLoadError: false,
-      searchTimeout: null
+      searchTimeout: null,
+      exportHint: ''
     }
   },
   mounted() {
@@ -344,50 +349,13 @@ export default {
       return match ? parseFloat(match[0]) : NaN
     },
     async loadData() {
-      this.rodData = []
-      this.reelData = []
       this.isLoading = true
       this.dataLoadError = false
-      try {
-        const [rodResponse, reelResponse] = await Promise.all([
-          fetch('/api/rods'),
-          fetch('/api/reels')
-        ])
-        
-        if (!rodResponse.ok) {
-          const errorText = await rodResponse.text()
-          console.error('鱼竿API响应错误:', rodResponse.status, errorText)
-          throw new Error(`鱼竿API HTTP ${rodResponse.status}: ${errorText}`)
-        }
-        
-        if (!reelResponse.ok) {
-          const errorText = await reelResponse.text()
-          console.error('渔轮API响应错误:', reelResponse.status, errorText)
-          throw new Error(`渔轮API HTTP ${reelResponse.status}: ${errorText}`)
-        }
-        
-        // 【源头清洗】把所有对象字段 primitive 化，根除隐式转换报错
-        const rawRod = await rodResponse.json()
-        const rawReel = await reelResponse.json()
-        // 补齐 ratingAlias（搜索用）与 panelTension（默认排序用），与计算器页的装备结构对齐
-        this.rodData = sanitizeEquipmentList(Array.isArray(rawRod) ? rawRod : []).map(item => ({
-          ...item,
-          ratingAlias: getRatingAlias(item.rating),
-          panelTension: this.extractNumber(item.strengthKg) || 0
-        }))
-        this.reelData = sanitizeEquipmentList(Array.isArray(rawReel) ? rawReel : []).map(item => ({
-          ...item,
-          ratingAlias: getRatingAlias(item.rating),
-          panelTension: this.extractNumber(item.frictionForce) || this.extractNumber(item.lockTension) || 0
-        }))
-        
-        console.log('装备对比数据加载成功:', this.rodData.length, '条鱼竿,', this.reelData.length, '条渔轮')
-      } catch (error) {
-        console.error('加载数据失败:', error)
-        this.dataLoadError = true
-      } finally {
-        this.isLoading = false
-      }
+      const { rodData, reelData, error } = await loadRodAndReelData()
+      this.rodData = rodData
+      this.reelData = reelData
+      this.dataLoadError = error
+      this.isLoading = false
     },
     switchType(type) {
       if (this.compareType === type) return
@@ -518,6 +486,42 @@ export default {
     },
     clearCompareList() {
       this.compareEquipmentList = []
+    },
+    /** 将对比表格导出为文本并复制到剪贴板 */
+    async exportCompare() {
+      if (this.compareEquipmentList.length === 0) return
+      const rows = this.currentCompareRows
+      const names = this.compareEquipmentList.map(eq =>
+        this.formatValue(eq.model || eq.equipmentName, '未知')
+      )
+      const lines = []
+      lines.push(`RF4 装备对比 (${this.compareType === 'rod' ? '鱼竿' : '渔轮'})`)
+      lines.push('装备: ' + names.join(' | '))
+      lines.push('─'.repeat(50))
+
+      for (const row of rows) {
+        const values = this.compareEquipmentList.map(eq => {
+          const formatted = this.formatCellValue(eq, row)
+          const isMax = row.highlight && this.isFieldMax(eq, row)
+          return isMax ? `★${formatted}` : formatted
+        })
+        lines.push(`${row.label}: ${values.join(' | ')}`)
+      }
+
+      // 性价比
+      for (const row of this.costEffectivenessRows) {
+        const values = this.compareEquipmentList.map(eq => this.formatCostEffectiveness(eq, row.field))
+        lines.push(`${row.label}: ${values.join(' | ')}`)
+      }
+
+      const text = lines.join('\n')
+      try {
+        await navigator.clipboard.writeText(text)
+        this.exportHint = '已复制到剪贴板！'
+      } catch (_) {
+        this.exportHint = text
+      }
+      setTimeout(() => { this.exportHint = '' }, 3000)
     },
     removeCompareItem(equipment) {
       const key = this.getItemKey(equipment)
@@ -854,6 +858,43 @@ export default {
 .clear-btn:hover {
   background-color: #90caf9;
   color: white;
+}
+
+.panel-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.export-btn {
+  padding: 8px 16px;
+  border: 1px solid #43a047;
+  background-color: white;
+  color: #43a047;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.export-btn:hover:not(:disabled) {
+  background-color: #43a047;
+  color: white;
+}
+
+.export-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.export-hint-bar {
+  padding: 10px 24px;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  border-radius: 0 0 8px 8px;
 }
 
 .compare-table {

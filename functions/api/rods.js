@@ -1,10 +1,17 @@
-import { jsonResponse, buildSearchWhere, SEARCH_FIELDS, NO_SEARCH_LIMIT } from './_shared.js'
+import { jsonResponse, buildSearchWhere, SEARCH_FIELDS, NO_SEARCH_LIMIT, getCachedResponse, putCache } from './_shared.js'
 
 export async function onRequestGet(context) {
   const { request, env } = context
   const url = new URL(request.url)
   const searchQuery = url.searchParams.get('q')
   const category = url.searchParams.get('category')
+
+  // 仅缓存无搜索的全量请求（搜索请求结果不确定，不适合缓存）
+  const cacheable = !searchQuery
+  if (cacheable) {
+    const cached = await getCachedResponse(request)
+    if (cached) return cached
+  }
 
   try {
     // 过滤条件下推到 SQL，避免全表取回后再 JS 过滤
@@ -25,7 +32,9 @@ export async function onRequestGet(context) {
     sql += hasSearch ? ' LIMIT 50' : ` LIMIT ${NO_SEARCH_LIMIT}`
 
     const result = await env.DB.prepare(sql).bind(...binds).all()
-    return jsonResponse(result.results)
+    const response = jsonResponse(result.results)
+    if (cacheable) putCache(request, response.clone())
+    return response
   } catch (error) {
     console.error('Database query error:', error)
     return jsonResponse([])

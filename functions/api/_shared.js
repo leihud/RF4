@@ -7,6 +7,55 @@
  * 因此不再返回 Access-Control-Allow-* 通配头，收紧攻击面。
  */
 
+/** Cloudflare Cache API 缓存键前缀 */
+const CACHE_PREFIX = 'rf4-api:'
+/** 装备数据缓存 TTL（1 小时，数据仅通过手动导入更新） */
+const EQUIPMENT_CACHE_TTL = 3600
+
+/**
+ * 尝试从 Cache API 读取缓存响应。
+ * @param {Request} request 原始请求（用于生成缓存键）
+ * @returns {Promise<Response|null>}
+ */
+export async function getCachedResponse(request) {
+  if (typeof caches === 'undefined') return null
+  const cache = await caches.open(CACHE_PREFIX)
+  return cache.match(request)
+}
+
+/**
+ * 将响应写入 Cache API。
+ * @param {Request} request 原始请求
+ * @param {Response} response 待缓存的响应
+ */
+export async function putCache(request, response) {
+  if (typeof caches === 'undefined') return
+  try {
+    const cache = await caches.open(CACHE_PREFIX)
+    // Cache API 要求响应带有 Content-Length 或 Transfer-Encoding
+    const headers = new Headers(response.headers)
+    headers.set('Cache-Control', `public, max-age=${EQUIPMENT_CACHE_TTL}`)
+    const cachedResponse = new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers
+    })
+    await cache.put(request, cachedResponse)
+  } catch (_) {
+    // 缓存写入失败不影响主流程
+  }
+}
+
+/**
+ * 清除装备相关的所有缓存（导入新数据后调用）。
+ */
+export async function clearEquipmentCache() {
+  if (typeof caches === 'undefined') return
+  try {
+    await caches.delete(CACHE_PREFIX)
+  } catch (_) {}
+}
+
 export function jsonResponse(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,

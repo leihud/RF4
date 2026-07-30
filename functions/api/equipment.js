@@ -1,4 +1,4 @@
-import { jsonResponse, errorResponse, extractNumber, buildSearchWhere, SEARCH_FIELDS, NO_SEARCH_LIMIT } from './_shared.js'
+import { jsonResponse, errorResponse, extractNumber, buildSearchWhere, SEARCH_FIELDS, NO_SEARCH_LIMIT, getCachedResponse, putCache } from './_shared.js'
 
 /** rods 表行 → 前端统一装备结构（鱼竿） */
 function mapRod(row) {
@@ -92,6 +92,13 @@ export async function onRequestGet(context) {
   const type = url.searchParams.get('type')
   const searchQuery = url.searchParams.get('q')
 
+  // 仅缓存无搜索的全量请求
+  const cacheable = !searchQuery
+  if (cacheable) {
+    const cached = await getCachedResponse(request)
+    if (cached) return cached
+  }
+
   try {
     let results = []
 
@@ -105,7 +112,9 @@ export async function onRequestGet(context) {
       results = results.concat(rows.map(mapReel))
     }
 
-    return jsonResponse(results)
+    const response = jsonResponse(results)
+    if (cacheable) putCache(request, response.clone())
+    return response
   } catch (error) {
     return errorResponse(error)
   }

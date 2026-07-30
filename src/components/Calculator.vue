@@ -7,6 +7,9 @@
         <button class="compare-nav-btn" @click="goToCompare">参数对比</button>
         <button class="import-nav-btn" @click="goToImport">数据导入</button>
         <button class="rf4-stat-btn" @click="openRf4Stat" rel="noopener noreferrer" target="_blank">RF4 数据站</button>
+        <button class="share-btn" @click="sharePreset" :title="shareHint || '分享当前装备方案'">
+          {{ shareHint || '分享方案' }}
+        </button>
       </div>
     </div>
 
@@ -20,6 +23,21 @@
       >
         {{ rule.label }}
       </button>
+    </div>
+
+    <div class="fish-selector">
+      <span class="fish-label">目标鱼种:</span>
+      <select v-model="selectedFish" class="fish-select">
+        <option value="">不限</option>
+        <option v-for="fish in FISH_RECOMMENDATIONS" :key="fish.name" :value="fish.name">
+          {{ fish.name }} ({{ fish.difficulty }})
+        </option>
+      </select>
+      <div v-if="currentFishRec" class="fish-tips">
+        <span class="tips-icon"></span>
+        <span>{{ currentFishRec.tips }}</span>
+        <span class="tips-range">推荐拉力: {{ currentFishRec.minTension }}-{{ currentFishRec.maxTension }} kN</span>
+      </div>
     </div>
 
     <div v-if="!calculationRule" class="rule-warning">
@@ -161,6 +179,18 @@
       </div>
     </div>
 
+    <div v-if="lineAdvice.length > 0" class="line-advice-section">
+      <h3>线组搭配建议</h3>
+      <div
+        v-for="(advice, idx) in lineAdvice"
+        :key="idx"
+        :class="['advice-item', `advice-${advice.type}`]"
+      >
+        <span class="advice-icon">{{ advice.type === 'warn' ? '⚠️' : advice.type === 'ok' ? '✅' : 'ℹ️' }}</span>
+        <span class="advice-text">{{ advice.text }}</span>
+      </div>
+    </div>
+
     <EquipmentSummary
       v-if="allEquipmentSelected"
       :selected-equipment-list="selectedEquipmentList"
@@ -193,10 +223,13 @@ import {
   formatTension
 } from '../utils/tension.js'
 import { getMergedAdaptWeight } from '../utils/display.js'
-import { sanitizeEquipmentFields, sanitizeEquipmentList, safeToNumber, safeToString } from '../utils/sanitize.js'
+import { sanitizeEquipmentFields, safeToNumber, safeToString } from '../utils/sanitize.js'
+import { loadEquipmentData } from '../utils/equipmentLoader.js'
+import { encodePreset, decodePreset, getShareUrl } from '../utils/presetShare.js'
 import DisclaimerModal from './calculator/DisclaimerModal.vue'
 import EquipmentSearchDropdown from './calculator/EquipmentSearchDropdown.vue'
 import EquipmentSummary from './calculator/EquipmentSummary.vue'
+import { FISH_RECOMMENDATIONS } from '../constants/fishRecommendations.js'
 
 export default {
   name: 'Calculator',
@@ -220,13 +253,17 @@ export default {
       selectedEquipmentList: [],
       calculationRule: CALC_RULES.GUIDE,
       CALC_RULE_OPTIONS,
-      formatTension
+      formatTension,
+      shareHint: '',
+      selectedFish: '',
+      FISH_RECOMMENDATIONS
     }
   },
   mounted() {
     this.loadEquipmentData()
     document.addEventListener('click', this.handleClickOutside)
     this.showDisclaimer = true
+    this.restoreFromUrl()
   },
   beforeUnmount() {
     document.removeEventListener('click', this.handleClickOutside)
@@ -300,6 +337,49 @@ export default {
     },
     allEquipmentSelected() {
       return !!this.selectedEquipmentMap['鱼竿']
+    },
+    /** 主线/引线搭配建议 */
+    lineAdvice() {
+      const advices = []
+      const mainLine = this.customEquipment['主线']
+      const leader = this.customEquipment['引线']
+      const mainTension = this.toSafeNumber(mainLine.maxTension, 0)
+      const leaderTension = this.toSafeNumber(leader.maxTension, 0)
+
+      if (mainTension > 0 && leaderTension > 0) {
+        if (leaderTension >= mainTension) {
+          advices.push({ type: 'warn', text: '引线拉力不应大于等于主线，挂底时可能断主线而非引线' })
+        } else if (leaderTension < mainTension * 0.5) {
+          advices.push({ type: 'info', text: '引线拉力远低于主线，可能过早断线' })
+        } else {
+          advices.push({ type: 'ok', text: '主线/引线拉力搭配合理' })
+        }
+      }
+
+      // 与鱼竿拉力对比
+      const rod = this.selectedEquipmentMap['鱼竿']
+      if (rod && mainTension > 0) {
+        const rodTension = this.toSafeNumber(rod.panelTension || rod.lockTension, 0)
+        if (rodTension > 0 && mainTension > rodTension * 1.5) {
+          advices.push({ type: 'warn', text: '主线拉力远高于鱼竿强度，可能损伤鱼竿' })
+        }
+      }
+
+      // 与渔轮锁轮拉力对比
+      const reel = this.selectedEquipmentMap['渔轮']
+      if (reel && mainTension > 0) {
+        const reelLockTension = this.toSafeNumber(reel.lockTension, 0)
+        if (reelLockTension > 0 && mainTension > reelLockTension * 1.5) {
+          advices.push({ type: 'warn', text: '主线拉力远高于渔轮锁轮拉力，可能损伤渔轮' })
+        }
+      }
+
+      return advices
+    },
+    /** 当前选中鱼种的推荐配置 */
+    currentFishRec() {
+      if (!this.selectedFish) return null
+      return FISH_RECOMMENDATIONS.find(f => f.name === this.selectedFish) || null
     }
   },
   methods: {
@@ -331,33 +411,12 @@ export default {
     async loadEquipmentData() {
       this.equipmentData = []
       this.isLoading = true
-      try {
-        const response = await fetch('/api/equipment')
-        if (!response.ok) {
-          const errorText = await response.text()
-          console.error('API响应错误:', response.status, errorText)
-          throw new Error(`HTTP ${response.status}: ${errorText}`)
-        }
-        const result = await response.json()
-        // 【源头清洗】把所有字段对象型转为 primitive，从入口根除
-        // "Cannot convert object to primitive value"
-        const sanitized = sanitizeEquipmentList(
-          Array.isArray(result) ? result : []
-        )
-        this.equipmentData = sanitized.map(item => ({
-          ...item,
-          maxTension: item.panelTension ?? item.maxTension ?? null,
-          ratingAlias: getRatingAlias(item.rating)
-        }))
-        console.log('装备数据加载成功:', this.equipmentData.length, '条')
-      } catch (error) {
-        // 加载失败只提示错误，不再注入演示用假数据（避免误导用户按假参数计算）
-        console.error('加载装备数据失败:', error)
-        this.dataLoadError = true
-        this.equipmentData = []
-      } finally {
-        this.isLoading = false
-      }
+      const { data, error } = await loadEquipmentData('/api/equipment')
+      this.equipmentData = data
+      this.dataLoadError = error
+      this.isLoading = false
+      // 数据就绪后恢复 URL 中的装备方案
+      this.applyPendingPreset()
     },
     calculateCustomActualTension(item) {
       return calculateCustomActualTension(item)
@@ -433,6 +492,78 @@ export default {
       if (typeof window !== 'undefined' && typeof window.open === 'function') {
         window.open('https://cn.rf4-stat.ru/', '_blank', 'noopener,noreferrer')
       }
+    },
+    /** 从 URL 参数恢复装备方案 */
+    restoreFromUrl() {
+      const preset = decodePreset(window.location.search)
+      if (!preset) return
+      if (preset.calculationRule) this.calculationRule = preset.calculationRule
+      if (preset.friction) this.friction = clampFriction(preset.friction, this.calculationRule)
+      if (preset.mainLineTension) {
+        this.customEquipment['主线'].maxTension = preset.mainLineTension
+        this.customEquipment['主线'].wear = preset.mainLineWear || 0
+      }
+      if (preset.leaderLineTension) {
+        this.customEquipment['引线'].maxTension = preset.leaderLineTension
+        this.customEquipment['引线'].wear = preset.leaderLineWear || 0
+      }
+      // 竿/轮型号需要在数据加载后匹配
+      if (preset.rodModel || preset.reelModel) {
+        this._pendingPreset = preset
+      }
+    },
+    /** 数据加载完成后，根据 URL preset 匹配装备 */
+    applyPendingPreset() {
+      const preset = this._pendingPreset
+      if (!preset) return
+      delete this._pendingPreset
+      if (preset.rodModel) {
+        const rod = this.equipmentData.find(
+          item => item.equipmentType === '鱼竿' &&
+            (item.model === preset.rodModel || item.equipmentName === preset.rodModel)
+        )
+        if (rod) {
+          this.selectedEquipmentList.push({ ...rod, wear: preset.rodWear || 0 })
+        }
+      }
+      if (preset.reelModel) {
+        const reel = this.equipmentData.find(
+          item => item.equipmentType === '渔轮' &&
+            (item.model === preset.reelModel || item.equipmentName === preset.reelModel)
+        )
+        if (reel) {
+          const rod = this.selectedEquipmentMap['鱼竿']
+          if (!rod || isRodReelCompatible(rod, reel)) {
+            this.selectedEquipmentList.push({ ...reel, wear: preset.reelWear || 0 })
+          }
+        }
+      }
+    },
+    /** 生成分享链接并复制到剪贴板 */
+    async sharePreset() {
+      const rod = this.selectedEquipmentMap['鱼竿']
+      const reel = this.selectedEquipmentMap['渔轮']
+      const state = {
+        rodModel: rod ? (rod.model || rod.equipmentName) : '',
+        reelModel: reel ? (reel.model || reel.equipmentName) : '',
+        rodWear: rod ? this.toSafeNumber(rod.wear, 0) : 0,
+        reelWear: reel ? this.toSafeNumber(reel.wear, 0) : 0,
+        friction: this.toSafeNumber(this.friction, 0),
+        mainLineTension: this.toSafeNumber(this.customEquipment['主线'].maxTension, 0),
+        mainLineWear: this.toSafeNumber(this.customEquipment['主线'].wear, 0),
+        leaderLineTension: this.toSafeNumber(this.customEquipment['引线'].maxTension, 0),
+        leaderLineWear: this.toSafeNumber(this.customEquipment['引线'].wear, 0),
+        calculationRule: this.calculationRule
+      }
+      const url = getShareUrl(state)
+      try {
+        await navigator.clipboard.writeText(url)
+        this.shareHint = '链接已复制！'
+      } catch (_) {
+        // 剪贴板 API 不可用时回退到 prompt
+        this.shareHint = url
+      }
+      setTimeout(() => { this.shareHint = '' }, 3000)
     }
   }
 }
@@ -514,6 +645,124 @@ h1 {
 
 .rf4-stat-btn:hover {
   background-color: #e8f5e9;
+}
+
+/* 分享方案按钮 */
+.share-btn {
+  padding: 10px 24px;
+  border: 2px solid #7b1fa2;
+  background-color: white;
+  color: #7b1fa2;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.share-btn:hover {
+  background-color: #f3e5f5;
+}
+
+/* 线组搭配建议 */
+.line-advice-section {
+  background-color: #fff8e1;
+  padding: 16px 20px;
+  border-radius: 8px;
+  border: 1px solid #ffe082;
+  margin-bottom: 20px;
+}
+
+.line-advice-section h3 {
+  color: #f57f17;
+  margin: 0 0 10px 0;
+  font-size: 15px;
+}
+
+.advice-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 14px;
+}
+
+.advice-icon {
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+.advice-text {
+  color: #333;
+}
+
+.advice-warn .advice-text {
+  color: #c62828;
+  font-weight: 600;
+}
+
+.advice-ok .advice-text {
+  color: #2e7d32;
+}
+
+.advice-info .advice-text {
+  color: #1565c0;
+}
+
+/* 鱼种选择器 */
+.fish-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+  padding: 12px 15px;
+  background-color: #e3f2fd;
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+.fish-label {
+  font-weight: bold;
+  color: #1565c0;
+  font-size: 14px;
+}
+
+.fish-select {
+  padding: 6px 12px;
+  border: 1px solid #90caf9;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: white;
+  cursor: pointer;
+  outline: none;
+}
+
+.fish-select:focus {
+  border-color: #1565c0;
+  box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
+}
+
+.fish-tips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #333;
+  flex-wrap: wrap;
+}
+
+.tips-icon::before {
+  content: '💡';
+}
+
+.tips-range {
+  color: #1565c0;
+  font-weight: 600;
+  background-color: #bbdefb;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
 }
 
 h2 {
