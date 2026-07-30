@@ -61,6 +61,11 @@ export default {
     equipmentList: {
       type: Array,
       default: () => []
+    },
+    /** 外部传入的过滤函数，用于过滤装备列表（如根据鱼竿类型过滤兼容渔轮） */
+    equipmentFilter: {
+      type: Function,
+      default: null
     }
   },
   emits: ['select'],
@@ -94,6 +99,11 @@ export default {
     filteredEquipment() {
       if (!Array.isArray(this.equipmentList)) return []
       let filtered = this.equipmentList
+
+      // 外部兼容性过滤（如鱼竿-渔轮兼容性）
+      if (typeof this.equipmentFilter === 'function') {
+        filtered = filtered.filter(this.equipmentFilter)
+      }
 
       if (this.selectedCategory && this.selectedCategory !== '全部') {
         filtered = filtered.filter(item => item.category === this.selectedCategory)

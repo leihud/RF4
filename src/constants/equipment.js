@@ -85,6 +85,60 @@ export const RATING_ALIAS = Object.freeze(
 )
 
 /**
+ * ── 鱼竿-渔轮兼容性规则 ──
+ *
+ * 手竿：无法装备任何渔轮
+ * 博洛尼亚竿、竞赛竿、飞德竿、派克竿、鲤鱼竿、直柄路亚竿：仅支持纺车轮
+ * 枪柄路亚竿：仅支持鼓轮、水滴轮
+ * 其他鱼竿类型：不限制
+ */
+
+/** 无法装备任何渔轮的鱼竿分类 */
+export const ROD_NO_REEL_CATEGORIES = Object.freeze(['手竿', '新年系列 手竿'])
+
+/** 仅支持纺车轮的鱼竿分类 */
+export const ROD_SPINNING_ONLY_CATEGORIES = Object.freeze([
+  '博洛尼亚竿', '赛竿', '飞德竿', 'PICKER竿', '鲤鱼竿', '纺车竿',
+  '新年系列 博洛尼亚', '新年系列 纺车竿', '新年系列 飞德竿'
+])
+
+/** 仅支持鼓轮/水滴轮的鱼竿分类 */
+export const ROD_BAITCAST_ONLY_CATEGORIES = Object.freeze(['枪柄竿'])
+
+/** 纺车式渔轮分类 */
+export const SPINNING_REEL_CATEGORIES = Object.freeze(['纺车式', '新年系列 纺车式'])
+
+/** 鼓轮/水滴轮渔轮分类 */
+export const BAITCAST_REEL_CATEGORIES = Object.freeze(['鼓轮', '水滴轮', '动力鼓轮', '新年系列 鼓轮', '新年系列 动力鼓轮'])
+
+/**
+ * 根据鱼竿分类获取兼容的渔轮分类列表。
+ * 返回 null 表示不限制（所有渔轮均可）；返回空数组表示无兼容渔轮。
+ * @param {string|null} rodCategory 鱼竿的 category 字段
+ * @returns {string[]|null}
+ */
+export function getCompatibleReelTypes(rodCategory) {
+  if (!rodCategory) return null
+  if (ROD_NO_REEL_CATEGORIES.includes(rodCategory)) return []
+  if (ROD_SPINNING_ONLY_CATEGORIES.includes(rodCategory)) return [...SPINNING_REEL_CATEGORIES]
+  if (ROD_BAITCAST_ONLY_CATEGORIES.includes(rodCategory)) return [...BAITCAST_REEL_CATEGORIES]
+  return null
+}
+
+/**
+ * 检查鱼竿与渔轮是否兼容。
+ * @param {object|null} rod 鱼竿装备对象
+ * @param {object|null} reel 渔轮装备对象
+ * @returns {boolean}
+ */
+export function isRodReelCompatible(rod, reel) {
+  if (!rod || !reel) return true
+  const compatible = getCompatibleReelTypes(rod.category)
+  if (compatible === null) return true
+  return compatible.includes(reel.category)
+}
+
+/**
  * 把 rating 原始值（可能是数字 / 星级字符串 / 空）转成中文别名。
  * 保证不会返回 null/undefined；未命中映射时直接返回数据库原值（不再追加「级」后缀）。
  */

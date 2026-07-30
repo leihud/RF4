@@ -144,6 +144,7 @@
           <EquipmentSearchDropdown
             v-if="isSearchableType(type) && selectedType === type"
             :equipment-list="equipmentOfSelectedType"
+            :equipment-filter="type === '渔轮' ? reelEquipmentFilter : null"
             @select="selectEquipment"
           />
 
@@ -176,7 +177,9 @@ import {
   CALC_RULE_OPTIONS,
   DEFAULT_FRICTION,
   CALC_RULES,
-  getRatingAlias
+  getRatingAlias,
+  getCompatibleReelTypes,
+  isRodReelCompatible
 } from '../constants/equipment.js'
 import { ROUTES } from '../constants/routes.js'
 import {
@@ -231,6 +234,13 @@ export default {
       if (val) {
         this.friction = clampFriction(this.friction, val)
       }
+    },
+    /** 鱼竿切换时，若已选渔轮不兼容则自动清除 */
+    'selectedEquipmentMap.鱼竿'(newRod) {
+      const reel = this.selectedEquipmentMap['渔轮']
+      if (newRod && reel && !isRodReelCompatible(newRod, reel)) {
+        this.clearEquipmentByType('渔轮')
+      }
     }
   },
   computed: {
@@ -273,6 +283,18 @@ export default {
     equipmentOfSelectedType() {
       if (!Array.isArray(this.equipmentData)) return []
       return this.equipmentData.filter(item => item.equipmentType === this.selectedType)
+    },
+    /** 当前鱼竿兼容的渔轮分类列表（null 表示不限制） */
+    compatibleReelTypes() {
+      const rod = this.selectedEquipmentMap['鱼竿']
+      if (!rod) return null
+      return getCompatibleReelTypes(rod.category)
+    },
+    /** 传给渔轮下拉的过滤函数：根据当前鱼竿过滤不兼容渔轮 */
+    reelEquipmentFilter() {
+      const compatible = this.compatibleReelTypes
+      if (compatible === null) return null
+      return (item) => compatible.includes(item.category)
     },
     allEquipmentSelected() {
       return !!(this.selectedEquipmentMap['鱼竿'] && this.selectedEquipmentMap['渔轮'])
@@ -347,6 +369,14 @@ export default {
     selectEquipment(equipment) {
       // 【入口二次清洗】防止装备对象中残留未清洗的对象字段
       const safe = sanitizeEquipmentFields(equipment || {})
+      // 渔轮兼容性检查：与当前鱼竿不兼容时拒绝选择
+      if (safe.equipmentType === '渔轮') {
+        const rod = this.selectedEquipmentMap['鱼竿']
+        if (rod && !isRodReelCompatible(rod, safe)) {
+          alert('当前鱼竿无法装备此类型渔轮')
+          return
+        }
+      }
       const existingIndex = this.selectedEquipmentList.findIndex(
         item => item.equipmentType === safe.equipmentType
       )
