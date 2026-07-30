@@ -145,6 +145,7 @@
             v-if="isSearchableType(type) && selectedType === type"
             :equipment-list="equipmentOfSelectedType"
             :equipment-filter="type === '渔轮' ? reelEquipmentFilter : null"
+            :compatible-categories="type === '渔轮' ? compatibleReelTypes : null"
             :empty-hint="type === '渔轮' && compatibleReelTypes !== null && compatibleReelTypes.length === 0 ? '当前鱼竿无法装备任何渔轮' : null"
             @select="selectEquipment"
           />

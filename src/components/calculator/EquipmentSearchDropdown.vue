@@ -40,7 +40,7 @@
         >{{ toSafeDisplay(equipment.ratingAlias) }}</span>
       </div>
       <div v-if="filteredEquipment.length === 0" class="dropdown-empty">
-        {{ emptyHint || '未找到匹配的装备' }}
+        {{ emptyHint || autoEmptyHint }}
       </div>
     </div>
   </div>
@@ -67,7 +67,12 @@ export default {
       type: Function,
       default: null
     },
-    /** 自定义空状态提示文本，不传则显示默认「未找到匹配的装备」 */
+    /** 兼容的渔轮分类列表（null 表示不限制），用于生成不兼容提示 */
+    compatibleCategories: {
+      type: Array,
+      default: null
+    },
+    /** 自定义空状态提示文本，不传则显示默认或自动生成不兼容提示 */
     emptyHint: {
       type: String,
       default: null
@@ -122,6 +127,16 @@ export default {
       }
 
       return filtered
+    },
+    /** 根据当前筛选状态自动生成空状态提示 */
+    autoEmptyHint() {
+      // 用户手动选了分类，且该分类不在兼容列表中
+      if (this.selectedCategory && this.selectedCategory !== '全部' && Array.isArray(this.compatibleCategories)) {
+        if (!this.compatibleCategories.includes(this.selectedCategory)) {
+          return `该类型鱼竿无法装备「${this.selectedCategory}」`
+        }
+      }
+      return '未找到匹配的装备'
     }
   },
   methods: {
