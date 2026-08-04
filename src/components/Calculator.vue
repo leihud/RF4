@@ -877,7 +877,8 @@ export default {
           // 刷新页面以更新方案列表
           window.location.reload()
         } else {
-          alert('保存失败：' + (result.message || '未知错误'))
+          const errorMsg = result.error || result.message || '未知错误'
+          alert('保存失败：' + errorMsg)
           console.error('保存失败详情:', result)
         }
       } catch (error) {
