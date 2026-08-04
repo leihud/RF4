@@ -129,12 +129,6 @@
             <h4>📝 说明</h4>
             <p>{{ build.description }}</p>
           </div>
-
-          <!-- 计算规则 -->
-          <div class="detail-group">
-            <h4>⚙️ 计算规则</h4>
-            <p>{{ build.calculation_rule || 'guide' }} | 摩擦值: {{ build.friction || 0 }}</p>
-          </div>
         </div>
       </div>
     </div>
