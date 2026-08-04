@@ -29,8 +29,8 @@
       <span class="fish-label">目标鱼种:</span>
       <select v-model="selectedFish" class="fish-select">
         <option value="">不限</option>
-        <option v-for="fish in FISH_RECOMMENDATIONS" :key="fish.name" :value="fish.name">
-          {{ fish.name }} ({{ fish.difficulty }})
+        <option v-for="fish in fishSpeciesList" :key="fish.name" :value="fish.display_name">
+          {{ fish.display_name }} ({{ fish.difficulty || '未知' }})
         </option>
       </select>
       <div v-if="currentFishRec" class="fish-tips">
@@ -317,7 +317,6 @@ import { encodePreset, decodePreset, getShareUrl } from '../utils/presetShare.js
 import DisclaimerModal from './calculator/DisclaimerModal.vue'
 import EquipmentSearchDropdown from './calculator/EquipmentSearchDropdown.vue'
 import EquipmentSummary from './calculator/EquipmentSummary.vue'
-import { FISH_RECOMMENDATIONS } from '../constants/fishRecommendations.js'
 
 export default {
   name: 'Calculator',
@@ -346,7 +345,6 @@ export default {
       formatTension,
       shareHint: '',
       selectedFish: '',
-      FISH_RECOMMENDATIONS,
       showSubmitModal: false,
       isSubmitting: false,
       submitForm: {
@@ -480,7 +478,15 @@ export default {
     /** 当前选中鱼种的推荐配置 */
     currentFishRec() {
       if (!this.selectedFish) return null
-      return FISH_RECOMMENDATIONS.find(f => f.name === this.selectedFish) || null
+      const fish = this.fishSpeciesList.find(f => f.display_name === this.selectedFish)
+      if (!fish) return null
+      return {
+        name: fish.display_name,
+        difficulty: fish.difficulty || '未知',
+        tips: fish.description || '',
+        minTension: fish.min_tension || 0,
+        maxTension: fish.max_tension || 0
+      }
     }
   },
   methods: {
