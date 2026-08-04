@@ -28,6 +28,8 @@ CREATE TABLE IF NOT EXISTS recommended_builds (
   description TEXT DEFAULT '',
   suitable_fish TEXT DEFAULT '',
   suitable_map TEXT DEFAULT '',
+  -- 外键关联地图表（可选）
+  -- map_id INTEGER REFERENCES maps(id),
   -- 时间戳
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
