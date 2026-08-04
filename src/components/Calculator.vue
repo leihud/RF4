@@ -766,6 +766,8 @@ export default {
           alert('推荐装备搭配已保存！')
           this.closeSubmitModal()
           this.submitForm = { name: '', description: '', suitableFish: [], suitableMap: [] }
+          // 刷新页面以更新方案列表
+          window.location.reload()
         } else {
           alert('保存失败：' + (result.message || '未知错误'))
           console.error('保存失败详情:', result)
