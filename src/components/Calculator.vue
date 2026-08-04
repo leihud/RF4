@@ -253,28 +253,32 @@
             ></textarea>
           </div>
           <div class="form-group">
-            <label class="form-label">适用鱼种</label>
+            <label class="form-label">适用鱼种（可多选）</label>
             <select
               v-model="submitForm.suitableFish"
-              class="form-select"
+              class="form-select form-select-multiple"
+              multiple
+              size="5"
             >
-              <option value="">请选择鱼种</option>
               <option v-for="fish in fishSpeciesList" :key="fish.name" :value="fish.display_name">
-                {{ fish.display_name }}
+                {{ fish.display_name }} ({{ fish.difficulty || '未知' }})
               </option>
             </select>
+            <span class="select-hint">按住 Ctrl/Cmd 键可多选</span>
           </div>
           <div class="form-group">
-            <label class="form-label">适用地图</label>
+            <label class="form-label">适用地图（可多选）</label>
             <select
               v-model="submitForm.suitableMap"
-              class="form-select"
+              class="form-select form-select-multiple"
+              multiple
+              size="5"
             >
-              <option value="">请选择地图</option>
               <option v-for="map in mapsList" :key="map.name" :value="map.display_name">
                 {{ map.display_name }}
               </option>
             </select>
+            <span class="select-hint">按住 Ctrl/Cmd 键可多选</span>
           </div>
         </div>
         <div class="modal-footer">
@@ -350,8 +354,8 @@ export default {
       submitForm: {
         name: '',
         description: '',
-        suitableFish: '',
-        suitableMap: ''
+        suitableFish: [],
+        suitableMap: []
       },
       mapsList: [],
       fishSpeciesList: []
@@ -719,8 +723,8 @@ export default {
         calculationRule: this.calculationRule,
         friction: this.toSafeNumber(this.friction, 0),
         description: this.submitForm.description,
-        suitableFish: this.submitForm.suitableFish,
-        suitableMap: this.submitForm.suitableMap
+        suitableFish: Array.isArray(this.submitForm.suitableFish) ? this.submitForm.suitableFish.join(',') : this.submitForm.suitableFish,
+        suitableMap: Array.isArray(this.submitForm.suitableMap) ? this.submitForm.suitableMap.join(',') : this.submitForm.suitableMap
       }
 
       this.isSubmitting = true
@@ -734,7 +738,7 @@ export default {
         if (result.success) {
           alert('推荐装备搭配已保存！')
           this.closeSubmitModal()
-          this.submitForm = { name: '', description: '', suitableFish: '', suitableMap: '' }
+          this.submitForm = { name: '', description: '', suitableFish: [], suitableMap: [] }
         } else {
           alert('保存失败：' + (result.message || '未知错误'))
         }
@@ -1423,6 +1427,18 @@ h2 {
 .form-select:focus {
   border-color: #42b983;
   box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.2);
+}
+
+.form-select-multiple {
+  height: auto;
+  min-height: 120px;
+}
+
+.select-hint {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #999;
 }
 
 .form-textarea {
