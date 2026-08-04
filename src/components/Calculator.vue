@@ -72,7 +72,7 @@
       </select>
       
       <button class="query-btn" @click="queryAndApplyBuild" :disabled="!selectedBuildName">
-        查询
+        加载装备方案
       </button>
       
       <div v-if="currentFishRec" class="fish-tips">
