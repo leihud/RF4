@@ -68,96 +68,89 @@
           </div>
           <div class="build-meta">
             <span class="meta-item">🎣 {{ getFishCount(build.suitable_fish) }} 种鱼</span>
-            <span class="meta-item">️ {{ getMapCount(build.suitable_map) }} 张地图</span>
+            <span class="meta-item">🗺️ {{ getMapCount(build.suitable_map) }} 张地图</span>
             <span class="meta-item">📅 {{ formatDate(build.created_at) }}</span>
           </div>
         </div>
 
         <div v-if="expandedIndex === index" class="build-details">
-          <!-- 上方：装备搭配 -->
-          <div class="equipment-section">
-            <div v-if="build.rod_model" class="detail-item">
-              <span class="detail-label">🎯 鱼竿</span>
-              <span class="detail-value">{{ build.rod_name || build.rod_model }} <span class="detail-sub">({{ build.rod_category || '未知分类' }})</span></span>
+          <!-- 装备搭配 -->
+          <div class="equipment-row">
+            <div v-if="build.rod_model" class="equip-chip">
+              <span class="equip-chip-label">鱼竿</span>
+              <span class="equip-chip-value">{{ build.rod_name || build.rod_model }}</span>
+              <span class="equip-chip-sub">{{ build.rod_category || '' }}</span>
             </div>
-
-            <div v-if="build.reel_model" class="detail-item">
-              <span class="detail-label">🔄 渔轮</span>
-              <span class="detail-value">{{ build.reel_name || build.reel_model }} <span class="detail-sub">({{ build.reel_category || '未知分类' }})</span></span>
+            <div v-if="build.reel_model" class="equip-chip">
+              <span class="equip-chip-label">渔轮</span>
+              <span class="equip-chip-value">{{ build.reel_name || build.reel_model }}</span>
+              <span class="equip-chip-sub">{{ build.reel_category || '' }}</span>
             </div>
-
-            <div v-if="build.main_line_tension > 0" class="detail-item">
-              <span class="detail-label">🧵 主线</span>
-              <span class="detail-value">
-                {{ build.main_line_material ? build.main_line_material + '线 ' : '' }}{{ build.main_line_tension }}kN
-                <span class="detail-sub">(磨损{{ build.main_line_wear }}%)</span>
-                <span v-if="build.main_line_diameter > 0" class="detail-sub">| 线径{{ build.main_line_diameter }}mm</span>
-                <span v-if="build.main_line_length > 0" class="detail-sub">| 长度{{ build.main_line_length }}cm</span>
+            <div v-if="build.main_line_tension > 0" class="equip-chip">
+              <span class="equip-chip-label">主线</span>
+              <span class="equip-chip-value">
+                {{ build.main_line_material ? build.main_line_material : '' }}{{ build.main_line_tension }}kN
+                <span class="equip-chip-sub" v-if="build.main_line_wear > 0">磨损{{ build.main_line_wear }}%</span>
+                <span class="equip-chip-sub" v-if="build.main_line_diameter > 0">{{ build.main_line_diameter }}mm</span>
+                <span class="equip-chip-sub" v-if="build.main_line_length > 0">{{ build.main_line_length }}cm</span>
               </span>
             </div>
-
-            <div v-if="build.leader_line_tension > 0" class="detail-item">
-              <span class="detail-label"> 引线</span>
-              <span class="detail-value">
-                {{ build.leader_line_material ? build.leader_line_material + '线 ' : '' }}{{ build.leader_line_tension }}kN
-                <span class="detail-sub">(磨损{{ build.leader_line_wear }}%)</span>
-                <span v-if="build.leader_line_diameter > 0" class="detail-sub">| 线径{{ build.leader_line_diameter }}mm</span>
-                <span v-if="build.leader_line_length > 0" class="detail-sub">| 长度{{ build.leader_line_length }}cm</span>
+            <div v-if="build.leader_line_tension > 0" class="equip-chip">
+              <span class="equip-chip-label">引线</span>
+              <span class="equip-chip-value">
+                {{ build.leader_line_material ? build.leader_line_material : '' }}{{ build.leader_line_tension }}kN
+                <span class="equip-chip-sub" v-if="build.leader_line_wear > 0">磨损{{ build.leader_line_wear }}%</span>
+                <span class="equip-chip-sub" v-if="build.leader_line_diameter > 0">{{ build.leader_line_diameter }}mm</span>
+                <span class="equip-chip-sub" v-if="build.leader_line_length > 0">{{ build.leader_line_length }}cm</span>
               </span>
             </div>
-
-            <div v-if="build.hook_name" class="detail-item">
-              <span class="detail-label"> 鱼钩</span>
-              <span class="detail-value">{{ build.hook_name }}</span>
+            <div v-if="build.hook_name" class="equip-chip">
+              <span class="equip-chip-label">鱼钩</span>
+              <span class="equip-chip-value">{{ build.hook_name }}</span>
             </div>
           </div>
 
-          <!-- 下方：装备分析 -->
-          <div class="analysis-section">
-            <h4> 装备分析</h4>
-            <div class="analysis-grid">
-              <div class="analysis-item">
-                <span class="analysis-label">总拉力</span>
-                <span class="analysis-value tension-value">{{ getTotalTension(build) }} kN</span>
-              </div>
-              <div class="analysis-item">
-                <span class="analysis-label">鱼竿价格</span>
-                <span class="analysis-value price-value">{{ formatPrice(build.rod_price) }}</span>
-              </div>
-              <div class="analysis-item">
-                <span class="analysis-label">渔轮价格</span>
-                <span class="analysis-value price-value">{{ formatPrice(build.reel_price) }}</span>
-              </div>
-              <div class="analysis-item total-price">
-                <span class="analysis-label">总价格</span>
-                <span class="analysis-value price-value total">{{ formatPrice((build.rod_price || 0) + (build.reel_price || 0)) }}</span>
-              </div>
+          <!-- 装备分析 -->
+          <div class="analysis-row">
+            <div class="analysis-stat">
+              <span class="stat-label">总拉力</span>
+              <span class="stat-value stat-tension">{{ getTotalTension(build) }} kN</span>
+            </div>
+            <div class="analysis-stat">
+              <span class="stat-label">鱼竿</span>
+              <span class="stat-value stat-price">{{ formatPrice(build.rod_price) }}</span>
+            </div>
+            <div class="analysis-stat">
+              <span class="stat-label">渔轮</span>
+              <span class="stat-value stat-price">{{ formatPrice(build.reel_price) }}</span>
+            </div>
+            <div class="analysis-stat analysis-total">
+              <span class="stat-label">总计</span>
+              <span class="stat-value stat-price stat-total">{{ formatPrice((build.rod_price || 0) + (build.reel_price || 0)) }}</span>
             </div>
           </div>
 
           <!-- 适用鱼种和地图 -->
-          <div class="meta-section">
-            <div v-if="build.suitable_fish" class="detail-item">
-              <span class="detail-label">🐟 适用鱼种</span>
+          <div class="meta-row" v-if="build.suitable_fish || build.suitable_map || build.description">
+            <div v-if="build.suitable_fish" class="meta-group">
+              <span class="meta-label">鱼种</span>
               <div class="tags">
-                <span v-for="(fish, i) in build.suitable_fish.split(',')" :key="i" class="tag">
+                <span v-for="(fish, i) in build.suitable_fish.split(',')" :key="i" class="tag tag-fish">
                   {{ fish.trim() }}
                 </span>
               </div>
             </div>
-
-            <div v-if="build.suitable_map" class="detail-item">
-              <span class="detail-label"> 适用地图</span>
+            <div v-if="build.suitable_map" class="meta-group">
+              <span class="meta-label">地图</span>
               <div class="tags">
-                <span v-for="(map, i) in build.suitable_map.split(',')" :key="i" class="tag">
+                <span v-for="(map, i) in build.suitable_map.split(',')" :key="i" class="tag tag-map">
                   {{ map.trim() }}
                 </span>
               </div>
             </div>
-
-            <div v-if="build.description" class="detail-item">
-              <span class="detail-label">📝 说明</span>
-              <span class="detail-value">{{ build.description }}</span>
+            <div v-if="build.description" class="meta-group meta-desc">
+              <span class="meta-label">说明</span>
+              <span class="meta-desc-text">{{ build.description }}</span>
             </div>
           </div>
         </div>
@@ -431,127 +424,149 @@ export default {
 
 /* 详情区域 */
 .build-details {
-  padding: 20px;
-  border-top: 1px solid #e0e0e0;
+  padding: 16px 20px;
+  border-top: 1px solid #f0f0f0;
   background-color: white;
 }
 
-/* 装备搭配区域 */
-.equipment-section {
+/* 装备搭配行 */
+.equipment-row {
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.equip-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.equip-chip-label {
+  color: #1565c0;
+  font-weight: 600;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.equip-chip-value {
+  color: #333;
+  font-weight: 500;
+}
+
+.equip-chip-sub {
+  color: #888;
+  font-size: 12px;
+}
+
+/* 装备分析行 */
+.analysis-row {
+  display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #f0f0f0;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #fafbfc;
+  border: 1px solid #f0f0f0;
+  border-radius: 6px;
+  margin-bottom: 14px;
 }
 
-.detail-item {
+.analysis-stat {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 6px;
 }
 
-.detail-label {
-  font-size: 14px;
-  color: #1565c0;
-  font-weight: bold;
-  min-width: 80px;
-  flex-shrink: 0;
-}
-
-.detail-value {
-  font-size: 14px;
-  color: #333;
-  line-height: 1.6;
-}
-
-.detail-sub {
+.stat-label {
   font-size: 13px;
-  color: #666;
+  color: #888;
 }
 
-/* 装备分析区域 */
-.analysis-section {
-  background-color: #f9f9f9;
-  padding: 15px 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
+.stat-value {
+  font-size: 15px;
+  font-weight: 600;
 }
 
-.analysis-section h4 {
-  font-size: 14px;
-  color: #1565c0;
-  margin: 0 0 12px 0;
-  font-weight: bold;
-}
-
-.analysis-grid {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 24px;
-  align-items: center;
-}
-
-.analysis-item {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-}
-
-.analysis-label {
-  font-size: 13px;
-  color: #666;
-}
-
-.analysis-value {
-  font-size: 16px;
-  color: #333;
-  font-weight: bold;
-}
-
-.tension-value {
+.stat-tension {
   color: #1565c0;
 }
 
-.price-value {
+.stat-price {
   color: #e65100;
 }
 
-.total-price {
+.analysis-total {
+  margin-left: auto;
   padding-left: 16px;
   border-left: 1px solid #e0e0e0;
 }
 
-.total-price .analysis-value {
-  font-size: 18px;
-  color: #e65100;
+.stat-total {
+  font-size: 17px;
 }
 
-/* 鱼种地图区域 */
-.meta-section {
+/* 鱼种地图行 */
+.meta-row {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.meta-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.meta-label {
+  font-size: 13px;
+  color: #888;
+  font-weight: 500;
+  padding-top: 4px;
+  white-space: nowrap;
+}
+
+.meta-desc {
+  flex: 1;
+}
+
+.meta-desc-text {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.5;
 }
 
 /* 标签样式 */
 .tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 
 .tag {
   display: inline-block;
-  padding: 4px 10px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.tag-fish {
   background-color: #e3f2fd;
   color: #1565c0;
-  border-radius: 4px;
-  font-size: 13px;
+}
+
+.tag-map {
+  background-color: #e8f5e9;
+  color: #2e7d32;
 }
 
 /* 空状态 */
@@ -598,32 +613,24 @@ export default {
     flex-wrap: wrap;
   }
 
-  .equipment-section {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .analysis-grid {
+  .analysis-row {
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: 10px;
   }
 
-  .analysis-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
-
-  .total-price {
+  .analysis-total {
+    margin-left: 0;
     padding-left: 0;
     border-left: none;
     padding-top: 8px;
     border-top: 1px solid #e0e0e0;
+    width: 100%;
   }
 
-  .detail-label {
-    min-width: auto;
+  .meta-row {
+    flex-direction: column;
+    gap: 10px;
   }
 }
 </style>

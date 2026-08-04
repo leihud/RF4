@@ -895,14 +895,40 @@ export default {
         return
       }
       
-      // 只根据方案名称精确匹配，不检查鱼种和地图
-      const build = this.recommendedBuilds.find(b => b.name === this.selectedBuildName)
+      // 获取所有同名方案
+      const matchingBuilds = this.recommendedBuilds.filter(b => b.name === this.selectedBuildName)
       
-      if (build) {
-        this.applyRecommendedBuild(build)
-      } else {
+      if (matchingBuilds.length === 0) {
         alert(`未找到方案 "${this.selectedBuildName}"`)
+        return
       }
+      
+      // 如果有多个同名方案，根据当前选中的鱼种和地图找到最佳匹配
+      let build
+      if (matchingBuilds.length === 1) {
+        build = matchingBuilds[0]
+      } else {
+        // 优先匹配鱼种和地图都符合的
+        build = matchingBuilds.find(b => {
+          const fishMatch = !this.selectedFish || (b.suitable_fish && b.suitable_fish.includes(this.selectedFish))
+          const mapMatch = !this.selectedMap || (b.suitable_map && b.suitable_map.includes(this.selectedMap))
+          return fishMatch && mapMatch
+        })
+        // 其次只匹配鱼种
+        if (!build && this.selectedFish) {
+          build = matchingBuilds.find(b => b.suitable_fish && b.suitable_fish.includes(this.selectedFish))
+        }
+        // 其次只匹配地图
+        if (!build && this.selectedMap) {
+          build = matchingBuilds.find(b => b.suitable_map && b.suitable_map.includes(this.selectedMap))
+        }
+        // 最后取最新的
+        if (!build) {
+          build = matchingBuilds.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0]
+        }
+      }
+      
+      this.applyRecommendedBuild(build)
     },
     /** 应用推荐装备搭配到当前选择 */
     applyRecommendedBuild(build) {
