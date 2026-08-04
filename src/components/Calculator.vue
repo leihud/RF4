@@ -5,6 +5,7 @@
       <h1>装备计算器</h1>
       <div class="header-buttons">
         <button class="compare-nav-btn" @click="goToCompare">参数对比</button>
+        <button class="builds-nav-btn" @click="goToBuildsList">装备方案汇总</button>
         <button class="import-nav-btn" @click="goToImport">数据导入</button>
         <button class="rf4-stat-btn" @click="openRf4Stat" rel="noopener noreferrer" target="_blank">RF4 数据站</button>
         <button class="share-btn" @click="sharePreset" :title="shareHint || '分享当前装备方案'">
@@ -673,6 +674,9 @@ export default {
     goToCompare() {
       this.$router.push(ROUTES.COMPARE)
     },
+    goToBuildsList() {
+      this.$router.push('/builds')
+    },
     goToImport() {
       this.$router.push(ROUTES.IMPORT)
     },
@@ -999,6 +1003,24 @@ h1 {
 
 .import-nav-btn:hover {
   background-color: #fff3e0;
+}
+
+/* 装备方案汇总按钮 */
+.builds-nav-btn {
+  padding: 10px 24px;
+  border: 2px solid #9c27b0;
+  background-color: white;
+  color: #9c27b0;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.builds-nav-btn:hover {
+  background-color: #f3e5f5;
 }
 
 /* 顶部 header 第三个按钮：外链打开 RF4 中文数据站 */
