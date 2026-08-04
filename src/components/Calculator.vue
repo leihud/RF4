@@ -254,11 +254,15 @@
           </div>
           <div class="form-group">
             <label class="form-label">适用鱼种</label>
-            <input
+            <select
               v-model="submitForm.suitableFish"
-              class="form-input"
-              placeholder="例如：鲤鱼、鲫鱼、鲈鱼"
-            />
+              class="form-select"
+            >
+              <option value="">请选择鱼种</option>
+              <option v-for="fish in fishSpeciesList" :key="fish.name" :value="fish.display_name">
+                {{ fish.display_name }}
+              </option>
+            </select>
           </div>
           <div class="form-group">
             <label class="form-label">适用地图</label>
@@ -267,8 +271,8 @@
               class="form-select"
             >
               <option value="">请选择地图</option>
-              <option v-for="map in RF4_MAPS" :key="map.value" :value="map.value">
-                {{ map.label }}
+              <option v-for="map in mapsList" :key="map.name" :value="map.display_name">
+                {{ map.display_name }}
               </option>
             </select>
           </div>
@@ -351,26 +355,8 @@ export default {
         suitableFish: '',
         suitableMap: ''
       },
-      RF4_MAPS: [
-        { value: '克马羚诺也湖', label: '克马羚诺也湖' },
-        { value: '梅德韦杰湖', label: '梅德韦杰湖' },
-        { value: '拉多加湖群岛', label: '拉多加湖群岛' },
-        { value: '埃尔克湖', label: '埃尔克湖' },
-        { value: '沃尔霍夫河', label: '沃尔霍夫河' },
-        { value: '阿赫图巴河', label: '阿赫图巴河' },
-        { value: '惟有诺克河', label: '惟有诺克河' },
-        { value: '北顿涅茨河', label: '北顿涅茨河' },
-        { value: '铜湖', label: '铜湖' },
-        { value: '旧奥斯特罗格湖', label: '旧奥斯特罗格湖' },
-        { value: '苏拉河', label: '苏拉河' },
-        { value: '下通古斯卡河', label: '下通古斯卡河' },
-        { value: '白河', label: '白河' },
-        { value: '拉多加湖', label: '拉多加湖' },
-        { value: '亚马河', label: '亚马河' },
-        { value: '廓里湖', label: '廓里湖' },
-        { value: '琥珀湖', label: '琥珀湖' },
-        { value: '挪威海', label: '挪威海' }
-      ]
+      mapsList: [],
+      fishSpeciesList: []
     }
   },
   mounted() {
@@ -378,6 +364,7 @@ export default {
     document.addEventListener('click', this.handleClickOutside)
     this.showDisclaimer = true
     this.restoreFromUrl()
+    this.loadMapsAndFishSpecies()
   },
   beforeUnmount() {
     document.removeEventListener('click', this.handleClickOutside)
@@ -678,6 +665,25 @@ export default {
         this.shareHint = url
       }
       setTimeout(() => { this.shareHint = '' }, 3000)
+    },
+    /** 从数据库加载地图和鱼种列表 */
+    async loadMapsAndFishSpecies() {
+      try {
+        const [mapsRes, fishRes] = await Promise.all([
+          fetch('/api/maps'),
+          fetch('/api/fish_species')
+        ])
+        const mapsData = await mapsRes.json()
+        const fishData = await fishRes.json()
+        if (mapsData.success) {
+          this.mapsList = mapsData.data || []
+        }
+        if (fishData.success) {
+          this.fishSpeciesList = fishData.data || []
+        }
+      } catch (error) {
+        console.error('加载地图和鱼种数据失败:', error)
+      }
     },
     openSubmitModal() {
       this.showSubmitModal = true
