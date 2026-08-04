@@ -14,10 +14,14 @@ CREATE TABLE IF NOT EXISTS recommended_builds (
   main_line_tension REAL DEFAULT 0,
   main_line_wear REAL DEFAULT 0,
   main_line_material TEXT DEFAULT '',
+  main_line_diameter REAL DEFAULT 0,
+  main_line_length REAL DEFAULT 0,
   -- 引线信息
   leader_line_tension REAL DEFAULT 0,
   leader_line_wear REAL DEFAULT 0,
   leader_line_material TEXT DEFAULT '',
+  leader_line_diameter REAL DEFAULT 0,
+  leader_line_length REAL DEFAULT 0,
   -- 鱼钩信息
   hook_name TEXT DEFAULT '',
   -- 计算规则

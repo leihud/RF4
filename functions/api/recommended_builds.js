@@ -4,12 +4,12 @@ const INSERT_SQL = `INSERT INTO recommended_builds (
   name,
   rod_model, rod_name, rod_category,
   reel_model, reel_name, reel_category,
-  main_line_tension, main_line_wear, main_line_material,
-  leader_line_tension, leader_line_wear, leader_line_material,
+  main_line_tension, main_line_wear, main_line_material, main_line_diameter, main_line_length,
+  leader_line_tension, leader_line_wear, leader_line_material, leader_line_diameter, leader_line_length,
   hook_name,
   calculation_rule, friction,
   description, suitable_fish, suitable_map
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 
 export async function onRequestPost(context) {
   const { request, env } = context
@@ -36,9 +36,13 @@ export async function onRequestPost(context) {
       build.mainLineTension || 0,
       build.mainLineWear || 0,
       build.mainLineMaterial || '',
+      build.mainLineDiameter || 0,
+      build.mainLineLength || 0,
       build.leaderLineTension || 0,
       build.leaderLineWear || 0,
       build.leaderLineMaterial || '',
+      build.leaderLineDiameter || 0,
+      build.leaderLineLength || 0,
       build.hookName || '',
       build.calculationRule || 'guide',
       build.friction || 0,

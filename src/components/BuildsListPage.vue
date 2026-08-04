@@ -89,13 +89,23 @@
           <!-- 主线信息 -->
           <div v-if="build.main_line_tension > 0" class="detail-group">
             <h4>🧵 主线</h4>
-            <p>{{ build.main_line_material ? build.main_line_material + '线 ' : '' }}{{ build.main_line_tension }}kN (磨损: {{ build.main_line_wear }}%)</p>
+            <p>
+              {{ build.main_line_material ? build.main_line_material + '线 ' : '' }}{{ build.main_line_tension }}kN
+              (磨损: {{ build.main_line_wear }}%)
+              <span v-if="build.main_line_diameter > 0">| 线径: {{ build.main_line_diameter }}mm</span>
+              <span v-if="build.main_line_length > 0">| 长度: {{ build.main_line_length }}cm</span>
+            </p>
           </div>
 
           <!-- 引线信息 -->
           <div v-if="build.leader_line_tension > 0" class="detail-group">
-            <h4>🧶 引线</h4>
-            <p>{{ build.leader_line_material ? build.leader_line_material + '线 ' : '' }}{{ build.leader_line_tension }}kN (磨损: {{ build.leader_line_wear }}%)</p>
+            <h4> 引线</h4>
+            <p>
+              {{ build.leader_line_material ? build.leader_line_material + '线 ' : '' }}{{ build.leader_line_tension }}kN
+              (磨损: {{ build.leader_line_wear }}%)
+              <span v-if="build.leader_line_diameter > 0">| 线径: {{ build.leader_line_diameter }}mm</span>
+              <span v-if="build.leader_line_length > 0">| 长度: {{ build.leader_line_length }}cm</span>
+            </p>
           </div>
 
           <!-- 鱼钩信息 -->

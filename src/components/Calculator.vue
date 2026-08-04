@@ -151,6 +151,25 @@
                     max="100"
                   />
                   <span class="input-unit">%</span>
+                  <span class="input-label">线径:</span>
+                  <input
+                    type="number"
+                    class="diameter-input"
+                    v-model.number="customEquipment[type].diameter"
+                    placeholder="0"
+                    min="0"
+                    step="0.01"
+                  />
+                  <span class="input-unit">mm</span>
+                  <span class="input-label">长度:</span>
+                  <input
+                    type="number"
+                    class="length-input"
+                    v-model.number="customEquipment[type].length"
+                    placeholder="0"
+                    min="0"
+                  />
+                  <span class="input-unit">cm</span>
                   <span class="actual-tension">
                     实际拉力:{{ formatTension(calculateCustomActualTension(customEquipment[type])) }} kN
                   </span>
@@ -383,8 +402,8 @@ export default {
       isLoading: false,
       showDisclaimer: false,
       customEquipment: {
-        '主线': { maxTension: 0, wear: 0, material: '' },
-        '引线': { maxTension: 0, wear: 0, material: '' },
+        '主线': { maxTension: 0, wear: 0, material: '', diameter: 0, length: 0 },
+        '引线': { maxTension: 0, wear: 0, material: '', diameter: 0, length: 0 },
         '鱼钩': { name: '' }
       },
       friction: DEFAULT_FRICTION,
@@ -825,9 +844,13 @@ export default {
         mainLineTension: this.toSafeNumber(this.customEquipment['主线'].maxTension, 0),
         mainLineWear: this.toSafeNumber(this.customEquipment['主线'].wear, 0),
         mainLineMaterial: this.customEquipment['主线'].material || '',
+        mainLineDiameter: this.toSafeNumber(this.customEquipment['主线'].diameter, 0),
+        mainLineLength: this.toSafeNumber(this.customEquipment['主线'].length, 0),
         leaderLineTension: this.toSafeNumber(this.customEquipment['引线'].maxTension, 0),
         leaderLineWear: this.toSafeNumber(this.customEquipment['引线'].wear, 0),
         leaderLineMaterial: this.customEquipment['引线'].material || '',
+        leaderLineDiameter: this.toSafeNumber(this.customEquipment['引线'].diameter, 0),
+        leaderLineLength: this.toSafeNumber(this.customEquipment['引线'].length, 0),
         hookName: this.customEquipment['鱼钩'].name || '',
         calculationRule: this.calculationRule,
         friction: this.toSafeNumber(this.friction, 0),
@@ -910,6 +933,8 @@ export default {
         this.customEquipment['主线'].maxTension = build.main_line_tension
         this.customEquipment['主线'].wear = build.main_line_wear || 0
         this.customEquipment['主线'].material = build.main_line_material || ''
+        this.customEquipment['主线'].diameter = build.main_line_diameter || 0
+        this.customEquipment['主线'].length = build.main_line_length || 0
       }
       
       // 设置引线
@@ -917,6 +942,8 @@ export default {
         this.customEquipment['引线'].maxTension = build.leader_line_tension
         this.customEquipment['引线'].wear = build.leader_line_wear || 0
         this.customEquipment['引线'].material = build.leader_line_material || ''
+        this.customEquipment['引线'].diameter = build.leader_line_diameter || 0
+        this.customEquipment['引线'].length = build.leader_line_length || 0
       }
       
       // 设置鱼钩
@@ -1474,6 +1501,23 @@ h2 {
 }
 
 .tension-input:focus {
+  outline: none;
+  border-color: #42b983;
+  box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.3);
+}
+
+.diameter-input,
+.length-input {
+  width: 70px;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.diameter-input:focus,
+.length-input:focus {
   outline: none;
   border-color: #42b983;
   box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.3);
