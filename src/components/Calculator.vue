@@ -30,7 +30,7 @@
       <select v-model="selectedFish" class="fish-select">
         <option value="">不限</option>
         <option v-for="fish in fishSpeciesList" :key="fish.name" :value="fish.display_name">
-          {{ fish.display_name }}{{ fish.difficulty ? ' (' + fish.difficulty + ')' : '' }}
+          {{ fish.display_name }}
         </option>
       </select>
       <div v-if="currentFishRec" class="fish-tips">
@@ -261,7 +261,7 @@
               size="5"
             >
               <option v-for="fish in fishSpeciesList" :key="fish.name" :value="fish.display_name">
-                {{ fish.display_name }}{{ fish.difficulty ? ' (' + fish.difficulty + ')' : '' }}
+                {{ fish.display_name }}
               </option>
             </select>
             <span class="select-hint">按住 Ctrl/Cmd 键可多选</span>
