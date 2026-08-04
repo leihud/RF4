@@ -1,5 +1,7 @@
 CREATE TABLE IF NOT EXISTS recommended_builds (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  -- 方案名称
+  name TEXT DEFAULT '',
   -- 鱼竿信息
   rod_model TEXT,
   rod_name TEXT,

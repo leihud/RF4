@@ -236,6 +236,14 @@
         <h3 class="modal-title">提交推荐装备搭配</h3>
         <div class="modal-body">
           <div class="form-group">
+            <label class="form-label">装备方案名称</label>
+            <input
+              v-model="submitForm.name"
+              class="form-input"
+              placeholder="例如：鲤鱼通用套装、鱼远投配置"
+            />
+          </div>
+          <div class="form-group">
             <label class="form-label">装备说明</label>
             <textarea
               v-model="submitForm.description"
@@ -254,11 +262,15 @@
           </div>
           <div class="form-group">
             <label class="form-label">适用地图</label>
-            <input
+            <select
               v-model="submitForm.suitableMap"
-              class="form-input"
-              placeholder="例如：芬兰湖、西伯利亚"
-            />
+              class="form-select"
+            >
+              <option value="">请选择地图</option>
+              <option v-for="map in RF4_MAPS" :key="map.value" :value="map.value">
+                {{ map.label }}
+              </option>
+            </select>
           </div>
         </div>
         <div class="modal-footer">
@@ -334,10 +346,25 @@ export default {
       showSubmitModal: false,
       isSubmitting: false,
       submitForm: {
+        name: '',
         description: '',
         suitableFish: '',
         suitableMap: ''
-      }
+      },
+      RF4_MAPS: [
+        { value: '老奥', label: '老奥斯特罗夫' },
+        { value: '维姆', label: '维姆湖' },
+        { value: '库页岛', label: '库页岛' },
+        { value: '拉多加', label: '拉多加湖' },
+        { value: '芬兰', label: '芬兰湾' },
+        { value: '阿赫图巴', label: '阿赫图巴河' },
+        { value: '沃尔霍夫', label: '沃尔霍夫河' },
+        { value: '白湖', label: '白湖' },
+        { value: '乌尼加', label: '乌尼加河' },
+        { value: '雅曼', label: '雅曼湖' },
+        { value: '星湖', label: '星湖' },
+        { value: '琥珀', label: '琥珀湖' }
+      ]
     }
   },
   mounted() {
@@ -657,6 +684,7 @@ export default {
       const reel = this.selectedEquipmentMap['渔轮']
       
       const build = {
+        name: this.submitForm.name,
         rodModel: rod ? (rod.model || rod.equipmentName) : '',
         rodName: rod ? rod.equipmentName : '',
         rodCategory: rod ? rod.category : '',
@@ -688,7 +716,7 @@ export default {
         if (result.success) {
           alert('推荐装备搭配已保存！')
           this.closeSubmitModal()
-          this.submitForm = { description: '', suitableFish: '', suitableMap: '' }
+          this.submitForm = { name: '', description: '', suitableFish: '', suitableMap: '' }
         } else {
           alert('保存失败：' + (result.message || '未知错误'))
         }
@@ -1359,6 +1387,22 @@ h2 {
 }
 
 .form-input:focus {
+  border-color: #42b983;
+  box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.2);
+}
+
+.form-select {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: white;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.form-select:focus {
   border-color: #42b983;
   box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.2);
 }

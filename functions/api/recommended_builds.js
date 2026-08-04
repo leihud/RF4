@@ -1,6 +1,7 @@
 import { jsonResponse, errorResponse } from './_shared.js'
 
 const INSERT_SQL = `INSERT INTO recommended_builds (
+  name,
   rod_model, rod_name, rod_category,
   reel_model, reel_name, reel_category,
   main_line_tension, main_line_wear, main_line_material,
@@ -24,6 +25,7 @@ export async function onRequestPost(context) {
     const db = env.DB
     const stmt = db.prepare(INSERT_SQL)
     const result = await stmt.bind(
+      build.name || '',
       build.rodModel || '',
       build.rodName || '',
       build.rodCategory || '',
