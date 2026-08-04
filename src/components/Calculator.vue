@@ -203,18 +203,6 @@
       </div>
     </div>
 
-    <div v-if="lineAdvice.length > 0" class="line-advice-section">
-      <h3>线组搭配建议</h3>
-      <div
-        v-for="(advice, idx) in lineAdvice"
-        :key="idx"
-        :class="['advice-item', `advice-${advice.type}`]"
-      >
-        <span class="advice-icon">{{ advice.type === 'warn' ? '⚠️' : advice.type === 'ok' ? '✅' : 'ℹ️' }}</span>
-        <span class="advice-text">{{ advice.text }}</span>
-      </div>
-    </div>
-
     <EquipmentSummary
       v-if="allEquipmentSelected"
       :selected-equipment-list="selectedEquipmentList"
@@ -492,44 +480,6 @@ export default {
     },
     allEquipmentSelected() {
       return !!this.selectedEquipmentMap['鱼竿']
-    },
-    /** 主线/引线搭配建议 */
-    lineAdvice() {
-      const advices = []
-      const mainLine = this.customEquipment['主线']
-      const leader = this.customEquipment['引线']
-      const mainTension = this.toSafeNumber(mainLine.maxTension, 0)
-      const leaderTension = this.toSafeNumber(leader.maxTension, 0)
-
-      if (mainTension > 0 && leaderTension > 0) {
-        if (leaderTension >= mainTension) {
-          advices.push({ type: 'warn', text: '引线拉力不应大于等于主线，挂底时可能断主线而非引线' })
-        } else if (leaderTension < mainTension * 0.5) {
-          advices.push({ type: 'info', text: '引线拉力远低于主线，可能过早断线' })
-        } else {
-          advices.push({ type: 'ok', text: '主线/引线拉力搭配合理' })
-        }
-      }
-
-      // 与鱼竿拉力对比
-      const rod = this.selectedEquipmentMap['鱼竿']
-      if (rod && mainTension > 0) {
-        const rodTension = this.toSafeNumber(rod.panelTension || rod.lockTension, 0)
-        if (rodTension > 0 && mainTension > rodTension * 1.5) {
-          advices.push({ type: 'warn', text: '主线拉力远高于鱼竿强度，可能损伤鱼竿' })
-        }
-      }
-
-      // 与渔轮锁轮拉力对比
-      const reel = this.selectedEquipmentMap['渔轮']
-      if (reel && mainTension > 0) {
-        const reelLockTension = this.toSafeNumber(reel.lockTension, 0)
-        if (reelLockTension > 0 && mainTension > reelLockTension * 1.5) {
-          advices.push({ type: 'warn', text: '主线拉力远高于渔轮锁轮拉力，可能损伤渔轮' })
-        }
-      }
-
-      return advices
     },
     /** 当前选中鱼种的推荐配置 */
     currentFishRec() {
@@ -969,51 +919,6 @@ h1 {
 
 .share-btn:hover {
   background-color: #f3e5f5;
-}
-
-/* 线组搭配建议 */
-.line-advice-section {
-  background-color: #fff8e1;
-  padding: 16px 20px;
-  border-radius: 8px;
-  border: 1px solid #ffe082;
-  margin-bottom: 20px;
-}
-
-.line-advice-section h3 {
-  color: #f57f17;
-  margin: 0 0 10px 0;
-  font-size: 15px;
-}
-
-.advice-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 0;
-  font-size: 14px;
-}
-
-.advice-icon {
-  flex-shrink: 0;
-  font-size: 16px;
-}
-
-.advice-text {
-  color: #333;
-}
-
-.advice-warn .advice-text {
-  color: #c62828;
-  font-weight: 600;
-}
-
-.advice-ok .advice-text {
-  color: #2e7d32;
-}
-
-.advice-info .advice-text {
-  color: #1565c0;
 }
 
 /* 鱼种选择器 */
