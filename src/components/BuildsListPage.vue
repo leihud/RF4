@@ -258,9 +258,9 @@ export default {
       return (build.main_line_tension || 0) + (build.leader_line_tension || 0)
     },
     formatPrice(price) {
-      if (!price) return '0'
+      if (!price || price === 0) return '-'
       return price.toLocaleString('zh-CN')
-    }
+    },
   }
 }
 </script>
