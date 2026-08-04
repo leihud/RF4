@@ -263,17 +263,27 @@
           </div>
           <div class="form-group">
             <label class="form-label">适用鱼种（可多选）</label>
-            <select
-              v-model="submitForm.suitableFish"
-              class="form-select form-select-multiple"
-              multiple
-              size="5"
-            >
-              <option v-for="fish in fishSpeciesList" :key="fish.name" :value="fish.display_name">
-                {{ fish.display_name }}
-              </option>
-            </select>
-            <span class="select-hint">按住 Ctrl/Cmd 键可多选</span>
+            <!-- 搜索框 -->
+            <input
+              v-model="fishSearchKeyword"
+              type="text"
+              class="search-input"
+              placeholder="输入鱼种名称搜索..."
+            />
+            <!-- 多选列表 -->
+            <div class="multi-select-container">
+              <div 
+                v-for="fish in filteredFishSpeciesList" 
+                :key="fish.name"
+                class="multi-select-item"
+                :class="{ selected: submitForm.suitableFish.includes(fish.display_name) }"
+                @click="toggleFishSelection(fish.display_name)"
+              >
+                <span class="checkbox-icon">{{ submitForm.suitableFish.includes(fish.display_name) ? '☑' : '☐' }}</span>
+                <span class="item-text">{{ fish.display_name }}</span>
+              </div>
+            </div>
+            <span class="select-hint">已选择 {{ submitForm.suitableFish.length }} 个鱼种</span>
           </div>
           <div class="form-group">
             <label class="form-label">适用地图（可多选）</label>
@@ -370,7 +380,8 @@ export default {
       },
       mapsList: [],
       fishSpeciesList: [],
-      recommendedBuilds: []
+      recommendedBuilds: [],
+      fishSearchKeyword: ''
     }
   },
   mounted() {
@@ -502,6 +513,16 @@ export default {
         minTension: fish.min_tension || 0,
         maxTension: fish.max_tension || 0
       }
+    },
+    /** 根据搜索关键词过滤鱼种列表 */
+    filteredFishSpeciesList() {
+      if (!this.fishSearchKeyword.trim()) {
+        return this.fishSpeciesList
+      }
+      const keyword = this.fishSearchKeyword.toLowerCase()
+      return this.fishSpeciesList.filter(fish => 
+        fish.display_name.toLowerCase().includes(keyword)
+      )
     }
   },
   methods: {
@@ -847,6 +868,17 @@ export default {
       }
       if (build.friction > 0) {
         this.friction = clampFriction(build.friction, build.calculation_rule || this.calculationRule)
+      }
+    },
+    /** 切换鱼种选择状态 */
+    toggleFishSelection(fishName) {
+      const index = this.submitForm.suitableFish.indexOf(fishName)
+      if (index > -1) {
+        // 已选中，取消选择
+        this.submitForm.suitableFish.splice(index, 1)
+      } else {
+        // 未选中，添加选择
+        this.submitForm.suitableFish.push(fishName)
       }
     }
   }
@@ -1506,6 +1538,69 @@ h2 {
 .form-select:focus {
   border-color: #42b983;
   box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.2);
+}
+
+/* 搜索输入框 */
+.search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 8px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-input:focus {
+  border-color: #42b983;
+  box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.2);
+}
+
+/* 多选容器 */
+.multi-select-container {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+}
+
+/* 多选项 */
+.multi-select-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.multi-select-item:last-child {
+  border-bottom: none;
+}
+
+.multi-select-item:hover {
+  background-color: #f5f5f5;
+}
+
+.multi-select-item.selected {
+  background-color: #e8f5e9;
+}
+
+.checkbox-icon {
+  font-size: 16px;
+  margin-right: 8px;
+  color: #666;
+}
+
+.multi-select-item.selected .checkbox-icon {
+  color: #42b983;
+}
+
+.item-text {
+  font-size: 14px;
+  color: #333;
 }
 
 .form-select-multiple {
