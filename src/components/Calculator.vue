@@ -230,6 +230,49 @@
       </button>
     </div>
 
+    <!-- 推荐装备列表 -->
+    <div v-if="recommendedBuilds.length > 0" class="recommended-builds-section">
+      <h3>该鱼种的推荐装备搭配 ({{ recommendedBuilds.length }})</h3>
+      <div class="build-list">
+        <div 
+          v-for="(build, index) in recommendedBuilds" 
+          :key="index"
+          class="build-card"
+        >
+          <div class="build-header">
+            <span class="build-name">{{ build.name || '未命名方案' }}</span>
+            <button class="apply-btn" @click="applyRecommendedBuild(build)">应用此方案</button>
+          </div>
+          <div class="build-details">
+            <div v-if="build.rod_model" class="detail-item">
+              <span class="label">鱼竿:</span>
+              <span class="value">{{ build.rod_name || build.rod_model }}</span>
+            </div>
+            <div v-if="build.reel_model" class="detail-item">
+              <span class="label">渔轮:</span>
+              <span class="value">{{ build.reel_name || build.reel_model }}</span>
+            </div>
+            <div v-if="build.main_line_tension > 0" class="detail-item">
+              <span class="label">主线:</span>
+              <span class="value">{{ build.main_line_material ? build.main_line_material + '线 ' : '' }}{{ build.main_line_tension }}kN</span>
+            </div>
+            <div v-if="build.leader_line_tension > 0" class="detail-item">
+              <span class="label">引线:</span>
+              <span class="value">{{ build.leader_line_material ? build.leader_line_material + '线 ' : '' }}{{ build.leader_line_tension }}kN</span>
+            </div>
+            <div v-if="build.hook_name" class="detail-item">
+              <span class="label">鱼钩:</span>
+              <span class="value">{{ build.hook_name }}</span>
+            </div>
+            <div v-if="build.description" class="detail-item description">
+              <span class="label">说明:</span>
+              <span class="value">{{ build.description }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 提交弹窗 -->
     <div v-if="showSubmitModal" class="modal-mask" @click.self="closeSubmitModal">
       <div class="modal-popup">
@@ -358,7 +401,8 @@ export default {
         suitableMap: []
       },
       mapsList: [],
-      fishSpeciesList: []
+      fishSpeciesList: [],
+      recommendedBuilds: []
     }
   },
   mounted() {
@@ -382,6 +426,14 @@ export default {
       const reel = this.selectedEquipmentMap['渔轮']
       if (newRod && reel && !isRodReelCompatible(newRod, reel)) {
         this.clearEquipmentByType('渔轮')
+      }
+    },
+    /** 鱼种切换时，加载推荐装备搭配 */
+    selectedFish(newFish) {
+      if (newFish) {
+        this.loadRecommendedBuilds(newFish)
+      } else {
+        this.recommendedBuilds = []
       }
     }
   },
@@ -695,6 +747,21 @@ export default {
         console.error('加载地图和鱼种数据失败:', error)
       }
     },
+    /** 加载指定鱼种的推荐装备搭配 */
+    async loadRecommendedBuilds(fishName) {
+      try {
+        const response = await fetch(`/api/recommended_builds?fish=${encodeURIComponent(fishName)}`)
+        const result = await response.json()
+        if (result.success && result.data) {
+          this.recommendedBuilds = result.data
+        } else {
+          this.recommendedBuilds = []
+        }
+      } catch (error) {
+        console.error('加载推荐装备失败:', error)
+        this.recommendedBuilds = []
+      }
+    },
     openSubmitModal() {
       this.showSubmitModal = true
     },
@@ -747,6 +814,62 @@ export default {
       } finally {
         this.isSubmitting = false
       }
+    },
+    /** 应用推荐装备搭配到当前选择 */
+    applyRecommendedBuild(build) {
+      // 清空当前选择
+      this.selectedEquipmentList = []
+      
+      // 匹配并设置鱼竿
+      if (build.rod_model) {
+        const rod = this.equipmentData.find(
+          item => item.equipmentType === '鱼竿' && 
+            (item.model === build.rod_model || item.equipmentName === build.rod_model)
+        )
+        if (rod) {
+          this.selectedEquipmentList.push({ ...rod, wear: 0 })
+        }
+      }
+      
+      // 匹配并设置渔轮
+      if (build.reel_model) {
+        const reel = this.equipmentData.find(
+          item => item.equipmentType === '渔轮' && 
+            (item.model === build.reel_model || item.equipmentName === build.reel_model)
+        )
+        if (reel) {
+          this.selectedEquipmentList.push({ ...reel, wear: 0 })
+        }
+      }
+      
+      // 设置主线
+      if (build.main_line_tension > 0) {
+        this.customEquipment['主线'].maxTension = build.main_line_tension
+        this.customEquipment['主线'].wear = build.main_line_wear || 0
+        this.customEquipment['主线'].material = build.main_line_material || ''
+      }
+      
+      // 设置引线
+      if (build.leader_line_tension > 0) {
+        this.customEquipment['引线'].maxTension = build.leader_line_tension
+        this.customEquipment['引线'].wear = build.leader_line_wear || 0
+        this.customEquipment['引线'].material = build.leader_line_material || ''
+      }
+      
+      // 设置鱼钩
+      if (build.hook_name) {
+        this.customEquipment['鱼钩'].name = build.hook_name
+      }
+      
+      // 设置计算规则和摩擦值
+      if (build.calculation_rule) {
+        this.calculationRule = build.calculation_rule
+      }
+      if (build.friction > 0) {
+        this.friction = clampFriction(build.friction, build.calculation_rule || this.calculationRule)
+      }
+      
+      alert(`已加载推荐装备：${build.name || '未命名方案'}`)
     }
   }
 }
@@ -1606,6 +1729,95 @@ h2 {
   .friction-input,
   .tension-input {
     width: 45px;
+  }
+
+  /* 推荐装备列表 */
+  .recommended-builds-section {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
+
+  .recommended-builds-section h3 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 15px;
+  }
+
+  .build-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .build-card {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 15px;
+    transition: all 0.2s;
+  }
+
+  .build-card:hover {
+    border-color: #42b983;
+    box-shadow: 0 2px 8px rgba(66, 185, 131, 0.1);
+  }
+
+  .build-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .build-name {
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+  }
+
+  .apply-btn {
+    padding: 6px 12px;
+    background-color: #42b983;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+  }
+
+  .apply-btn:hover {
+    background-color: #36a373;
+  }
+
+  .build-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px;
+  }
+
+  .detail-item {
+    font-size: 14px;
+    color: #666;
+  }
+
+  .detail-item.description {
+    grid-column: 1 / -1;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #e0e0e0;
+  }
+
+  .detail-item .label {
+    font-weight: 500;
+    color: #333;
+    margin-right: 5px;
+  }
+
+  .detail-item .value {
+    color: #666;
   }
 }
 </style>

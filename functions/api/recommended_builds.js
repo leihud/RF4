@@ -55,3 +55,32 @@ export async function onRequestPost(context) {
     return errorResponse(error)
   }
 }
+
+export async function onRequestGet(context) {
+  const { env, request } = context
+  const url = new URL(request.url)
+  const fishName = url.searchParams.get('fish')
+
+  if (!fishName) {
+    return errorResponse(new Error('缺少鱼种参数'))
+  }
+
+  try {
+    const db = env.DB
+    
+    // 查询该鱼种的推荐装备搭配（按创建时间倒序，取最新10条）
+    const result = await db.prepare(`
+      SELECT * FROM recommended_builds 
+      WHERE suitable_fish LIKE ? 
+      ORDER BY created_at DESC 
+      LIMIT 10
+    `).bind(`%${fishName}%`).all()
+    
+    return jsonResponse({
+      success: true,
+      data: result.results || []
+    })
+  } catch (error) {
+    return errorResponse(error)
+  }
+}
