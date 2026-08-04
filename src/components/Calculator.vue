@@ -352,18 +352,24 @@ export default {
         suitableMap: ''
       },
       RF4_MAPS: [
-        { value: '老奥', label: '老奥斯特罗夫' },
-        { value: '维姆', label: '维姆湖' },
-        { value: '库页岛', label: '库页岛' },
-        { value: '拉多加', label: '拉多加湖' },
-        { value: '芬兰', label: '芬兰湾' },
-        { value: '阿赫图巴', label: '阿赫图巴河' },
-        { value: '沃尔霍夫', label: '沃尔霍夫河' },
-        { value: '白湖', label: '白湖' },
-        { value: '乌尼加', label: '乌尼加河' },
-        { value: '雅曼', label: '雅曼湖' },
-        { value: '星湖', label: '星湖' },
-        { value: '琥珀', label: '琥珀湖' }
+        { value: '克马羚诺也湖', label: '克马羚诺也湖' },
+        { value: '梅德韦杰湖', label: '梅德韦杰湖' },
+        { value: '拉多加湖群岛', label: '拉多加湖群岛' },
+        { value: '埃尔克湖', label: '埃尔克湖' },
+        { value: '沃尔霍夫河', label: '沃尔霍夫河' },
+        { value: '阿赫图巴河', label: '阿赫图巴河' },
+        { value: '惟有诺克河', label: '惟有诺克河' },
+        { value: '北顿涅茨河', label: '北顿涅茨河' },
+        { value: '铜湖', label: '铜湖' },
+        { value: '旧奥斯特罗格湖', label: '旧奥斯特罗格湖' },
+        { value: '苏拉河', label: '苏拉河' },
+        { value: '下通古斯卡河', label: '下通古斯卡河' },
+        { value: '白河', label: '白河' },
+        { value: '拉多加湖', label: '拉多加湖' },
+        { value: '亚马河', label: '亚马河' },
+        { value: '廓里湖', label: '廓里湖' },
+        { value: '琥珀湖', label: '琥珀湖' },
+        { value: '挪威海', label: '挪威海' }
       ]
     }
   },
