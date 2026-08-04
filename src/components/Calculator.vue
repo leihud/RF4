@@ -256,7 +256,12 @@
 
     <!-- 提交推荐装备按钮 -->
     <div class="submit-section">
-      <button class="submit-build-btn" @click="openSubmitModal">
+      <button 
+        class="submit-build-btn" 
+        @click="openSubmitModal"
+        :disabled="!hasSelectedEquipment"
+        :title="hasSelectedEquipment ? '' : '请先选择鱼竿、渔轮等装备'"
+      >
         提交推荐装备搭配
       </button>
     </div>
@@ -557,6 +562,13 @@ export default {
       return this.fishSpeciesList.filter(fish => 
         fish.display_name.toLowerCase().includes(keyword)
       )
+    },
+    /** 判断是否选择了必要的装备 */
+    hasSelectedEquipment() {
+      // 必须选择鱼竿和渔轮，主线、引线、鱼钩为可选
+      const rod = this.selectedEquipmentMap['鱼竿']
+      const reel = this.selectedEquipmentMap['渔轮']
+      return !!rod && !!reel
     }
   },
   methods: {
@@ -1584,9 +1596,16 @@ h2 {
   transition: all 0.3s;
 }
 
-.submit-build-btn:hover {
+.submit-build-btn:hover:not(:disabled) {
   background-color: #ff9800;
   color: white;
+}
+
+.submit-build-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: #ccc;
+  color: #ccc;
 }
 
 /* 弹窗样式 */
