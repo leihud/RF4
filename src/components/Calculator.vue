@@ -27,12 +27,33 @@
 
     <div class="fish-selector">
       <span class="fish-label">目标鱼种:</span>
-      <select v-model="selectedFish" class="fish-select">
-        <option value="">不限</option>
-        <option v-for="fish in fishSpeciesList" :key="fish.name" :value="fish.display_name">
+      <!-- 搜索输入框 -->
+      <input
+        v-model="targetFishSearch"
+        type="text"
+        class="fish-search-input"
+        placeholder="搜索鱼种..."
+        @focus="showFishDropdown = true"
+      />
+      <!-- 下拉列表 -->
+      <div class="custom-dropdown" v-if="showFishDropdown">
+        <div 
+          class="dropdown-item" 
+          :class="{ selected: selectedFish === '' }"
+          @click="selectTargetFish('')"
+        >
+          不限
+        </div>
+        <div 
+          v-for="fish in filteredTargetFishList" 
+          :key="fish.name"
+          class="dropdown-item"
+          :class="{ selected: selectedFish === fish.display_name }"
+          @click="selectTargetFish(fish.display_name)"
+        >
           {{ fish.display_name }}
-        </option>
-      </select>
+        </div>
+      </div>
       
       <span class="fish-label">目标地图:</span>
       <select v-model="selectedMap" class="fish-select">
@@ -370,6 +391,8 @@ export default {
       selectedFish: '',
       selectedMap: '',
       selectedBuildName: '',
+      targetFishSearch: '',
+      showFishDropdown: false,
       showSubmitModal: false,
       isSubmitting: false,
       submitForm: {
@@ -523,6 +546,16 @@ export default {
       return this.fishSpeciesList.filter(fish => 
         fish.display_name.toLowerCase().includes(keyword)
       )
+    },
+    /** 过滤目标鱼种下拉列表 */
+    filteredTargetFishList() {
+      if (!this.targetFishSearch.trim()) {
+        return this.fishSpeciesList
+      }
+      const keyword = this.targetFishSearch.toLowerCase()
+      return this.fishSpeciesList.filter(fish => 
+        fish.display_name.toLowerCase().includes(keyword)
+      )
     }
   },
   methods: {
@@ -603,11 +636,24 @@ export default {
       if (!el || typeof el.querySelector !== 'function' || typeof el.querySelectorAll !== 'function') {
         return
       }
+      
+      // 点击在目标鱼种搜索框或下拉列表内，不关闭
+      const fishSearchInput = el.querySelector('.fish-search-input')
+      const customDropdown = el.querySelector('.custom-dropdown')
+      if ((fishSearchInput && fishSearchInput.contains(event.target)) || 
+          (customDropdown && customDropdown.contains(event.target))) {
+        return
+      }
+      
       // 点击免责声明区域时不处理
       const disclaimers = document.querySelectorAll('.disclaimer-mask, .disclaimer-popup, .disclaimer-footer')
       for (const el2 of disclaimers) {
         if (el2 && el2.contains && el2.contains(event.target)) return
       }
+      
+      // 关闭鱼种下拉列表
+      this.showFishDropdown = false
+      
       const activeRow = el.querySelector('.type-item.active')
       const selectBtns = el.querySelectorAll('.select-btn')
       // 点击在激活行（参数+搜索框+下拉）内部，不处理
@@ -880,6 +926,16 @@ export default {
         // 未选中，添加选择
         this.submitForm.suitableFish.push(fishName)
       }
+    },
+    /** 选择目标鱼种 */
+    selectTargetFish(fishName) {
+      this.selectedFish = fishName
+      this.showFishDropdown = false
+      this.targetFishSearch = ''
+    },
+    /** 显示/隐藏鱼种下拉列表 */
+    toggleFishDropdown() {
+      this.showFishDropdown = !this.showFishDropdown
     }
   }
 }
@@ -1014,6 +1070,7 @@ h1 {
   background-color: #e3f2fd;
   border-radius: 8px;
   flex-wrap: wrap;
+  position: relative;
 }
 
 .fish-label {
@@ -1035,6 +1092,54 @@ h1 {
 .fish-select:focus {
   border-color: #1565c0;
   box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
+}
+
+/* 目标鱼种搜索输入框 */
+.fish-search-input {
+  padding: 6px 12px;
+  border: 1px solid #90caf9;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: white;
+  outline: none;
+  min-width: 150px;
+}
+
+.fish-search-input:focus {
+  border-color: #1565c0;
+  box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
+}
+
+/* 自定义下拉列表 */
+.custom-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  margin-top: 4px;
+}
+
+.dropdown-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 14px;
+}
+
+.dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+.dropdown-item.selected {
+  background-color: #e3f2fd;
+  font-weight: bold;
 }
 
 .fish-tips {
