@@ -1,11 +1,19 @@
 // 装备类型常量
-export const EQUIPMENT_TYPES = ['鱼竿', '渔轮', '主线', '引线']
+export const EQUIPMENT_TYPES = ['鱼竿', '渔轮', '主线', '引线', '鱼钩']
 
 // 自定义输入类型(不参与搜索下拉)
-export const CUSTOM_INPUT_TYPES = ['主线', '引线']
+export const CUSTOM_INPUT_TYPES = ['主线', '引线', '鱼钩']
 
 // 可搜索下拉的类型
 export const SEARCHABLE_TYPES = ['鱼竿', '渔轮']
+
+// 线材材质选项
+export const LINE_MATERIALS = Object.freeze([
+  { value: '', label: '未选择' },
+  { value: '氟碳线', label: '氟碳线' },
+  { value: '编织线', label: '编织线' },
+  { value: '尼龙线', label: '尼龙线' }
+])
 
 // 计算规则
 export const CALC_RULES = {

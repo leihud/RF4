@@ -66,6 +66,19 @@
           <div class="type-value">
             <template v-if="isCustomInputType(type)">
               <div class="custom-input-group">
+                <span v-if="type === '主线' || type === '引线'" class="material-wrapper">
+                  <span class="material-label">材质:</span>
+                  <select
+                    class="material-select"
+                    v-model="customEquipment[type].material"
+                  >
+                    <option
+                      v-for="mat in LINE_MATERIALS"
+                      :key="mat.value"
+                      :value="mat.value"
+                    >{{ mat.label }}</option>
+                  </select>
+                </span>
                 <span class="input-label">拉力:</span>
                 <input
                   type="number"
@@ -198,6 +211,53 @@
       :actual-lock-tension-map="actualLockTensionMap"
       :actual-panel-tension-map="actualPanelTensionMap"
     />
+
+    <!-- 提交推荐装备按钮 -->
+    <div class="submit-section">
+      <button class="submit-build-btn" @click="openSubmitModal">
+        提交推荐装备搭配
+      </button>
+    </div>
+
+    <!-- 提交弹窗 -->
+    <div v-if="showSubmitModal" class="modal-mask" @click.self="closeSubmitModal">
+      <div class="modal-popup">
+        <h3 class="modal-title">提交推荐装备搭配</h3>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">装备说明</label>
+            <textarea
+              v-model="submitForm.description"
+              class="form-textarea"
+              placeholder="请输入装备搭配的说明或使用心得"
+              rows="3"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">适用鱼种</label>
+            <input
+              v-model="submitForm.suitableFish"
+              class="form-input"
+              placeholder="例如：鲤鱼、鲫鱼、鲈鱼"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">适用地图</label>
+            <input
+              v-model="submitForm.suitableMap"
+              class="form-input"
+              placeholder="例如：芬兰湖、西伯利亚"
+            />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="modal-cancel-btn" @click="closeSubmitModal">取消</button>
+          <button class="modal-confirm-btn" @click="submitBuild" :disabled="isSubmitting">
+            {{ isSubmitting ? '提交中...' : '确认提交' }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -209,6 +269,7 @@ import {
   CALC_RULE_OPTIONS,
   DEFAULT_FRICTION,
   CALC_RULES,
+  LINE_MATERIALS,
   getRatingAlias,
   getCompatibleReelTypes,
   isRodReelCompatible
@@ -246,17 +307,26 @@ export default {
       isLoading: false,
       showDisclaimer: false,
       customEquipment: {
-        '主线': { maxTension: 0, wear: 0 },
-        '引线': { maxTension: 0, wear: 0 }
+        '主线': { maxTension: 0, wear: 0, material: '' },
+        '引线': { maxTension: 0, wear: 0, material: '' },
+        '鱼钩': { maxTension: 0, wear: 0 }
       },
       friction: DEFAULT_FRICTION,
       selectedEquipmentList: [],
       calculationRule: CALC_RULES.GUIDE,
       CALC_RULE_OPTIONS,
+      LINE_MATERIALS,
       formatTension,
       shareHint: '',
       selectedFish: '',
-      FISH_RECOMMENDATIONS
+      FISH_RECOMMENDATIONS,
+      showSubmitModal: false,
+      isSubmitting: false,
+      submitForm: {
+        description: '',
+        suitableFish: '',
+        suitableMap: ''
+      }
     }
   },
   mounted() {
@@ -564,6 +634,59 @@ export default {
         this.shareHint = url
       }
       setTimeout(() => { this.shareHint = '' }, 3000)
+    },
+    openSubmitModal() {
+      this.showSubmitModal = true
+    },
+    closeSubmitModal() {
+      this.showSubmitModal = false
+    },
+    async submitBuild() {
+      const rod = this.selectedEquipmentMap['鱼竿']
+      const reel = this.selectedEquipmentMap['渔轮']
+      
+      const build = {
+        rodModel: rod ? (rod.model || rod.equipmentName) : '',
+        rodName: rod ? rod.equipmentName : '',
+        rodCategory: rod ? rod.category : '',
+        reelModel: reel ? (reel.model || reel.equipmentName) : '',
+        reelName: reel ? reel.equipmentName : '',
+        reelCategory: reel ? reel.category : '',
+        mainLineTension: this.toSafeNumber(this.customEquipment['主线'].maxTension, 0),
+        mainLineWear: this.toSafeNumber(this.customEquipment['主线'].wear, 0),
+        mainLineMaterial: this.customEquipment['主线'].material || '',
+        leaderLineTension: this.toSafeNumber(this.customEquipment['引线'].maxTension, 0),
+        leaderLineWear: this.toSafeNumber(this.customEquipment['引线'].wear, 0),
+        leaderLineMaterial: this.customEquipment['引线'].material || '',
+        hookTension: this.toSafeNumber(this.customEquipment['鱼钩'].maxTension, 0),
+        hookWear: this.toSafeNumber(this.customEquipment['鱼钩'].wear, 0),
+        calculationRule: this.calculationRule,
+        friction: this.toSafeNumber(this.friction, 0),
+        description: this.submitForm.description,
+        suitableFish: this.submitForm.suitableFish,
+        suitableMap: this.submitForm.suitableMap
+      }
+
+      this.isSubmitting = true
+      try {
+        const response = await fetch('/api/recommended_builds', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ build })
+        })
+        const result = await response.json()
+        if (result.success) {
+          alert('推荐装备搭配已保存！')
+          this.closeSubmitModal()
+          this.submitForm = { description: '', suitableFish: '', suitableMap: '' }
+        } else {
+          alert('保存失败：' + (result.message || '未知错误'))
+        }
+      } catch (error) {
+        alert('提交失败：' + error.message)
+      } finally {
+        this.isSubmitting = false
+      }
     }
   }
 }
@@ -986,6 +1109,32 @@ h2 {
   gap: 8px;
 }
 
+.material-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.material-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.material-select {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: white;
+  cursor: pointer;
+  outline: none;
+}
+
+.material-select:focus {
+  border-color: #42b983;
+  box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.3);
+}
+
 .input-label {
   font-size: 14px;
   color: #666;
@@ -1101,6 +1250,152 @@ h2 {
 .adapt-weight-tag {
   color: #8e44ad;
   background-color: #f3e9fa;
+}
+
+/* 提交推荐装备 */
+.submit-section {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.submit-build-btn {
+  padding: 12px 32px;
+  border: 2px solid #ff9800;
+  background-color: white;
+  color: #ff9800;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.submit-build-btn:hover {
+  background-color: #ff9800;
+  color: white;
+}
+
+/* 弹窗样式 */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-popup {
+  background-color: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-title {
+  color: #2c3e50;
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  text-align: center;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-input {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  border-color: #42b983;
+  box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.2);
+}
+
+.form-textarea {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.form-textarea:focus {
+  border-color: #42b983;
+  box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.2);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.modal-cancel-btn {
+  padding: 10px 24px;
+  border: 1px solid #ddd;
+  background-color: white;
+  color: #666;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.modal-cancel-btn:hover {
+  background-color: #f5f5f5;
+}
+
+.modal-confirm-btn {
+  padding: 10px 24px;
+  border: none;
+  background-color: #42b983;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.modal-confirm-btn:hover {
+  background-color: #38a376;
+}
+
+.modal-confirm-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 @media (min-width: 768px) and (max-width: 1200px) {
