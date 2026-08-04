@@ -6,10 +6,12 @@ CREATE TABLE IF NOT EXISTS recommended_builds (
   rod_model TEXT,
   rod_name TEXT,
   rod_category TEXT,
+  rod_price REAL DEFAULT 0,
   -- 渔轮信息
   reel_model TEXT,
   reel_name TEXT,
   reel_category TEXT,
+  reel_price REAL DEFAULT 0,
   -- 主线信息
   main_line_tension REAL DEFAULT 0,
   main_line_wear REAL DEFAULT 0,

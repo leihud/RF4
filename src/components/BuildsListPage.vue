@@ -74,70 +74,102 @@
         </div>
 
         <div v-if="expandedIndex === index" class="build-details">
-          <!-- 鱼竿信息 -->
-          <div v-if="build.rod_model" class="detail-group">
-            <h4>🎯 鱼竿</h4>
-            <p>{{ build.rod_name || build.rod_model }} ({{ build.rod_category || '未知分类' }})</p>
-          </div>
+          <!-- 两列布局 -->
+          <div class="details-grid">
+            <!-- 左列：装备信息 -->
+            <div class="details-column">
+              <!-- 鱼竿信息 -->
+              <div v-if="build.rod_model" class="detail-item">
+                <span class="detail-label">🎯 鱼竿</span>
+                <span class="detail-value">{{ build.rod_name || build.rod_model }} <span class="detail-sub">({{ build.rod_category || '未知分类' }})</span></span>
+              </div>
 
-          <!-- 渔轮信息 -->
-          <div v-if="build.reel_model" class="detail-group">
-            <h4>🔄 渔轮</h4>
-            <p>{{ build.reel_name || build.reel_model }} ({{ build.reel_category || '未知分类' }})</p>
-          </div>
+              <!-- 渔轮信息 -->
+              <div v-if="build.reel_model" class="detail-item">
+                <span class="detail-label">🔄 渔轮</span>
+                <span class="detail-value">{{ build.reel_name || build.reel_model }} <span class="detail-sub">({{ build.reel_category || '未知分类' }})</span></span>
+              </div>
 
-          <!-- 主线信息 -->
-          <div v-if="build.main_line_tension > 0" class="detail-group">
-            <h4>🧵 主线</h4>
-            <p>
-              {{ build.main_line_material ? build.main_line_material + '线 ' : '' }}{{ build.main_line_tension }}kN
-              (磨损: {{ build.main_line_wear }}%)
-              <span v-if="build.main_line_diameter > 0">| 线径: {{ build.main_line_diameter }}mm</span>
-              <span v-if="build.main_line_length > 0">| 长度: {{ build.main_line_length }}cm</span>
-            </p>
-          </div>
+              <!-- 主线信息 -->
+              <div v-if="build.main_line_tension > 0" class="detail-item">
+                <span class="detail-label">🧵 主线</span>
+                <span class="detail-value">
+                  {{ build.main_line_material ? build.main_line_material + '线 ' : '' }}{{ build.main_line_tension }}kN
+                  <span class="detail-sub">(磨损{{ build.main_line_wear }}%)</span>
+                  <span v-if="build.main_line_diameter > 0" class="detail-sub">| 线径{{ build.main_line_diameter }}mm</span>
+                  <span v-if="build.main_line_length > 0" class="detail-sub">| 长度{{ build.main_line_length }}cm</span>
+                </span>
+              </div>
 
-          <!-- 引线信息 -->
-          <div v-if="build.leader_line_tension > 0" class="detail-group">
-            <h4> 引线</h4>
-            <p>
-              {{ build.leader_line_material ? build.leader_line_material + '线 ' : '' }}{{ build.leader_line_tension }}kN
-              (磨损: {{ build.leader_line_wear }}%)
-              <span v-if="build.leader_line_diameter > 0">| 线径: {{ build.leader_line_diameter }}mm</span>
-              <span v-if="build.leader_line_length > 0">| 长度: {{ build.leader_line_length }}cm</span>
-            </p>
-          </div>
+              <!-- 引线信息 -->
+              <div v-if="build.leader_line_tension > 0" class="detail-item">
+                <span class="detail-label"> 引线</span>
+                <span class="detail-value">
+                  {{ build.leader_line_material ? build.leader_line_material + '线 ' : '' }}{{ build.leader_line_tension }}kN
+                  <span class="detail-sub">(磨损{{ build.leader_line_wear }}%)</span>
+                  <span v-if="build.leader_line_diameter > 0" class="detail-sub">| 线径{{ build.leader_line_diameter }}mm</span>
+                  <span v-if="build.leader_line_length > 0" class="detail-sub">| 长度{{ build.leader_line_length }}cm</span>
+                </span>
+              </div>
 
-          <!-- 鱼钩信息 -->
-          <div v-if="build.hook_name" class="detail-group">
-            <h4>🪝 鱼钩</h4>
-            <p>{{ build.hook_name }}</p>
-          </div>
-
-          <!-- 适用鱼种 -->
-          <div v-if="build.suitable_fish" class="detail-group">
-            <h4>🐟 适用鱼种</h4>
-            <div class="tags">
-              <span v-for="(fish, i) in build.suitable_fish.split(',')" :key="i" class="tag">
-                {{ fish.trim() }}
-              </span>
+              <!-- 鱼钩信息 -->
+              <div v-if="build.hook_name" class="detail-item">
+                <span class="detail-label"> 鱼钩</span>
+                <span class="detail-value">{{ build.hook_name }}</span>
+              </div>
             </div>
-          </div>
 
-          <!-- 适用地图 -->
-          <div v-if="build.suitable_map" class="detail-group">
-            <h4> 适用地图</h4>
-            <div class="tags">
-              <span v-for="(map, i) in build.suitable_map.split(',')" :key="i" class="tag">
-                {{ map.trim() }}
-              </span>
+            <!-- 右列：装备分析 -->
+            <div class="details-column">
+              <!-- 装备分析 -->
+              <div class="analysis-section">
+                <h4> 装备分析</h4>
+                <div class="analysis-grid">
+                  <div class="analysis-item">
+                    <span class="analysis-label">总拉力</span>
+                    <span class="analysis-value tension-value">{{ getTotalTension(build) }} kN</span>
+                  </div>
+                  <div class="analysis-item">
+                    <span class="analysis-label">鱼竿价格</span>
+                    <span class="analysis-value price-value">{{ formatPrice(build.rod_price) }}</span>
+                  </div>
+                  <div class="analysis-item">
+                    <span class="analysis-label">渔轮价格</span>
+                    <span class="analysis-value price-value">{{ formatPrice(build.reel_price) }}</span>
+                  </div>
+                  <div class="analysis-item total-price">
+                    <span class="analysis-label">总价格</span>
+                    <span class="analysis-value price-value total">{{ formatPrice((build.rod_price || 0) + (build.reel_price || 0)) }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 适用鱼种 -->
+              <div v-if="build.suitable_fish" class="detail-item">
+                <span class="detail-label">🐟 适用鱼种</span>
+                <div class="tags">
+                  <span v-for="(fish, i) in build.suitable_fish.split(',')" :key="i" class="tag">
+                    {{ fish.trim() }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- 适用地图 -->
+              <div v-if="build.suitable_map" class="detail-item">
+                <span class="detail-label"> 适用地图</span>
+                <div class="tags">
+                  <span v-for="(map, i) in build.suitable_map.split(',')" :key="i" class="tag">
+                    {{ map.trim() }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- 说明 -->
+              <div v-if="build.description" class="detail-item">
+                <span class="detail-label">📝 说明</span>
+                <span class="detail-value">{{ build.description }}</span>
+              </div>
             </div>
-          </div>
-
-          <!-- 说明 -->
-          <div v-if="build.description" class="detail-group">
-            <h4>📝 说明</h4>
-            <p>{{ build.description }}</p>
           </div>
         </div>
       </div>
@@ -232,6 +264,13 @@ export default {
         hour: '2-digit',
         minute: '2-digit'
       })
+    },
+    getTotalTension(build) {
+      return (build.main_line_tension || 0) + (build.leader_line_tension || 0)
+    },
+    formatPrice(price) {
+      if (!price) return '0'
+      return price.toLocaleString('zh-CN')
     }
   }
 }
@@ -408,26 +447,83 @@ export default {
   background-color: white;
 }
 
-.detail-group {
-  margin-bottom: 15px;
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
 }
 
-.detail-group:last-child {
-  margin-bottom: 0;
+.details-column {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-.detail-group h4 {
+.detail-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-label {
   font-size: 14px;
   color: #1565c0;
   margin: 0 0 8px 0;
   font-weight: bold;
 }
 
-.detail-group p {
+.detail-value {
   font-size: 14px;
   color: #333;
   margin: 0;
   line-height: 1.6;
+}
+
+.detail-sub {
+  font-size: 13px;
+  color: #666;
+}
+
+.analysis-section {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.analysis-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.analysis-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.analysis-label {
+  font-size: 14px;
+  color: #1565c0;
+  margin: 0 0 8px 0;
+  font-weight: bold;
+}
+
+.analysis-value {
+  font-size: 14px;
+  color: #333;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.tension-value {
+  font-weight: bold;
+}
+
+.price-value {
+  font-weight: bold;
+}
+
+.total-price {
+  grid-column: 1 / -1;
 }
 
 /* 标签样式 */
@@ -488,6 +584,10 @@ export default {
 
   .build-meta {
     flex-wrap: wrap;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>

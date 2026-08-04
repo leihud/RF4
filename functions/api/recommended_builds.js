@@ -2,8 +2,8 @@ import { jsonResponse, errorResponse } from './_shared.js'
 
 const INSERT_SQL = `INSERT INTO recommended_builds (
   name,
-  rod_model, rod_name, rod_category,
-  reel_model, reel_name, reel_category,
+  rod_model, rod_name, rod_category, rod_price,
+  reel_model, reel_name, reel_category, reel_price,
   main_line_tension, main_line_wear, main_line_material, main_line_diameter, main_line_length,
   leader_line_tension, leader_line_wear, leader_line_material, leader_line_diameter, leader_line_length,
   hook_name,
@@ -30,9 +30,11 @@ export async function onRequestPost(context) {
       build.rodModel || '',
       build.rodName || '',
       build.rodCategory || '',
+      build.rodPrice || 0,
       build.reelModel || '',
       build.reelName || '',
       build.reelCategory || '',
+      build.reelPrice || 0,
       build.mainLineTension || 0,
       build.mainLineWear || 0,
       build.mainLineMaterial || '',
