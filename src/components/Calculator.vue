@@ -781,13 +781,8 @@ export default {
         return
       }
       
-      // 从 recommendedBuilds 中查找匹配的方案（优先匹配同时满足鱼种和地图的）
-      const build = this.recommendedBuilds.find(b => {
-        const nameMatch = b.name === this.selectedBuildName
-        const fishMatch = !this.selectedFish || (b.suitable_fish && b.suitable_fish.includes(this.selectedFish))
-        const mapMatch = !this.selectedMap || (b.suitable_map && b.suitable_map.includes(this.selectedMap))
-        return nameMatch && fishMatch && mapMatch
-      }) || this.recommendedBuilds.find(b => b.name === this.selectedBuildName)
+      // 只根据方案名称精确匹配，不检查鱼种和地图
+      const build = this.recommendedBuilds.find(b => b.name === this.selectedBuildName)
       
       if (build) {
         this.applyRecommendedBuild(build)
