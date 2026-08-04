@@ -17,8 +17,7 @@ CREATE TABLE IF NOT EXISTS recommended_builds (
   leader_line_wear REAL DEFAULT 0,
   leader_line_material TEXT DEFAULT '',
   -- 鱼钩信息
-  hook_tension REAL DEFAULT 0,
-  hook_wear REAL DEFAULT 0,
+  hook_name TEXT DEFAULT '',
   -- 计算规则
   calculation_rule TEXT DEFAULT 'guide',
   -- 摩擦值

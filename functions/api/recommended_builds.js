@@ -5,7 +5,7 @@ const INSERT_SQL = `INSERT INTO recommended_builds (
   reel_model, reel_name, reel_category,
   main_line_tension, main_line_wear, main_line_material,
   leader_line_tension, leader_line_wear, leader_line_material,
-  hook_tension, hook_wear,
+  hook_name,
   calculation_rule, friction,
   description, suitable_fish, suitable_map
 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
@@ -36,8 +36,7 @@ export async function onRequestPost(context) {
       build.leaderLineTension || 0,
       build.leaderLineWear || 0,
       build.leaderLineMaterial || '',
-      build.hookTension || 0,
-      build.hookWear || 0,
+      build.hookName || '',
       build.calculationRule || 'guide',
       build.friction || 0,
       build.description || '',

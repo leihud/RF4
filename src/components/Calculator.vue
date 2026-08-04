@@ -66,41 +66,52 @@
           <div class="type-value">
             <template v-if="isCustomInputType(type)">
               <div class="custom-input-group">
-                <span v-if="type === '主线' || type === '引线'" class="material-wrapper">
-                  <span class="material-label">材质:</span>
-                  <select
-                    class="material-select"
-                    v-model="customEquipment[type].material"
-                  >
-                    <option
-                      v-for="mat in LINE_MATERIALS"
-                      :key="mat.value"
-                      :value="mat.value"
-                    >{{ mat.label }}</option>
-                  </select>
-                </span>
-                <span class="input-label">拉力:</span>
-                <input
-                  type="number"
-                  class="tension-input"
-                  v-model.number="customEquipment[type].maxTension"
-                  placeholder="0"
-                  min="0"
-                />
-                <span class="input-unit">kN</span>
-                <span class="input-label">磨损:</span>
-                <input
-                  type="number"
-                  class="wear-input"
-                  v-model.number="customEquipment[type].wear"
-                  placeholder="0"
-                  min="0"
-                  max="100"
-                />
-                <span class="input-unit">%</span>
-                <span class="actual-tension">
-                  实际拉力:{{ formatTension(calculateCustomActualTension(customEquipment[type])) }} kN
-                </span>
+                <template v-if="type === '鱼钩'">
+                  <span class="input-label">名称:</span>
+                  <input
+                    type="text"
+                    class="hook-name-input"
+                    v-model="customEquipment[type].name"
+                    placeholder="请输入鱼钩名称"
+                  />
+                </template>
+                <template v-else>
+                  <span v-if="type === '主线' || type === '引线'" class="material-wrapper">
+                    <span class="material-label">材质:</span>
+                    <select
+                      class="material-select"
+                      v-model="customEquipment[type].material"
+                    >
+                      <option
+                        v-for="mat in LINE_MATERIALS"
+                        :key="mat.value"
+                        :value="mat.value"
+                      >{{ mat.label }}</option>
+                    </select>
+                  </span>
+                  <span class="input-label">拉力:</span>
+                  <input
+                    type="number"
+                    class="tension-input"
+                    v-model.number="customEquipment[type].maxTension"
+                    placeholder="0"
+                    min="0"
+                  />
+                  <span class="input-unit">kN</span>
+                  <span class="input-label">磨损:</span>
+                  <input
+                    type="number"
+                    class="wear-input"
+                    v-model.number="customEquipment[type].wear"
+                    placeholder="0"
+                    min="0"
+                    max="100"
+                  />
+                  <span class="input-unit">%</span>
+                  <span class="actual-tension">
+                    实际拉力:{{ formatTension(calculateCustomActualTension(customEquipment[type])) }} kN
+                  </span>
+                </template>
               </div>
             </template>
             <template v-else>
@@ -309,7 +320,7 @@ export default {
       customEquipment: {
         '主线': { maxTension: 0, wear: 0, material: '' },
         '引线': { maxTension: 0, wear: 0, material: '' },
-        '鱼钩': { maxTension: 0, wear: 0 }
+        '鱼钩': { name: '' }
       },
       friction: DEFAULT_FRICTION,
       selectedEquipmentList: [],
@@ -658,8 +669,7 @@ export default {
         leaderLineTension: this.toSafeNumber(this.customEquipment['引线'].maxTension, 0),
         leaderLineWear: this.toSafeNumber(this.customEquipment['引线'].wear, 0),
         leaderLineMaterial: this.customEquipment['引线'].material || '',
-        hookTension: this.toSafeNumber(this.customEquipment['鱼钩'].maxTension, 0),
-        hookWear: this.toSafeNumber(this.customEquipment['鱼钩'].wear, 0),
+        hookName: this.customEquipment['鱼钩'].name || '',
         calculationRule: this.calculationRule,
         friction: this.toSafeNumber(this.friction, 0),
         description: this.submitForm.description,
