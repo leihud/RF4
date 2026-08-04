@@ -1145,6 +1145,20 @@ h2 {
   box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.3);
 }
 
+.hook-name-input {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 200px;
+  outline: none;
+}
+
+.hook-name-input:focus {
+  border-color: #42b983;
+  box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.3);
+}
+
 .input-label {
   font-size: 14px;
   color: #666;
