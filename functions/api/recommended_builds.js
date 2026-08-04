@@ -61,20 +61,19 @@ export async function onRequestGet(context) {
   const url = new URL(request.url)
   const fishName = url.searchParams.get('fish')
 
-  if (!fishName) {
-    return errorResponse(new Error('缺少鱼种参数'))
-  }
-
   try {
     const db = env.DB
     
-    // 查询该鱼种的推荐装备搭配（按创建时间倒序，取最新10条）
-    const result = await db.prepare(`
-      SELECT * FROM recommended_builds 
-      WHERE suitable_fish LIKE ? 
-      ORDER BY created_at DESC 
-      LIMIT 10
-    `).bind(`%${fishName}%`).all()
+    let query = 'SELECT * FROM recommended_builds ORDER BY created_at DESC'
+    let bindings = []
+    
+    // 如果指定了鱼种，添加过滤条件
+    if (fishName) {
+      query = 'SELECT * FROM recommended_builds WHERE suitable_fish LIKE ? ORDER BY created_at DESC LIMIT 10'
+      bindings = [`%${fishName}%`]
+    }
+    
+    const result = await db.prepare(query).bind(...bindings).all()
     
     return jsonResponse({
       success: true,
