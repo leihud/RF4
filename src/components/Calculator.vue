@@ -761,15 +761,18 @@ export default {
           body: JSON.stringify({ build })
         })
         const result = await response.json()
+        console.log('提交结果:', result)
         if (result.success) {
           alert('推荐装备搭配已保存！')
           this.closeSubmitModal()
           this.submitForm = { name: '', description: '', suitableFish: [], suitableMap: [] }
         } else {
           alert('保存失败：' + (result.message || '未知错误'))
+          console.error('保存失败详情:', result)
         }
       } catch (error) {
         alert('提交失败：' + error.message)
+        console.error('提交异常:', error)
       } finally {
         this.isSubmitting = false
       }

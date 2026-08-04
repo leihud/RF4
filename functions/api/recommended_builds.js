@@ -16,6 +16,7 @@ export async function onRequestPost(context) {
 
   try {
     const body = await request.json()
+    console.log('接收到的数据:', JSON.stringify(body, null, 2))
     const { build } = body
 
     if (!build) {
@@ -52,6 +53,7 @@ export async function onRequestPost(context) {
       id: result.meta.last_row_id
     })
   } catch (error) {
+    console.error('保存失败:', error)
     return errorResponse(error)
   }
 }
