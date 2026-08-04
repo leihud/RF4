@@ -439,8 +439,9 @@ export default {
 /* 装备搭配区域 */
 .equipment-section {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 20px;
   margin-bottom: 20px;
   padding-bottom: 20px;
   border-bottom: 1px solid #f0f0f0;
@@ -487,15 +488,18 @@ export default {
 }
 
 .analysis-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: center;
 }
 
 .analysis-item {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
 }
 
 .analysis-label {
@@ -518,9 +522,8 @@ export default {
 }
 
 .total-price {
-  grid-column: 1 / -1;
-  padding-top: 10px;
-  border-top: 1px solid #e0e0e0;
+  padding-left: 16px;
+  border-left: 1px solid #e0e0e0;
 }
 
 .total-price .analysis-value {
@@ -595,14 +598,28 @@ export default {
     flex-wrap: wrap;
   }
 
-  .analysis-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .equipment-section {
+    flex-direction: column;
+    gap: 12px;
   }
 
-  .detail-item {
+  .analysis-grid {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .analysis-item {
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
+  }
+
+  .total-price {
+    padding-left: 0;
+    border-left: none;
+    padding-top: 8px;
+    border-top: 1px solid #e0e0e0;
   }
 
   .detail-label {
