@@ -229,37 +229,41 @@ export default {
 
 <style scoped>
 .builds-list-page {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 30px;
+  width: 100%;
 }
 
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e3f2fd;
 }
 
 .page-header h1 {
   font-size: 28px;
-  color: #333;
+  color: #1565c0;
   margin: 0;
 }
 
 .back-btn {
-  padding: 10px 20px;
-  border: 2px solid #666;
+  padding: 10px 24px;
+  border: 2px solid #1565c0;
   background-color: white;
-  color: #666;
-  border-radius: 8px;
+  color: #1565c0;
+  border-radius: 20px;
   cursor: pointer;
   font-size: 14px;
+  font-weight: bold;
   transition: all 0.3s;
 }
 
 .back-btn:hover {
-  background-color: #f5f5f5;
+  background-color: #e3f2fd;
 }
 
 /* 搜索区域 */
@@ -291,8 +295,8 @@ export default {
 }
 
 .search-input:focus {
-  border-color: #9c27b0;
-  box-shadow: 0 0 0 2px rgba(156, 39, 176, 0.2);
+  border-color: #1565c0;
+  box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
 }
 
 .sort-select {
@@ -305,11 +309,19 @@ export default {
   cursor: pointer;
 }
 
+.sort-select:focus {
+  border-color: #1565c0;
+  box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
+}
+
 /* 统计信息 */
 .stats-info {
   font-size: 14px;
   color: #666;
   margin-bottom: 15px;
+  padding: 10px 15px;
+  background-color: #e3f2fd;
+  border-radius: 6px;
 }
 
 /* 方案容器 */
@@ -333,7 +345,7 @@ export default {
 }
 
 .build-card.expanded {
-  border-color: #9c27b0;
+  border-color: #1565c0;
 }
 
 /* 卡片头部 */
@@ -359,7 +371,7 @@ export default {
 
 .expand-icon {
   font-size: 12px;
-  color: #9c27b0;
+  color: #1565c0;
   width: 16px;
 }
 
@@ -396,7 +408,7 @@ export default {
 
 .detail-group h4 {
   font-size: 14px;
-  color: #9c27b0;
+  color: #1565c0;
   margin: 0 0 8px 0;
   font-weight: bold;
 }
@@ -418,8 +430,8 @@ export default {
 .tag {
   display: inline-block;
   padding: 4px 10px;
-  background-color: #f3e5f5;
-  color: #9c27b0;
+  background-color: #e3f2fd;
+  color: #1565c0;
   border-radius: 4px;
   font-size: 13px;
 }
@@ -438,17 +450,18 @@ export default {
 
 .create-btn {
   padding: 12px 24px;
-  background-color: #9c27b0;
+  background-color: #1565c0;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 20px;
   cursor: pointer;
   font-size: 14px;
+  font-weight: bold;
   transition: background-color 0.3s;
 }
 
 .create-btn:hover {
-  background-color: #7b1fa2;
+  background-color: #0d47a1;
 }
 
 /* 响应式 */
