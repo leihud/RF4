@@ -65,14 +65,14 @@
       </select>
       
       <span class="fish-label">目标方案:</span>
-      <select v-model="selectedBuildName" class="fish-select">
-        <option value="">请选择方案</option>
-        <option v-for="build in filteredBuildNames" :key="build" :value="build">
-          {{ build }}
+      <select v-model="selectedBuild" class="fish-select">
+        <option :value="null">请选择方案</option>
+        <option v-for="build in filteredBuildNames" :key="build.id" :value="build">
+          {{ build.name }} (总计{{ formatBuildPrice(build) }})
         </option>
       </select>
       
-      <button class="query-btn" @click="queryAndApplyBuild" :disabled="!selectedBuildName">
+      <button class="query-btn" @click="queryAndApplyBuild" :disabled="!selectedBuild">
         加载装备方案
       </button>
       
@@ -415,7 +415,7 @@ export default {
       shareHint: '',
       selectedFish: '',
       selectedMap: '',
-      selectedBuildName: '',
+      selectedBuild: null,
       targetFishSearch: '',
       showFishDropdown: false,
       showSubmitModal: false,
@@ -459,13 +459,13 @@ export default {
     /** 鱼种切换时，清空方案选择 */
     selectedFish(newFish) {
       if (!newFish) {
-        this.selectedBuildName = ''
+        this.selectedBuild = null
       }
     },
     /** 地图切换时，清空方案选择 */
     selectedMap(newMap) {
       if (!newMap) {
-        this.selectedBuildName = ''
+        this.selectedBuild = null
       }
     }
   },
@@ -525,28 +525,22 @@ export default {
     allEquipmentSelected() {
       return !!this.selectedEquipmentMap['鱼竿']
     },
-    /** 根据选中的鱼种和地图过滤方案名称列表 */
+    /** 根据选中的鱼种和地图过滤方案列表（保留重名方案） */
     filteredBuildNames() {
-      // 获取所有唯一的方案名称
-      const allNames = [...new Set(this.recommendedBuilds.map(b => b.name).filter(n => n))]
+      let builds = this.recommendedBuilds.filter(b => b.name)
       
       // 如果没有选择鱼种或地图，返回所有方案
       if (!this.selectedFish && !this.selectedMap) {
-        return allNames
+        return builds
       }
       
       // 根据鱼种和地图过滤
-      return allNames.filter(name => {
-        const buildsForName = this.recommendedBuilds.filter(b => b.name === name)
-        return buildsForName.some(build => {
-          // 检查鱼种匹配
-          const fishMatch = !this.selectedFish || 
-            (build.suitable_fish && build.suitable_fish.includes(this.selectedFish))
-          // 检查地图匹配
-          const mapMatch = !this.selectedMap || 
-            (build.suitable_map && build.suitable_map.includes(this.selectedMap))
-          return fishMatch && mapMatch
-        })
+      return builds.filter(build => {
+        const fishMatch = !this.selectedFish || 
+          (build.suitable_fish && build.suitable_fish.includes(this.selectedFish))
+        const mapMatch = !this.selectedMap || 
+          (build.suitable_map && build.suitable_map.includes(this.selectedMap))
+        return fishMatch && mapMatch
       })
     },
     /** 当前选中鱼种的推荐配置 */
@@ -888,47 +882,20 @@ export default {
         this.isSubmitting = false
       }
     },
+    /** 格式化方案总价格 */
+    formatBuildPrice(build) {
+      const total = (build.rod_price || 0) + (build.reel_price || 0)
+      if (!total) return '-'
+      return total.toLocaleString('zh-CN')
+    },
     /** 查询并应用选中的方案 */
     queryAndApplyBuild() {
-      if (!this.selectedBuildName) {
+      if (!this.selectedBuild) {
         alert('请先选择目标方案')
         return
       }
       
-      // 获取所有同名方案
-      const matchingBuilds = this.recommendedBuilds.filter(b => b.name === this.selectedBuildName)
-      
-      if (matchingBuilds.length === 0) {
-        alert(`未找到方案 "${this.selectedBuildName}"`)
-        return
-      }
-      
-      // 如果有多个同名方案，根据当前选中的鱼种和地图找到最佳匹配
-      let build
-      if (matchingBuilds.length === 1) {
-        build = matchingBuilds[0]
-      } else {
-        // 优先匹配鱼种和地图都符合的
-        build = matchingBuilds.find(b => {
-          const fishMatch = !this.selectedFish || (b.suitable_fish && b.suitable_fish.includes(this.selectedFish))
-          const mapMatch = !this.selectedMap || (b.suitable_map && b.suitable_map.includes(this.selectedMap))
-          return fishMatch && mapMatch
-        })
-        // 其次只匹配鱼种
-        if (!build && this.selectedFish) {
-          build = matchingBuilds.find(b => b.suitable_fish && b.suitable_fish.includes(this.selectedFish))
-        }
-        // 其次只匹配地图
-        if (!build && this.selectedMap) {
-          build = matchingBuilds.find(b => b.suitable_map && b.suitable_map.includes(this.selectedMap))
-        }
-        // 最后取最新的
-        if (!build) {
-          build = matchingBuilds.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0]
-        }
-      }
-      
-      this.applyRecommendedBuild(build)
+      this.applyRecommendedBuild(this.selectedBuild)
     },
     /** 应用推荐装备搭配到当前选择 */
     applyRecommendedBuild(build) {
