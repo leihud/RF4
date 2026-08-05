@@ -123,12 +123,12 @@
           <div class="equipment-row">
             <div v-if="build.rod_model" class="equip-chip">
               <span class="equip-chip-label">鱼竿</span>
-              <span class="equip-chip-value">{{ build.rod_name || build.rod_model }}</span>
+              <span class="equip-chip-value">{{ build.rod_model || build.rod_name }}</span>
               <span class="equip-chip-sub">{{ build.rod_category || '' }}</span>
             </div>
             <div v-if="build.reel_model" class="equip-chip">
               <span class="equip-chip-label">渔轮</span>
-              <span class="equip-chip-value">{{ build.reel_name || build.reel_model }}</span>
+              <span class="equip-chip-value">{{ build.reel_model || build.reel_name }}</span>
               <span class="equip-chip-sub">{{ build.reel_category || '' }}</span>
             </div>
             <div v-if="build.main_line_tension > 0" class="equip-chip">
