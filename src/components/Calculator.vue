@@ -578,10 +578,8 @@ export default {
     },
     /** 判断是否选择了必要的装备 */
     hasSelectedEquipment() {
-      // 必须选择鱼竿和渔轮，主线、引线、鱼钩为可选
-      const rod = this.selectedEquipmentMap['鱼竿']
-      const reel = this.selectedEquipmentMap['渔轮']
-      return !!rod && !!reel
+      // 必须选择鱼竿，其他为可选
+      return !!this.selectedEquipmentMap['鱼竿']
     }
   },
   methods: {
