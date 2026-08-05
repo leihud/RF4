@@ -48,7 +48,7 @@
               @mousedown.prevent="selectEquipment(index, 'rod', rod, entry)"
             >
               <span class="dropdown-name">{{ rod.model }}</span>
-              <span class="dropdown-form" v-if="rod.form">{{ rod.form }}</span>
+              <span class="dropdown-type">{{ rod.category }}</span>
               <span class="dropdown-category" v-if="getRatingAlias(rod.rating) !== '常规'">{{ getRatingAlias(rod.rating) }}</span>
               <span v-if="rod.ratingAlias && rod.ratingAlias !== '常规'" class="dropdown-rating">{{ rod.ratingAlias }}</span>
             </div>
@@ -111,7 +111,7 @@
               @mousedown.prevent="selectEquipment(index, 'reel', reel, entry)"
             >
               <span class="dropdown-name">{{ reel.model }}</span>
-              <span class="dropdown-form" v-if="reel.form">{{ reel.form }}</span>
+              <span class="dropdown-type">{{ reel.category }}</span>
               <span class="dropdown-category" v-if="getRatingAlias(reel.rating) !== '常规'">{{ getRatingAlias(reel.rating) }}</span>
               <span v-if="reel.ratingAlias && reel.ratingAlias !== '常规'" class="dropdown-rating">{{ reel.ratingAlias }}</span>
             </div>
