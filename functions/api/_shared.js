@@ -85,6 +85,8 @@ export async function checkRateLimit(ip, db) {
     return { allowed: true, remaining: ANTI_SCRAPING_CONFIG.RATE_LIMIT.MAX_REQUESTS_PER_MINUTE }
   }
   
+  const maxRequests = ANTI_SCRAPING_CONFIG.RATE_LIMIT.MAX_REQUESTS_PER_MINUTE
+  
   try {
     const now = Date.now()
     const windowStart = now - ANTI_SCRAPING_CONFIG.RATE_LIMIT.WINDOW_MS
@@ -100,7 +102,6 @@ export async function checkRateLimit(ip, db) {
     ).bind(ip, new Date(windowStart).toISOString()).first()
     
     const currentCount = countResult?.count || 0
-    const maxRequests = ANTI_SCRAPING_CONFIG.RATE_LIMIT.MAX_REQUESTS_PER_MINUTE
     
     if (currentCount >= maxRequests) {
       // 超过限制，标记为可疑
@@ -118,6 +119,7 @@ export async function checkRateLimit(ip, db) {
     return { allowed: true, remaining: maxRequests - currentCount - 1 }
   } catch (e) {
     console.error('检查速率限制失败:', e)
+    // 表不存在或其他错误时放行，避免阻塞正常请求
     return { allowed: true, remaining: maxRequests }
   }
 }
