@@ -8,7 +8,7 @@
  */
 
 /** Cloudflare Cache API 缓存键前缀 */
-const CACHE_PREFIX = 'rf4-api:'
+const CACHE_PREFIX = 'rf4-api-v2:'
 /** 装备数据缓存 TTL（1 小时，数据仅通过手动导入更新） */
 const EQUIPMENT_CACHE_TTL = 3600
 
