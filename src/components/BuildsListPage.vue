@@ -165,6 +165,7 @@
               <span class="stat-label">渔轮拉力</span>
               <span class="stat-value stat-tension">{{ build.reel_tension || 0 }} kN</span>
             </div>
+            <div class="analysis-divider"></div>
             <div class="analysis-stat">
               <span class="stat-label">鱼竿</span>
               <span class="stat-value stat-price">{{ formatPrice(build.rod_price) }}</span>
@@ -395,7 +396,7 @@ export default {
     },
     formatPrice(price) {
       if (!price || price === 0) return '-'
-      return price.toLocaleString('zh-CN')
+      return Math.round(price).toLocaleString('zh-CN')
     },
     handleKeyDown(e) {
       if (e.key === 'h' || e.key === 'H') {
@@ -776,7 +777,7 @@ export default {
 .analysis-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 0;
   align-items: center;
   padding: 12px 16px;
   background-color: #fafbfc;
@@ -787,8 +788,22 @@ export default {
 
 .analysis-stat {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 6px;
+  padding: 0 16px;
+  white-space: nowrap;
+}
+
+.analysis-stat:first-child {
+  padding-left: 0;
+}
+
+.analysis-divider {
+  width: 1px;
+  height: 20px;
+  background-color: #e0e0e0;
+  margin: 0 4px;
+  flex-shrink: 0;
 }
 
 .stat-label {
@@ -933,7 +948,15 @@ export default {
   .analysis-row {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
+    gap: 8px;
+  }
+
+  .analysis-stat {
+    padding: 0;
+  }
+
+  .analysis-divider {
+    display: none;
   }
 
   .analysis-total {
