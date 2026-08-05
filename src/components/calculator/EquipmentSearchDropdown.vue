@@ -11,7 +11,7 @@
       <span class="search-icon">🔍</span>
     </div>
     <div v-if="isDropdownOpen && categoryOptions.length > 0" class="category-filter-header">
-      <button class="category-toggle-btn" @click.stop="showCategoryFilter = !showCategoryFilter">
+      <button class="category-toggle-btn" @mousedown.prevent="showCategoryFilter = !showCategoryFilter">
         {{ showCategoryFilter ? '▼' : '▲' }} 装备类型
       </button>
     </div>
@@ -20,7 +20,7 @@
         v-for="cat in categoryOptions"
         :key="cat"
         :class="['category-filter-btn', { active: selectedCategory === cat }]"
-        @click.stop="selectedCategory = cat"
+        @mousedown.prevent="selectedCategory = cat"
       >
         {{ cat }}
       </button>

@@ -29,14 +29,14 @@
             <span class="tag-type">{{ entry.equipment.category }}</span>
             <span class="tag-rating" v-if="getRatingAlias(entry.equipment.rating) !== '常规'">{{ getRatingAlias(entry.equipment.rating) }}</span>
           </div>
-          <div v-if="entry.isDropdownOpen && getRodCategoryOptions(entry).length > 0" class="category-filter-header">
+          <div v-if="entry.isDropdownOpen && getRodCategoryOptions().length > 0" class="category-filter-header">
             <button class="category-toggle-btn" @mousedown.prevent="entry.showCategoryFilter = !entry.showCategoryFilter">
               {{ entry.showCategoryFilter ? '▼' : '▲' }} 装备类型
             </button>
           </div>
           <div v-if="entry.isDropdownOpen && entry.showCategoryFilter" class="category-filter-wrapper">
             <button
-              v-for="cat in getRodCategoryOptions(entry)"
+              v-for="cat in getRodCategoryOptions()"
               :key="cat"
               :class="['category-filter-btn', { active: entry.selectedCategory === cat }]"
               @mousedown.prevent="entry.selectedCategory = cat"
@@ -102,14 +102,14 @@
             <span class="tag-type">{{ entry.equipment.category }}</span>
             <span class="tag-rating" v-if="getRatingAlias(entry.equipment.rating) !== '常规'">{{ getRatingAlias(entry.equipment.rating) }}</span>
           </div>
-          <div v-if="entry.isDropdownOpen && getReelCategoryOptions(entry).length > 0" class="category-filter-header">
+          <div v-if="entry.isDropdownOpen && getReelCategoryOptions().length > 0" class="category-filter-header">
             <button class="category-toggle-btn" @mousedown.prevent="entry.showCategoryFilter = !entry.showCategoryFilter">
               {{ entry.showCategoryFilter ? '▼' : '▲' }} 装备类型
             </button>
           </div>
           <div v-if="entry.isDropdownOpen && entry.showCategoryFilter" class="category-filter-wrapper">
             <button
-              v-for="cat in getReelCategoryOptions(entry)"
+              v-for="cat in getReelCategoryOptions()"
               :key="cat"
               :class="['category-filter-btn', { active: entry.selectedCategory === cat }]"
               @mousedown.prevent="entry.selectedCategory = cat"
@@ -192,6 +192,7 @@
 <script>
 import { searchAndRankEquipment, sortByPanelTension, EQUIPMENT_SEARCH_FIELDS } from '../utils/search.js'
 import { getRatingAlias } from '../constants/equipment.js'
+import { formatPrice as formatPriceDisplay } from '../utils/display.js'
 
 export default {
   name: 'ValuePage',
@@ -234,6 +235,15 @@ export default {
   async mounted() {
     await Promise.all([this.loadRods(), this.loadReels()])
   },
+  beforeUnmount() {
+    // 清理所有 entry 的搜索防抖计时器
+    for (const entry of this.rodEntries) {
+      if (entry.searchTimer) clearTimeout(entry.searchTimer)
+    }
+    for (const entry of this.reelEntries) {
+      if (entry.searchTimer) clearTimeout(entry.searchTimer)
+    }
+  },
   methods: {
     getRatingAlias,
     async loadRods() {
@@ -250,12 +260,12 @@ export default {
         this.reelList = Array.isArray(result) ? result : (result.data || [])
       } catch (e) { console.error('加载渔轮失败:', e) }
     },
-    getRodCategoryOptions(entry) {
+    getRodCategoryOptions() {
       if (!Array.isArray(this.rodList)) return []
       const categories = [...new Set(this.rodList.map(item => item.form))].filter(Boolean)
       return ['全部', ...categories]
     },
-    getReelCategoryOptions(entry) {
+    getReelCategoryOptions() {
       if (!Array.isArray(this.reelList)) return []
       const categories = [...new Set(this.reelList.map(item => item.form))].filter(Boolean)
       return ['全部', ...categories]
@@ -349,8 +359,7 @@ export default {
       }, 200)
     },
     formatPrice(price) {
-      if (!price || price === 0) return '0'
-      return Math.round(price).toLocaleString('zh-CN')
+      return formatPriceDisplay(price)
     }
   }
 }
@@ -361,6 +370,7 @@ export default {
   max-width: 1600px;
   margin: 0 auto;
   padding: 30px;
+  width: 100%;
 }
 
 .page-header {
@@ -611,23 +621,6 @@ export default {
   background-color: #e3f2fd;
   color: #1565c0;
   border: 1px solid #90caf9;
-  border-radius: 14px;
-  font-size: 13px;
-  font-weight: 500;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.dropdown-form {
-  flex: 0 0 auto;
-  min-width: 56px;
-  max-width: 100px;
-  padding: 4px 12px;
-  background-color: #f3e8ff;
-  color: #7c3aed;
-  border: 1px solid #c4b5fd;
   border-radius: 14px;
   font-size: 13px;
   font-weight: 500;
