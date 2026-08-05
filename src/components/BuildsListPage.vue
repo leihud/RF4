@@ -208,8 +208,12 @@
 
     <!-- 空状态 -->
     <div v-if="filteredBuilds.length === 0" class="empty-state">
-      <p>暂无装备方案</p>
-      <button class="create-btn" @click="$router.push('/')">去创建一个方案</button>
+      <p>暂无匹配的装备方案</p>
+    </div>
+
+    <!-- 创建方案按钮（常驻） -->
+    <div class="create-section">
+      <button class="create-btn" @click="$router.push('/')">+ 创建新方案</button>
     </div>
   </div>
 </template>
@@ -884,20 +888,30 @@ export default {
   margin-bottom: 20px;
 }
 
+/* 创建方案按钮（常驻） */
+.create-section {
+  display: flex;
+  justify-content: center;
+  padding: 30px 20px;
+}
+
 .create-btn {
-  padding: 12px 24px;
+  padding: 14px 32px;
   background-color: #1565c0;
   color: white;
   border: none;
-  border-radius: 20px;
+  border-radius: 24px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: bold;
-  transition: background-color 0.3s;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(21, 101, 192, 0.3);
 }
 
 .create-btn:hover {
   background-color: #0d47a1;
+  box-shadow: 0 4px 12px rgba(21, 101, 192, 0.4);
+  transform: translateY(-1px);
 }
 
 /* 响应式 */
