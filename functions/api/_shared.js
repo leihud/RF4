@@ -215,8 +215,8 @@ export function sanitizeEquipmentData(row, type) {
       adaptWeightStar: row.adaptWeightStar,
       adaptWeightG: row.adaptWeightG,
       levelReq: row.levelReq,
-      silverPrice: row.silverPrice,
-      goldPrice: row.goldPrice
+      silverPrice: extractNumber(row.silverPrice),
+      goldPrice: extractNumber(row.goldPrice)
     }
   } else if (type === 'reel') {
     return {
@@ -244,8 +244,8 @@ export function sanitizeEquipmentData(row, type) {
       adaptWeightStar: row.adaptWeightStar,
       adaptWeightG: row.adaptWeightG,
       test: row.test,
-      silverPrice: row.silverPrice,
-      goldPrice: row.goldPrice
+      silverPrice: extractNumber(row.silverPrice),
+      goldPrice: extractNumber(row.goldPrice)
     }
   }
   return row

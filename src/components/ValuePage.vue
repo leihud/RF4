@@ -338,9 +338,9 @@ export default {
 
 <style scoped>
 .value-page {
-  max-width: 900px;
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 30px;
 }
 
 .page-header {
@@ -374,7 +374,7 @@ export default {
 .equipment-section {
   background: white;
   border-radius: 12px;
-  padding: 20px;
+  padding: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   margin-bottom: 20px;
 }
@@ -410,8 +410,8 @@ export default {
 
 .entry-row {
   display: flex;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 16px;
+  margin-bottom: 16px;
   align-items: center;
 }
 
@@ -634,7 +634,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-width: 110px;
+  min-width: 120px;
   flex-shrink: 0;
 }
 
@@ -662,7 +662,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  min-width: 130px;
+  min-width: 150px;
   flex-shrink: 0;
 }
 
