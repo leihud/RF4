@@ -169,7 +169,7 @@
                     placeholder="0"
                     min="0"
                   />
-                  <span class="input-unit">m</span>
+                  <span class="input-unit">{{ type === '主线' ? 'm' : 'cm' }}</span>
                   <span class="actual-tension">
                     实际拉力:{{ formatTension(calculateCustomActualTension(customEquipment[type])) }} kN
                   </span>
