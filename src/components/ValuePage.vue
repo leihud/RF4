@@ -59,9 +59,15 @@
           <label>数量:</label>
           <input type="number" v-model.number="entry.quantity" min="1" class="quantity-input" />
         </div>
-        <div class="entry-subtotal" v-if="entry.equipment">
-          <span class="subtotal-silver">{{ formatPrice(entry.equipment.silverPrice * entry.quantity) }} 银币</span>
-          <span class="subtotal-gold">{{ formatPrice(entry.equipment.goldPrice * entry.quantity) }} 金币</span>
+        <div class="entry-subtotal">
+          <template v-if="entry.equipment">
+            <span class="subtotal-silver">{{ formatPrice(entry.equipment.silverPrice * entry.quantity) }} 银币</span>
+            <span class="subtotal-gold">{{ formatPrice(entry.equipment.goldPrice * entry.quantity) }} 金币</span>
+          </template>
+          <template v-else>
+            <span class="subtotal-placeholder">-</span>
+            <span class="subtotal-placeholder">-</span>
+          </template>
         </div>
         <button class="remove-entry-btn" @click="removeRodEntry(index)" title="删除">✕</button>
       </div>
@@ -122,9 +128,15 @@
           <label>数量:</label>
           <input type="number" v-model.number="entry.quantity" min="1" class="quantity-input" />
         </div>
-        <div class="entry-subtotal" v-if="entry.equipment">
-          <span class="subtotal-silver">{{ formatPrice(entry.equipment.silverPrice * entry.quantity) }} 银币</span>
-          <span class="subtotal-gold">{{ formatPrice(entry.equipment.goldPrice * entry.quantity) }} 金币</span>
+        <div class="entry-subtotal">
+          <template v-if="entry.equipment">
+            <span class="subtotal-silver">{{ formatPrice(entry.equipment.silverPrice * entry.quantity) }} 银币</span>
+            <span class="subtotal-gold">{{ formatPrice(entry.equipment.goldPrice * entry.quantity) }} 金币</span>
+          </template>
+          <template v-else>
+            <span class="subtotal-placeholder">-</span>
+            <span class="subtotal-placeholder">-</span>
+          </template>
         </div>
         <button class="remove-entry-btn" @click="removeReelEntry(index)" title="删除">✕</button>
       </div>
@@ -676,6 +688,12 @@ export default {
   color: #e65100;
   font-size: 13px;
   font-weight: 600;
+}
+
+.subtotal-placeholder {
+  color: #ccc;
+  font-size: 13px;
+  min-height: 18px;
 }
 
 .remove-entry-btn {
