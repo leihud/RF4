@@ -233,12 +233,12 @@ export default {
     },
     getRodCategoryOptions(entry) {
       if (!Array.isArray(this.rodList)) return []
-      const categories = [...new Set(this.rodList.map(item => item.category))].filter(Boolean)
+      const categories = [...new Set(this.rodList.map(item => item.form))].filter(Boolean)
       return ['全部', ...categories]
     },
     getReelCategoryOptions(entry) {
       if (!Array.isArray(this.reelList)) return []
-      const categories = [...new Set(this.reelList.map(item => item.category))].filter(Boolean)
+      const categories = [...new Set(this.reelList.map(item => item.form))].filter(Boolean)
       return ['全部', ...categories]
     },
     getFilteredRodList(entry) {
@@ -246,7 +246,7 @@ export default {
       let filtered = this.rodList
 
       if (entry.selectedCategory && entry.selectedCategory !== '全部') {
-        filtered = filtered.filter(item => item.category === entry.selectedCategory)
+        filtered = filtered.filter(item => item.form === entry.selectedCategory)
       }
 
       if (entry.debouncedSearch && entry.debouncedSearch.trim()) {
@@ -262,7 +262,7 @@ export default {
       let filtered = this.reelList
 
       if (entry.selectedCategory && entry.selectedCategory !== '全部') {
-        filtered = filtered.filter(item => item.category === entry.selectedCategory)
+        filtered = filtered.filter(item => item.form === entry.selectedCategory)
       }
 
       if (entry.debouncedSearch && entry.debouncedSearch.trim()) {
