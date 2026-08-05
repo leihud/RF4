@@ -25,6 +25,10 @@
             />
             <span class="search-icon">🔍</span>
           </div>
+          <div class="selected-tags" v-if="entry.equipment">
+            <span class="tag-type">{{ entry.equipment.category }}</span>
+            <span class="tag-rating" v-if="getRatingAlias(entry.equipment.rating) !== '常规'">{{ getRatingAlias(entry.equipment.rating) }}</span>
+          </div>
           <div v-if="entry.isDropdownOpen && getRodCategoryOptions(entry).length > 0" class="category-filter-header">
             <button class="category-toggle-btn" @mousedown.prevent="entry.showCategoryFilter = !entry.showCategoryFilter">
               {{ entry.showCategoryFilter ? '▼' : '▲' }} 装备类型
@@ -93,6 +97,10 @@
               @blur="onSearchBlur(entry, 'reel', index)"
             />
             <span class="search-icon">🔍</span>
+          </div>
+          <div class="selected-tags" v-if="entry.equipment">
+            <span class="tag-type">{{ entry.equipment.category }}</span>
+            <span class="tag-rating" v-if="getRatingAlias(entry.equipment.rating) !== '常规'">{{ getRatingAlias(entry.equipment.rating) }}</span>
           </div>
           <div v-if="entry.isDropdownOpen && getReelCategoryOptions(entry).length > 0" class="category-filter-header">
             <button class="category-toggle-btn" @mousedown.prevent="entry.showCategoryFilter = !entry.showCategoryFilter">
@@ -441,6 +449,35 @@ export default {
   position: relative;
   display: flex;
   align-items: center;
+}
+
+.selected-tags {
+  display: flex;
+  gap: 6px;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.tag-type {
+  padding: 3px 10px;
+  background-color: #e3f2fd;
+  color: #1565c0;
+  border: 1px solid #90caf9;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.tag-rating {
+  padding: 3px 10px;
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 .search-input {
