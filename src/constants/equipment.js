@@ -12,7 +12,8 @@ export const LINE_MATERIALS = Object.freeze([
   { value: '', label: '未选择' },
   { value: '氟碳线', label: '氟碳线' },
   { value: '编织线', label: '编织线' },
-  { value: '尼龙线', label: '尼龙线' }
+  { value: '尼龙线', label: '尼龙线' },
+  { value: '钢', label: '钢' }
 ])
 
 // 计算规则
