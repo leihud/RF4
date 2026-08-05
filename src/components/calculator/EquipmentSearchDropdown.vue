@@ -123,7 +123,8 @@ export default {
         // 搜索字段与参数对比页统一（EQUIPMENT_SEARCH_FIELDS），保证两处搜索语义一致
         filtered = searchAndRankEquipment(filtered, this.debouncedSearchQuery, EQUIPMENT_SEARCH_FIELDS)
       } else {
-        filtered = sortByPanelTension(filtered)
+        // 无搜索词时不显示任何结果
+        return []
       }
 
       return filtered
