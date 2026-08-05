@@ -5,59 +5,76 @@
       <button class="back-btn" @click="$router.back()">← 返回计算器</button>
     </div>
 
-    <!-- 装备选择区域 -->
-    <div class="selection-section">
-      <div class="selection-row">
-        <!-- 鱼竿选择 -->
-        <div class="multi-select-wrapper" ref="rodWrapper">
-          <div class="multi-select-trigger" @click="toggleDropdown('rod')">
-            <span v-if="selectedRod" class="selected-text">{{ selectedRod.equipmentName || selectedRod.model }}</span>
+    <!-- 鱼竿列表 -->
+    <div class="equipment-section">
+      <div class="section-header">
+        <h2>🎣 鱼竿</h2>
+        <button class="add-btn" @click="addRodEntry">+ 添加鱼竿</button>
+      </div>
+      <div v-for="(entry, index) in rodEntries" :key="'rod-' + index" class="entry-row">
+        <div class="multi-select-wrapper">
+          <div class="multi-select-trigger" @click="toggleDropdown('rod-' + index)">
+            <span v-if="entry.equipment" class="selected-text">{{ entry.equipment.equipmentName || entry.equipment.model }}</span>
             <span v-else class="placeholder-text">选择鱼竿...</span>
-            <span class="dropdown-arrow">{{ showDropdown === 'rod' ? '▲' : '▼' }}</span>
+            <span class="dropdown-arrow">{{ showDropdown === 'rod-' + index ? '▲' : '▼' }}</span>
           </div>
-          <div v-if="showDropdown === 'rod'" class="multi-select-dropdown">
-            <input v-model="rodSearch" type="text" class="dropdown-search" placeholder="搜索鱼竿..." @click.stop />
+          <div v-if="showDropdown === 'rod-' + index" class="multi-select-dropdown">
+            <input v-model="entry.search" type="text" class="dropdown-search" placeholder="搜索鱼竿..." @click.stop />
             <div class="dropdown-list">
-              <div v-for="rod in filteredRodList" :key="rod.id" class="dropdown-item" :class="{ selected: selectedRod && selectedRod.id === rod.id }" @click.stop="selectRod(rod)">
+              <div v-for="rod in getFilteredRodList(entry.search)" :key="rod.id" class="dropdown-item" @click.stop="selectEquipment(index, 'rod', rod)">
                 <span class="item-text">{{ rod.equipmentName || rod.model }}</span>
                 <span class="item-price">{{ formatPrice(rod.silverPrice) }} 银币</span>
               </div>
             </div>
           </div>
         </div>
-
-        <!-- 鱼竿数量 -->
         <div class="quantity-input-wrapper">
           <label>数量:</label>
-          <input type="number" v-model.number="rodQuantity" min="1" class="quantity-input" />
+          <input type="number" v-model.number="entry.quantity" min="1" class="quantity-input" />
         </div>
+        <div class="entry-subtotal" v-if="entry.equipment">
+          <span class="subtotal-silver">{{ formatPrice(entry.equipment.silverPrice * entry.quantity) }} 银币</span>
+          <span class="subtotal-gold">{{ formatPrice(entry.equipment.goldPrice * entry.quantity) }} 金币</span>
+        </div>
+        <button class="remove-entry-btn" @click="removeRodEntry(index)" title="删除">✕</button>
       </div>
+      <div v-if="rodEntries.length === 0" class="empty-hint">点击「添加鱼竿」开始统计</div>
+    </div>
 
-      <div class="selection-row">
-        <!-- 渔轮选择 -->
-        <div class="multi-select-wrapper" ref="reelWrapper">
-          <div class="multi-select-trigger" @click="toggleDropdown('reel')">
-            <span v-if="selectedReel" class="selected-text">{{ selectedReel.equipmentName || selectedReel.model }}</span>
+    <!-- 渔轮列表 -->
+    <div class="equipment-section">
+      <div class="section-header">
+        <h2>🎡 渔轮</h2>
+        <button class="add-btn" @click="addReelEntry">+ 添加渔轮</button>
+      </div>
+      <div v-for="(entry, index) in reelEntries" :key="'reel-' + index" class="entry-row">
+        <div class="multi-select-wrapper">
+          <div class="multi-select-trigger" @click="toggleDropdown('reel-' + index)">
+            <span v-if="entry.equipment" class="selected-text">{{ entry.equipment.equipmentName || entry.equipment.model }}</span>
             <span v-else class="placeholder-text">选择渔轮...</span>
-            <span class="dropdown-arrow">{{ showDropdown === 'reel' ? '▲' : '▼' }}</span>
+            <span class="dropdown-arrow">{{ showDropdown === 'reel-' + index ? '▲' : '▼' }}</span>
           </div>
-          <div v-if="showDropdown === 'reel'" class="multi-select-dropdown">
-            <input v-model="reelSearch" type="text" class="dropdown-search" placeholder="搜索渔轮..." @click.stop />
+          <div v-if="showDropdown === 'reel-' + index" class="multi-select-dropdown">
+            <input v-model="entry.search" type="text" class="dropdown-search" placeholder="搜索渔轮..." @click.stop />
             <div class="dropdown-list">
-              <div v-for="reel in filteredReelList" :key="reel.id" class="dropdown-item" :class="{ selected: selectedReel && selectedReel.id === reel.id }" @click.stop="selectReel(reel)">
+              <div v-for="reel in getFilteredReelList(entry.search)" :key="reel.id" class="dropdown-item" @click.stop="selectEquipment(index, 'reel', reel)">
                 <span class="item-text">{{ reel.equipmentName || reel.model }}</span>
                 <span class="item-price">{{ formatPrice(reel.silverPrice) }} 银币</span>
               </div>
             </div>
           </div>
         </div>
-
-        <!-- 渔轮数量 -->
         <div class="quantity-input-wrapper">
           <label>数量:</label>
-          <input type="number" v-model.number="reelQuantity" min="1" class="quantity-input" />
+          <input type="number" v-model.number="entry.quantity" min="1" class="quantity-input" />
         </div>
+        <div class="entry-subtotal" v-if="entry.equipment">
+          <span class="subtotal-silver">{{ formatPrice(entry.equipment.silverPrice * entry.quantity) }} 银币</span>
+          <span class="subtotal-gold">{{ formatPrice(entry.equipment.goldPrice * entry.quantity) }} 金币</span>
+        </div>
+        <button class="remove-entry-btn" @click="removeReelEntry(index)" title="删除">✕</button>
       </div>
+      <div v-if="reelEntries.length === 0" class="empty-hint">点击「添加渔轮」开始统计</div>
     </div>
 
     <!-- 价值统计 -->
@@ -95,19 +112,6 @@
         </div>
       </div>
     </div>
-
-    <!-- 已选装备列表 -->
-    <div v-if="selectedItems.length > 0" class="selected-list">
-      <h3>已选装备</h3>
-      <div v-for="(item, index) in selectedItems" :key="index" class="selected-item">
-        <span class="item-type">{{ item.type }}</span>
-        <span class="item-name">{{ item.equipmentName || item.model }}</span>
-        <span class="item-quantity">× {{ item.quantity }}</span>
-        <span class="item-price silver">{{ formatPrice(item.silverPrice * item.quantity) }} 银币</span>
-        <span class="item-price gold">{{ formatPrice(item.goldPrice * item.quantity) }} 金币</span>
-        <button class="remove-btn" @click="removeItem(index)">✕</button>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -118,44 +122,37 @@ export default {
     return {
       rodList: [],
       reelList: [],
-      selectedRod: null,
-      selectedReel: null,
-      rodQuantity: 1,
-      reelQuantity: 1,
-      selectedItems: [],
-      showDropdown: null,
-      rodSearch: '',
-      reelSearch: ''
+      rodEntries: [],
+      reelEntries: [],
+      showDropdown: null
     }
   },
   computed: {
-    filteredRodList() {
-      if (!this.rodSearch.trim()) return this.rodList
-      const kw = this.rodSearch.toLowerCase()
-      return this.rodList.filter(r => (r.equipmentName || r.model || '').toLowerCase().includes(kw))
-    },
-    filteredReelList() {
-      if (!this.reelSearch.trim()) return this.reelList
-      const kw = this.reelSearch.toLowerCase()
-      return this.reelList.filter(r => (r.equipmentName || r.model || '').toLowerCase().includes(kw))
-    },
     rodTotalSilver() {
-      return this.selectedRod ? this.selectedRod.silverPrice * this.rodQuantity : 0
+      return this.rodEntries.reduce((sum, entry) => {
+        return sum + (entry.equipment ? entry.equipment.silverPrice * entry.quantity : 0)
+      }, 0)
     },
     rodTotalGold() {
-      return this.selectedRod ? this.selectedRod.goldPrice * this.rodQuantity : 0
+      return this.rodEntries.reduce((sum, entry) => {
+        return sum + (entry.equipment ? entry.equipment.goldPrice * entry.quantity : 0)
+      }, 0)
     },
     reelTotalSilver() {
-      return this.selectedReel ? this.selectedReel.silverPrice * this.reelQuantity : 0
+      return this.reelEntries.reduce((sum, entry) => {
+        return sum + (entry.equipment ? entry.equipment.silverPrice * entry.quantity : 0)
+      }, 0)
     },
     reelTotalGold() {
-      return this.selectedReel ? this.selectedReel.goldPrice * this.reelQuantity : 0
+      return this.reelEntries.reduce((sum, entry) => {
+        return sum + (entry.equipment ? entry.equipment.goldPrice * entry.quantity : 0)
+      }, 0)
     },
     totalSilver() {
-      return this.rodTotalSilver + this.reelTotalSilver + this.selectedItems.reduce((sum, item) => sum + item.silverPrice * item.quantity, 0)
+      return this.rodTotalSilver + this.reelTotalSilver
     },
     totalGold() {
-      return this.rodTotalGold + this.reelTotalGold + this.selectedItems.reduce((sum, item) => sum + item.goldPrice * item.quantity, 0)
+      return this.rodTotalGold + this.reelTotalGold
     }
   },
   async mounted() {
@@ -180,18 +177,40 @@ export default {
         this.reelList = Array.isArray(result) ? result : (result.data || [])
       } catch (e) { console.error('加载渔轮失败:', e) }
     },
-    toggleDropdown(type) {
-      this.showDropdown = this.showDropdown === type ? null : type
+    getFilteredRodList(search) {
+      if (!search || !search.trim()) return this.rodList
+      const kw = search.toLowerCase()
+      return this.rodList.filter(r => (r.equipmentName || r.model || '').toLowerCase().includes(kw))
     },
-    selectRod(rod) {
-      this.selectedRod = rod
-      this.showDropdown = null
-      this.rodSearch = ''
+    getFilteredReelList(search) {
+      if (!search || !search.trim()) return this.reelList
+      const kw = search.toLowerCase()
+      return this.reelList.filter(r => (r.equipmentName || r.model || '').toLowerCase().includes(kw))
     },
-    selectReel(reel) {
-      this.selectedReel = reel
+    addRodEntry() {
+      this.rodEntries.push({ equipment: null, quantity: 1, search: '' })
+    },
+    addReelEntry() {
+      this.reelEntries.push({ equipment: null, quantity: 1, search: '' })
+    },
+    removeRodEntry(index) {
+      this.rodEntries.splice(index, 1)
+    },
+    removeReelEntry(index) {
+      this.reelEntries.splice(index, 1)
+    },
+    toggleDropdown(key) {
+      this.showDropdown = this.showDropdown === key ? null : key
+    },
+    selectEquipment(index, type, equipment) {
+      if (type === 'rod') {
+        this.rodEntries[index].equipment = equipment
+        this.rodEntries[index].search = ''
+      } else {
+        this.reelEntries[index].equipment = equipment
+        this.reelEntries[index].search = ''
+      }
       this.showDropdown = null
-      this.reelSearch = ''
     },
     handleClickOutside(e) {
       const wrappers = this.$el.querySelectorAll('.multi-select-wrapper')
@@ -204,9 +223,6 @@ export default {
     formatPrice(price) {
       if (!price || price === 0) return '0'
       return Math.round(price).toLocaleString('zh-CN')
-    },
-    removeItem(index) {
-      this.selectedItems.splice(index, 1)
     }
   }
 }
@@ -247,7 +263,7 @@ export default {
   background-color: #e3f2fd;
 }
 
-.selection-section {
+.equipment-section {
   background: white;
   border-radius: 12px;
   padding: 20px;
@@ -255,14 +271,43 @@ export default {
   margin-bottom: 20px;
 }
 
-.selection-row {
+.section-header {
   display: flex;
-  gap: 16px;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 16px;
+}
+
+.section-header h2 {
+  font-size: 18px;
+  color: #333;
+  margin: 0;
+}
+
+.add-btn {
+  padding: 8px 16px;
+  border: 1px solid #43a047;
+  background-color: white;
+  color: #43a047;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.add-btn:hover {
+  background-color: #e8f5e9;
+}
+
+.entry-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
   align-items: center;
 }
 
-.selection-row:last-child {
+.entry-row:last-child {
   margin-bottom: 0;
 }
 
@@ -281,6 +326,7 @@ export default {
   background-color: white;
   cursor: pointer;
   transition: border-color 0.2s;
+  min-height: 42px;
 }
 
 .multi-select-trigger:hover {
@@ -290,10 +336,12 @@ export default {
 .selected-text {
   color: #333;
   font-weight: 500;
+  font-size: 14px;
 }
 
 .placeholder-text {
   color: #999;
+  font-size: 14px;
 }
 
 .dropdown-arrow {
@@ -323,6 +371,7 @@ export default {
   border-bottom: 1px solid #eee;
   outline: none;
   font-size: 14px;
+  box-sizing: border-box;
 }
 
 .dropdown-list {
@@ -343,10 +392,6 @@ export default {
   background-color: #f5f5f5;
 }
 
-.dropdown-item.selected {
-  background-color: #e3f2fd;
-}
-
 .item-text {
   color: #333;
   font-size: 14px;
@@ -361,7 +406,8 @@ export default {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-width: 120px;
+  min-width: 110px;
+  flex-shrink: 0;
 }
 
 .quantity-input-wrapper label {
@@ -371,7 +417,7 @@ export default {
 }
 
 .quantity-input {
-  width: 70px;
+  width: 60px;
   padding: 8px 10px;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -382,6 +428,50 @@ export default {
 .quantity-input:focus {
   outline: none;
   border-color: #1565c0;
+}
+
+.entry-subtotal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 130px;
+  flex-shrink: 0;
+}
+
+.subtotal-silver {
+  color: #1565c0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.subtotal-gold {
+  color: #e65100;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.remove-entry-btn {
+  padding: 6px 10px;
+  border: 1px solid #e53935;
+  background-color: white;
+  color: #e53935;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.remove-entry-btn:hover {
+  background-color: #e53935;
+  color: white;
+}
+
+.empty-hint {
+  text-align: center;
+  color: #999;
+  padding: 20px;
+  font-size: 14px;
 }
 
 .value-summary {
@@ -445,106 +535,27 @@ export default {
   color: white;
 }
 
-.selected-list {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.selected-list h3 {
-  margin: 0 0 16px 0;
-  font-size: 16px;
-  color: #333;
-}
-
-.selected-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.selected-item:last-child {
-  border-bottom: none;
-}
-
-.item-type {
-  padding: 4px 8px;
-  background-color: #e3f2fd;
-  color: #1565c0;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
-  min-width: 50px;
-  text-align: center;
-}
-
-.item-name {
-  flex: 1;
-  color: #333;
-  font-size: 14px;
-}
-
-.item-quantity {
-  color: #666;
-  font-size: 14px;
-  min-width: 50px;
-  text-align: center;
-}
-
-.item-price {
-  font-size: 13px;
-  font-weight: 500;
-  min-width: 100px;
-  text-align: right;
-}
-
-.item-price.silver {
-  color: #1565c0;
-}
-
-.item-price.gold {
-  color: #e65100;
-}
-
-.remove-btn {
-  padding: 4px 8px;
-  border: 1px solid #e53935;
-  background-color: white;
-  color: #e53935;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-  transition: all 0.2s;
-}
-
-.remove-btn:hover {
-  background-color: #e53935;
-  color: white;
-}
-
 @media (max-width: 768px) {
-  .selection-row {
-    flex-direction: column;
-    align-items: stretch;
+  .entry-row {
+    flex-wrap: wrap;
+  }
+
+  .multi-select-wrapper {
+    min-width: 100%;
   }
 
   .quantity-input-wrapper {
     min-width: auto;
   }
 
+  .entry-subtotal {
+    min-width: auto;
+    flex-direction: row;
+    gap: 12px;
+  }
+
   .value-summary {
     flex-direction: column;
-  }
-
-  .selected-item {
-    flex-wrap: wrap;
-  }
-
-  .item-price {
-    min-width: auto;
   }
 }
 </style>
