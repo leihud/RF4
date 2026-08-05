@@ -13,21 +13,23 @@
       </div>
       <div v-for="(entry, index) in rodEntries" :key="'rod-' + index" class="entry-row">
         <div class="search-dropdown">
-          <div class="search-input-wrapper">
-            <input
-              type="text"
-              class="search-input"
-              v-model="entry.search"
-              @input="onSearchInput(entry)"
-              placeholder="搜索鱼竿..."
-              @focus="entry.isDropdownOpen = true"
-              @blur="onSearchBlur(entry, 'rod', index)"
-            />
-            <span class="search-icon">🔍</span>
-          </div>
-          <div class="selected-tags" v-if="entry.equipment">
-            <span class="tag-type">{{ entry.equipment.category }}</span>
-            <span class="tag-rating" v-if="getRatingAlias(entry.equipment.rating) !== '常规'">{{ getRatingAlias(entry.equipment.rating) }}</span>
+          <div class="search-row">
+            <div class="search-input-wrapper">
+              <input
+                type="text"
+                class="search-input"
+                v-model="entry.search"
+                @input="onSearchInput(entry)"
+                placeholder="搜索鱼竿..."
+                @focus="entry.isDropdownOpen = true"
+                @blur="onSearchBlur(entry, 'rod', index)"
+              />
+              <span class="search-icon">🔍</span>
+            </div>
+            <div class="selected-tags" v-if="entry.equipment">
+              <span class="tag-type">{{ entry.equipment.category }}</span>
+              <span class="tag-rating" v-if="getRatingAlias(entry.equipment.rating) !== '常规'">{{ getRatingAlias(entry.equipment.rating) }}</span>
+            </div>
           </div>
           <div v-if="entry.isDropdownOpen && getRodCategoryOptions().length > 0" class="category-filter-header">
             <button class="category-toggle-btn" @mousedown.prevent="entry.showCategoryFilter = !entry.showCategoryFilter">
@@ -86,21 +88,23 @@
       </div>
       <div v-for="(entry, index) in reelEntries" :key="'reel-' + index" class="entry-row">
         <div class="search-dropdown">
-          <div class="search-input-wrapper">
-            <input
-              type="text"
-              class="search-input"
-              v-model="entry.search"
-              @input="onSearchInput(entry)"
-              placeholder="搜索渔轮..."
-              @focus="entry.isDropdownOpen = true"
-              @blur="onSearchBlur(entry, 'reel', index)"
-            />
-            <span class="search-icon">🔍</span>
-          </div>
-          <div class="selected-tags" v-if="entry.equipment">
-            <span class="tag-type">{{ entry.equipment.category }}</span>
-            <span class="tag-rating" v-if="getRatingAlias(entry.equipment.rating) !== '常规'">{{ getRatingAlias(entry.equipment.rating) }}</span>
+          <div class="search-row">
+            <div class="search-input-wrapper">
+              <input
+                type="text"
+                class="search-input"
+                v-model="entry.search"
+                @input="onSearchInput(entry)"
+                placeholder="搜索渔轮..."
+                @focus="entry.isDropdownOpen = true"
+                @blur="onSearchBlur(entry, 'reel', index)"
+              />
+              <span class="search-icon">🔍</span>
+            </div>
+            <div class="selected-tags" v-if="entry.equipment">
+              <span class="tag-type">{{ entry.equipment.category }}</span>
+              <span class="tag-rating" v-if="getRatingAlias(entry.equipment.rating) !== '常规'">{{ getRatingAlias(entry.equipment.rating) }}</span>
+            </div>
           </div>
           <div v-if="entry.isDropdownOpen && getReelCategoryOptions().length > 0" class="category-filter-header">
             <button class="category-toggle-btn" @mousedown.prevent="entry.showCategoryFilter = !entry.showCategoryFilter">
@@ -455,6 +459,12 @@ export default {
   min-width: 0;
 }
 
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .search-input-wrapper {
   position: relative;
   display: flex;
@@ -602,7 +612,7 @@ export default {
 }
 
 .dropdown-name {
-  flex: 0 1 auto;
+  flex: 1 1 auto;
   min-width: 0;
   font-size: 16px;
   font-weight: 600;
@@ -614,9 +624,7 @@ export default {
 }
 
 .dropdown-type {
-  flex: 0 0 auto;
-  min-width: 56px;
-  max-width: 100px;
+  flex: 0 0 80px;
   padding: 4px 12px;
   background-color: #e3f2fd;
   color: #1565c0;
@@ -631,9 +639,7 @@ export default {
 }
 
 .dropdown-category {
-  flex: 0 0 auto;
-  min-width: 68px;
-  max-width: 120px;
+  flex: 0 0 80px;
   padding: 4px 12px;
   background-color: #f0fdf4;
   color: #166534;
@@ -648,9 +654,7 @@ export default {
 }
 
 .dropdown-rating {
-  flex: 0 0 auto;
-  min-width: 60px;
-  max-width: 100px;
+  flex: 0 0 80px;
   padding: 4px 12px;
   background-color: #fff7ed;
   color: #c2410c;
@@ -662,7 +666,6 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-left: auto;
 }
 
 .dropdown-empty {
