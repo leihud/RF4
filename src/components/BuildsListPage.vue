@@ -14,32 +14,76 @@
           class="search-input"
           placeholder="搜索方案名称..."
         />
-        <input
-          v-model="searchQuery.rod"
-          type="text"
-          class="search-input"
-          placeholder="搜索鱼竿..."
-        />
-        <input
-          v-model="searchQuery.reel"
-          type="text"
-          class="search-input"
-          placeholder="搜索渔轮..."
-        />
+        <!-- 鱼竿多选 -->
+        <div class="multi-select-wrapper" ref="rodWrapper">
+          <div class="multi-select-trigger" @click="toggleDropdown('rod')">
+            <span v-if="searchQuery.rod.length === 0" class="placeholder-text">选择鱼竿...</span>
+            <span v-else class="selected-count">{{ searchQuery.rod.length }} 个鱼竿</span>
+            <span class="dropdown-arrow">{{ showDropdown === 'rod' ? '▲' : '▼' }}</span>
+          </div>
+          <div v-if="showDropdown === 'rod'" class="multi-select-dropdown">
+            <input v-model="rodSearch" type="text" class="dropdown-search" placeholder="搜索鱼竿..." @click.stop />
+            <div class="dropdown-list">
+              <div v-for="rod in filteredRodList" :key="rod.model || rod.equipmentName" class="dropdown-item" :class="{ selected: searchQuery.rod.includes(rod.equipmentName || rod.model) }" @click.stop="toggleMultiSelect('rod', rod.equipmentName || rod.model)">
+                <span class="checkbox-icon">{{ searchQuery.rod.includes(rod.equipmentName || rod.model) ? '☑' : '☐' }}</span>
+                <span class="item-text">{{ rod.equipmentName || rod.model }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 渔轮多选 -->
+        <div class="multi-select-wrapper" ref="reelWrapper">
+          <div class="multi-select-trigger" @click="toggleDropdown('reel')">
+            <span v-if="searchQuery.reel.length === 0" class="placeholder-text">选择渔轮...</span>
+            <span v-else class="selected-count">{{ searchQuery.reel.length }} 个渔轮</span>
+            <span class="dropdown-arrow">{{ showDropdown === 'reel' ? '▲' : '▼' }}</span>
+          </div>
+          <div v-if="showDropdown === 'reel'" class="multi-select-dropdown">
+            <input v-model="reelSearch" type="text" class="dropdown-search" placeholder="搜索渔轮..." @click.stop />
+            <div class="dropdown-list">
+              <div v-for="reel in filteredReelList" :key="reel.model || reel.equipmentName" class="dropdown-item" :class="{ selected: searchQuery.reel.includes(reel.equipmentName || reel.model) }" @click.stop="toggleMultiSelect('reel', reel.equipmentName || reel.model)">
+                <span class="checkbox-icon">{{ searchQuery.reel.includes(reel.equipmentName || reel.model) ? '☑' : '☐' }}</span>
+                <span class="item-text">{{ reel.equipmentName || reel.model }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="search-row">
-        <input
-          v-model="searchQuery.fish"
-          type="text"
-          class="search-input"
-          placeholder="搜索适用鱼种..."
-        />
-        <input
-          v-model="searchQuery.map"
-          type="text"
-          class="search-input"
-          placeholder="搜索适用地图..."
-        />
+        <!-- 鱼种多选 -->
+        <div class="multi-select-wrapper" ref="fishWrapper">
+          <div class="multi-select-trigger" @click="toggleDropdown('fish')">
+            <span v-if="searchQuery.fish.length === 0" class="placeholder-text">选择鱼种...</span>
+            <span v-else class="selected-count">{{ searchQuery.fish.length }} 个鱼种</span>
+            <span class="dropdown-arrow">{{ showDropdown === 'fish' ? '▲' : '▼' }}</span>
+          </div>
+          <div v-if="showDropdown === 'fish'" class="multi-select-dropdown">
+            <input v-model="fishSearch" type="text" class="dropdown-search" placeholder="搜索鱼种..." @click.stop />
+            <div class="dropdown-list">
+              <div v-for="fish in filteredFishList" :key="fish.display_name" class="dropdown-item" :class="{ selected: searchQuery.fish.includes(fish.display_name) }" @click.stop="toggleMultiSelect('fish', fish.display_name)">
+                <span class="checkbox-icon">{{ searchQuery.fish.includes(fish.display_name) ? '☑' : '☐' }}</span>
+                <span class="item-text">{{ fish.display_name }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 地图多选 -->
+        <div class="multi-select-wrapper" ref="mapWrapper">
+          <div class="multi-select-trigger" @click="toggleDropdown('map')">
+            <span v-if="searchQuery.map.length === 0" class="placeholder-text">选择地图...</span>
+            <span v-else class="selected-count">{{ searchQuery.map.length }} 张地图</span>
+            <span class="dropdown-arrow">{{ showDropdown === 'map' ? '▲' : '▼' }}</span>
+          </div>
+          <div v-if="showDropdown === 'map'" class="multi-select-dropdown">
+            <input v-model="mapSearch" type="text" class="dropdown-search" placeholder="搜索地图..." @click.stop />
+            <div class="dropdown-list">
+              <div v-for="map in filteredMapList" :key="map.display_name" class="dropdown-item" :class="{ selected: searchQuery.map.includes(map.display_name) }" @click.stop="toggleMultiSelect('map', map.display_name)">
+                <span class="checkbox-icon">{{ searchQuery.map.includes(map.display_name) ? '☑' : '☐' }}</span>
+                <span class="item-text">{{ map.display_name }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
         <select v-model="sortBy" class="sort-select">
           <option value="newest">最新优先</option>
           <option value="oldest">最早优先</option>
@@ -178,29 +222,63 @@ export default {
       builds: [],
       searchQuery: {
         name: '',
-        rod: '',
-        reel: '',
-        fish: '',
-        map: ''
+        rod: [],
+        reel: [],
+        fish: [],
+        map: []
       },
       sortBy: 'newest',
       expandedIndex: null,
       showDeleteBtn: false,
-      hKeyTimer: null
+      hKeyTimer: null,
+      showDropdown: null,
+      rodList: [],
+      reelList: [],
+      fishList: [],
+      mapList: [],
+      rodSearch: '',
+      reelSearch: '',
+      fishSearch: '',
+      mapSearch: ''
     }
   },
   computed: {
+    filteredRodList() {
+      if (!this.rodSearch.trim()) return this.rodList
+      const kw = this.rodSearch.toLowerCase()
+      return this.rodList.filter(r => (r.equipmentName || r.model || '').toLowerCase().includes(kw))
+    },
+    filteredReelList() {
+      if (!this.reelSearch.trim()) return this.reelList
+      const kw = this.reelSearch.toLowerCase()
+      return this.reelList.filter(r => (r.equipmentName || r.model || '').toLowerCase().includes(kw))
+    },
+    filteredFishList() {
+      if (!this.fishSearch.trim()) return this.fishList
+      const kw = this.fishSearch.toLowerCase()
+      return this.fishList.filter(f => f.display_name.toLowerCase().includes(kw))
+    },
+    filteredMapList() {
+      if (!this.mapSearch.trim()) return this.mapList
+      const kw = this.mapSearch.toLowerCase()
+      return this.mapList.filter(m => m.display_name.toLowerCase().includes(kw))
+    },
     filteredBuilds() {
       let result = this.builds.filter(build => {
         const q = this.searchQuery
         const matchName = !q.name || (build.name && build.name.toLowerCase().includes(q.name.toLowerCase()))
-        const matchRod = !q.rod || (build.rod_name && build.rod_name.toLowerCase().includes(q.rod.toLowerCase())) || 
-                        (build.rod_model && build.rod_model.toLowerCase().includes(q.rod.toLowerCase()))
-        const matchReel = !q.reel || (build.reel_name && build.reel_name.toLowerCase().includes(q.reel.toLowerCase())) || 
-                         (build.reel_model && build.reel_model.toLowerCase().includes(q.reel.toLowerCase()))
-        const matchFish = !q.fish || (build.suitable_fish && build.suitable_fish.toLowerCase().includes(q.fish.toLowerCase()))
-        const matchMap = !q.map || (build.suitable_map && build.suitable_map.toLowerCase().includes(q.map.toLowerCase()))
-        
+        const matchRod = q.rod.length === 0 || q.rod.some(v =>
+          (build.rod_name && build.rod_name.includes(v)) || (build.rod_model && build.rod_model.includes(v))
+        )
+        const matchReel = q.reel.length === 0 || q.reel.some(v =>
+          (build.reel_name && build.reel_name.includes(v)) || (build.reel_model && build.reel_model.includes(v))
+        )
+        const matchFish = q.fish.length === 0 || q.fish.some(v =>
+          build.suitable_fish && build.suitable_fish.includes(v)
+        )
+        const matchMap = q.map.length === 0 || q.map.some(v =>
+          build.suitable_map && build.suitable_map.includes(v)
+        )
         return matchName && matchRod && matchReel && matchFish && matchMap
       })
 
@@ -217,11 +295,19 @@ export default {
     }
   },
   async mounted() {
-    await this.loadBuilds()
+    await Promise.all([
+      this.loadBuilds(),
+      this.loadRods(),
+      this.loadReels(),
+      this.loadFishSpecies(),
+      this.loadMaps()
+    ])
     document.addEventListener('keydown', this.handleKeyDown)
+    document.addEventListener('click', this.handleClickOutside)
   },
   beforeUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown)
+    document.removeEventListener('click', this.handleClickOutside)
   },
   methods: {
     async loadBuilds() {
@@ -235,6 +321,51 @@ export default {
         console.error('加载装备方案失败:', error)
         alert('加载失败：' + error.message)
       }
+    },
+    async loadRods() {
+      try {
+        const res = await fetch('/api/rods')
+        const result = await res.json()
+        if (result.success) this.rodList = result.data || []
+      } catch (e) { console.error('加载鱼竿失败:', e) }
+    },
+    async loadReels() {
+      try {
+        const res = await fetch('/api/reels')
+        const result = await res.json()
+        if (result.success) this.reelList = result.data || []
+      } catch (e) { console.error('加载渔轮失败:', e) }
+    },
+    async loadFishSpecies() {
+      try {
+        const res = await fetch('/api/fish_species')
+        const result = await res.json()
+        if (result.success) this.fishList = result.data || []
+      } catch (e) { console.error('加载鱼种失败:', e) }
+    },
+    async loadMaps() {
+      try {
+        const res = await fetch('/api/maps')
+        const result = await res.json()
+        if (result.success) this.mapList = result.data || []
+      } catch (e) { console.error('加载地图失败:', e) }
+    },
+    toggleDropdown(type) {
+      this.showDropdown = this.showDropdown === type ? null : type
+    },
+    toggleMultiSelect(type, value) {
+      const arr = this.searchQuery[type]
+      const idx = arr.indexOf(value)
+      if (idx > -1) arr.splice(idx, 1)
+      else arr.push(value)
+    },
+    handleClickOutside(e) {
+      const wrappers = this.$el.querySelectorAll('.multi-select-wrapper')
+      let inside = false
+      for (const w of wrappers) {
+        if (w.contains(e.target)) { inside = true; break }
+      }
+      if (!inside) this.showDropdown = null
     },
     toggleExpand(index) {
       this.expandedIndex = this.expandedIndex === index ? null : index
@@ -387,6 +518,112 @@ export default {
 .sort-select:focus {
   border-color: #1565c0;
   box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
+}
+
+/* 多选下拉框 */
+.multi-select-wrapper {
+  flex: 1;
+  position: relative;
+}
+
+.multi-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: white;
+  transition: border-color 0.2s;
+  min-height: 20px;
+}
+
+.multi-select-trigger:hover {
+  border-color: #1565c0;
+}
+
+.placeholder-text {
+  color: #999;
+}
+
+.selected-count {
+  color: #1565c0;
+  font-weight: 600;
+}
+
+.dropdown-arrow {
+  font-size: 10px;
+  color: #999;
+  margin-left: 8px;
+}
+
+.multi-select-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 300px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  margin-top: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-search {
+  padding: 8px 12px;
+  border: none;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  outline: none;
+}
+
+.dropdown-search:focus {
+  border-bottom-color: #1565c0;
+}
+
+.dropdown-list {
+  overflow-y: auto;
+  max-height: 240px;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  gap: 8px;
+}
+
+.dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+.dropdown-item.selected {
+  background-color: #e3f2fd;
+}
+
+.checkbox-icon {
+  font-size: 14px;
+  color: #999;
+  width: 18px;
+  flex-shrink: 0;
+}
+
+.dropdown-item.selected .checkbox-icon {
+  color: #1565c0;
+}
+
+.item-text {
+  font-size: 14px;
+  color: #333;
 }
 
 /* 统计信息 */
