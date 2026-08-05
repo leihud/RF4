@@ -331,28 +331,28 @@ export default {
       try {
         const res = await fetch('/api/rods')
         const result = await res.json()
-        if (result.success) this.rodList = result.data || []
+        this.rodList = Array.isArray(result) ? result : (result.data || [])
       } catch (e) { console.error('加载鱼竿失败:', e) }
     },
     async loadReels() {
       try {
         const res = await fetch('/api/reels')
         const result = await res.json()
-        if (result.success) this.reelList = result.data || []
+        this.reelList = Array.isArray(result) ? result : (result.data || [])
       } catch (e) { console.error('加载渔轮失败:', e) }
     },
     async loadFishSpecies() {
       try {
         const res = await fetch('/api/fish_species')
         const result = await res.json()
-        if (result.success) this.fishList = result.data || []
+        this.fishList = Array.isArray(result) ? result : (result.data || [])
       } catch (e) { console.error('加载鱼种失败:', e) }
     },
     async loadMaps() {
       try {
         const res = await fetch('/api/maps')
         const result = await res.json()
-        if (result.success) this.mapList = result.data || []
+        this.mapList = Array.isArray(result) ? result : (result.data || [])
       } catch (e) { console.error('加载地图失败:', e) }
     },
     toggleDropdown(type) {
