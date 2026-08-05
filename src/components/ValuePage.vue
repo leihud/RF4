@@ -26,7 +26,7 @@
             <span class="search-icon">🔍</span>
           </div>
           <div v-if="entry.isDropdownOpen && getRodCategoryOptions(entry).length > 0" class="category-filter-header">
-            <button class="category-toggle-btn" @click.stop="entry.showCategoryFilter = !entry.showCategoryFilter">
+            <button class="category-toggle-btn" @mousedown.prevent="entry.showCategoryFilter = !entry.showCategoryFilter">
               {{ entry.showCategoryFilter ? '▼' : '▲' }} 装备类型
             </button>
           </div>
@@ -35,7 +35,7 @@
               v-for="cat in getRodCategoryOptions(entry)"
               :key="cat"
               :class="['category-filter-btn', { active: entry.selectedCategory === cat }]"
-              @click.stop="entry.selectedCategory = cat"
+              @mousedown.prevent="entry.selectedCategory = cat"
             >
               {{ cat }}
             </button>
@@ -49,7 +49,7 @@
             >
               <span class="dropdown-name">{{ rod.model }}</span>
               <span class="dropdown-type">{{ rod.category }}</span>
-              <span class="dropdown-category">{{ rod.rating }}</span>
+              <span class="dropdown-category" v-if="getRatingAlias(rod.rating) !== '常规'">{{ getRatingAlias(rod.rating) }}</span>
               <span v-if="rod.ratingAlias && rod.ratingAlias !== '常规'" class="dropdown-rating">{{ rod.ratingAlias }}</span>
             </div>
             <div v-if="getFilteredRodList(entry).length === 0" class="dropdown-empty">未找到匹配的装备</div>
@@ -89,7 +89,7 @@
             <span class="search-icon">🔍</span>
           </div>
           <div v-if="entry.isDropdownOpen && getReelCategoryOptions(entry).length > 0" class="category-filter-header">
-            <button class="category-toggle-btn" @click.stop="entry.showCategoryFilter = !entry.showCategoryFilter">
+            <button class="category-toggle-btn" @mousedown.prevent="entry.showCategoryFilter = !entry.showCategoryFilter">
               {{ entry.showCategoryFilter ? '▼' : '▲' }} 装备类型
             </button>
           </div>
@@ -98,7 +98,7 @@
               v-for="cat in getReelCategoryOptions(entry)"
               :key="cat"
               :class="['category-filter-btn', { active: entry.selectedCategory === cat }]"
-              @click.stop="entry.selectedCategory = cat"
+              @mousedown.prevent="entry.selectedCategory = cat"
             >
               {{ cat }}
             </button>
@@ -112,7 +112,7 @@
             >
               <span class="dropdown-name">{{ reel.model }}</span>
               <span class="dropdown-type">{{ reel.category }}</span>
-              <span class="dropdown-category">{{ reel.rating }}</span>
+              <span class="dropdown-category" v-if="getRatingAlias(reel.rating) !== '常规'">{{ getRatingAlias(reel.rating) }}</span>
               <span v-if="reel.ratingAlias && reel.ratingAlias !== '常规'" class="dropdown-rating">{{ reel.ratingAlias }}</span>
             </div>
             <div v-if="getFilteredReelList(entry).length === 0" class="dropdown-empty">未找到匹配的装备</div>
@@ -171,6 +171,7 @@
 
 <script>
 import { searchAndRankEquipment, sortByPanelTension, EQUIPMENT_SEARCH_FIELDS } from '../utils/search.js'
+import { getRatingAlias } from '../constants/equipment.js'
 
 export default {
   name: 'ValuePage',
