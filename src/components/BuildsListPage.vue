@@ -28,7 +28,7 @@
               <div v-for="rod in filteredRodList" :key="rod.model || rod.equipmentName" class="dropdown-item" :class="{ selected: searchQuery.rod.includes(rod.equipmentName || rod.model) }" @click.stop="toggleMultiSelect('rod', rod.equipmentName || rod.model)">
                 <span class="checkbox-icon">{{ searchQuery.rod.includes(rod.equipmentName || rod.model) ? '☑' : '☐' }}</span>
                 <span class="item-text">{{ rod.model }}</span>
-                <span class="item-category">{{ rod.category }}</span>
+                <span class="item-category">{{ rod.form || rod.category }}</span>
                 <span v-if="rod.ratingAlias && rod.ratingAlias !== '常规'" class="item-rating">{{ rod.ratingAlias }}</span>
               </div>
             </div>
@@ -47,7 +47,7 @@
               <div v-for="reel in filteredReelList" :key="reel.model || reel.equipmentName" class="dropdown-item" :class="{ selected: searchQuery.reel.includes(reel.equipmentName || reel.model) }" @click.stop="toggleMultiSelect('reel', reel.equipmentName || reel.model)">
                 <span class="checkbox-icon">{{ searchQuery.reel.includes(reel.equipmentName || reel.model) ? '☑' : '☐' }}</span>
                 <span class="item-text">{{ reel.model }}</span>
-                <span class="item-category">{{ reel.category }}</span>
+                <span class="item-category">{{ reel.form || reel.category }}</span>
                 <span v-if="reel.ratingAlias && reel.ratingAlias !== '常规'" class="item-rating">{{ reel.ratingAlias }}</span>
               </div>
             </div>

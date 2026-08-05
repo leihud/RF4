@@ -33,7 +33,7 @@
         @click.stop="$emit('select', equipment)"
       >
         <span class="dropdown-name">{{ toSafeDisplay(equipment.model || equipment.equipmentName, '-') }}</span>
-        <span class="dropdown-category">{{ toSafeDisplay(equipment.category || equipment.subCategory, '') }}</span>
+        <span class="dropdown-category">{{ toSafeDisplay(equipment.form || equipment.category, '') }}</span>
         <span
           v-if="equipment.ratingAlias && equipment.ratingAlias !== '常规'"
           class="dropdown-rating"
@@ -103,7 +103,7 @@ export default {
   computed: {
     categoryOptions() {
       if (!Array.isArray(this.equipmentList)) return ['全部']
-      const categories = [...new Set(this.equipmentList.map(item => item.category))].filter(Boolean)
+      const categories = [...new Set(this.equipmentList.map(item => item.form))].filter(Boolean)
       return ['全部', ...categories]
     },
     filteredEquipment() {
@@ -116,7 +116,7 @@ export default {
       }
 
       if (this.selectedCategory && this.selectedCategory !== '全部') {
-        filtered = filtered.filter(item => item.category === this.selectedCategory)
+        filtered = filtered.filter(item => item.form === this.selectedCategory)
       }
 
       if (this.debouncedSearchQuery.trim()) {
