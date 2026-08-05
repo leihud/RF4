@@ -878,7 +878,7 @@ export default {
         const result = await response.json()
         console.log('提交结果:', result)
         if (result.success) {
-          this.showToast('推荐装备搭配已保存！', 'success')
+          this.showToast('方案已提交，等待审核通过后展示', 'success')
           this.closeSubmitModal()
           this.submitForm = { name: '', description: '', suitableFish: [], suitableMap: [] }
           // 刷新页面以更新方案列表

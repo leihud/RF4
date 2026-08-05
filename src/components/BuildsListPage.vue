@@ -127,9 +127,11 @@
             <span class="build-name">{{ build.name || '未命名方案' }}</span>
           </div>
           <div class="build-meta">
+            <span v-if="!build.is_approved" class="meta-item pending-tag">待审核</span>
             <span class="meta-item">🎣 {{ getFishCount(build.suitable_fish) }} 种鱼</span>
             <span class="meta-item">️ {{ getMapCount(build.suitable_map) }} 张地图</span>
-            <span class="meta-item">📅 {{ formatDate(build.created_at) }}</span>
+            <span class="meta-item"> {{ formatDate(build.created_at) }}</span>
+            <button v-if="isAdminMode" class="approve-btn" @click.stop="approveBuild(build)" :title="build.is_approved ? '取消审核' : '通过审核'">{{ build.is_approved ? '✓ 已审核' : '审核' }}</button>
             <button v-if="showDeleteBtn" class="delete-btn" @click.stop="deleteBuild(build, index)" title="删除方案">️</button>
           </div>
         </div>
@@ -258,6 +260,7 @@ export default {
       sortBy: 'newest',
       expandedIndex: null,
       showDeleteBtn: false,
+      isAdminMode: false,
       hKeyTimer: null,
       showDropdown: null,
       rodList: [],
@@ -347,7 +350,8 @@ export default {
   methods: {
     async loadBuilds() {
       try {
-        const response = await fetch('/api/recommended_builds')
+        const adminParam = this.isAdminMode ? '?admin=true' : ''
+        const response = await fetch(`/api/recommended_builds${adminParam}`)
         const result = await response.json()
         if (result.success && result.data) {
           this.builds = result.data
@@ -431,10 +435,14 @@ export default {
     handleKeyDown(e) {
       if (e.key === 'h' || e.key === 'H') {
         if (this.hKeyTimer) {
-          // 第二次按下，切换删除按钮
-          this.showDeleteBtn = !this.showDeleteBtn
+          // 第二次按下，切换管理员模式
+          this.isAdminMode = !this.isAdminMode
+          this.showDeleteBtn = this.isAdminMode
           clearTimeout(this.hKeyTimer)
           this.hKeyTimer = null
+          // 重新加载数据
+          this.loadBuilds()
+          this.showToast(this.isAdminMode ? '已进入管理员模式' : '已退出管理员模式', 'info')
         } else {
           // 第一次按下，设置计时器
           this.hKeyTimer = setTimeout(() => {
@@ -462,6 +470,25 @@ export default {
         }
       } catch (error) {
         this.showToast('删除失败：' + error.message, 'error')
+      }
+    },
+    async approveBuild(build) {
+      try {
+        const newStatus = !build.is_approved
+        const response = await fetch('/api/recommended_builds', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: build.id, isApproved: newStatus })
+        })
+        const result = await response.json()
+        if (result.success) {
+          build.is_approved = newStatus ? 1 : 0
+          this.showToast(newStatus ? '方案已通过审核' : '已取消审核', 'success')
+        } else {
+          this.showToast('审核操作失败：' + (result.error || result.message || '未知错误'), 'error')
+        }
+      } catch (error) {
+        this.showToast('审核操作失败：' + error.message, 'error')
       }
     },
     showToast(message, type = 'info') {
@@ -767,6 +794,34 @@ export default {
 .delete-btn:hover {
   background-color: #e53935;
   color: white;
+}
+
+/* 审核按钮 */
+.approve-btn {
+  padding: 4px 8px;
+  border: 1px solid #43a047;
+  background-color: white;
+  color: #43a047;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+  margin-left: 8px;
+}
+
+.approve-btn:hover {
+  background-color: #43a047;
+  color: white;
+}
+
+/* 待审核标签 */
+.pending-tag {
+  background-color: #fff3e0;
+  color: #e65100;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
 }
 
 /* 详情区域 */

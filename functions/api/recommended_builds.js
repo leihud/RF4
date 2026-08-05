@@ -8,8 +8,9 @@ const INSERT_SQL = `INSERT INTO recommended_builds (
   leader_line_tension, leader_line_wear, leader_line_material, leader_line_diameter, leader_line_length,
   hook_name,
   calculation_rule, friction,
-  description, suitable_fish, suitable_map
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  description, suitable_fish, suitable_map,
+  is_approved
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 
 export async function onRequestPost(context) {
   const { request, env } = context
@@ -52,12 +53,13 @@ export async function onRequestPost(context) {
       build.friction || 0,
       build.description || '',
       build.suitableFish || '',
-      build.suitableMap || ''
+      build.suitableMap || '',
+      0  // 新提交的方案默认未审核
     ).run()
 
     return jsonResponse({
       success: true,
-      message: '推荐装备搭配已保存',
+      message: '推荐装备搭配已保存，等待审核',
       id: result.meta.last_row_id
     })
   } catch (error) {
@@ -87,22 +89,61 @@ export async function onRequestDelete(context) {
   }
 }
 
+export async function onRequestPut(context) {
+  const { request, env } = context
+
+  try {
+    const body = await request.json()
+    const { id, isApproved } = body
+
+    if (!id) {
+      return jsonResponse({ success: false, message: '缺少方案ID' }, 400)
+    }
+
+    const db = env.DB
+    await db.prepare('UPDATE recommended_builds SET is_approved = ? WHERE id = ?')
+      .bind(isApproved ? 1 : 0, id)
+      .run()
+
+    return jsonResponse({ 
+      success: true, 
+      message: isApproved ? '方案已通过审核' : '方案已取消审核' 
+    })
+  } catch (error) {
+    console.error('审核操作失败:', error)
+    return errorResponse(error)
+  }
+}
+
 export async function onRequestGet(context) {
   const { env, request } = context
   const url = new URL(request.url)
   const fishName = url.searchParams.get('fish')
+  const adminMode = url.searchParams.get('admin') === 'true'
 
   try {
     const db = env.DB
     
-    let query = 'SELECT * FROM recommended_builds ORDER BY created_at DESC'
+    let query = 'SELECT * FROM recommended_builds'
     let bindings = []
+    const conditions = []
+    
+    // 非管理员模式只显示已审核的方案
+    if (!adminMode) {
+      conditions.push('is_approved = 1')
+    }
     
     // 如果指定了鱼种，添加过滤条件
     if (fishName) {
-      query = 'SELECT * FROM recommended_builds WHERE suitable_fish LIKE ? ORDER BY created_at DESC LIMIT 10'
-      bindings = [`%${fishName}%`]
+      conditions.push('suitable_fish LIKE ?')
+      bindings.push(`%${fishName}%`)
     }
+    
+    if (conditions.length > 0) {
+      query += ' WHERE ' + conditions.join(' AND ')
+    }
+    
+    query += ' ORDER BY created_at DESC'
     
     const result = await db.prepare(query).bind(...bindings).all()
     
