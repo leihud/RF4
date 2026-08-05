@@ -12,6 +12,116 @@ const CACHE_PREFIX = 'rf4-api:'
 /** 装备数据缓存 TTL（1 小时，数据仅通过手动导入更新） */
 const EQUIPMENT_CACHE_TTL = 3600
 
+/** 反扒机制配置 */
+export const ANTI_SCRAPING_CONFIG = {
+  // 请求频率限制：每IP每分钟最大请求数
+  RATE_LIMIT: {
+    MAX_REQUESTS_PER_MINUTE: 60,
+    WINDOW_MS: 60000
+  },
+  // User-Agent 白名单关键词（允许包含这些关键词的UA访问）
+  ALLOWED_UA_KEYWORDS: ['Mozilla', 'Chrome', 'Safari', 'Firefox', 'Edge'],
+  // IP 黑名单存储键前缀
+  BLACKLIST_PREFIX: 'rf4-blacklist:',
+  // 速率限制计数存储键前缀
+  RATE_LIMIT_PREFIX: 'rf4-ratelimit:'
+}
+
+/**
+ * 获取客户端真实 IP
+ * @param {Request} request
+ * @returns {string}
+ */
+export function getClientIP(request) {
+  // Cloudflare 会通过 CF-Connecting-IP 头传递真实 IP
+  return request.headers.get('cf-connecting-ip') || 
+         request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+         'unknown'
+}
+
+/**
+ * 验证 User-Agent 是否合法
+ * @param {Request} request
+ * @returns {boolean}
+ */
+export function isValidUserAgent(request) {
+  const ua = request.headers.get('user-agent') || ''
+  if (!ua) return false
+  
+  // 检查是否包含允许的关键词
+  return ANTI_SCRAPING_CONFIG.ALLOWED_UA_KEYWORDS.some(keyword => 
+    ua.includes(keyword)
+  )
+}
+
+/**
+ * 检查 IP 是否在黑名单中
+ * @param {string} ip
+ * @param {D1Database} db
+ * @returns {Promise<boolean>}
+ */
+export async function isIPBlacklisted(ip, db) {
+  if (!db || ip === 'unknown') return false
+  
+  try {
+    const result = await db.prepare(
+      'SELECT 1 FROM rate_limits WHERE ip = ? AND is_blacklisted = 1 LIMIT 1'
+    ).bind(ip).first()
+    return !!result
+  } catch (e) {
+    console.error('检查黑名单失败:', e)
+    return false
+  }
+}
+
+/**
+ * 记录并检查请求频率
+ * @param {string} ip
+ * @param {D1Database} db
+ * @returns {Promise<{allowed: boolean, remaining: number}>}
+ */
+export async function checkRateLimit(ip, db) {
+  if (!db || ip === 'unknown') {
+    return { allowed: true, remaining: ANTI_SCRAPING_CONFIG.RATE_LIMIT.MAX_REQUESTS_PER_MINUTE }
+  }
+  
+  try {
+    const now = Date.now()
+    const windowStart = now - ANTI_SCRAPING_CONFIG.RATE_LIMIT.WINDOW_MS
+    
+    // 清理过期记录
+    await db.prepare(
+      'DELETE FROM rate_limits WHERE ip = ? AND created_at < ?'
+    ).bind(ip, new Date(windowStart).toISOString()).run()
+    
+    // 统计当前窗口内的请求数
+    const countResult = await db.prepare(
+      'SELECT COUNT(*) as count FROM rate_limits WHERE ip = ? AND created_at > ?'
+    ).bind(ip, new Date(windowStart).toISOString()).first()
+    
+    const currentCount = countResult?.count || 0
+    const maxRequests = ANTI_SCRAPING_CONFIG.RATE_LIMIT.MAX_REQUESTS_PER_MINUTE
+    
+    if (currentCount >= maxRequests) {
+      // 超过限制，标记为可疑
+      await db.prepare(
+        'INSERT OR REPLACE INTO rate_limits (ip, request_count, last_request_at, is_suspicious) VALUES (?, ?, ?, 1)'
+      ).bind(ip, currentCount + 1, new Date().toISOString()).run()
+      return { allowed: false, remaining: 0 }
+    }
+    
+    // 记录本次请求
+    await db.prepare(
+      'INSERT INTO rate_limits (ip, request_count, last_request_at) VALUES (?, 1, ?)'
+    ).bind(ip, new Date().toISOString()).run()
+    
+    return { allowed: true, remaining: maxRequests - currentCount - 1 }
+  } catch (e) {
+    console.error('检查速率限制失败:', e)
+    return { allowed: true, remaining: maxRequests }
+  }
+}
+
 /**
  * 尝试从 Cache API 读取缓存响应。
  * @param {Request} request 原始请求（用于生成缓存键）
