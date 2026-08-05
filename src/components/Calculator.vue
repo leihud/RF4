@@ -68,7 +68,7 @@
       <select v-model="selectedBuild" class="fish-select">
         <option :value="null">请选择方案</option>
         <option v-for="build in filteredBuildNames" :key="build.id" :value="build">
-          {{ build.name }} (总计{{ formatBuildPrice(build) }})
+          {{ build.name }} (总计{{ formatBuildPrice(build) }} | {{ formatBuildDate(build.created_at) }})
         </option>
       </select>
       
@@ -887,6 +887,12 @@ export default {
       const total = (build.rod_price || 0) + (build.reel_price || 0)
       if (!total) return '-'
       return total.toLocaleString('zh-CN')
+    },
+    /** 格式化方案创建时间 */
+    formatBuildDate(dateStr) {
+      if (!dateStr) return ''
+      const date = new Date(dateStr)
+      return date.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
     },
     /** 查询并应用选中的方案 */
     queryAndApplyBuild() {
