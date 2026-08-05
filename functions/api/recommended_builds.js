@@ -66,6 +66,27 @@ export async function onRequestPost(context) {
   }
 }
 
+export async function onRequestDelete(context) {
+  const { request, env } = context
+
+  try {
+    const body = await request.json()
+    const { id } = body
+
+    if (!id) {
+      return jsonResponse({ success: false, message: '缺少方案ID' }, 400)
+    }
+
+    const db = env.DB
+    await db.prepare('DELETE FROM recommended_builds WHERE id = ?').bind(id).run()
+
+    return jsonResponse({ success: true, message: '方案已删除' })
+  } catch (error) {
+    console.error('删除失败:', error)
+    return errorResponse(error)
+  }
+}
+
 export async function onRequestGet(context) {
   const { env, request } = context
   const url = new URL(request.url)

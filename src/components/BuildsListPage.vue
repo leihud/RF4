@@ -68,8 +68,9 @@
           </div>
           <div class="build-meta">
             <span class="meta-item">🎣 {{ getFishCount(build.suitable_fish) }} 种鱼</span>
-            <span class="meta-item">🗺️ {{ getMapCount(build.suitable_map) }} 张地图</span>
+            <span class="meta-item">️ {{ getMapCount(build.suitable_map) }} 张地图</span>
             <span class="meta-item">📅 {{ formatDate(build.created_at) }}</span>
+            <button v-if="showDeleteBtn" class="delete-btn" @click.stop="deleteBuild(build, index)" title="删除方案">️</button>
           </div>
         </div>
 
@@ -183,7 +184,9 @@ export default {
         map: ''
       },
       sortBy: 'newest',
-      expandedIndex: null
+      expandedIndex: null,
+      showDeleteBtn: false,
+      hKeyTimer: null
     }
   },
   computed: {
@@ -215,6 +218,10 @@ export default {
   },
   async mounted() {
     await this.loadBuilds()
+    document.addEventListener('keydown', this.handleKeyDown)
+  },
+  beforeUnmount() {
+    document.removeEventListener('keydown', this.handleKeyDown)
   },
   methods: {
     async loadBuilds() {
@@ -254,6 +261,42 @@ export default {
     formatPrice(price) {
       if (!price || price === 0) return '-'
       return price.toLocaleString('zh-CN')
+    },
+    handleKeyDown(e) {
+      if (e.key === 'h' || e.key === 'H') {
+        if (this.hKeyTimer) {
+          // 第二次按下，切换删除按钮
+          this.showDeleteBtn = !this.showDeleteBtn
+          clearTimeout(this.hKeyTimer)
+          this.hKeyTimer = null
+        } else {
+          // 第一次按下，设置计时器
+          this.hKeyTimer = setTimeout(() => {
+            this.hKeyTimer = null
+          }, 500)
+        }
+      }
+    },
+    async deleteBuild(build, index) {
+      if (!confirm(`确定要删除方案 "${build.name || '未命名'}" 吗？`)) return
+      try {
+        const response = await fetch('/api/recommended_builds', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: build.id })
+        })
+        const result = await response.json()
+        if (result.success) {
+          this.builds.splice(this.builds.indexOf(build), 1)
+          if (this.expandedIndex === index) {
+            this.expandedIndex = null
+          }
+        } else {
+          alert('删除失败：' + (result.error || result.message || '未知错误'))
+        }
+      } catch (error) {
+        alert('删除失败：' + error.message)
+      }
     },
   }
 }
@@ -421,6 +464,24 @@ export default {
 .meta-item {
   font-size: 13px;
   color: #666;
+}
+
+/* 删除按钮 */
+.delete-btn {
+  padding: 4px 8px;
+  border: 1px solid #e53935;
+  background-color: white;
+  color: #e53935;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+  margin-left: 8px;
+}
+
+.delete-btn:hover {
+  background-color: #e53935;
+  color: white;
 }
 
 /* 详情区域 */
