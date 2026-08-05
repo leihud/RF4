@@ -155,7 +155,7 @@
                 {{ build.main_line_material ? build.main_line_material : '' }}{{ build.main_line_tension }}kN
                 <span class="equip-chip-sub" v-if="build.main_line_wear > 0">磨损{{ build.main_line_wear }}%</span>
                 <span class="equip-chip-sub" v-if="build.main_line_diameter > 0">{{ build.main_line_diameter }}mm</span>
-                <span class="equip-chip-sub" v-if="build.main_line_length > 0">{{ build.main_line_length }}cm</span>
+                <span class="equip-chip-sub" v-if="build.main_line_length > 0">{{ build.main_line_length }}m</span>
               </span>
             </div>
             <div v-if="build.leader_line_tension > 0" class="equip-chip">
@@ -847,14 +847,14 @@ export default {
   background-color: #f8f9fa;
   border: 1px solid #e9ecef;
   border-radius: 6px;
-  font-size: 13px;
+  font-size: 14px;
   max-width: 100%;
 }
 
 .equip-chip-label {
   color: #1565c0;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 14px;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -863,11 +863,12 @@ export default {
   color: #333;
   font-weight: 500;
   white-space: nowrap;
+  font-size: 14px;
 }
 
 .equip-chip-sub {
   color: #888;
-  font-size: 12px;
+  font-size: 13px;
   white-space: nowrap;
 }
 
