@@ -242,29 +242,33 @@ export default {
     },
     getFilteredRodList(entry) {
       if (!Array.isArray(this.rodList)) return []
-      // 无搜索词时不显示任何结果
-      if (!entry.debouncedSearch || !entry.debouncedSearch.trim()) return []
       let filtered = this.rodList
 
       if (entry.selectedCategory && entry.selectedCategory !== '全部') {
         filtered = filtered.filter(item => item.form === entry.selectedCategory)
       }
 
-      filtered = searchAndRankEquipment(filtered, entry.debouncedSearch, EQUIPMENT_SEARCH_FIELDS)
+      if (entry.debouncedSearch && entry.debouncedSearch.trim()) {
+        filtered = searchAndRankEquipment(filtered, entry.debouncedSearch, EQUIPMENT_SEARCH_FIELDS)
+      } else {
+        filtered = sortByPanelTension(filtered)
+      }
 
       return filtered
     },
     getFilteredReelList(entry) {
       if (!Array.isArray(this.reelList)) return []
-      // 无搜索词时不显示任何结果
-      if (!entry.debouncedSearch || !entry.debouncedSearch.trim()) return []
       let filtered = this.reelList
 
       if (entry.selectedCategory && entry.selectedCategory !== '全部') {
         filtered = filtered.filter(item => item.form === entry.selectedCategory)
       }
 
-      filtered = searchAndRankEquipment(filtered, entry.debouncedSearch, EQUIPMENT_SEARCH_FIELDS)
+      if (entry.debouncedSearch && entry.debouncedSearch.trim()) {
+        filtered = searchAndRankEquipment(filtered, entry.debouncedSearch, EQUIPMENT_SEARCH_FIELDS)
+      } else {
+        filtered = sortByPanelTension(filtered)
+      }
 
       return filtered
     },
