@@ -217,6 +217,7 @@ export default {
     await Promise.all([this.loadRods(), this.loadReels()])
   },
   methods: {
+    getRatingAlias,
     async loadRods() {
       try {
         const res = await fetch('/api/rods')
