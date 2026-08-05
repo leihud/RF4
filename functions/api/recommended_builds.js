@@ -2,14 +2,14 @@ import { jsonResponse, errorResponse } from './_shared.js'
 
 const INSERT_SQL = `INSERT INTO recommended_builds (
   name,
-  rod_model, rod_name, rod_category, rod_price,
-  reel_model, reel_name, reel_category, reel_price,
+  rod_model, rod_name, rod_category, rod_price, rod_tension,
+  reel_model, reel_name, reel_category, reel_price, reel_tension,
   main_line_tension, main_line_wear, main_line_material, main_line_diameter, main_line_length,
   leader_line_tension, leader_line_wear, leader_line_material, leader_line_diameter, leader_line_length,
   hook_name,
   calculation_rule, friction,
   description, suitable_fish, suitable_map
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 
 export async function onRequestPost(context) {
   const { request, env } = context
@@ -31,10 +31,12 @@ export async function onRequestPost(context) {
       build.rodName || '',
       build.rodCategory || '',
       build.rodPrice || 0,
+      build.rodTension || 0,
       build.reelModel || '',
       build.reelName || '',
       build.reelCategory || '',
       build.reelPrice || 0,
+      build.reelTension || 0,
       build.mainLineTension || 0,
       build.mainLineWear || 0,
       build.mainLineMaterial || '',

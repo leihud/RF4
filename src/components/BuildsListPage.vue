@@ -113,8 +113,12 @@
           <!-- 装备分析 -->
           <div class="analysis-row">
             <div class="analysis-stat">
-              <span class="stat-label">总拉力</span>
-              <span class="stat-value stat-tension">{{ getTotalTension(build) }} kN</span>
+              <span class="stat-label">鱼竿拉力</span>
+              <span class="stat-value stat-tension">{{ build.rod_tension || 0 }} kN</span>
+            </div>
+            <div class="analysis-stat">
+              <span class="stat-label">渔轮拉力</span>
+              <span class="stat-value stat-tension">{{ build.reel_tension || 0 }} kN</span>
             </div>
             <div class="analysis-stat">
               <span class="stat-label">鱼竿</span>
@@ -246,9 +250,6 @@ export default {
         hour: '2-digit',
         minute: '2-digit'
       })
-    },
-    getTotalTension(build) {
-      return (build.main_line_tension || 0) + (build.leader_line_tension || 0)
     },
     formatPrice(price) {
       if (!price || price === 0) return '-'
@@ -446,6 +447,7 @@ export default {
   border: 1px solid #e9ecef;
   border-radius: 6px;
   font-size: 13px;
+  max-width: 100%;
 }
 
 .equip-chip-label {
@@ -453,16 +455,19 @@ export default {
   font-weight: 600;
   font-size: 12px;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .equip-chip-value {
   color: #333;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .equip-chip-sub {
   color: #888;
   font-size: 12px;
+  white-space: nowrap;
 }
 
 /* 装备分析行 */
