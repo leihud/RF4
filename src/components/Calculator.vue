@@ -5,6 +5,7 @@
       <h1>装备计算器</h1>
       <div class="header-buttons">
         <button class="compare-nav-btn" @click="goToCompare">参数对比</button>
+        <button class="value-nav-btn" @click="goToValue">装备价值计算</button>
         <button class="builds-nav-btn" @click="goToBuildsList">装备方案汇总</button>
         <button class="import-nav-btn" @click="goToImport">数据导入</button>
         <button class="rf4-stat-btn" @click="openRf4Stat" rel="noopener noreferrer" target="_blank">RF4 数据站</button>
@@ -710,6 +711,9 @@ export default {
     goToCompare() {
       this.$router.push(ROUTES.COMPARE)
     },
+    goToValue() {
+      this.$router.push(ROUTES.VALUE)
+    },
     goToBuildsList() {
       this.$router.push('/builds')
     },
@@ -1043,6 +1047,22 @@ h1 {
 
 .compare-nav-btn:hover {
   background-color: #e3f2fd;
+}
+
+.value-nav-btn {
+  padding: 10px 24px;
+  border: 2px solid #43a047;
+  background-color: white;
+  color: #43a047;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.value-nav-btn:hover {
+  background-color: #e8f5e9;
 }
 
 .header-buttons {

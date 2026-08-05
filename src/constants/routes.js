@@ -10,5 +10,7 @@ export const ROUTES = Object.freeze({
   /** 装备参数对比 */
   COMPARE: '/compare',
   /** Excel/csv 装备数据导入 */
-  IMPORT: '/import'
+  IMPORT: '/import',
+  /** 装备价值统计 */
+  VALUE: '/value'
 })

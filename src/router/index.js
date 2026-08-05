@@ -23,6 +23,11 @@ const routes = [
     path: ROUTES.IMPORT,
     name: 'Import',
     component: () => import('../components/ImportPage.vue')
+  },
+  {
+    path: ROUTES.VALUE,
+    name: 'Value',
+    component: () => import('../components/ValuePage.vue')
   }
 ]
 
