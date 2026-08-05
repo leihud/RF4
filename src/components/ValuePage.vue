@@ -48,7 +48,7 @@
               @mousedown.prevent="selectEquipment(index, 'rod', rod, entry)"
             >
               <span class="dropdown-name">{{ rod.model }}</span>
-              <span class="dropdown-category">{{ rod.subCategory || rod.category }}</span>
+              <span class="dropdown-category">{{ rod.rating }}</span>
               <span v-if="rod.ratingAlias && rod.ratingAlias !== '常规'" class="dropdown-rating">{{ rod.ratingAlias }}</span>
             </div>
             <div v-if="getFilteredRodList(entry).length === 0" class="dropdown-empty">未找到匹配的装备</div>
@@ -110,7 +110,7 @@
               @mousedown.prevent="selectEquipment(index, 'reel', reel, entry)"
             >
               <span class="dropdown-name">{{ reel.model }}</span>
-              <span class="dropdown-category">{{ reel.subCategory || reel.category }}</span>
+              <span class="dropdown-category">{{ reel.rating }}</span>
               <span v-if="reel.ratingAlias && reel.ratingAlias !== '常规'" class="dropdown-rating">{{ reel.ratingAlias }}</span>
             </div>
             <div v-if="getFilteredReelList(entry).length === 0" class="dropdown-empty">未找到匹配的装备</div>
