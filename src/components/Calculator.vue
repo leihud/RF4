@@ -435,7 +435,11 @@ export default {
   mounted() {
     this.loadEquipmentData()
     document.addEventListener('click', this.handleClickOutside)
-    this.showDisclaimer = true
+    // 仅在当前浏览器会话首次打开时弹出免责声明
+    if (!sessionStorage.getItem('disclaimer_shown')) {
+      this.showDisclaimer = true
+      sessionStorage.setItem('disclaimer_shown', '1')
+    }
     this.restoreFromUrl()
     this.loadMapsAndFishSpecies()
     this.loadRecommendedBuilds()
