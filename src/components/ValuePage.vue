@@ -48,7 +48,7 @@
               @mousedown.prevent="selectEquipment(index, 'rod', rod, entry)"
             >
               <span class="dropdown-name">{{ rod.model }}</span>
-              <span class="dropdown-type">{{ rod.subCategory || rod.category }}</span>
+              <span class="dropdown-type">{{ rod.category }}</span>
               <span class="dropdown-category">{{ rod.rating }}</span>
               <span v-if="rod.ratingAlias && rod.ratingAlias !== '常规'" class="dropdown-rating">{{ rod.ratingAlias }}</span>
             </div>
@@ -111,7 +111,7 @@
               @mousedown.prevent="selectEquipment(index, 'reel', reel, entry)"
             >
               <span class="dropdown-name">{{ reel.model }}</span>
-              <span class="dropdown-type">{{ reel.subCategory || reel.category }}</span>
+              <span class="dropdown-type">{{ reel.category }}</span>
               <span class="dropdown-category">{{ reel.rating }}</span>
               <span v-if="reel.ratingAlias && reel.ratingAlias !== '常规'" class="dropdown-rating">{{ reel.ratingAlias }}</span>
             </div>
@@ -230,12 +230,12 @@ export default {
     },
     getRodCategoryOptions(entry) {
       if (!Array.isArray(this.rodList)) return []
-      const categories = [...new Set(this.rodList.map(item => item.subCategory || item.category))].filter(Boolean)
+      const categories = [...new Set(this.rodList.map(item => item.category))].filter(Boolean)
       return ['全部', ...categories]
     },
     getReelCategoryOptions(entry) {
       if (!Array.isArray(this.reelList)) return []
-      const categories = [...new Set(this.reelList.map(item => item.subCategory || item.category))].filter(Boolean)
+      const categories = [...new Set(this.reelList.map(item => item.category))].filter(Boolean)
       return ['全部', ...categories]
     },
     getFilteredRodList(entry) {
@@ -243,7 +243,7 @@ export default {
       let filtered = this.rodList
 
       if (entry.selectedCategory && entry.selectedCategory !== '全部') {
-        filtered = filtered.filter(item => (item.subCategory || item.category) === entry.selectedCategory)
+        filtered = filtered.filter(item => item.category === entry.selectedCategory)
       }
 
       if (entry.debouncedSearch && entry.debouncedSearch.trim()) {
@@ -259,7 +259,7 @@ export default {
       let filtered = this.reelList
 
       if (entry.selectedCategory && entry.selectedCategory !== '全部') {
-        filtered = filtered.filter(item => (item.subCategory || item.category) === entry.selectedCategory)
+        filtered = filtered.filter(item => item.category === entry.selectedCategory)
       }
 
       if (entry.debouncedSearch && entry.debouncedSearch.trim()) {
