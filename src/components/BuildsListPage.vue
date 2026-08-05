@@ -9,7 +9,8 @@
     <div class="search-section">
       <div class="search-row">
         <input
-          v-model="searchQuery.name"
+          v-model="searchInput"
+          @input="onSearchInput"
           type="text"
           class="search-input"
           placeholder="搜索方案名称..."
@@ -97,8 +98,23 @@
       共找到 {{ filteredBuilds.length }} 个方案
     </div>
 
+    <!-- 加载骨架屏 -->
+    <div v-if="isLoading" class="skeleton-container">
+      <div v-for="i in 3" :key="i" class="skeleton-card">
+        <div class="skeleton-header">
+          <div class="skeleton-line skeleton-title"></div>
+          <div class="skeleton-line skeleton-meta"></div>
+        </div>
+        <div class="skeleton-body">
+          <div class="skeleton-line skeleton-chip"></div>
+          <div class="skeleton-line skeleton-chip"></div>
+          <div class="skeleton-line skeleton-chip"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- 方案列表 -->
-    <div class="builds-container">
+    <div v-else class="builds-container">
       <div 
         v-for="(build, index) in filteredBuilds" 
         :key="index"
@@ -216,6 +232,13 @@
     <div class="create-section">
       <button class="create-btn" @click="$router.push('/')">+ 创建新方案</button>
     </div>
+
+    <!-- Toast 提示 -->
+    <transition name="toast">
+      <div v-if="toast.visible" class="toast" :class="'toast-' + toast.type">
+        {{ toast.message }}
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -244,7 +267,12 @@ export default {
       rodSearch: '',
       reelSearch: '',
       fishSearch: '',
-      mapSearch: ''
+      mapSearch: '',
+      isLoading: false,
+      toast: { visible: false, message: '', type: 'info' },
+      toastTimer: null,
+      searchInput: '',
+      searchDebounceTimer: null
     }
   },
   computed: {
@@ -300,6 +328,7 @@ export default {
     }
   },
   async mounted() {
+    this.isLoading = true
     await Promise.all([
       this.loadBuilds(),
       this.loadRods(),
@@ -307,6 +336,7 @@ export default {
       this.loadFishSpecies(),
       this.loadMaps()
     ])
+    this.isLoading = false
     document.addEventListener('keydown', this.handleKeyDown)
     document.addEventListener('click', this.handleClickOutside)
   },
@@ -324,7 +354,7 @@ export default {
         }
       } catch (error) {
         console.error('加载装备方案失败:', error)
-        alert('加载失败：' + error.message)
+        this.showToast('加载失败：' + error.message, 'error')
       }
     },
     async loadRods() {
@@ -428,11 +458,24 @@ export default {
             this.expandedIndex = null
           }
         } else {
-          alert('删除失败：' + (result.error || result.message || '未知错误'))
+          this.showToast('删除失败：' + (result.error || result.message || '未知错误'), 'error')
         }
       } catch (error) {
-        alert('删除失败：' + error.message)
+        this.showToast('删除失败：' + error.message, 'error')
       }
+    },
+    showToast(message, type = 'info') {
+      this.toast = { visible: true, message, type }
+      if (this.toastTimer) clearTimeout(this.toastTimer)
+      this.toastTimer = setTimeout(() => {
+        this.toast.visible = false
+      }, 3000)
+    },
+    onSearchInput() {
+      if (this.searchDebounceTimer) clearTimeout(this.searchDebounceTimer)
+      this.searchDebounceTimer = setTimeout(() => {
+        this.searchQuery.name = this.searchInput
+      }, 300)
     },
   }
 }
@@ -972,5 +1015,100 @@ export default {
     flex-direction: column;
     gap: 10px;
   }
+}
+
+/* 骨架屏 */
+.skeleton-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.skeleton-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.skeleton-header {
+  margin-bottom: 16px;
+}
+
+.skeleton-body {
+  display: flex;
+  gap: 12px;
+}
+
+.skeleton-line {
+  height: 16px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeleton-title {
+  width: 40%;
+  height: 20px;
+  margin-bottom: 12px;
+}
+
+.skeleton-meta {
+  width: 60%;
+  height: 14px;
+}
+
+.skeleton-chip {
+  width: 120px;
+  height: 32px;
+  border-radius: 16px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Toast 提示 */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 90%;
+  word-break: break-word;
+}
+
+.toast-info {
+  background-color: #1565c0;
+  color: white;
+}
+
+.toast-error {
+  background-color: #c62828;
+  color: white;
+}
+
+.toast-success {
+  background-color: #2e7d32;
+  color: white;
+}
+
+.toast-enter-active,
+.toast-leave-active {
+  transition: all 0.3s ease;
+}
+
+.toast-enter-from,
+.toast-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(20px);
 }
 </style>

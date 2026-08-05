@@ -354,6 +354,13 @@
         </div>
       </div>
     </div>
+
+    <!-- Toast 提示 -->
+    <transition name="toast">
+      <div v-if="toast.visible" class="toast" :class="'toast-' + toast.type">
+        {{ toast.message }}
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -381,7 +388,7 @@ import {
 } from '../utils/tension.js'
 import { getMergedAdaptWeight } from '../utils/display.js'
 import { sanitizeEquipmentFields, safeToNumber, safeToString } from '../utils/sanitize.js'
-import { loadEquipmentData } from '../utils/equipmentLoader.js'
+import { loadRodAndReelData } from '../utils/equipmentLoader.js'
 import { encodePreset, decodePreset, getShareUrl } from '../utils/presetShare.js'
 import DisclaimerModal from './calculator/DisclaimerModal.vue'
 import EquipmentSearchDropdown from './calculator/EquipmentSearchDropdown.vue'
@@ -429,7 +436,9 @@ export default {
       mapsList: [],
       fishSpeciesList: [],
       recommendedBuilds: [],
-      fishSearchKeyword: ''
+      fishSearchKeyword: '',
+      toast: { visible: false, message: '', type: 'info' },
+      toastTimer: null
     }
   },
   mounted() {
@@ -615,8 +624,8 @@ export default {
     async loadEquipmentData() {
       this.equipmentData = []
       this.isLoading = true
-      const { data, error } = await loadEquipmentData('/api/equipment')
-      this.equipmentData = data
+      const { rodData, reelData, error } = await loadRodAndReelData()
+      this.equipmentData = [...rodData, ...reelData]
       this.dataLoadError = error
       this.isLoading = false
       // 数据就绪后恢复 URL 中的装备方案
@@ -638,7 +647,7 @@ export default {
       if (safe.equipmentType === '渔轮') {
         const rod = this.selectedEquipmentMap['鱼竿']
         if (rod && !isRodReelCompatible(rod, safe)) {
-          alert('当前鱼竿无法装备此类型渔轮')
+          this.showToast('当前鱼竿无法装备此类型渔轮', 'error')
           return
         }
       }
@@ -869,18 +878,18 @@ export default {
         const result = await response.json()
         console.log('提交结果:', result)
         if (result.success) {
-          alert('推荐装备搭配已保存！')
+          this.showToast('推荐装备搭配已保存！', 'success')
           this.closeSubmitModal()
           this.submitForm = { name: '', description: '', suitableFish: [], suitableMap: [] }
           // 刷新页面以更新方案列表
           window.location.reload()
         } else {
           const errorMsg = result.error || result.message || '未知错误'
-          alert('保存失败：' + errorMsg)
+          this.showToast('保存失败：' + errorMsg, 'error')
           console.error('保存失败详情:', result)
         }
       } catch (error) {
-        alert('提交失败：' + error.message)
+        this.showToast('提交失败：' + error.message, 'error')
         console.error('提交异常:', error)
       } finally {
         this.isSubmitting = false
@@ -901,7 +910,7 @@ export default {
     /** 查询并应用选中的方案 */
     queryAndApplyBuild() {
       if (!this.selectedBuild) {
-        alert('请先选择目标方案')
+        this.showToast('请先选择目标方案', 'error')
         return
       }
       
@@ -985,6 +994,13 @@ export default {
     /** 显示/隐藏鱼种下拉列表 */
     toggleFishDropdown() {
       this.showFishDropdown = !this.showFishDropdown
+    },
+    showToast(message, type = 'info') {
+      this.toast = { visible: true, message, type }
+      if (this.toastTimer) clearTimeout(this.toastTimer)
+      this.toastTimer = setTimeout(() => {
+        this.toast.visible = false
+      }, 3000)
     }
   }
 }
@@ -1977,5 +1993,47 @@ h2 {
   .tension-input {
     width: 45px;
   }
+}
+
+/* Toast 提示 */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 90%;
+  word-break: break-word;
+}
+
+.toast-info {
+  background-color: #1565c0;
+  color: white;
+}
+
+.toast-error {
+  background-color: #c62828;
+  color: white;
+}
+
+.toast-success {
+  background-color: #2e7d32;
+  color: white;
+}
+
+.toast-enter-active,
+.toast-leave-active {
+  transition: all 0.3s ease;
+}
+
+.toast-enter-from,
+.toast-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(20px);
 }
 </style>
