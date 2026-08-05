@@ -602,7 +602,7 @@ export default {
 }
 
 .dropdown-name {
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-width: 0;
   font-size: 16px;
   font-weight: 600;
