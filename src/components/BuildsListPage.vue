@@ -27,7 +27,9 @@
             <div class="dropdown-list">
               <div v-for="rod in filteredRodList" :key="rod.model || rod.equipmentName" class="dropdown-item" :class="{ selected: searchQuery.rod.includes(rod.equipmentName || rod.model) }" @click.stop="toggleMultiSelect('rod', rod.equipmentName || rod.model)">
                 <span class="checkbox-icon">{{ searchQuery.rod.includes(rod.equipmentName || rod.model) ? '☑' : '☐' }}</span>
-                <span class="item-text">{{ rod.equipmentName || rod.model }}</span>
+                <span class="item-text">{{ rod.model }}</span>
+                <span class="item-category">{{ rod.subCategory || rod.category }}</span>
+                <span v-if="rod.ratingAlias && rod.ratingAlias !== '常规'" class="item-rating">{{ rod.ratingAlias }}</span>
               </div>
             </div>
           </div>
@@ -44,7 +46,9 @@
             <div class="dropdown-list">
               <div v-for="reel in filteredReelList" :key="reel.model || reel.equipmentName" class="dropdown-item" :class="{ selected: searchQuery.reel.includes(reel.equipmentName || reel.model) }" @click.stop="toggleMultiSelect('reel', reel.equipmentName || reel.model)">
                 <span class="checkbox-icon">{{ searchQuery.reel.includes(reel.equipmentName || reel.model) ? '☑' : '☐' }}</span>
-                <span class="item-text">{{ reel.equipmentName || reel.model }}</span>
+                <span class="item-text">{{ reel.model }}</span>
+                <span class="item-category">{{ reel.subCategory || reel.category }}</span>
+                <span v-if="reel.ratingAlias && reel.ratingAlias !== '常规'" class="item-rating">{{ reel.ratingAlias }}</span>
               </div>
             </div>
           </div>
@@ -245,6 +249,8 @@
 </template>
 
 <script>
+import { searchAndRankEquipment, EQUIPMENT_SEARCH_FIELDS } from '../utils/search.js'
+
 export default {
   name: 'BuildsListPage',
   data() {
@@ -281,23 +287,19 @@ export default {
   computed: {
     filteredRodList() {
       if (!this.rodSearch.trim()) return this.rodList
-      const kw = this.rodSearch.toLowerCase()
-      return this.rodList.filter(r => (r.equipmentName || r.model || '').toLowerCase().includes(kw))
+      return searchAndRankEquipment(this.rodList, this.rodSearch, EQUIPMENT_SEARCH_FIELDS)
     },
     filteredReelList() {
       if (!this.reelSearch.trim()) return this.reelList
-      const kw = this.reelSearch.toLowerCase()
-      return this.reelList.filter(r => (r.equipmentName || r.model || '').toLowerCase().includes(kw))
+      return searchAndRankEquipment(this.reelList, this.reelSearch, EQUIPMENT_SEARCH_FIELDS)
     },
     filteredFishList() {
       if (!this.fishSearch.trim()) return this.fishList
-      const kw = this.fishSearch.toLowerCase()
-      return this.fishList.filter(f => f.display_name.toLowerCase().includes(kw))
+      return searchAndRankEquipment(this.fishList, this.fishSearch, ['display_name'])
     },
     filteredMapList() {
       if (!this.mapSearch.trim()) return this.mapList
-      const kw = this.mapSearch.toLowerCase()
-      return this.mapList.filter(m => m.display_name.toLowerCase().includes(kw))
+      return searchAndRankEquipment(this.mapList, this.mapSearch, ['display_name'])
     },
     filteredBuilds() {
       let result = this.builds.filter(build => {
@@ -699,6 +701,42 @@ export default {
 .item-text {
   font-size: 14px;
   color: #333;
+  flex: 1;
+  min-width: 0;
+}
+
+.item-category {
+  flex: 0 0 auto;
+  min-width: 56px;
+  max-width: 120px;
+  padding: 3px 10px;
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-rating {
+  flex: 0 0 auto;
+  min-width: 50px;
+  max-width: 100px;
+  padding: 3px 10px;
+  background-color: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* 统计信息 */

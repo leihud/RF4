@@ -12,20 +12,46 @@
         <button class="add-btn" @click="addRodEntry">+ 添加鱼竿</button>
       </div>
       <div v-for="(entry, index) in rodEntries" :key="'rod-' + index" class="entry-row">
-        <div class="multi-select-wrapper">
-          <div class="multi-select-trigger" @click="toggleDropdown('rod-' + index)">
-            <span v-if="entry.equipment" class="selected-text">{{ entry.equipment.equipmentName || entry.equipment.model }}</span>
-            <span v-else class="placeholder-text">选择鱼竿...</span>
-            <span class="dropdown-arrow">{{ showDropdown === 'rod-' + index ? '▲' : '▼' }}</span>
+        <div class="search-dropdown">
+          <div class="search-input-wrapper">
+            <input
+              type="text"
+              class="search-input"
+              v-model="entry.search"
+              @input="onSearchInput(entry)"
+              placeholder="搜索鱼竿..."
+              @focus="entry.isDropdownOpen = true"
+              @blur="onSearchBlur(entry, 'rod', index)"
+            />
+            <span class="search-icon">🔍</span>
           </div>
-          <div v-if="showDropdown === 'rod-' + index" class="multi-select-dropdown">
-            <input v-model="entry.search" type="text" class="dropdown-search" placeholder="搜索鱼竿..." @click.stop />
-            <div class="dropdown-list">
-              <div v-for="rod in getFilteredRodList(entry.search)" :key="rod.id" class="dropdown-item" @click.stop="selectEquipment(index, 'rod', rod)">
-                <span class="item-text">{{ rod.equipmentName || rod.model }}</span>
-                <span class="item-price">{{ formatPrice(rod.silverPrice) }} 银币</span>
-              </div>
+          <div v-if="entry.isDropdownOpen && getRodCategoryOptions(entry).length > 0" class="category-filter-header">
+            <button class="category-toggle-btn" @click.stop="entry.showCategoryFilter = !entry.showCategoryFilter">
+              {{ entry.showCategoryFilter ? '▼' : '▲' }} 装备类型
+            </button>
+          </div>
+          <div v-if="entry.isDropdownOpen && entry.showCategoryFilter" class="category-filter-wrapper">
+            <button
+              v-for="cat in getRodCategoryOptions(entry)"
+              :key="cat"
+              :class="['category-filter-btn', { active: entry.selectedCategory === cat }]"
+              @click.stop="entry.selectedCategory = cat"
+            >
+              {{ cat }}
+            </button>
+          </div>
+          <div v-if="entry.isDropdownOpen" class="dropdown-list">
+            <div
+              v-for="rod in getFilteredRodList(entry)"
+              :key="rod.id"
+              class="dropdown-item"
+              @mousedown.prevent="selectEquipment(index, 'rod', rod, entry)"
+            >
+              <span class="dropdown-name">{{ rod.model }}</span>
+              <span class="dropdown-category">{{ rod.subCategory || rod.category }}</span>
+              <span v-if="rod.ratingAlias && rod.ratingAlias !== '常规'" class="dropdown-rating">{{ rod.ratingAlias }}</span>
             </div>
+            <div v-if="getFilteredRodList(entry).length === 0" class="dropdown-empty">未找到匹配的装备</div>
           </div>
         </div>
         <div class="quantity-input-wrapper">
@@ -48,20 +74,46 @@
         <button class="add-btn" @click="addReelEntry">+ 添加渔轮</button>
       </div>
       <div v-for="(entry, index) in reelEntries" :key="'reel-' + index" class="entry-row">
-        <div class="multi-select-wrapper">
-          <div class="multi-select-trigger" @click="toggleDropdown('reel-' + index)">
-            <span v-if="entry.equipment" class="selected-text">{{ entry.equipment.equipmentName || entry.equipment.model }}</span>
-            <span v-else class="placeholder-text">选择渔轮...</span>
-            <span class="dropdown-arrow">{{ showDropdown === 'reel-' + index ? '▲' : '▼' }}</span>
+        <div class="search-dropdown">
+          <div class="search-input-wrapper">
+            <input
+              type="text"
+              class="search-input"
+              v-model="entry.search"
+              @input="onSearchInput(entry)"
+              placeholder="搜索渔轮..."
+              @focus="entry.isDropdownOpen = true"
+              @blur="onSearchBlur(entry, 'reel', index)"
+            />
+            <span class="search-icon">🔍</span>
           </div>
-          <div v-if="showDropdown === 'reel-' + index" class="multi-select-dropdown">
-            <input v-model="entry.search" type="text" class="dropdown-search" placeholder="搜索渔轮..." @click.stop />
-            <div class="dropdown-list">
-              <div v-for="reel in getFilteredReelList(entry.search)" :key="reel.id" class="dropdown-item" @click.stop="selectEquipment(index, 'reel', reel)">
-                <span class="item-text">{{ reel.equipmentName || reel.model }}</span>
-                <span class="item-price">{{ formatPrice(reel.silverPrice) }} 银币</span>
-              </div>
+          <div v-if="entry.isDropdownOpen && getReelCategoryOptions(entry).length > 0" class="category-filter-header">
+            <button class="category-toggle-btn" @click.stop="entry.showCategoryFilter = !entry.showCategoryFilter">
+              {{ entry.showCategoryFilter ? '▼' : '▲' }} 装备类型
+            </button>
+          </div>
+          <div v-if="entry.isDropdownOpen && entry.showCategoryFilter" class="category-filter-wrapper">
+            <button
+              v-for="cat in getReelCategoryOptions(entry)"
+              :key="cat"
+              :class="['category-filter-btn', { active: entry.selectedCategory === cat }]"
+              @click.stop="entry.selectedCategory = cat"
+            >
+              {{ cat }}
+            </button>
+          </div>
+          <div v-if="entry.isDropdownOpen" class="dropdown-list">
+            <div
+              v-for="reel in getFilteredReelList(entry)"
+              :key="reel.id"
+              class="dropdown-item"
+              @mousedown.prevent="selectEquipment(index, 'reel', reel, entry)"
+            >
+              <span class="dropdown-name">{{ reel.model }}</span>
+              <span class="dropdown-category">{{ reel.subCategory || reel.category }}</span>
+              <span v-if="reel.ratingAlias && reel.ratingAlias !== '常规'" class="dropdown-rating">{{ reel.ratingAlias }}</span>
             </div>
+            <div v-if="getFilteredReelList(entry).length === 0" class="dropdown-empty">未找到匹配的装备</div>
           </div>
         </div>
         <div class="quantity-input-wrapper">
@@ -116,6 +168,8 @@
 </template>
 
 <script>
+import { searchAndRankEquipment, sortByPanelTension, EQUIPMENT_SEARCH_FIELDS } from '../utils/search.js'
+
 export default {
   name: 'ValuePage',
   data() {
@@ -123,8 +177,7 @@ export default {
       rodList: [],
       reelList: [],
       rodEntries: [],
-      reelEntries: [],
-      showDropdown: null
+      reelEntries: []
     }
   },
   computed: {
@@ -157,10 +210,6 @@ export default {
   },
   async mounted() {
     await Promise.all([this.loadRods(), this.loadReels()])
-    document.addEventListener('click', this.handleClickOutside)
-  },
-  beforeUnmount() {
-    document.removeEventListener('click', this.handleClickOutside)
   },
   methods: {
     async loadRods() {
@@ -177,21 +226,71 @@ export default {
         this.reelList = Array.isArray(result) ? result : (result.data || [])
       } catch (e) { console.error('加载渔轮失败:', e) }
     },
-    getFilteredRodList(search) {
-      if (!search || !search.trim()) return this.rodList
-      const kw = search.toLowerCase()
-      return this.rodList.filter(r => (r.equipmentName || r.model || '').toLowerCase().includes(kw))
+    getRodCategoryOptions(entry) {
+      if (!Array.isArray(this.rodList)) return []
+      const categories = [...new Set(this.rodList.map(item => item.subCategory || item.category))].filter(Boolean)
+      return ['全部', ...categories]
     },
-    getFilteredReelList(search) {
-      if (!search || !search.trim()) return this.reelList
-      const kw = search.toLowerCase()
-      return this.reelList.filter(r => (r.equipmentName || r.model || '').toLowerCase().includes(kw))
+    getReelCategoryOptions(entry) {
+      if (!Array.isArray(this.reelList)) return []
+      const categories = [...new Set(this.reelList.map(item => item.subCategory || item.category))].filter(Boolean)
+      return ['全部', ...categories]
+    },
+    getFilteredRodList(entry) {
+      if (!Array.isArray(this.rodList)) return []
+      let filtered = this.rodList
+
+      if (entry.selectedCategory && entry.selectedCategory !== '全部') {
+        filtered = filtered.filter(item => (item.subCategory || item.category) === entry.selectedCategory)
+      }
+
+      if (entry.debouncedSearch && entry.debouncedSearch.trim()) {
+        filtered = searchAndRankEquipment(filtered, entry.debouncedSearch, EQUIPMENT_SEARCH_FIELDS)
+      } else {
+        filtered = sortByPanelTension(filtered)
+      }
+
+      return filtered
+    },
+    getFilteredReelList(entry) {
+      if (!Array.isArray(this.reelList)) return []
+      let filtered = this.reelList
+
+      if (entry.selectedCategory && entry.selectedCategory !== '全部') {
+        filtered = filtered.filter(item => (item.subCategory || item.category) === entry.selectedCategory)
+      }
+
+      if (entry.debouncedSearch && entry.debouncedSearch.trim()) {
+        filtered = searchAndRankEquipment(filtered, entry.debouncedSearch, EQUIPMENT_SEARCH_FIELDS)
+      } else {
+        filtered = sortByPanelTension(filtered)
+      }
+
+      return filtered
     },
     addRodEntry() {
-      this.rodEntries.push({ equipment: null, quantity: 1, search: '' })
+      this.rodEntries.push({
+        equipment: null,
+        quantity: 1,
+        search: '',
+        debouncedSearch: '',
+        searchTimer: null,
+        isDropdownOpen: false,
+        selectedCategory: '',
+        showCategoryFilter: false
+      })
     },
     addReelEntry() {
-      this.reelEntries.push({ equipment: null, quantity: 1, search: '' })
+      this.reelEntries.push({
+        equipment: null,
+        quantity: 1,
+        search: '',
+        debouncedSearch: '',
+        searchTimer: null,
+        isDropdownOpen: false,
+        selectedCategory: '',
+        showCategoryFilter: false
+      })
     },
     removeRodEntry(index) {
       this.rodEntries.splice(index, 1)
@@ -199,26 +298,31 @@ export default {
     removeReelEntry(index) {
       this.reelEntries.splice(index, 1)
     },
-    toggleDropdown(key) {
-      this.showDropdown = this.showDropdown === key ? null : key
-    },
-    selectEquipment(index, type, equipment) {
+    selectEquipment(index, type, equipment, entry) {
       if (type === 'rod') {
         this.rodEntries[index].equipment = equipment
-        this.rodEntries[index].search = ''
+        this.rodEntries[index].search = equipment.model
       } else {
         this.reelEntries[index].equipment = equipment
-        this.reelEntries[index].search = ''
+        this.reelEntries[index].search = equipment.model
       }
-      this.showDropdown = null
+      entry.isDropdownOpen = false
     },
-    handleClickOutside(e) {
-      const wrappers = this.$el.querySelectorAll('.multi-select-wrapper')
-      let inside = false
-      for (const w of wrappers) {
-        if (w.contains(e.target)) { inside = true; break }
-      }
-      if (!inside) this.showDropdown = null
+    onSearchInput(entry) {
+      if (entry.searchTimer) clearTimeout(entry.searchTimer)
+      entry.searchTimer = setTimeout(() => {
+        entry.debouncedSearch = entry.search
+      }, 200)
+    },
+    onSearchBlur(entry, type, index) {
+      // 延迟关闭，让点击事件先触发
+      setTimeout(() => {
+        entry.isDropdownOpen = false
+        // 如果已选择装备，恢复显示model
+        if (entry.equipment) {
+          entry.search = entry.equipment.model
+        }
+      }, 200)
     },
     formatPrice(price) {
       if (!price || price === 0) return '0'
@@ -311,95 +415,181 @@ export default {
   margin-bottom: 0;
 }
 
-.multi-select-wrapper {
-  flex: 1;
+.search-dropdown {
   position: relative;
+  flex: 1;
+  min-width: 0;
 }
 
-.multi-select-trigger {
+.search-input-wrapper {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 32px 8px 12px;
+  border: 1px solid #42b983;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #2c3e50;
   background-color: white;
-  cursor: pointer;
-  transition: border-color 0.2s;
-  min-height: 42px;
+  box-sizing: border-box;
 }
 
-.multi-select-trigger:hover {
-  border-color: #1565c0;
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.3);
 }
 
-.selected-text {
-  color: #333;
-  font-weight: 500;
-  font-size: 14px;
-}
-
-.placeholder-text {
+.search-input::placeholder {
   color: #999;
-  font-size: 14px;
 }
 
-.dropdown-arrow {
-  color: #666;
+.search-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+}
+
+.category-filter-header {
+  padding: 8px 15px;
+  background-color: #f0fdf4;
+  border-bottom: 1px solid #dcfce7;
+}
+
+.category-toggle-btn {
+  padding: 4px 12px;
+  border: none;
+  background-color: transparent;
+  color: #16a34a;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.category-toggle-btn:hover {
+  color: #22c55e;
+}
+
+.category-filter-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 15px;
+  background-color: #f0fdf4;
+  border-bottom: 1px solid #dcfce7;
+}
+
+.category-filter-btn {
+  padding: 4px 12px;
+  border: 1px solid #bbf7d0;
+  background-color: white;
+  color: #16a34a;
+  border-radius: 16px;
   font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.multi-select-dropdown {
+.category-filter-btn:hover {
+  background-color: #dcfce7;
+}
+
+.category-filter-btn.active {
+  background-color: #22c55e;
+  color: white;
+  border-color: #22c55e;
+}
+
+.dropdown-list {
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
-  margin-top: 4px;
-  background: white;
+  background-color: white;
   border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  overflow-y: auto;
   z-index: 100;
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.dropdown-search {
-  width: 100%;
-  padding: 10px 14px;
-  border: none;
-  border-bottom: 1px solid #eee;
-  outline: none;
-  font-size: 14px;
-  box-sizing: border-box;
-}
-
-.dropdown-list {
-  max-height: 250px;
-  overflow-y: auto;
 }
 
 .dropdown-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px 14px;
+  padding: 12px 18px;
   cursor: pointer;
+  border-bottom: 1px solid #f5f5f5;
   transition: background-color 0.2s;
+  gap: 18px;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
 }
 
 .dropdown-item:hover {
-  background-color: #f5f5f5;
+  background-color: #e8f5e9;
 }
 
-.item-text {
-  color: #333;
+.dropdown-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+  line-height: 1.4;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.dropdown-category {
+  flex: 0 0 auto;
+  min-width: 68px;
+  max-width: 120px;
+  padding: 4px 12px;
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown-rating {
+  flex: 0 0 auto;
+  min-width: 60px;
+  max-width: 100px;
+  padding: 4px 12px;
+  background-color: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-left: auto;
+}
+
+.dropdown-empty {
+  padding: 15px;
+  text-align: center;
+  color: #999;
   font-size: 14px;
-}
-
-.item-price {
-  color: #888;
-  font-size: 12px;
 }
 
 .quantity-input-wrapper {
@@ -540,7 +730,7 @@ export default {
     flex-wrap: wrap;
   }
 
-  .multi-select-wrapper {
+  .search-dropdown {
     min-width: 100%;
   }
 
