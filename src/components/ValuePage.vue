@@ -48,6 +48,7 @@
               @mousedown.prevent="selectEquipment(index, 'rod', rod, entry)"
             >
               <span class="dropdown-name">{{ rod.model }}</span>
+              <span class="dropdown-type">{{ rod.subCategory || rod.category }}</span>
               <span class="dropdown-category">{{ rod.rating }}</span>
               <span v-if="rod.ratingAlias && rod.ratingAlias !== '常规'" class="dropdown-rating">{{ rod.ratingAlias }}</span>
             </div>
@@ -110,6 +111,7 @@
               @mousedown.prevent="selectEquipment(index, 'reel', reel, entry)"
             >
               <span class="dropdown-name">{{ reel.model }}</span>
+              <span class="dropdown-type">{{ reel.subCategory || reel.category }}</span>
               <span class="dropdown-category">{{ reel.rating }}</span>
               <span v-if="reel.ratingAlias && reel.ratingAlias !== '常规'" class="dropdown-rating">{{ reel.ratingAlias }}</span>
             </div>
@@ -548,6 +550,23 @@ export default {
   white-space: normal;
   word-break: break-word;
   overflow-wrap: anywhere;
+}
+
+.dropdown-type {
+  flex: 0 0 auto;
+  min-width: 56px;
+  max-width: 100px;
+  padding: 4px 12px;
+  background-color: #e3f2fd;
+  color: #1565c0;
+  border: 1px solid #90caf9;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .dropdown-category {
