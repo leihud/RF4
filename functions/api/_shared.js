@@ -180,7 +180,8 @@ export function errorResponse(error) {
 }
 
 /**
- * 数据脱敏：只返回前端需要的必要字段
+ * 数据脱敏：返回前端需要的字段（含对比页所需）
+ * 移除 description（过长文本）和内部元数据字段
  * @param {object} row 数据库原始行
  * @param {string} type 'rod' | 'reel'
  * @returns {object} 脱敏后的数据
@@ -198,10 +199,22 @@ export function sanitizeEquipmentData(row, type) {
       lockTension: extractNumber(row.strengthKg),
       price: extractNumber(row.silverPrice),
       rating: row.rating,
+      ratingAlias: row.ratingAlias || '',
       weightG: row.weightG,
+      lengthM: row.lengthM,
+      strengthKg: row.strengthKg,
+      testG: row.testG,
+      sensitivity: row.sensitivity,
+      hardness: row.hardness,
+      form: row.form,
+      structure: row.structure,
+      ability: row.ability,
       adaptWeight: row.adaptWeight,
+      adaptWeightStar: row.adaptWeightStar,
+      adaptWeightG: row.adaptWeightG,
+      levelReq: row.levelReq,
       silverPrice: row.silverPrice,
-      lengthM: row.lengthM
+      goldPrice: row.goldPrice
     }
   } else if (type === 'reel') {
     return {
@@ -215,12 +228,22 @@ export function sanitizeEquipmentData(row, type) {
       lockTension: extractNumber(row.lockTension),
       price: extractNumber(row.silverPrice),
       rating: row.rating,
+      ratingAlias: row.ratingAlias || '',
       size: row.size,
       form: row.form,
       levelReq: row.levelReq,
+      frictionForce: row.frictionForce,
+      transmissionRatio: row.transmissionRatio,
+      lineSpeed: row.lineSpeed,
+      windingSpeed: row.windingSpeed,
+      spoolCapacity: row.spoolCapacity,
+      saltwaterResistant: row.saltwaterResistant,
       adaptWeight: row.adaptWeight,
+      adaptWeightStar: row.adaptWeightStar,
+      adaptWeightG: row.adaptWeightG,
+      test: row.test,
       silverPrice: row.silverPrice,
-      saltwaterResistant: row.saltwaterResistant
+      goldPrice: row.goldPrice
     }
   }
   return row
