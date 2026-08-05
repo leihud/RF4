@@ -30,30 +30,32 @@
     <div class="fish-selector">
       <span class="fish-label">目标鱼种:</span>
       <!-- 搜索输入框 -->
-      <input
-        v-model="targetFishSearch"
-        type="text"
-        class="fish-search-input"
-        placeholder="搜索鱼种..."
-        @focus="showFishDropdown = true"
-      />
-      <!-- 下拉列表 -->
-      <div class="custom-dropdown" v-if="showFishDropdown">
-        <div 
-          class="dropdown-item" 
-          :class="{ selected: selectedFish === '' }"
-          @click="selectTargetFish('')"
-        >
-          不限
-        </div>
-        <div 
-          v-for="fish in filteredTargetFishList" 
-          :key="fish.name"
-          class="dropdown-item"
-          :class="{ selected: selectedFish === fish.display_name }"
-          @click="selectTargetFish(fish.display_name)"
-        >
-          {{ fish.display_name }}
+      <div class="fish-search-wrapper">
+        <input
+          v-model="targetFishSearch"
+          type="text"
+          class="fish-search-input"
+          placeholder="搜索鱼种..."
+          @focus="showFishDropdown = true"
+        />
+        <!-- 下拉列表 -->
+        <div class="custom-dropdown" v-if="showFishDropdown">
+          <div 
+            class="dropdown-item" 
+            :class="{ selected: selectedFish === '' }"
+            @click="selectTargetFish('')"
+          >
+            不限
+          </div>
+          <div 
+            v-for="fish in filteredTargetFishList" 
+            :key="fish.name"
+            class="dropdown-item"
+            :class="{ selected: selectedFish === fish.display_name }"
+            @click="selectTargetFish(fish.display_name)"
+          >
+            {{ fish.display_name }}
+          </div>
         </div>
       </div>
       
@@ -1195,6 +1197,11 @@ h1 {
 .fish-select:focus {
   border-color: #1565c0;
   box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
+}
+
+.fish-search-wrapper {
+  position: relative;
+  display: inline-block;
 }
 
 /* 目标鱼种搜索输入框 */
