@@ -179,6 +179,52 @@ export function errorResponse(error) {
   return jsonResponse({ error: error.message }, 500)
 }
 
+/**
+ * 数据脱敏：只返回前端需要的必要字段
+ * @param {object} row 数据库原始行
+ * @param {string} type 'rod' | 'reel'
+ * @returns {object} 脱敏后的数据
+ */
+export function sanitizeEquipmentData(row, type) {
+  if (type === 'rod') {
+    return {
+      id: row.id,
+      equipmentType: '鱼竿',
+      equipmentName: row.equipmentName,
+      model: row.model,
+      category: row.category,
+      subCategory: row.subCategory,
+      panelTension: extractNumber(row.strengthKg),
+      lockTension: extractNumber(row.strengthKg),
+      price: extractNumber(row.silverPrice),
+      rating: row.rating,
+      weightG: row.weightG,
+      adaptWeight: row.adaptWeight,
+      silverPrice: row.silverPrice,
+      lengthM: row.lengthM
+    }
+  } else if (type === 'reel') {
+    return {
+      id: row.id,
+      equipmentType: '渔轮',
+      equipmentName: row.equipmentName,
+      model: row.model,
+      category: row.category,
+      subCategory: row.subCategory,
+      panelTension: extractNumber(row.frictionForce) || extractNumber(row.lockTension),
+      lockTension: extractNumber(row.lockTension),
+      price: extractNumber(row.silverPrice),
+      rating: row.rating,
+      size: row.size,
+      form: row.form,
+      levelReq: row.levelReq,
+      adaptWeight: row.adaptWeight,
+      silverPrice: row.silverPrice,
+      saltwaterResistant: row.saltwaterResistant
+    }
+  }
+  return row
+}
 /** 从 "12.5 kg" / "1,024" 这类文本中提取数字，失败兜底 0 */
 export function extractNumber(str) {
   if (!str) return 0

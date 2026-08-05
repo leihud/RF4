@@ -1,4 +1,4 @@
-import { jsonResponse, buildSearchWhere, SEARCH_FIELDS, NO_SEARCH_LIMIT, getCachedResponse, putCache, getClientIP, isValidUserAgent, isIPBlacklisted, checkRateLimit } from './_shared.js'
+import { jsonResponse, buildSearchWhere, SEARCH_FIELDS, NO_SEARCH_LIMIT, getCachedResponse, putCache, getClientIP, isValidUserAgent, isIPBlacklisted, checkRateLimit, sanitizeEquipmentData } from './_shared.js'
 
 export async function onRequestGet(context) {
   const { request, env } = context
@@ -54,7 +54,8 @@ export async function onRequestGet(context) {
     sql += hasSearch ? ' LIMIT 50' : ` LIMIT ${NO_SEARCH_LIMIT}`
 
     const result = await env.DB.prepare(sql).bind(...binds).all()
-    const response = jsonResponse(result.results)
+    const sanitizedResults = result.results.map(row => sanitizeEquipmentData(row, 'reel'))
+    const response = jsonResponse(sanitizedResults)
     if (cacheable) putCache(request, response.clone())
     return response
   } catch (error) {
