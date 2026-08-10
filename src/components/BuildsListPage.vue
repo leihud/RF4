@@ -250,6 +250,7 @@
 
 <script>
 import { searchAndRankEquipment, EQUIPMENT_SEARCH_FIELDS } from '../utils/search.js'
+import { formatPrice as formatPriceDisplay } from '../utils/display.js'
 
 export default {
   name: 'BuildsListPage',
@@ -431,8 +432,8 @@ export default {
       })
     },
     formatPrice(price) {
-      if (!price || price === 0) return '-'
-      return Math.round(price).toLocaleString('zh-CN')
+      const result = formatPriceDisplay(price)
+      return result || '-'
     },
     handleKeyDown(e) {
       if (e.key === 'h' || e.key === 'H') {
