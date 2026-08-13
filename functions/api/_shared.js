@@ -235,8 +235,11 @@ export function sanitizeEquipmentData(row, type) {
       form: row.form,
       levelReq: row.levelReq,
       frictionForce: row.frictionForce,
+      frictionForceStar: row.frictionForceStar,
       transmissionRatio: row.transmissionRatio,
+      transmissionRatioStar: row.transmissionRatioStar,
       lineSpeed: row.lineSpeed,
+      lineSpeedStar: row.lineSpeedStar,
       windingSpeed: row.windingSpeed,
       spoolCapacity: row.spoolCapacity,
       saltwaterResistant: row.saltwaterResistant,
@@ -244,6 +247,8 @@ export function sanitizeEquipmentData(row, type) {
       adaptWeightStar: row.adaptWeightStar,
       adaptWeightG: row.adaptWeightG,
       test: row.test,
+      testStar: row.testStar,
+      lockTensionStar: row.lockTensionStar,
       silverPrice: extractNumber(row.silverPrice),
       goldPrice: extractNumber(row.goldPrice)
     }

@@ -176,10 +176,10 @@ const COMPARE_ROWS = {
     { label: '描述', field: 'description', fallback: '-' }
   ],
   reel: [
-    { label: '锁轮拉力', field: 'lockTension', highlight: true },
-    { label: '摩擦制动力', field: 'frictionForce', highlight: true },
-    { label: '传动比', field: 'transmissionRatio', highlight: true },
-    { label: '回线速度', field: 'lineSpeed', highlight: true },
+    { label: '锁轮拉力', field: 'lockTension', highlight: true, format: (v, eq) => v || eq.lockTensionStar || '-' },
+    { label: '摩擦制动力', field: 'frictionForce', highlight: true, format: (v, eq) => v || eq.frictionForceStar || '-' },
+    { label: '传动比', field: 'transmissionRatio', highlight: true, format: (v, eq) => v || eq.transmissionRatioStar || '-' },
+    { label: '回线速度', field: 'lineSpeed', highlight: true, format: (v, eq) => v || eq.lineSpeedStar || '-' },
     { label: '收线速度', field: 'windingSpeed', highlight: true },
     { label: '大小', field: 'size' },
     { label: '形式', field: 'form' },
@@ -318,7 +318,14 @@ export default {
         let max = -Infinity
         for (const eq of eqs) {
           const price = this.extractNumber(eq.silverPrice)
-          const value = this.extractNumber(eq[field])
+          let value = this.extractNumber(eq[field])
+          // 文本字段为空时，回退到 Star 字段
+          if (Number.isNaN(value) || value === 0) {
+            const starField = field + 'Star'
+            if (eq[starField] != null && eq[starField] !== '' && eq[starField] !== 0) {
+              value = this.extractNumber(eq[starField])
+            }
+          }
           if (!Number.isNaN(price) && price > 0 && !Number.isNaN(value) && value > 0) {
             const ce = (value / price) * 100
             if (ce > max) max = ce
@@ -406,7 +413,14 @@ export default {
         }
         return NaN
       }
-      return this.extractNumber(equipment[row.field])
+      const raw = equipment[row.field]
+      if (raw != null && raw !== '') return this.extractNumber(raw)
+      // 文本字段为空时，回退到对应的 Star 字段
+      const starField = row.field + 'Star'
+      if (equipment[starField] != null && equipment[starField] !== '' && equipment[starField] !== 0) {
+        return this.extractNumber(equipment[starField])
+      }
+      return NaN
     },
     /**
      * 合并展示适配重（与Calculator.vue逻辑一致）
