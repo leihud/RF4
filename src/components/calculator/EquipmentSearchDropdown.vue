@@ -48,7 +48,7 @@
 
 <script>
 import { searchAndRankEquipment, sortByPanelTension, EQUIPMENT_SEARCH_FIELDS } from '../../utils/search.js'
-import { safeToString } from '../../utils/sanitize.js'
+import { safeToString, toSafeDisplay } from '../../utils/sanitize.js'
 
 /**
  * 装备搜索下拉：自持搜索词（200ms 防抖）、分类筛选与下拉展开状态，
@@ -140,10 +140,7 @@ export default {
     }
   },
   methods: {
-    toSafeDisplay(v, fallback = '') {
-      const s = safeToString(v, fallback)
-      return s == null ? fallback : s
-    }
+    toSafeDisplay
   }
 }
 </script>

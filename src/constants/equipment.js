@@ -67,11 +67,6 @@ const RATING_ALIAS_RAW = {
   '3': '三星级',
   '4': '四星级',
   '5': '五星级',
-  1:   '一星级',
-  2:   '二星级',
-  3:   '三星级',
-  4:   '四星级',
-  5:   '五星级',
   '⭐': '一星级',
   '⭐⭐': '二星级',
   '⭐⭐⭐': '三星级',
@@ -85,7 +80,7 @@ const RATING_ALIAS_RAW = {
   'SSS': '神话级'
 }
 
-/** Object.freeze + 双映射：同时命中字符串 key / Number(key) */
+/** Object.freeze：JS 对象键始终为字符串，数字键 1-5 与字符串键 '1'-'5' 重复，已移除 */
 export const RATING_ALIAS = Object.freeze(
   Object.keys(RATING_ALIAS_RAW).reduce((acc, k) => {
     acc[k] = RATING_ALIAS_RAW[k]

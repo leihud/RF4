@@ -338,16 +338,6 @@ export default {
     }
   },
   methods: {
-    /**
-     * 安全转数值：对象一律兜底为 NaN，禁止隐式 toString 抛 Cannot convert object to primitive value
-     */
-    toSafeNumber(v, fallback = NaN) {
-      if (typeof v === 'number') return Number.isFinite(v) ? v : fallback
-      if (v == null) return fallback
-      if (typeof v === 'object') return fallback
-      const n = Number(v)
-      return Number.isFinite(n) ? n : fallback
-    },
     extractNumber(str) {
       if (str == null) return NaN
       // 对象直接返回 NaN，避免 String(obj) 隐式转换报错

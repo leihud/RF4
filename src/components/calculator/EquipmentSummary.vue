@@ -50,7 +50,7 @@ import {
   buildMinTensionInfo
 } from '../../utils/tension.js'
 import { parsePrice, formatPrice, getMergedAdaptWeight } from '../../utils/display.js'
-import { safeToNumber, safeToString } from '../../utils/sanitize.js'
+import { safeToNumber, safeToString, toSafeNumber, toSafeDisplay } from '../../utils/sanitize.js'
 
 /**
  * 装备组合总览：装备组合文本、锁轮/常规最小拉力、适配重、价格汇总。
@@ -93,7 +93,7 @@ export default {
       const reel = this.selectedEquipmentMap['渔轮']
       const pickName = (eq) => {
         if (!eq) return '未选择'
-        const s = this.toSafeDisplay(eq.model || eq.equipmentName, '')
+        const s = toSafeDisplay(eq.model || eq.equipmentName, '')
         return s || '未选择'
       }
       const rodName = pickName(rod)
@@ -101,8 +101,8 @@ export default {
       const mainLine = this.customEquipment['主线']
       const leader = this.customEquipment['引线']
       const fmt = (t) => {
-        const mt = this.toSafeNumber(t.value && t.value.maxTension, 0)
-        return mt > 0 ? `${this.toSafeDisplay(t.label || '')}(${mt}kN)` : '未设置'
+        const mt = toSafeNumber(t.value && t.value.maxTension, 0)
+        return mt > 0 ? `${toSafeDisplay(t.label || '')}(${mt}kN)` : '未设置'
       }
       return [
         rodName,
@@ -122,7 +122,7 @@ export default {
         this.actualLockTensionMap,
         this.customEquipment,
         calculateCustomActualTension,
-        this.toSafeNumber,
+        toSafeNumber,
         formatTension
       )
     },
@@ -136,7 +136,7 @@ export default {
         this.actualPanelTensionMap,
         this.customEquipment,
         calculateCustomActualTension,
-        this.toSafeNumber,
+        toSafeNumber,
         formatTension
       )
     },
@@ -162,14 +162,8 @@ export default {
   },
   methods: {
     formatPrice,
-    toSafeNumber(v, fallback = 0) {
-      const n = safeToNumber(v, fallback)
-      return n == null ? fallback : n
-    },
-    toSafeDisplay(v, fallback = '') {
-      const s = safeToString(v, fallback)
-      return s == null ? fallback : s
-    }
+    toSafeNumber,
+    toSafeDisplay
   }
 }
 </script>

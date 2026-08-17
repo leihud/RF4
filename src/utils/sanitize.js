@@ -91,6 +91,24 @@ export function safeToNumber(v, fallback = null) {
 }
 
 /**
+ * 组件通用安全转数值：薄包装 safeToNumber。
+ * null/undefined 兜底 fallback（默认 0），防止隐式转换报错。
+ */
+export function toSafeNumber(v, fallback = 0) {
+  const n = safeToNumber(v, fallback)
+  return n == null ? fallback : n
+}
+
+/**
+ * 组件通用安全转展示值：薄包装 safeToString。
+ * null/undefined 兜底 fallback（默认 ''），防止模板插值对象触发隐式 toString 报错。
+ */
+export function toSafeDisplay(v, fallback = '') {
+  const s = safeToString(v, fallback)
+  return s == null ? fallback : s
+}
+
+/**
  * 深度清洗单个装备对象（或任意对象）所有字段：
  * 把对象型字段全部转成 primitive，从源头消除隐式转换风险
  */

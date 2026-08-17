@@ -390,7 +390,7 @@ import {
   formatTension
 } from '../utils/tension.js'
 import { getMergedAdaptWeight } from '../utils/display.js'
-import { sanitizeEquipmentFields, safeToNumber, safeToString } from '../utils/sanitize.js'
+import { sanitizeEquipmentFields, safeToNumber, safeToString, toSafeNumber, toSafeDisplay } from '../utils/sanitize.js'
 import { loadRodAndReelData } from '../utils/equipmentLoader.js'
 import { encodePreset, decodePreset, getShareUrl } from '../utils/presetShare.js'
 import DisclaimerModal from './calculator/DisclaimerModal.vue'
@@ -599,24 +599,8 @@ export default {
     }
   },
   methods: {
-    /**
-     * 安全转数值：薄包装 sanitize.js/safeToNumber
-     *  - 兜底 fallback（默认 0）
-     *  - 防止隐式转换报错（safeToNumber 内部会处理对象/字符串提取数字）
-     */
-    toSafeNumber(v, fallback = 0) {
-      const n = safeToNumber(v, fallback)
-      return n == null ? fallback : n
-    },
-    /**
-     * 安全显示值：薄包装 sanitize.js/safeToString
-     *  - 兜底 fallback（默认 ''）
-     *  - 防止模板插值对象触发隐式 toString 报错
-     */
-    toSafeDisplay(v, fallback = '') {
-      const s = safeToString(v, fallback)
-      return s == null ? fallback : s
-    },
+    toSafeNumber,
+    toSafeDisplay,
     getMergedAdaptWeight,
     isCustomInputType(type) {
       return CUSTOM_INPUT_TYPES.includes(type)
@@ -659,7 +643,7 @@ export default {
       )
       const next = { ...safe, wear: 0 }
       if (existingIndex >= 0) {
-        next.wear = this.toSafeNumber(this.selectedEquipmentList[existingIndex].wear, 0)
+        next.wear = toSafeNumber(this.selectedEquipmentList[existingIndex].wear, 0)
         this.selectedEquipmentList.splice(existingIndex, 1, next)
       } else {
         this.selectedEquipmentList.push(next)
@@ -781,13 +765,13 @@ export default {
       const state = {
         rodModel: rod ? (rod.model || rod.equipmentName) : '',
         reelModel: reel ? (reel.model || reel.equipmentName) : '',
-        rodWear: rod ? this.toSafeNumber(rod.wear, 0) : 0,
-        reelWear: reel ? this.toSafeNumber(reel.wear, 0) : 0,
-        friction: this.toSafeNumber(this.friction, 0),
-        mainLineTension: this.toSafeNumber(this.customEquipment['主线'].maxTension, 0),
-        mainLineWear: this.toSafeNumber(this.customEquipment['主线'].wear, 0),
-        leaderLineTension: this.toSafeNumber(this.customEquipment['引线'].maxTension, 0),
-        leaderLineWear: this.toSafeNumber(this.customEquipment['引线'].wear, 0),
+        rodWear: rod ? toSafeNumber(rod.wear, 0) : 0,
+        reelWear: reel ? toSafeNumber(reel.wear, 0) : 0,
+        friction: toSafeNumber(this.friction, 0),
+        mainLineTension: toSafeNumber(this.customEquipment['主线'].maxTension, 0),
+        mainLineWear: toSafeNumber(this.customEquipment['主线'].wear, 0),
+        leaderLineTension: toSafeNumber(this.customEquipment['引线'].maxTension, 0),
+        leaderLineWear: toSafeNumber(this.customEquipment['引线'].wear, 0),
         calculationRule: this.calculationRule
       }
       const url = getShareUrl(state)
@@ -849,26 +833,26 @@ export default {
         rodModel: rod ? (rod.model || rod.equipmentName) : '',
         rodName: rod ? rod.equipmentName : '',
         rodCategory: rod ? rod.category : '',
-        rodPrice: rod ? this.toSafeNumber(rod.silverPrice, 0) : 0,
-        rodTension: rod ? this.toSafeNumber(this.actualPanelTensionMap['鱼竿'], 0) : 0,
+        rodPrice: rod ? toSafeNumber(rod.silverPrice, 0) : 0,
+        rodTension: rod ? toSafeNumber(this.actualPanelTensionMap['鱼竿'], 0) : 0,
         reelModel: reel ? (reel.model || reel.equipmentName) : '',
         reelName: reel ? reel.equipmentName : '',
         reelCategory: reel ? reel.category : '',
-        reelPrice: reel ? this.toSafeNumber(reel.silverPrice, 0) : 0,
-        reelTension: reel ? this.toSafeNumber(this.actualPanelTensionMap['渔轮'], 0) : 0,
-        mainLineTension: this.toSafeNumber(this.customEquipment['主线'].maxTension, 0),
-        mainLineWear: this.toSafeNumber(this.customEquipment['主线'].wear, 0),
+        reelPrice: reel ? toSafeNumber(reel.silverPrice, 0) : 0,
+        reelTension: reel ? toSafeNumber(this.actualPanelTensionMap['渔轮'], 0) : 0,
+        mainLineTension: toSafeNumber(this.customEquipment['主线'].maxTension, 0),
+        mainLineWear: toSafeNumber(this.customEquipment['主线'].wear, 0),
         mainLineMaterial: this.customEquipment['主线'].material || '',
-        mainLineDiameter: this.toSafeNumber(this.customEquipment['主线'].diameter, 0),
-        mainLineLength: this.toSafeNumber(this.customEquipment['主线'].length, 0),
-        leaderLineTension: this.toSafeNumber(this.customEquipment['引线'].maxTension, 0),
-        leaderLineWear: this.toSafeNumber(this.customEquipment['引线'].wear, 0),
+        mainLineDiameter: toSafeNumber(this.customEquipment['主线'].diameter, 0),
+        mainLineLength: toSafeNumber(this.customEquipment['主线'].length, 0),
+        leaderLineTension: toSafeNumber(this.customEquipment['引线'].maxTension, 0),
+        leaderLineWear: toSafeNumber(this.customEquipment['引线'].wear, 0),
         leaderLineMaterial: this.customEquipment['引线'].material || '',
-        leaderLineDiameter: this.toSafeNumber(this.customEquipment['引线'].diameter, 0),
-        leaderLineLength: this.toSafeNumber(this.customEquipment['引线'].length, 0),
+        leaderLineDiameter: toSafeNumber(this.customEquipment['引线'].diameter, 0),
+        leaderLineLength: toSafeNumber(this.customEquipment['引线'].length, 0),
         hookName: this.customEquipment['鱼钩'].name || '',
         calculationRule: this.calculationRule,
-        friction: this.toSafeNumber(this.friction, 0),
+        friction: toSafeNumber(this.friction, 0),
         description: this.submitForm.description,
         suitableFish: Array.isArray(this.submitForm.suitableFish) ? this.submitForm.suitableFish.join(',') : this.submitForm.suitableFish,
         suitableMap: Array.isArray(this.submitForm.suitableMap) ? this.submitForm.suitableMap.join(',') : this.submitForm.suitableMap
