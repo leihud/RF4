@@ -1,13 +1,14 @@
 /**
  * 版本信息配置
  * 每次发版时更新此文件
+ * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: '1.1.0',
+  currentVersion: 'V20260817-01',
   buildTime: '2026-08-17',
   changelog: [
     {
-      version: '1.1.0',
+      version: 'V20260817-01',
       date: '2026-08-17',
       changes: [
         '新增：前端版本展示功能',
@@ -18,7 +19,7 @@ export const versionInfo = {
       ]
     },
     {
-      version: '1.0.0',
+      version: 'V20260801-01',
       date: '2026-08-01',
       changes: [
         '初始版本发布',
