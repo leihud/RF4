@@ -3,7 +3,7 @@
     <router-view />
     <!-- 版本信息展示 -->
     <div class="version-badge" @click="showVersionDetail = !showVersionDetail">
-      <span class="version-label">v{{ appVersion }}</span>
+      <span class="version-label">{{ appVersion }}</span>
     </div>
     <!-- 版本详情弹窗 -->
     <div v-if="showVersionDetail" class="version-overlay" @click.self="showVersionDetail = false">
@@ -12,7 +12,7 @@
         <div class="version-info">
           <div class="info-row">
             <span class="info-label">当前版本：</span>
-            <span class="info-value">v{{ appVersion }}</span>
+            <span class="info-value">{{ appVersion }}</span>
           </div>
           <div class="info-row">
             <span class="info-label">发布时间：</span>
@@ -25,11 +25,11 @@
         </div>
         <!-- 更新日志 -->
         <div class="changelog-section">
-          <h4>📝 更新日志</h4>
+          <h4> 更新日志</h4>
           <div class="changelog-list">
-            <div v-for="(log, idx) in changelog" :key="idx" class="changelog-item">
+            <div v-for="(log, idx) in displayChangelog" :key="idx" class="changelog-item">
               <div class="changelog-version">
-                <span class="version-tag">v{{ log.version }}</span>
+                <span class="version-tag">{{ log.version }}</span>
                 <span class="version-date">{{ log.date }}</span>
               </div>
               <ul class="changelog-changes">
@@ -37,6 +37,10 @@
               </ul>
             </div>
           </div>
+          <!-- 加载更多按钮 -->
+          <button v-if="changelog.length > 1 && !showAllChangelog" class="load-more-btn" @click="showAllChangelog = true">
+            查看更多版本 ({{ changelog.length - 1 }})
+          </button>
         </div>
         <button class="close-btn" @click="showVersionDetail = false">关闭</button>
       </div>
@@ -65,7 +69,17 @@ export default {
       appVersion: versionInfo.currentVersion,
       buildTime: versionInfo.buildTime,
       changelog: versionInfo.changelog,
-      showVersionDetail: false
+      showVersionDetail: false,
+      showAllChangelog: false
+    }
+  },
+  computed: {
+    // 显示更新日志（默认只显示最新版本）
+    displayChangelog() {
+      if (this.showAllChangelog) {
+        return this.changelog
+      }
+      return this.changelog.slice(0, 1)
     }
   },
   created() {
