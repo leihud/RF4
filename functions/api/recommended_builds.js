@@ -130,13 +130,13 @@ export async function onRequestPatch(context) {
     const db = env.DB
     await db.prepare(UPDATE_SQL).bind(
       build.name || '',
-      build.rod_model || '', build.rod_name || '', build.rod_category || '', build.rod_price || 0, build.rod_tension || 0,
-      build.reel_model || '', build.reel_name || '', build.reel_category || '', build.reel_price || 0, build.reel_tension || 0,
-      build.main_line_tension || 0, build.main_line_wear || 0, build.main_line_material || '', build.main_line_diameter || 0, build.main_line_length || 0,
-      build.leader_line_tension || 0, build.leader_line_wear || 0, build.leader_line_material || '', build.leader_line_diameter || 0, build.leader_line_length || 0,
-      build.hook_name || '',
-      build.calculation_rule || 'guide', build.friction || 0,
-      build.description || '', build.suitable_fish || '', build.suitable_map || '',
+      build.rodModel || '', build.rodName || '', build.rodCategory || '', build.rodPrice || 0, build.rodTension || 0,
+      build.reelModel || '', build.reelName || '', build.reelCategory || '', build.reelPrice || 0, build.reelTension || 0,
+      build.mainLineTension || 0, build.mainLineWear || 0, build.mainLineMaterial || '', build.mainLineDiameter || 0, build.mainLineLength || 0,
+      build.leaderLineTension || 0, build.leaderLineWear || 0, build.leaderLineMaterial || '', build.leaderLineDiameter || 0, build.leaderLineLength || 0,
+      build.hookName || '',
+      build.calculationRule || 'guide', build.friction || 0,
+      build.description || '', build.suitableFish || '', build.suitableMap || '',
       id
     ).run()
 
