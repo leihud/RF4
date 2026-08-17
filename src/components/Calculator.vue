@@ -36,7 +36,7 @@
           type="text"
           class="fish-search-input"
           placeholder="搜索鱼种..."
-          @focus="showFishDropdown = true"
+          @focus="onFishSearchFocus"
         />
         <!-- 下拉列表 -->
         <div class="custom-dropdown" v-if="showFishDropdown">
@@ -978,7 +978,12 @@ export default {
     selectTargetFish(fishName) {
       this.selectedFish = fishName
       this.showFishDropdown = false
+      this.targetFishSearch = fishName
+    },
+    /** 鱼种搜索框聚焦：清空搜索词并展开下拉，方便重新搜索 */
+    onFishSearchFocus() {
       this.targetFishSearch = ''
+      this.showFishDropdown = true
     },
     /** 显示/隐藏鱼种下拉列表 */
     toggleFishDropdown() {
