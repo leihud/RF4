@@ -501,6 +501,7 @@ export default {
   },
   beforeUnmount() {
     document.removeEventListener('click', this.handleClickOutside)
+    if (this.toastTimer) clearTimeout(this.toastTimer)
   },
   watch: {
     calculationRule(val) {
@@ -840,17 +841,24 @@ export default {
     /** 从数据库加载地图和鱼种列表 */
     async loadMapsAndFishSpecies() {
       try {
-        const [mapsRes, fishRes] = await Promise.all([
+        const [mapsRes, fishRes] = await Promise.allSettled([
           fetch('/api/maps'),
           fetch('/api/fish_species')
         ])
-        const mapsData = await mapsRes.json()
-        const fishData = await fishRes.json()
-        if (mapsData.success) {
-          this.mapsList = mapsData.data || []
+        if (mapsRes.status === 'fulfilled' && mapsRes.value.ok) {
+          try {
+            const mapsData = await mapsRes.value.json()
+            if (mapsData.success) this.mapsList = mapsData.data || []
+          } catch (e) { console.error('解析地图数据失败:', e) }
         }
-        if (fishData.success) {
-          this.fishSpeciesList = fishData.data || []
+        if (fishRes.status === 'fulfilled' && fishRes.value.ok) {
+          try {
+            const fishData = await fishRes.value.json()
+            if (fishData.success) this.fishSpeciesList = fishData.data || []
+          } catch (e) { console.error('解析鱼种数据失败:', e) }
+        }
+        if (this.mapsList.length === 0 && this.fishSpeciesList.length === 0) {
+          this.showToast('地图和鱼种数据加载失败', 'error')
         }
       } catch (error) {
         console.error('加载地图和鱼种数据失败:', error)
@@ -878,8 +886,12 @@ export default {
         this.submitForm = {
           name: b.name || '',
           description: b.description || '',
-          suitableFish: b.suitable_fish ? b.suitable_fish.split(',').map(s => s.trim()).filter(Boolean) : [],
-          suitableMap: b.suitable_map ? b.suitable_map.split(',').map(s => s.trim()).filter(Boolean) : []
+          suitableFish: Array.isArray(b.suitable_fish)
+            ? b.suitable_fish
+            : (b.suitable_fish ? b.suitable_fish.split(',').map(s => s.trim()).filter(Boolean) : []),
+          suitableMap: Array.isArray(b.suitable_map)
+            ? b.suitable_map
+            : (b.suitable_map ? b.suitable_map.split(',').map(s => s.trim()).filter(Boolean) : [])
         }
         this.submitMode = 'new'
       } else {

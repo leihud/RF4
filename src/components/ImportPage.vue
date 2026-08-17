@@ -380,6 +380,9 @@ export default {
           this.parsedData = null
           this.previewHeaders = []
           this.previewData = []
+          if (this.$refs.fileInput) {
+            this.$refs.fileInput.value = ''
+          }
         }
       } catch (error) {
         this.importResult = {

@@ -120,14 +120,14 @@
     <!-- 方案列表 -->
     <div v-else class="builds-container">
       <div 
-        v-for="(build, index) in filteredBuilds" 
-        :key="index"
+        v-for="build in filteredBuilds" 
+        :key="build.id"
         class="build-card"
-        :class="{ expanded: expandedIndex === index }"
+        :class="{ expanded: expandedIndex === build.id }"
       >
-        <div class="build-header" @click="toggleExpand(index)">
+        <div class="build-header" @click="toggleExpand(build.id)">
           <div class="build-title">
-            <span class="expand-icon">{{ expandedIndex === index ? '▼' : '▶' }}</span>
+            <span class="expand-icon">{{ expandedIndex === build.id ? '▼' : '▶' }}</span>
             <span class="build-name">{{ build.name || '未命名方案' }}</span>
           </div>
           <div class="build-meta">
@@ -137,11 +137,11 @@
             <span class="meta-item"> {{ formatDate(build.created_at) }}</span>
             <button v-if="isAdminMode" class="edit-btn" @click.stop="openEditModal(build)" title="编辑方案">✎ 编辑</button>
             <button v-if="isAdminMode" class="approve-btn" @click.stop="approveBuild(build)" :title="build.is_approved ? '取消审核' : '通过审核'">{{ build.is_approved ? '✓ 已审核' : '审核' }}</button>
-            <button v-if="showDeleteBtn" class="delete-btn" @click.stop="deleteBuild(build, index)" title="删除方案">️</button>
+            <button v-if="showDeleteBtn" class="delete-btn" @click.stop="deleteBuild(build)" title="删除方案">️</button>
           </div>
         </div>
 
-        <div v-if="expandedIndex === index" class="build-details">
+        <div v-if="expandedIndex === build.id" class="build-details">
           <!-- 装备搭配 -->
           <div class="equipment-row">
             <div v-if="build.rod_model" class="equip-chip">
@@ -444,6 +444,9 @@ export default {
   beforeUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown)
     document.removeEventListener('click', this.handleClickOutside)
+    if (this.toastTimer) clearTimeout(this.toastTimer)
+    if (this.searchDebounceTimer) clearTimeout(this.searchDebounceTimer)
+    if (this.hKeyTimer) clearTimeout(this.hKeyTimer)
   },
   methods: {
     async loadBuilds() {
@@ -504,8 +507,8 @@ export default {
       }
       if (!inside) this.showDropdown = null
     },
-    toggleExpand(index) {
-      this.expandedIndex = this.expandedIndex === index ? null : index
+    toggleExpand(buildId) {
+      this.expandedIndex = this.expandedIndex === buildId ? null : buildId
     },
     getFishCount(fishStr) {
       if (!fishStr) return 0
@@ -550,7 +553,7 @@ export default {
         }
       }
     },
-    async deleteBuild(build, index) {
+    async deleteBuild(build) {
       if (!confirm(`确定要删除方案 "${build.name || '未命名'}" 吗？`)) return
       const password = prompt('请输入管理员密码：')
       if (password === null) return
@@ -563,7 +566,7 @@ export default {
         const result = await response.json()
         if (result.success) {
           this.builds.splice(this.builds.indexOf(build), 1)
-          if (this.expandedIndex === index) {
+          if (this.expandedIndex === build.id) {
             this.expandedIndex = null
           }
         } else {
