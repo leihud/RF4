@@ -31,8 +31,8 @@ async function checkDuplicates(db, type, data) {
 const ROD_INSERT_SQL = `INSERT OR REPLACE INTO rods (
   equipmentName, equipmentType, category, subCategory, model, description,
   strengthKg, form, testG, sensitivity, hardness, levelReq, structure, ability,
-  rating, weightG, adaptWeight, adaptWeightG, goldPrice, silverPrice, lengthM
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  rating, weightG, adaptWeight, adaptWeightG, adaptWeightStar, goldPrice, silverPrice, lengthM
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 
 function bindRod(stmt, item) {
   return stmt.bind(
@@ -44,8 +44,8 @@ function bindRod(stmt, item) {
     item.description || '',
     item.strengthKg || '',
     item.form || '',
-    item.testG || 0,
-    item.sensitivity || 0,
+    item.testG ?? 0,
+    item.sensitivity ?? 0,
     item.hardness || '',
     item.levelReq || '',
     item.structure || '',
@@ -53,7 +53,8 @@ function bindRod(stmt, item) {
     item.rating || '',
     item.weightG || '',
     item.adaptWeight || '',
-    item.adaptWeightG || 0,
+    item.adaptWeightG ?? 0,
+    item.adaptWeightStar ?? 0,
     item.goldPrice || '',
     item.silverPrice || '',
     item.lengthM || ''
@@ -77,27 +78,27 @@ function bindReel(stmt, item) {
     item.model || '',
     item.description || '',
     item.transmissionRatio || '',
-    item.transmissionRatioStar || 0,
+    item.transmissionRatioStar ?? 0,
     item.enginePower || '',
     item.lineSpeed || '',
-    item.lineSpeedStar || 0,
+    item.lineSpeedStar ?? 0,
     item.size || '',
     item.form || '',
     item.frictionForce || '',
-    item.frictionForceStar || 0,
+    item.frictionForceStar ?? 0,
     item.windingSpeed || '',
     item.test || '',
-    item.testStar || 0,
+    item.testStar ?? 0,
     item.levelReq || '',
     item.spoolCapacity || '',
     item.obtainMethod || '',
     item.rating || '',
     item.adaptWeight || '',
-    item.adaptWeightStar || 0,
+    item.adaptWeightStar ?? 0,
     item.goldPrice || '',
     item.silverPrice || '',
     item.lockTension || '',
-    item.lockTensionStar || 0,
+    item.lockTensionStar ?? 0,
     item.saltwaterResistant || ''
   )
 }

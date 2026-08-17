@@ -1,4 +1,13 @@
-import { jsonResponse, errorResponse } from './_shared.js'
+import { jsonResponse, errorResponse, getClientIP, isValidUserAgent, checkRateLimit, isIPBlacklisted } from './_shared.js'
+
+/** 验证管理员密码（写操作保护） */
+function validateAdminPassword(env, password) {
+  const importPassword = env.IMPORT_PASSWORD
+  if (!importPassword) {
+    return password && password.length > 0
+  }
+  return password === importPassword
+}
 
 const INSERT_SQL = `INSERT INTO recommended_builds (
   name,
@@ -72,7 +81,11 @@ export async function onRequestDelete(context) {
 
   try {
     const body = await request.json()
-    const { id } = body
+    const { id, password } = body
+
+    if (!validateAdminPassword(env, password)) {
+      return jsonResponse({ success: false, message: '需要管理员密码' }, 403)
+    }
 
     if (!id) {
       return jsonResponse({ success: false, message: '缺少方案ID' }, 400)
@@ -93,7 +106,11 @@ export async function onRequestPut(context) {
 
   try {
     const body = await request.json()
-    const { id, isApproved } = body
+    const { id, isApproved, password } = body
+
+    if (!validateAdminPassword(env, password)) {
+      return jsonResponse({ success: false, message: '需要管理员密码' }, 403)
+    }
 
     if (!id) {
       return jsonResponse({ success: false, message: '缺少方案ID' }, 400)
@@ -116,6 +133,20 @@ export async function onRequestPut(context) {
 
 export async function onRequestGet(context) {
   const { env, request } = context
+
+  // 反扒保护
+  if (!isValidUserAgent(request)) {
+    return jsonResponse({ success: false, message: 'Access denied' }, 403)
+  }
+  const clientIP = getClientIP(request)
+  if (await isIPBlacklisted(clientIP, env.DB)) {
+    return jsonResponse({ success: false, message: 'Access denied' }, 403)
+  }
+  const rateCheck = await checkRateLimit(clientIP, env.DB)
+  if (!rateCheck.allowed) {
+    return jsonResponse({ success: false, message: rateCheck.message || '请求过于频繁' }, 429)
+  }
+
   const url = new URL(request.url)
   const fishName = url.searchParams.get('fish')
   const adminMode = url.searchParams.get('admin') === 'true'

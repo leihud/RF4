@@ -67,8 +67,8 @@
         </div>
         <div class="entry-subtotal">
           <template v-if="entry.equipment">
-            <span class="subtotal-silver">{{ formatPrice(entry.equipment.silverPrice * entry.quantity) }} 银币</span>
-            <span class="subtotal-gold">{{ formatPrice(entry.equipment.goldPrice * entry.quantity) }} 金币</span>
+            <span class="subtotal-silver">{{ formatPrice((parsePrice(entry.equipment.silverPrice) ?? 0) * entry.quantity) }} 银币</span>
+            <span class="subtotal-gold">{{ formatPrice((parsePrice(entry.equipment.goldPrice) ?? 0) * entry.quantity) }} 金币</span>
           </template>
           <template v-else>
             <span class="subtotal-placeholder">-</span>
@@ -142,8 +142,8 @@
         </div>
         <div class="entry-subtotal">
           <template v-if="entry.equipment">
-            <span class="subtotal-silver">{{ formatPrice(entry.equipment.silverPrice * entry.quantity) }} 银币</span>
-            <span class="subtotal-gold">{{ formatPrice(entry.equipment.goldPrice * entry.quantity) }} 金币</span>
+            <span class="subtotal-silver">{{ formatPrice((parsePrice(entry.equipment.silverPrice) ?? 0) * entry.quantity) }} 银币</span>
+            <span class="subtotal-gold">{{ formatPrice((parsePrice(entry.equipment.goldPrice) ?? 0) * entry.quantity) }} 金币</span>
           </template>
           <template v-else>
             <span class="subtotal-placeholder">-</span>
@@ -196,7 +196,7 @@
 <script>
 import { searchAndRankEquipment, sortByPanelTension, EQUIPMENT_SEARCH_FIELDS } from '../utils/search.js'
 import { getRatingAlias } from '../constants/equipment.js'
-import { formatPrice as formatPriceDisplay } from '../utils/display.js'
+import { formatPrice as formatPriceDisplay, parsePrice } from '../utils/display.js'
 
 export default {
   name: 'ValuePage',
@@ -211,22 +211,22 @@ export default {
   computed: {
     rodTotalSilver() {
       return this.rodEntries.reduce((sum, entry) => {
-        return sum + (entry.equipment ? entry.equipment.silverPrice * entry.quantity : 0)
+        return sum + (entry.equipment ? (parsePrice(entry.equipment.silverPrice) ?? 0) * entry.quantity : 0)
       }, 0)
     },
     rodTotalGold() {
       return this.rodEntries.reduce((sum, entry) => {
-        return sum + (entry.equipment ? entry.equipment.goldPrice * entry.quantity : 0)
+        return sum + (entry.equipment ? (parsePrice(entry.equipment.goldPrice) ?? 0) * entry.quantity : 0)
       }, 0)
     },
     reelTotalSilver() {
       return this.reelEntries.reduce((sum, entry) => {
-        return sum + (entry.equipment ? entry.equipment.silverPrice * entry.quantity : 0)
+        return sum + (entry.equipment ? (parsePrice(entry.equipment.silverPrice) ?? 0) * entry.quantity : 0)
       }, 0)
     },
     reelTotalGold() {
       return this.reelEntries.reduce((sum, entry) => {
-        return sum + (entry.equipment ? entry.equipment.goldPrice * entry.quantity : 0)
+        return sum + (entry.equipment ? (parsePrice(entry.equipment.goldPrice) ?? 0) * entry.quantity : 0)
       }, 0)
     },
     totalSilver() {

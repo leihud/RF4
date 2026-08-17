@@ -190,15 +190,15 @@
             <div class="analysis-divider"></div>
             <div class="analysis-stat">
               <span class="stat-label">鱼竿</span>
-              <span class="stat-value stat-price">{{ formatPrice(build.rod_price) }}</span>
+              <span class="stat-value stat-price">{{ formatPrice(parsePrice(build.rod_price)) }}</span>
             </div>
             <div class="analysis-stat">
               <span class="stat-label">渔轮</span>
-              <span class="stat-value stat-price">{{ formatPrice(build.reel_price) }}</span>
+              <span class="stat-value stat-price">{{ formatPrice(parsePrice(build.reel_price)) }}</span>
             </div>
             <div class="analysis-stat analysis-total">
               <span class="stat-label">总计</span>
-              <span class="stat-value stat-price stat-total">{{ formatPrice((build.rod_price || 0) + (build.reel_price || 0)) }}</span>
+              <span class="stat-value stat-price stat-total">{{ formatPrice((parsePrice(build.rod_price) ?? 0) + (parsePrice(build.reel_price) ?? 0)) }}</span>
             </div>
           </div>
 
@@ -250,7 +250,7 @@
 
 <script>
 import { searchAndRankEquipment, EQUIPMENT_SEARCH_FIELDS } from '../utils/search.js'
-import { formatPrice as formatPriceDisplay } from '../utils/display.js'
+import { formatPrice as formatPriceDisplay, parsePrice } from '../utils/display.js'
 
 export default {
   name: 'BuildsListPage',
@@ -456,11 +456,13 @@ export default {
     },
     async deleteBuild(build, index) {
       if (!confirm(`确定要删除方案 "${build.name || '未命名'}" 吗？`)) return
+      const password = prompt('请输入管理员密码：')
+      if (password === null) return
       try {
         const response = await fetch('/api/recommended_builds', {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: build.id })
+          body: JSON.stringify({ id: build.id, password })
         })
         const result = await response.json()
         if (result.success) {
@@ -476,12 +478,14 @@ export default {
       }
     },
     async approveBuild(build) {
+      const password = prompt('请输入管理员密码：')
+      if (password === null) return
       try {
         const newStatus = !build.is_approved
         const response = await fetch('/api/recommended_builds', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: build.id, isApproved: newStatus })
+          body: JSON.stringify({ id: build.id, isApproved: newStatus, password })
         })
         const result = await response.json()
         if (result.success) {
