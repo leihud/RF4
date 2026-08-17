@@ -256,13 +256,60 @@
             <label>说明</label>
             <textarea v-model="editForm.description" class="form-textarea" placeholder="输入方案说明" rows="3"></textarea>
           </div>
-          <div class="form-group">
-            <label>适用鱼种（逗号分隔）</label>
-            <input v-model="editForm.suitable_fish" type="text" class="form-input" placeholder="如：丁克斯带形鲤,丁克斯无鳞鲤" />
-          </div>
-          <div class="form-group">
-            <label>适用地图（逗号分隔）</label>
-            <input v-model="editForm.suitable_map" type="text" class="form-input" placeholder="如：阿尔卑斯湖,贝加尔湖" />
+          <!-- 鱼种和地图左右布局 -->
+          <div class="form-row">
+            <div class="form-group form-col">
+              <label>适用鱼种（可多选）</label>
+              <!-- 已选标签 -->
+              <div v-if="editForm.suitable_fish.length" class="selected-tags">
+                <span v-for="(fish, i) in editForm.suitable_fish" :key="i" class="selected-tag">
+                  {{ fish }}
+                  <span class="tag-remove" @click="toggleEditFishSelection(fish)">✕</span>
+                </span>
+              </div>
+              <!-- 搜索框 -->
+              <input v-model="editFishSearch" type="text" class="form-input" placeholder="输入鱼种名称搜索..." />
+              <!-- 多选列表 -->
+              <div class="multi-select-container">
+                <div 
+                  v-for="fish in filteredEditFishList" 
+                  :key="fish.name"
+                  class="multi-select-item"
+                  :class="{ selected: editForm.suitable_fish.includes(fish.display_name) }"
+                  @click="toggleEditFishSelection(fish.display_name)"
+                >
+                  <span class="checkbox-icon">{{ editForm.suitable_fish.includes(fish.display_name) ? '☑' : '☐' }}</span>
+                  <span class="item-text">{{ fish.display_name }}</span>
+                </div>
+              </div>
+              <span class="select-hint">已选择 {{ editForm.suitable_fish.length }} 个鱼种</span>
+            </div>
+            <div class="form-group form-col">
+              <label>适用地图（可多选）</label>
+              <!-- 已选标签 -->
+              <div v-if="editForm.suitable_map.length" class="selected-tags">
+                <span v-for="(map, i) in editForm.suitable_map" :key="i" class="selected-tag">
+                  {{ map }}
+                  <span class="tag-remove" @click="toggleEditMapSelection(map)">✕</span>
+                </span>
+              </div>
+              <!-- 搜索框 -->
+              <input v-model="editMapSearch" type="text" class="form-input" placeholder="输入地图名称搜索..." />
+              <!-- 多选列表 -->
+              <div class="multi-select-container">
+                <div 
+                  v-for="map in filteredEditMapList" 
+                  :key="map.name"
+                  class="multi-select-item"
+                  :class="{ selected: editForm.suitable_map.includes(map.display_name) }"
+                  @click="toggleEditMapSelection(map.display_name)"
+                >
+                  <span class="checkbox-icon">{{ editForm.suitable_map.includes(map.display_name) ? '☑' : '☐' }}</span>
+                  <span class="item-text">{{ map.display_name }}</span>
+                </div>
+              </div>
+              <span class="select-hint">已选择 {{ editForm.suitable_map.length }} 张地图</span>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
@@ -317,7 +364,9 @@ export default {
       searchInput: '',
       searchDebounceTimer: null,
       showEditModal: false,
-      editForm: { id: null, name: '', description: '', suitable_fish: '', suitable_map: '' },
+      editForm: { id: null, name: '', description: '', suitable_fish: [], suitable_map: [] },
+      editFishSearch: '',
+      editMapSearch: '',
       isSaving: false
     }
   },
@@ -337,6 +386,16 @@ export default {
     filteredMapList() {
       if (!this.mapSearch.trim()) return this.mapList
       return searchAndRankEquipment(this.mapList, this.mapSearch, ['display_name'])
+    },
+    // 编辑弹窗鱼种过滤
+    filteredEditFishList() {
+      if (!this.editFishSearch.trim()) return this.fishList
+      return searchAndRankEquipment(this.fishList, this.editFishSearch, ['display_name'])
+    },
+    // 编辑弹窗地图过滤
+    filteredEditMapList() {
+      if (!this.editMapSearch.trim()) return this.mapList
+      return searchAndRankEquipment(this.mapList, this.editMapSearch, ['display_name'])
     },
     filteredBuilds() {
       let result = this.builds.filter(build => {
@@ -540,24 +599,46 @@ export default {
         id: build.id,
         name: build.name || '',
         description: build.description || '',
-        suitable_fish: build.suitable_fish || '',
-        suitable_map: build.suitable_map || ''
+        suitable_fish: build.suitable_fish ? build.suitable_fish.split(',').map(s => s.trim()).filter(Boolean) : [],
+        suitable_map: build.suitable_map ? build.suitable_map.split(',').map(s => s.trim()).filter(Boolean) : []
       }
+      this.editFishSearch = ''
+      this.editMapSearch = ''
       this.showEditModal = true
     },
     closeEditModal() {
       this.showEditModal = false
-      this.editForm = { id: null, name: '', description: '', suitable_fish: '', suitable_map: '' }
+      this.editForm = { id: null, name: '', description: '', suitable_fish: [], suitable_map: [] }
+      this.editFishSearch = ''
+      this.editMapSearch = ''
+    },
+    toggleEditFishSelection(fishName) {
+      const arr = this.editForm.suitable_fish
+      const idx = arr.indexOf(fishName)
+      if (idx > -1) arr.splice(idx, 1)
+      else arr.push(fishName)
+    },
+    toggleEditMapSelection(mapName) {
+      const arr = this.editForm.suitable_map
+      const idx = arr.indexOf(mapName)
+      if (idx > -1) arr.splice(idx, 1)
+      else arr.push(mapName)
     },
     async saveEditBuild() {
       const password = prompt('请输入管理员密码：')
       if (password === null) return
       this.isSaving = true
       try {
+        const buildData = {
+          name: this.editForm.name,
+          description: this.editForm.description,
+          suitable_fish: this.editForm.suitable_fish.join(','),
+          suitable_map: this.editForm.suitable_map.join(',')
+        }
         const response = await fetch('/api/recommended_builds', {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: this.editForm.id, build: this.editForm, password })
+          body: JSON.stringify({ id: this.editForm.id, build: buildData, password })
         })
         const result = await response.json()
         if (result.success) {
@@ -567,8 +648,8 @@ export default {
             Object.assign(this.builds[idx], {
               name: this.editForm.name,
               description: this.editForm.description,
-              suitable_fish: this.editForm.suitable_fish,
-              suitable_map: this.editForm.suitable_map
+              suitable_fish: buildData.suitable_fish,
+              suitable_map: buildData.suitable_map
             })
           }
           this.showToast('方案已更新', 'success')
@@ -1330,7 +1411,7 @@ export default {
   background: white;
   border-radius: 12px;
   width: 90%;
-  max-width: 500px;
+  max-width: 700px;
   max-height: 80vh;
   overflow-y: auto;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
@@ -1459,5 +1540,108 @@ export default {
 .btn-save:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* 编辑弹窗鱼种地图左右布局 */
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-col {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 已选标签 */
+.selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.selected-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background-color: #e3f2fd;
+  color: #1565c0;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.tag-remove {
+  cursor: pointer;
+  font-size: 11px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.tag-remove:hover {
+  opacity: 1;
+}
+
+/* 多选列表 */
+.multi-select-container {
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  background-color: #fafbfc;
+}
+
+.multi-select-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.multi-select-item:last-child {
+  border-bottom: none;
+}
+
+.multi-select-item:hover {
+  background-color: #f0f4f8;
+}
+
+.multi-select-item.selected {
+  background-color: #e3f2fd;
+}
+
+.checkbox-icon {
+  font-size: 14px;
+  color: #1565c0;
+  flex-shrink: 0;
+}
+
+.item-text {
+  font-size: 14px;
+  color: #333;
+  flex: 1;
+}
+
+.select-hint {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  margin-top: 4px;
+}
+
+/* 移动端响应式 */
+@media (max-width: 600px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  .edit-modal {
+    max-width: 95%;
+  }
 }
 </style>

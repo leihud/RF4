@@ -112,6 +112,11 @@ const UPDATE_SQL = `UPDATE recommended_builds SET
   description = ?, suitable_fish = ?, suitable_map = ?
 WHERE id = ?`
 
+const UPDATE_META_SQL = `UPDATE recommended_builds SET
+  name = ?,
+  description = ?, suitable_fish = ?, suitable_map = ?
+WHERE id = ?`
+
 export async function onRequestPatch(context) {
   const { request, env } = context
 
@@ -128,17 +133,31 @@ export async function onRequestPatch(context) {
     }
 
     const db = env.DB
-    await db.prepare(UPDATE_SQL).bind(
-      build.name || '',
-      build.rodModel || '', build.rodName || '', build.rodCategory || '', build.rodPrice || 0, build.rodTension || 0,
-      build.reelModel || '', build.reelName || '', build.reelCategory || '', build.reelPrice || 0, build.reelTension || 0,
-      build.mainLineTension || 0, build.mainLineWear || 0, build.mainLineMaterial || '', build.mainLineDiameter || 0, build.mainLineLength || 0,
-      build.leaderLineTension || 0, build.leaderLineWear || 0, build.leaderLineMaterial || '', build.leaderLineDiameter || 0, build.leaderLineLength || 0,
-      build.hookName || '',
-      build.calculationRule || 'guide', build.friction || 0,
-      build.description || '', build.suitableFish || '', build.suitableMap || '',
-      id
-    ).run()
+
+    // 判断是否包含装备数据（完整更新 vs 仅元数据更新）
+    const hasEquipment = build.rodModel !== undefined || build.rod_model !== undefined
+
+    if (hasEquipment) {
+      // 完整更新（来自计算器提交）
+      await db.prepare(UPDATE_SQL).bind(
+        build.name || '',
+        build.rodModel || '', build.rodName || '', build.rodCategory || '', build.rodPrice || 0, build.rodTension || 0,
+        build.reelModel || '', build.reelName || '', build.reelCategory || '', build.reelPrice || 0, build.reelTension || 0,
+        build.mainLineTension || 0, build.mainLineWear || 0, build.mainLineMaterial || '', build.mainLineDiameter || 0, build.mainLineLength || 0,
+        build.leaderLineTension || 0, build.leaderLineWear || 0, build.leaderLineMaterial || '', build.leaderLineDiameter || 0, build.leaderLineLength || 0,
+        build.hookName || '',
+        build.calculationRule || 'guide', build.friction || 0,
+        build.description || '', build.suitableFish || '', build.suitableMap || '',
+        id
+      ).run()
+    } else {
+      // 仅更新元数据（来自管理员编辑）
+      await db.prepare(UPDATE_META_SQL).bind(
+        build.name || '',
+        build.description || '', build.suitable_fish || '', build.suitable_map || '',
+        id
+      ).run()
+    }
 
     return jsonResponse({ success: true, message: '方案已更新' })
   } catch (error) {
