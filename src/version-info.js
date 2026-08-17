@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20260817-04',
+  currentVersion: 'V20260817-05',
   buildTime: '2026-08-17',
   changelog: [
+    {
+      version: 'V20260817-05',
+      date: '2026-08-17',
+      changes: [
+        '删除：移除不属于项目的 ponytail plugin 目录'
+      ]
+    },
     {
       version: 'V20260817-04',
       date: '2026-08-17',
