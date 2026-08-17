@@ -292,6 +292,19 @@
     <div v-if="showSubmitModal" class="modal-mask" @click.self="closeSubmitModal">
       <div class="modal-popup">
         <h3 class="modal-title">提交推荐装备搭配</h3>
+        <!-- 加载方案时显示提交模式选择 -->
+        <div v-if="_sourceBuild" class="submit-mode-selector">
+          <label class="mode-option">
+            <input type="radio" v-model="submitMode" value="new" />
+            <span>新增提交</span>
+            <span class="mode-desc">作为新方案提交，需审核</span>
+          </label>
+          <label class="mode-option">
+            <input type="radio" v-model="submitMode" value="overwrite" />
+            <span>覆盖提交</span>
+            <span class="mode-desc">覆盖原方案「{{ _sourceBuild.name }}」，需管理员密码</span>
+          </label>
+        </div>
         <div class="modal-body">
           <div class="form-group">
             <label class="form-label">装备方案名称</label>
@@ -352,7 +365,7 @@
         <div class="modal-footer">
           <button class="modal-cancel-btn" @click="closeSubmitModal">取消</button>
           <button class="modal-confirm-btn" @click="submitBuild" :disabled="isSubmitting">
-            {{ isSubmitting ? '提交中...' : '确认提交' }}
+            {{ isSubmitting ? '提交中...' : (submitMode === 'overwrite' ? '覆盖提交' : '确认提交') }}
           </button>
         </div>
       </div>
@@ -437,6 +450,7 @@ export default {
         suitableMap: []
       },
       _sourceBuild: null,
+      submitMode: 'new', // 'new' | 'overwrite'
       mapsList: [],
       fishSpeciesList: [],
       recommendedBuilds: [],
@@ -829,11 +843,15 @@ export default {
           suitableFish: b.suitable_fish ? b.suitable_fish.split(',').map(s => s.trim()).filter(Boolean) : [],
           suitableMap: b.suitable_map ? b.suitable_map.split(',').map(s => s.trim()).filter(Boolean) : []
         }
+        this.submitMode = 'new'
+      } else {
+        this.submitMode = 'new'
       }
       this.showSubmitModal = true
     },
     closeSubmitModal() {
       this.showSubmitModal = false
+      this._sourceBuild = null
     },
     async submitBuild() {
       const rod = this.selectedEquipmentMap['鱼竿']
@@ -871,16 +889,31 @@ export default {
 
       this.isSubmitting = true
       try {
-        const response = await fetch('/api/recommended_builds', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ build })
-        })
-        const result = await response.json()
+        let response, result
+        if (this.submitMode === 'overwrite' && this._sourceBuild) {
+          // 覆盖提交：需要管理员密码
+          const password = prompt('覆盖提交需要管理员密码：')
+          if (password === null) { this.isSubmitting = false; return }
+          response = await fetch('/api/recommended_builds', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: this._sourceBuild.id, build, password })
+          })
+        } else {
+          // 新增提交
+          response = await fetch('/api/recommended_builds', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ build })
+          })
+        }
+        result = await response.json()
         if (result.success) {
-          this.showToast('方案已提交，等待审核通过后展示', 'success')
+          const msg = this.submitMode === 'overwrite' ? '方案已更新' : '方案已提交，等待审核通过后展示'
+          this.showToast(msg, 'success')
           this.closeSubmitModal()
           this.submitForm = { name: '', description: '', suitableFish: [], suitableMap: [] }
+          this._sourceBuild = null
           // 刷新方案列表
           this.loadRecommendedBuilds()
         } else {
@@ -1731,6 +1764,56 @@ h2 {
   margin: 0 0 20px 0;
   font-size: 20px;
   text-align: center;
+}
+
+/* 提交模式选择器 */
+.submit-mode-selector {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background-color: #f0f7ff;
+  border: 1px solid #b3d4fc;
+  border-radius: 8px;
+}
+
+.mode-option {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: white;
+}
+
+.mode-option:hover {
+  border-color: #1565c0;
+}
+
+.mode-option:has(input:checked) {
+  border-color: #1565c0;
+  background-color: #e3f2fd;
+}
+
+.mode-option input[type="radio"] {
+  margin: 0;
+  accent-color: #1565c0;
+}
+
+.mode-option > span:first-of-type {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+.mode-desc {
+  font-size: 12px;
+  color: #888;
+  font-weight: normal;
 }
 
 .modal-body {
