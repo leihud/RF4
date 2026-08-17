@@ -23,6 +23,21 @@
             <span class="info-value status-success">✓ 已发布</span>
           </div>
         </div>
+        <!-- 更新日志 -->
+        <div class="changelog-section">
+          <h4>📝 更新日志</h4>
+          <div class="changelog-list">
+            <div v-for="(log, idx) in changelog" :key="idx" class="changelog-item">
+              <div class="changelog-version">
+                <span class="version-tag">v{{ log.version }}</span>
+                <span class="version-date">{{ log.date }}</span>
+              </div>
+              <ul class="changelog-changes">
+                <li v-for="(change, i) in log.changes" :key="i">{{ change }}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
         <button class="close-btn" @click="showVersionDetail = false">关闭</button>
       </div>
     </div>
@@ -40,15 +55,16 @@
 </template>
 
 <script>
-import pkg from '../package.json'
+import { versionInfo } from './version-info.js'
 
 export default {
   name: 'App',
   data() {
     return {
       fatalErrorMessage: '',
-      appVersion: pkg.version,
-      buildTime: new Date().toLocaleString('zh-CN'),
+      appVersion: versionInfo.currentVersion,
+      buildTime: versionInfo.buildTime,
+      changelog: versionInfo.changelog,
       showVersionDetail: false
     }
   },
@@ -286,5 +302,74 @@ body {
 .close-btn:hover {
   opacity: 0.9;
   transform: translateY(-1px);
+}
+
+/* 更新日志 */
+.changelog-section {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 2px solid #f0f0f0;
+}
+
+.changelog-section h4 {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.changelog-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.changelog-item {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.changelog-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.changelog-version {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.version-tag {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.version-date {
+  font-size: 12px;
+  color: #999;
+}
+
+.changelog-changes {
+  margin: 0;
+  padding-left: 20px;
+  list-style-type: disc;
+}
+
+.changelog-changes li {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 4px;
+}
+
+.changelog-changes li::marker {
+  color: #667eea;
 }
 </style>
