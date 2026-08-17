@@ -1,6 +1,6 @@
 {
   "name": "rf4",
-  "version": "V20260817-01",
+  "version": "V20260817-02",
   "description": "Russian Fishing 4 最大拉力磨损计算器 & 装备参数对比",
   "type": "module",
   "scripts": {
@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
+    "version:release": "node scripts/version.mjs",
     "deploy": "wrangler pages deploy dist"
   },
   "keywords": [
