@@ -323,67 +323,70 @@
               rows="3"
             ></textarea>
           </div>
-          <div class="form-group">
-            <label class="form-label">适用鱼种（可多选）</label>
-            <!-- 已选标签 -->
-            <div v-if="submitForm.suitableFish.length" class="selected-tags">
-              <span v-for="(fish, i) in submitForm.suitableFish" :key="i" class="selected-tag">
-                {{ fish }}
-                <span class="tag-remove" @click="toggleFishSelection(fish)">✕</span>
-              </span>
-            </div>
-            <!-- 搜索框 -->
-            <input
-              v-model="fishSearchKeyword"
-              type="text"
-              class="search-input"
-              placeholder="输入鱼种名称搜索..."
-            />
-            <!-- 多选列表 -->
-            <div class="multi-select-container">
-              <div 
-                v-for="fish in filteredFishSpeciesList" 
-                :key="fish.name"
-                class="multi-select-item"
-                :class="{ selected: submitForm.suitableFish.includes(fish.display_name) }"
-                @click="toggleFishSelection(fish.display_name)"
-              >
-                <span class="checkbox-icon">{{ submitForm.suitableFish.includes(fish.display_name) ? '☑' : '☐' }}</span>
-                <span class="item-text">{{ fish.display_name }}</span>
+          <!-- 鱼种和地图左右布局 -->
+          <div class="form-row">
+            <div class="form-group form-col">
+              <label class="form-label">适用鱼种（可多选）</label>
+              <!-- 已选标签 -->
+              <div v-if="submitForm.suitableFish.length" class="selected-tags">
+                <span v-for="(fish, i) in submitForm.suitableFish" :key="i" class="selected-tag">
+                  {{ fish }}
+                  <span class="tag-remove" @click="toggleFishSelection(fish)">✕</span>
+                </span>
               </div>
-            </div>
-            <span class="select-hint">已选择 {{ submitForm.suitableFish.length }} 个鱼种</span>
-          </div>
-          <div class="form-group">
-            <label class="form-label">适用地图（可多选）</label>
-            <!-- 已选标签 -->
-            <div v-if="submitForm.suitableMap.length" class="selected-tags">
-              <span v-for="(map, i) in submitForm.suitableMap" :key="i" class="selected-tag">
-                {{ map }}
-                <span class="tag-remove" @click="toggleMapSelection(map)">✕</span>
-              </span>
-            </div>
-            <!-- 搜索框 -->
-            <input
-              v-model="mapSearchKeyword"
-              type="text"
-              class="search-input"
-              placeholder="输入地图名称搜索..."
-            />
-            <!-- 多选列表 -->
-            <div class="multi-select-container">
-              <div 
-                v-for="map in filteredMapList" 
-                :key="map.name"
-                class="multi-select-item"
-                :class="{ selected: submitForm.suitableMap.includes(map.display_name) }"
-                @click="toggleMapSelection(map.display_name)"
-              >
-                <span class="checkbox-icon">{{ submitForm.suitableMap.includes(map.display_name) ? '☑' : '☐' }}</span>
-                <span class="item-text">{{ map.display_name }}</span>
+              <!-- 搜索框 -->
+              <input
+                v-model="fishSearchKeyword"
+                type="text"
+                class="search-input"
+                placeholder="输入鱼种名称搜索..."
+              />
+              <!-- 多选列表 -->
+              <div class="multi-select-container">
+                <div 
+                  v-for="fish in filteredFishSpeciesList" 
+                  :key="fish.name"
+                  class="multi-select-item"
+                  :class="{ selected: submitForm.suitableFish.includes(fish.display_name) }"
+                  @click="toggleFishSelection(fish.display_name)"
+                >
+                  <span class="checkbox-icon">{{ submitForm.suitableFish.includes(fish.display_name) ? '☑' : '☐' }}</span>
+                  <span class="item-text">{{ fish.display_name }}</span>
+                </div>
               </div>
+              <span class="select-hint">已选择 {{ submitForm.suitableFish.length }} 个鱼种</span>
             </div>
-            <span class="select-hint">已选择 {{ submitForm.suitableMap.length }} 张地图</span>
+            <div class="form-group form-col">
+              <label class="form-label">适用地图（可多选）</label>
+              <!-- 已选标签 -->
+              <div v-if="submitForm.suitableMap.length" class="selected-tags">
+                <span v-for="(map, i) in submitForm.suitableMap" :key="i" class="selected-tag">
+                  {{ map }}
+                  <span class="tag-remove" @click="toggleMapSelection(map)">✕</span>
+                </span>
+              </div>
+              <!-- 搜索框 -->
+              <input
+                v-model="mapSearchKeyword"
+                type="text"
+                class="search-input"
+                placeholder="输入地图名称搜索..."
+              />
+              <!-- 多选列表 -->
+              <div class="multi-select-container">
+                <div 
+                  v-for="map in filteredMapList" 
+                  :key="map.name"
+                  class="multi-select-item"
+                  :class="{ selected: submitForm.suitableMap.includes(map.display_name) }"
+                  @click="toggleMapSelection(map.display_name)"
+                >
+                  <span class="checkbox-icon">{{ submitForm.suitableMap.includes(map.display_name) ? '☑' : '☐' }}</span>
+                  <span class="item-text">{{ map.display_name }}</span>
+                </div>
+              </div>
+              <span class="select-hint">已选择 {{ submitForm.suitableMap.length }} 张地图</span>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
@@ -1866,6 +1869,21 @@ h2 {
   gap: 16px;
 }
 
+/* 鱼种地图左右布局 */
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.form-col .multi-select-container {
+  max-height: 180px;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -2224,5 +2242,16 @@ h2 {
 .toast-leave-to {
   opacity: 0;
   transform: translateX(-50%) translateY(20px);
+}
+
+/* 提交弹窗移动端：鱼种地图改回纵向 */
+@media (max-width: 600px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  .form-col .multi-select-container {
+    max-height: 200px;
+  }
 }
 </style>
