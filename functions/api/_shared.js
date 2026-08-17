@@ -313,3 +313,71 @@ export function buildSearchWhere(fields, query, binds) {
   }
   return `(${conds.join(' OR ')})`
 }
+
+/**
+ * 装备查询 handler 工厂（rods/reels 共用）。
+ * 合并反扒检查、缓存、SQL 构建与数据脱敏，消除 rods.js/reels.js 95% 代码重复。
+ * 缓存检查在反扒 DB 写入之前，合法无搜索请求命中缓存时跳过 3 次 rate_limit DB 操作。
+ */
+export function createEquipmentHandler(tableName, sanitizeType) {
+  return async function onRequestGet(context) {
+    const { request, env } = context
+    const url = new URL(request.url)
+    const searchQuery = url.searchParams.get('q')
+    const category = url.searchParams.get('category')
+
+    // 反扒检查：UA 验证（纯内存，无 DB 开销）
+    if (!isValidUserAgent(request)) {
+      return jsonResponse({ error: 'Invalid User-Agent' }, 403)
+    }
+
+    const clientIP = getClientIP(request)
+
+    // 缓存优先：合法无搜索请求命中缓存时，跳过后续 3 次 rate_limit DB 操作
+    const cacheable = !searchQuery
+    if (cacheable) {
+      const cached = await getCachedResponse(request)
+      if (cached) return cached
+    }
+
+    // IP 黑名单（需 DB 读取）
+    if (await isIPBlacklisted(clientIP, env.DB)) {
+      return jsonResponse({ error: 'IP blocked' }, 403)
+    }
+
+    // 请求频率限制（需 DB 读写）
+    const rateCheck = await checkRateLimit(clientIP, env.DB)
+    if (!rateCheck.allowed) {
+      return jsonResponse({
+        error: 'Rate limit exceeded',
+        message: 'Too many requests. Please try again later.'
+      }, 429)
+    }
+
+    try {
+      const conds = []
+      const binds = []
+      if (category) {
+        conds.push('category = ?')
+        binds.push(category)
+      }
+      const hasSearch = !!(searchQuery && searchQuery.trim())
+      if (hasSearch) {
+        conds.push(buildSearchWhere(SEARCH_FIELDS, searchQuery, binds))
+      }
+
+      let sql = `SELECT * FROM ${tableName}`
+      if (conds.length) sql += ` WHERE ${conds.join(' AND ')}`
+      sql += hasSearch ? ' LIMIT 50' : ` LIMIT ${NO_SEARCH_LIMIT}`
+
+      const result = await env.DB.prepare(sql).bind(...binds).all()
+      const sanitizedResults = result.results.map(row => sanitizeEquipmentData(row, sanitizeType))
+      const response = jsonResponse(sanitizedResults)
+      if (cacheable) putCache(request, response.clone())
+      return response
+    } catch (error) {
+      console.error('Database query error:', error)
+      return jsonResponse([])
+    }
+  }
+}

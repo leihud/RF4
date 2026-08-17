@@ -886,8 +886,8 @@ export default {
           this.showToast('方案已提交，等待审核通过后展示', 'success')
           this.closeSubmitModal()
           this.submitForm = { name: '', description: '', suitableFish: [], suitableMap: [] }
-          // 刷新页面以更新方案列表
-          window.location.reload()
+          // 刷新方案列表
+          this.loadRecommendedBuilds()
         } else {
           const errorMsg = result.error || result.message || '未知错误'
           this.showToast('保存失败：' + errorMsg, 'error')
