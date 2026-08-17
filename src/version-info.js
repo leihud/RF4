@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20260817-03',
+  currentVersion: 'V20260817-04',
   buildTime: '2026-08-17',
   changelog: [
+    {
+      version: 'V20260817-04',
+      date: '2026-08-17',
+      changes: [
+        '新增：hook 安装脚本，新克隆项目可执行 npm run hooks:install 配置'
+      ]
+    },
     {
       version: 'V20260817-03',
       date: '2026-08-17',
