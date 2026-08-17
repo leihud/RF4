@@ -431,6 +431,7 @@ export default {
         minute: '2-digit'
       })
     },
+    parsePrice,
     formatPrice(price) {
       const result = formatPriceDisplay(price)
       return result || '-'
