@@ -436,6 +436,7 @@ export default {
         suitableFish: [],
         suitableMap: []
       },
+      _sourceBuild: null,
       mapsList: [],
       fishSpeciesList: [],
       recommendedBuilds: [],
@@ -819,6 +820,16 @@ export default {
       }
     },
     openSubmitModal() {
+      // 如果之前应用过推荐方案，预填表单
+      if (this._sourceBuild) {
+        const b = this._sourceBuild
+        this.submitForm = {
+          name: b.name || '',
+          description: b.description || '',
+          suitableFish: b.suitable_fish ? b.suitable_fish.split(',').map(s => s.trim()).filter(Boolean) : [],
+          suitableMap: b.suitable_map ? b.suitable_map.split(',').map(s => s.trim()).filter(Boolean) : []
+        }
+      }
       this.showSubmitModal = true
     },
     closeSubmitModal() {
@@ -907,6 +918,9 @@ export default {
     },
     /** 应用推荐装备搭配到当前选择 */
     applyRecommendedBuild(build) {
+      // 保存方案元数据，供提交弹窗预填
+      this._sourceBuild = build
+      
       // 清空当前选择
       this.selectedEquipmentList = []
       
