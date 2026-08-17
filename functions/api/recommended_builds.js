@@ -101,6 +101,52 @@ export async function onRequestDelete(context) {
   }
 }
 
+const UPDATE_SQL = `UPDATE recommended_builds SET
+  name = ?,
+  rod_model = ?, rod_name = ?, rod_category = ?, rod_price = ?, rod_tension = ?,
+  reel_model = ?, reel_name = ?, reel_category = ?, reel_price = ?, reel_tension = ?,
+  main_line_tension = ?, main_line_wear = ?, main_line_material = ?, main_line_diameter = ?, main_line_length = ?,
+  leader_line_tension = ?, leader_line_wear = ?, leader_line_material = ?, leader_line_diameter = ?, leader_line_length = ?,
+  hook_name = ?,
+  calculation_rule = ?, friction = ?,
+  description = ?, suitable_fish = ?, suitable_map = ?
+WHERE id = ?`
+
+export async function onRequestPatch(context) {
+  const { request, env } = context
+
+  try {
+    const body = await request.json()
+    const { id, build, password } = body
+
+    if (!validateAdminPassword(env, password)) {
+      return jsonResponse({ success: false, message: '需要管理员密码' }, 403)
+    }
+
+    if (!id || !build) {
+      return jsonResponse({ success: false, message: '缺少方案ID或数据' }, 400)
+    }
+
+    const db = env.DB
+    await db.prepare(UPDATE_SQL).bind(
+      build.name || '',
+      build.rod_model || '', build.rod_name || '', build.rod_category || '', build.rod_price || 0, build.rod_tension || 0,
+      build.reel_model || '', build.reel_name || '', build.reel_category || '', build.reel_price || 0, build.reel_tension || 0,
+      build.main_line_tension || 0, build.main_line_wear || 0, build.main_line_material || '', build.main_line_diameter || 0, build.main_line_length || 0,
+      build.leader_line_tension || 0, build.leader_line_wear || 0, build.leader_line_material || '', build.leader_line_diameter || 0, build.leader_line_length || 0,
+      build.hook_name || '',
+      build.calculation_rule || 'guide', build.friction || 0,
+      build.description || '', build.suitable_fish || '', build.suitable_map || '',
+      id
+    ).run()
+
+    return jsonResponse({ success: true, message: '方案已更新' })
+  } catch (error) {
+    console.error('更新方案失败:', error)
+    return errorResponse(error)
+  }
+}
+
 export async function onRequestPut(context) {
   const { request, env } = context
 

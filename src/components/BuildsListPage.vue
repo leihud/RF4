@@ -135,6 +135,7 @@
             <span class="meta-item">🎣 {{ getFishCount(build.suitable_fish) }} 种鱼</span>
             <span class="meta-item">️ {{ getMapCount(build.suitable_map) }} 张地图</span>
             <span class="meta-item"> {{ formatDate(build.created_at) }}</span>
+            <button v-if="isAdminMode" class="edit-btn" @click.stop="openEditModal(build)" title="编辑方案">✎ 编辑</button>
             <button v-if="isAdminMode" class="approve-btn" @click.stop="approveBuild(build)" :title="build.is_approved ? '取消审核' : '通过审核'">{{ build.is_approved ? '✓ 已审核' : '审核' }}</button>
             <button v-if="showDeleteBtn" class="delete-btn" @click.stop="deleteBuild(build, index)" title="删除方案">️</button>
           </div>
@@ -239,6 +240,38 @@
       <button class="create-btn" @click="$router.push('/')">+ 创建新方案</button>
     </div>
 
+    <!-- 编辑方案弹窗 -->
+    <div v-if="showEditModal" class="modal-overlay" @click.self="closeEditModal">
+      <div class="edit-modal">
+        <div class="modal-header">
+          <h3>编辑方案</h3>
+          <button class="modal-close" @click="closeEditModal">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>方案名称</label>
+            <input v-model="editForm.name" type="text" class="form-input" placeholder="输入方案名称" />
+          </div>
+          <div class="form-group">
+            <label>说明</label>
+            <textarea v-model="editForm.description" class="form-textarea" placeholder="输入方案说明" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label>适用鱼种（逗号分隔）</label>
+            <input v-model="editForm.suitable_fish" type="text" class="form-input" placeholder="如：丁克斯带形鲤,丁克斯无鳞鲤" />
+          </div>
+          <div class="form-group">
+            <label>适用地图（逗号分隔）</label>
+            <input v-model="editForm.suitable_map" type="text" class="form-input" placeholder="如：阿尔卑斯湖,贝加尔湖" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cancel" @click="closeEditModal">取消</button>
+          <button class="btn-save" @click="saveEditBuild" :disabled="isSaving">{{ isSaving ? '保存中...' : '保存' }}</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Toast 提示 -->
     <transition name="toast">
       <div v-if="toast.visible" class="toast" :class="'toast-' + toast.type">
@@ -282,7 +315,10 @@ export default {
       toast: { visible: false, message: '', type: 'info' },
       toastTimer: null,
       searchInput: '',
-      searchDebounceTimer: null
+      searchDebounceTimer: null,
+      showEditModal: false,
+      editForm: { id: null, name: '', description: '', suitable_fish: '', suitable_map: '' },
+      isSaving: false
     }
   },
   computed: {
@@ -497,6 +533,53 @@ export default {
         }
       } catch (error) {
         this.showToast('审核操作失败：' + error.message, 'error')
+      }
+    },
+    openEditModal(build) {
+      this.editForm = {
+        id: build.id,
+        name: build.name || '',
+        description: build.description || '',
+        suitable_fish: build.suitable_fish || '',
+        suitable_map: build.suitable_map || ''
+      }
+      this.showEditModal = true
+    },
+    closeEditModal() {
+      this.showEditModal = false
+      this.editForm = { id: null, name: '', description: '', suitable_fish: '', suitable_map: '' }
+    },
+    async saveEditBuild() {
+      const password = prompt('请输入管理员密码：')
+      if (password === null) return
+      this.isSaving = true
+      try {
+        const response = await fetch('/api/recommended_builds', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: this.editForm.id, build: this.editForm, password })
+        })
+        const result = await response.json()
+        if (result.success) {
+          // 更新本地数据
+          const idx = this.builds.findIndex(b => b.id === this.editForm.id)
+          if (idx !== -1) {
+            Object.assign(this.builds[idx], {
+              name: this.editForm.name,
+              description: this.editForm.description,
+              suitable_fish: this.editForm.suitable_fish,
+              suitable_map: this.editForm.suitable_map
+            })
+          }
+          this.showToast('方案已更新', 'success')
+          this.closeEditModal()
+        } else {
+          this.showToast('更新失败：' + (result.error || result.message || '未知错误'), 'error')
+        }
+      } catch (error) {
+        this.showToast('更新失败：' + error.message, 'error')
+      } finally {
+        this.isSaving = false
       }
     },
     showToast(message, type = 'info') {
@@ -858,6 +941,24 @@ export default {
   color: white;
 }
 
+/* 编辑按钮 */
+.edit-btn {
+  padding: 4px 8px;
+  border: 1px solid #1565c0;
+  background-color: white;
+  color: #1565c0;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+  margin-left: 8px;
+}
+
+.edit-btn:hover {
+  background-color: #1565c0;
+  color: white;
+}
+
 /* 待审核标签 */
 .pending-tag {
   background-color: #fff3e0;
@@ -1210,5 +1311,154 @@ export default {
 .toast-leave-to {
   opacity: 0;
   transform: translateX(-50%) translateY(20px);
+}
+
+/* 编辑弹窗 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.edit-modal {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #999;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.modal-close:hover {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #1565c0;
+  box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
+}
+
+.form-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.form-textarea:focus {
+  outline: none;
+  border-color: #1565c0;
+  box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 20px;
+  border-top: 1px solid #eee;
+}
+
+.btn-cancel {
+  padding: 8px 20px;
+  border: 1px solid #ddd;
+  background-color: white;
+  color: #666;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+  background-color: #f5f5f5;
+  border-color: #ccc;
+}
+
+.btn-save {
+  padding: 8px 20px;
+  border: none;
+  background-color: #1565c0;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-save:hover:not(:disabled) {
+  background-color: #0d47a1;
+}
+
+.btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 </style>
