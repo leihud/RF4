@@ -33,7 +33,6 @@ export async function loadEquipmentData(apiPath, options = {}) {
       ...(typeof enrich === 'function' ? enrich(item) : {})
     }))
 
-    console.log(`装备数据加载成功 [${apiPath}]:`, data.length, '条')
     return { data, error: false }
   } catch (error) {
     console.error(`加载装备数据失败 [${apiPath}]:`, error)
@@ -60,12 +59,6 @@ export async function loadRodAndReelData() {
   if (rodResult.error || reelResult.error) {
     return { rodData: [], reelData: [], error: true }
   }
-
-  console.log(
-    '装备对比数据加载成功:',
-    rodResult.data.length, '条鱼竿,',
-    reelResult.data.length, '条渔轮'
-  )
 
   return {
     rodData: rodResult.data,

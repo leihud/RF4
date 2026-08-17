@@ -17,7 +17,6 @@ export async function onRequestPost(context) {
 
   try {
     const body = await request.json()
-    console.log('接收到的数据:', JSON.stringify(body, null, 2))
     const { build } = body
 
     if (!build) {

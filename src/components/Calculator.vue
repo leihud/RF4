@@ -882,7 +882,6 @@ export default {
           body: JSON.stringify({ build })
         })
         const result = await response.json()
-        console.log('提交结果:', result)
         if (result.success) {
           this.showToast('方案已提交，等待审核通过后展示', 'success')
           this.closeSubmitModal()
