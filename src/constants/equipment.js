@@ -44,12 +44,7 @@ export const FRICTION_TIP_LOW = 5
 // 默认摩擦值（宝典通用规则上限 = 29 / 论坛规则上限 = 30，取两者交集的最大值）
 export const DEFAULT_FRICTION = 29
 
-// readExcel.js 中通过汉字 charCode 区分鱼竿/渔轮
-// 鱼 = 40060, 渔 = 28180
-export const HANZI_CHARCODE = {
-  ROD: 40060,
-  REEL: 28180
-}
+// 摩擦值建议阈值
 
 /**
  * 装备评级 rating → 中文别名映射。

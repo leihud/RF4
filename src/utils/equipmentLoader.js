@@ -1,5 +1,6 @@
 import { getRatingAlias } from '../constants/equipment.js'
 import { sanitizeEquipmentList } from './sanitize.js'
+import { parsePrice } from './display.js'
 
 /**
  * 从 API 加载装备数据的共享逻辑。
@@ -47,11 +48,11 @@ export async function loadEquipmentData(apiPath, options = {}) {
 export async function loadRodAndReelData() {
   const [rodResult, reelResult] = await Promise.all([
     loadEquipmentData('/api/rods', {
-      enrich: (item) => ({ panelTension: safeExtractNumber(item.strengthKg) || 0 })
+      enrich: (item) => ({ panelTension: parsePrice(item.strengthKg) || 0 })
     }),
     loadEquipmentData('/api/reels', {
       enrich: (item) => ({
-        panelTension: safeExtractNumber(item.frictionForce) || safeExtractNumber(item.lockTension) || 0
+        panelTension: parsePrice(item.frictionForce) || parsePrice(item.lockTension) || 0
       })
     })
   ])
@@ -67,13 +68,3 @@ export async function loadRodAndReelData() {
   }
 }
 
-/**
- * 安全提取数值：对象/NaN/非数值字符串兜底为 0
- */
-function safeExtractNumber(str) {
-  if (str == null) return 0
-  if (typeof str === 'object') return 0
-  const cleaned = String(str).replace(/,/g, '')
-  const match = cleaned.match(/[\d.]+/)
-  return match ? parseFloat(match[0]) : 0
-}

@@ -5,9 +5,8 @@
  * 
  * 功能：
  * 1. 自动生成版本号（VYYYYMMDD-NN）
- * 2. 更新 src/version-info.js
+ * 2. 更新 src/version-info.js（唯一数据源）
  * 3. 更新 package.json
- * 4. 更新 CHANGELOG.md
  * 
  * 示例：
  *   node scripts/version.mjs 新增：版本展示功能 优化：编辑弹窗体验
@@ -100,24 +99,7 @@ function updatePackageJson(version) {
   console.log(`✓ 更新 package.json`)
 }
 
-// 更新 CHANGELOG.md
-function updateChangelog(version, date, changes) {
-  const filePath = join(ROOT, 'CHANGELOG.md')
-  let content = readFileSync(filePath, 'utf-8')
-  
-  // 构建新的 changelog 条目
-  const changesStr = changes.map(c => `- ${c}`).join('\n')
-  const newEntry = `## ${version} (${date})\n${changesStr}\n\n`
-  
-  // 在 # 更新日志 后插入
-  content = content.replace(
-    /(# 更新日志\n\n)/,
-    `$1${newEntry}`
-  )
-  
-  writeFileSync(filePath, content, 'utf-8')
-  console.log(`✓ 更新 CHANGELOG.md`)
-}
+
 
 // 主流程
 const version = generateVersion()
@@ -131,7 +113,6 @@ console.log('')
 
 updateVersionInfo(version, date, changes)
 updatePackageJson(version)
-updateChangelog(version, date, changes)
 
 console.log(`\n✅ 版本信息已更新完成！`)
 console.log(`\n下一步：`)
