@@ -1,6 +1,31 @@
 <template>
   <div id="app">
     <router-view />
+    <!-- 版本信息展示 -->
+    <div class="version-badge" @click="showVersionDetail = !showVersionDetail">
+      <span class="version-label">v{{ appVersion }}</span>
+    </div>
+    <!-- 版本详情弹窗 -->
+    <div v-if="showVersionDetail" class="version-overlay" @click.self="showVersionDetail = false">
+      <div class="version-popup">
+        <h3>📦 版本信息</h3>
+        <div class="version-info">
+          <div class="info-row">
+            <span class="info-label">当前版本：</span>
+            <span class="info-value">v{{ appVersion }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">发布时间：</span>
+            <span class="info-value">{{ buildTime }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">部署状态：</span>
+            <span class="info-value status-success">✓ 已发布</span>
+          </div>
+        </div>
+        <button class="close-btn" @click="showVersionDetail = false">关闭</button>
+      </div>
+    </div>
     <div v-if="fatalErrorMessage" class="global-error-overlay">
       <div class="global-error-popup">
         <h3>⚠ 页面出现异常</h3>
@@ -15,11 +40,16 @@
 </template>
 
 <script>
+import pkg from '../package.json'
+
 export default {
   name: 'App',
   data() {
     return {
-      fatalErrorMessage: ''
+      fatalErrorMessage: '',
+      appVersion: pkg.version,
+      buildTime: new Date().toLocaleString('zh-CN'),
+      showVersionDetail: false
     }
   },
   created() {
@@ -152,5 +182,109 @@ body {
 .global-error-btn.primary:hover {
   background: #1565c0;
   border-color: #1565c0;
+}
+
+/* 版本徽章 */
+.version-badge {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+  z-index: 9998;
+}
+
+.version-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+}
+
+.version-label {
+  white-space: nowrap;
+}
+
+/* 版本详情弹窗 */
+.version-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 16px;
+}
+
+.version-popup {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 100%;
+  padding: 28px 32px;
+}
+
+.version-popup h3 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.version-info {
+  margin-bottom: 24px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.info-value {
+  font-size: 14px;
+  color: #333;
+  font-weight: 600;
+}
+
+.status-success {
+  color: #43a047;
+}
+
+.close-btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
 }
 </style>
