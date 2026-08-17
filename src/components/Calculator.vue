@@ -325,6 +325,13 @@
           </div>
           <div class="form-group">
             <label class="form-label">适用鱼种（可多选）</label>
+            <!-- 已选标签 -->
+            <div v-if="submitForm.suitableFish.length" class="selected-tags">
+              <span v-for="(fish, i) in submitForm.suitableFish" :key="i" class="selected-tag">
+                {{ fish }}
+                <span class="tag-remove" @click="toggleFishSelection(fish)">✕</span>
+              </span>
+            </div>
             <!-- 搜索框 -->
             <input
               v-model="fishSearchKeyword"
@@ -349,17 +356,34 @@
           </div>
           <div class="form-group">
             <label class="form-label">适用地图（可多选）</label>
-            <select
-              v-model="submitForm.suitableMap"
-              class="form-select form-select-multiple"
-              multiple
-              size="5"
-            >
-              <option v-for="map in mapsList" :key="map.name" :value="map.display_name">
-                {{ map.display_name }}
-              </option>
-            </select>
-            <span class="select-hint">按住 Ctrl/Cmd 键可多选</span>
+            <!-- 已选标签 -->
+            <div v-if="submitForm.suitableMap.length" class="selected-tags">
+              <span v-for="(map, i) in submitForm.suitableMap" :key="i" class="selected-tag">
+                {{ map }}
+                <span class="tag-remove" @click="toggleMapSelection(map)">✕</span>
+              </span>
+            </div>
+            <!-- 搜索框 -->
+            <input
+              v-model="mapSearchKeyword"
+              type="text"
+              class="search-input"
+              placeholder="输入地图名称搜索..."
+            />
+            <!-- 多选列表 -->
+            <div class="multi-select-container">
+              <div 
+                v-for="map in filteredMapList" 
+                :key="map.name"
+                class="multi-select-item"
+                :class="{ selected: submitForm.suitableMap.includes(map.display_name) }"
+                @click="toggleMapSelection(map.display_name)"
+              >
+                <span class="checkbox-icon">{{ submitForm.suitableMap.includes(map.display_name) ? '☑' : '☐' }}</span>
+                <span class="item-text">{{ map.display_name }}</span>
+              </div>
+            </div>
+            <span class="select-hint">已选择 {{ submitForm.suitableMap.length }} 张地图</span>
           </div>
         </div>
         <div class="modal-footer">
@@ -455,6 +479,7 @@ export default {
       fishSpeciesList: [],
       recommendedBuilds: [],
       fishSearchKeyword: '',
+      mapSearchKeyword: '',
       toast: { visible: false, message: '', type: 'info' },
       toastTimer: null
     }
@@ -595,6 +620,16 @@ export default {
       const keyword = this.fishSearchKeyword.toLowerCase()
       return this.fishSpeciesList.filter(fish => 
         fish.display_name.toLowerCase().includes(keyword)
+      )
+    },
+    /** 根据搜索关键词过滤地图列表 */
+    filteredMapList() {
+      if (!this.mapSearchKeyword.trim()) {
+        return this.mapsList
+      }
+      const keyword = this.mapSearchKeyword.toLowerCase()
+      return this.mapsList.filter(map => 
+        map.display_name.toLowerCase().includes(keyword)
       )
     },
     /** 过滤目标鱼种下拉列表 */
@@ -1019,6 +1054,15 @@ export default {
       } else {
         // 未选中，添加选择
         this.submitForm.suitableFish.push(fishName)
+      }
+    },
+    /** 切换地图选择状态 */
+    toggleMapSelection(mapName) {
+      const index = this.submitForm.suitableMap.indexOf(mapName)
+      if (index > -1) {
+        this.submitForm.suitableMap.splice(index, 1)
+      } else {
+        this.submitForm.suitableMap.push(mapName)
       }
     },
     /** 选择目标鱼种 */
@@ -1879,6 +1923,39 @@ h2 {
 .search-input:focus {
   border-color: #42b983;
   box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.2);
+}
+
+/* 已选标签 */
+.selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+  min-height: 24px;
+}
+
+.selected-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  background-color: #e3f2fd;
+  color: #1565c0;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.tag-remove {
+  cursor: pointer;
+  font-size: 12px;
+  color: #999;
+  margin-left: 2px;
+  line-height: 1;
+}
+
+.tag-remove:hover {
+  color: #e53935;
 }
 
 /* 多选容器 */
