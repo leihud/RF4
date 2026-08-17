@@ -1032,7 +1032,7 @@ export default {
 
 .analysis-stat {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 6px;
   padding: 0 16px;
   white-space: nowrap;
@@ -1051,12 +1051,12 @@ export default {
 }
 
 .stat-label {
-  font-size: 13px;
+  font-size: 14px;
   color: #888;
 }
 
 .stat-value {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
 }
 
@@ -1075,7 +1075,7 @@ export default {
 }
 
 .stat-total {
-  font-size: 17px;
+  font-size: 14px;
 }
 
 /* 鱼种地图行 */
@@ -1083,20 +1083,19 @@ export default {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .meta-group {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 8px;
 }
 
 .meta-label {
-  font-size: 13px;
+  font-size: 14px;
   color: #888;
   font-weight: 500;
-  padding-top: 4px;
   white-space: nowrap;
 }
 
@@ -1105,7 +1104,7 @@ export default {
 }
 
 .meta-desc-text {
-  font-size: 13px;
+  font-size: 14px;
   color: #555;
   line-height: 1.5;
 }
