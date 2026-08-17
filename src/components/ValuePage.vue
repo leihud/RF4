@@ -364,7 +364,8 @@ export default {
     },
     formatPrice(price) {
       return formatPriceDisplay(price)
-    }
+    },
+    parsePrice
   }
 }
 </script>
