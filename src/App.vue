@@ -74,8 +74,7 @@ export default {
       buildTime: versionInfo.buildTime,
       changelog: versionInfo.changelog,
       showVersionDetail: false,
-      showAllChangelog: false,
-      hasAutoShown: false // 本次会话是否已自动弹出
+      showAllChangelog: false
     }
   },
   computed: {
@@ -88,17 +87,6 @@ export default {
     }
   },
   created() {
-    // 新版本首次访问时自动弹出公告（本次会话只弹一次）
-    this.$nextTick(() => {
-      const seenKey = 'version_seen_' + this.appVersion
-      if (!sessionStorage.getItem(seenKey)) {
-        setTimeout(() => {
-          this.showVersionDetail = true
-          this.hasAutoShown = true
-          sessionStorage.setItem(seenKey, '1')
-        }, 500) // 延迟 500ms 让页面加载完成
-      }
-    })
     // 全局 Vue 渲染错误兜底（防止组件内部未捕获异常导致整页白屏）
     if (this.$root && this.$root.appContext && this.$root.appContext.config) {
       const originalHandler = this.$root.appContext.config.errorHandler
