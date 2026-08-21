@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20260821-01',
+  currentVersion: 'V20260821-02',
   buildTime: '2026-08-21',
   changelog: [
+    {
+      version: 'V20260821-02',
+      date: '2026-08-21',
+      changes: [
+        '优化：移除版本公告自动弹出，改为用户主动点击查看'
+      ]
+    },
     {
       version: 'V20260821-01',
       date: '2026-08-21',
