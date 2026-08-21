@@ -30,10 +30,14 @@
             <div v-for="(log, idx) in displayChangelog" :key="idx" class="changelog-item">
               <div class="changelog-version">
                 <span class="version-tag">{{ log.version }}</span>
+                <span v-if="idx === 0" class="new-badge">NEW</span>
                 <span class="version-date">{{ log.date }}</span>
               </div>
               <ul class="changelog-changes">
-                <li v-for="(change, i) in log.changes" :key="i">{{ change }}</li>
+                <li v-for="(change, i) in log.changes" :key="i">
+                  <span :class="getChangeTypeClass(change)">{{ getChangeTypeLabel(change) }}</span>
+                  {{ getChangeContent(change) }}
+                </li>
               </ul>
             </div>
           </div>
@@ -70,7 +74,8 @@ export default {
       buildTime: versionInfo.buildTime,
       changelog: versionInfo.changelog,
       showVersionDetail: false,
-      showAllChangelog: false
+      showAllChangelog: false,
+      hasAutoShown: false // 本次会话是否已自动弹出
     }
   },
   computed: {
@@ -83,6 +88,17 @@ export default {
     }
   },
   created() {
+    // 新版本首次访问时自动弹出公告（本次会话只弹一次）
+    this.$nextTick(() => {
+      const seenKey = 'version_seen_' + this.appVersion
+      if (!sessionStorage.getItem(seenKey)) {
+        setTimeout(() => {
+          this.showVersionDetail = true
+          this.hasAutoShown = true
+          sessionStorage.setItem(seenKey, '1')
+        }, 500) // 延迟 500ms 让页面加载完成
+      }
+    })
     // 全局 Vue 渲染错误兜底（防止组件内部未捕获异常导致整页白屏）
     if (this.$root && this.$root.appContext && this.$root.appContext.config) {
       const originalHandler = this.$root.appContext.config.errorHandler
@@ -122,6 +138,25 @@ export default {
     },
     dismissError() {
       this.fatalErrorMessage = ''
+    },
+    // 解析变更类型前缀（新增/优化/修复/删除）
+    getChangeTypeClass(change) {
+      if (change.startsWith('新增：') || change.startsWith('新增:')) return 'change-type-new'
+      if (change.startsWith('优化：') || change.startsWith('优化:')) return 'change-type-optimize'
+      if (change.startsWith('修复：') || change.startsWith('修复:')) return 'change-type-fix'
+      if (change.startsWith('删除：') || change.startsWith('删除:')) return 'change-type-remove'
+      return ''
+    },
+    getChangeTypeLabel(change) {
+      if (change.startsWith('新增：') || change.startsWith('新增:')) return '[新增]'
+      if (change.startsWith('优化：') || change.startsWith('优化:')) return '[优化]'
+      if (change.startsWith('修复：') || change.startsWith('修复:')) return '[修复]'
+      if (change.startsWith('删除：') || change.startsWith('删除:')) return '[删除]'
+      return ''
+    },
+    getChangeContent(change) {
+      // 去掉类型前缀，返回纯内容
+      return change.replace(/^(新增|优化|修复|删除)[：:]/, '')
     }
   }
 }
@@ -385,5 +420,55 @@ body {
 
 .changelog-changes li::marker {
   color: #667eea;
+}
+
+/* 新版本标识 */
+.new-badge {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* 变更类型标签 */
+.change-type-new,
+.change-type-optimize,
+.change-type-fix,
+.change-type-remove {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.change-type-new {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.change-type-optimize {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.change-type-fix {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+.change-type-remove {
+  background: #fce4ec;
+  color: #c62828;
 }
 </style>
