@@ -184,9 +184,9 @@ const COMPARE_ROWS = {
     { label: '结构', field: 'structure' },
     { label: '能力', field: 'ability', fallback: '-' },
     { label: '评级', field: 'rating' },
-    { label: '等级要求', field: 'levelReq', format: v => `Lv.${v}` },
-    { label: '银币价格', field: 'silverPrice', fallback: '-', format: v => `银币：${v}` },
-    { label: '金币价格', field: 'goldPrice', fallback: '-', format: v => `金币：${v}` },
+    { label: '等级要求', field: 'levelReq', format: v => (v == null || v === '') ? '' : `Lv.${v}` },
+    { label: '银币价格', field: 'silverPrice', fallback: '-', format: v => (v == null || v === '') ? '' : `银币：${v}` },
+    { label: '金币价格', field: 'goldPrice', fallback: '-', format: v => (v == null || v === '') ? '' : `金币：${v}` },
     { label: '描述', field: 'description', fallback: '-' }
   ],
   reel: [
@@ -214,11 +214,11 @@ const COMPARE_ROWS = {
       }
     },
     { label: '评级', field: 'rating' },
-    { label: '等级要求', field: 'levelReq', format: v => `Lv.${v}` },
+    { label: '等级要求', field: 'levelReq', format: v => (v == null || v === '') ? '' : `Lv.${v}` },
     { label: '线轴容量', field: 'spoolCapacity', fallback: '-' },
     { label: '防海水', field: 'saltwaterResistant', fallback: '-' },
-    { label: '银币价格', field: 'silverPrice', fallback: '-', format: v => `银币：${v}` },
-    { label: '金币价格', field: 'goldPrice', fallback: '-', format: v => `金币：${v}` },
+    { label: '银币价格', field: 'silverPrice', fallback: '-', format: v => (v == null || v === '') ? '' : `银币：${v}` },
+    { label: '金币价格', field: 'goldPrice', fallback: '-', format: v => (v == null || v === '') ? '' : `金币：${v}` },
     { label: '描述', field: 'description', fallback: '-' }
   ]
 }
