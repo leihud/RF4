@@ -43,10 +43,12 @@ export async function loadEquipmentData(apiPath, options = {}) {
 
 /**
  * 并行加载鱼竿和渔轮数据（对比页使用）。
+ * 使用 Promise.allSettled 容错：单一接口失败时仍返回另一份数据，
+ * 仅当两者都失败才报 error，避免一个接口抖动导致整页无数据。
  * @returns {Promise<{ rodData: Array, reelData: Array, error: boolean }>}
  */
 export async function loadRodAndReelData() {
-  const [rodResult, reelResult] = await Promise.all([
+  const [rodResult, reelResult] = await Promise.allSettled([
     loadEquipmentData('/api/rods', {
       enrich: (item) => ({ panelTension: parsePrice(item.strengthKg) || 0 })
     }),
@@ -57,14 +59,14 @@ export async function loadRodAndReelData() {
     })
   ])
 
-  if (rodResult.error || reelResult.error) {
-    return { rodData: [], reelData: [], error: true }
-  }
+  // loadEquipmentData 自身不抛异常（内部已捕获），这里兼容 rejected 状态双保险
+  const rod = rodResult.status === 'fulfilled' ? rodResult.value : { data: [], error: true }
+  const reel = reelResult.status === 'fulfilled' ? reelResult.value : { data: [], error: true }
 
   return {
-    rodData: rodResult.data,
-    reelData: reelResult.data,
-    error: false
+    rodData: rod.data,
+    reelData: reel.data,
+    error: rod.error && reel.error
   }
 }
 
