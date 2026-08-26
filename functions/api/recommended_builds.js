@@ -171,7 +171,7 @@ export async function onRequestPut(context) {
 
   try {
     const body = await request.json()
-    const { id, isApproved, password } = body
+    const { id, isApproved, password, rejectReason } = body
 
     if (!validateAdminPassword(env, password)) {
       return jsonResponse({ success: false, message: '需要管理员密码' }, 403)
@@ -182,13 +182,14 @@ export async function onRequestPut(context) {
     }
 
     const db = env.DB
-    await db.prepare('UPDATE recommended_builds SET is_approved = ? WHERE id = ?')
-      .bind(isApproved ? 1 : 0, id)
+    // 通过审核时清空驳回原因；驳回时记录原因供提交者查看
+    await db.prepare('UPDATE recommended_builds SET is_approved = ?, reject_reason = ? WHERE id = ?')
+      .bind(isApproved ? 1 : 0, isApproved ? '' : (rejectReason || ''), id)
       .run()
 
     return jsonResponse({ 
       success: true, 
-      message: isApproved ? '方案已通过审核' : '方案已取消审核' 
+      message: isApproved ? '方案已通过审核' : '方案已驳回' 
     })
   } catch (error) {
     console.error('审核操作失败:', error)
@@ -215,6 +216,9 @@ export async function onRequestGet(context) {
   const url = new URL(request.url)
   const fishName = url.searchParams.get('fish')
   const adminMode = url.searchParams.get('admin') === 'true'
+  // 分页参数：limit 上限 200 防止滥用，不传则返回全部（兼容旧客户端）
+  const limit = Math.min(parseInt(url.searchParams.get('limit'), 10) || 0, 200)
+  const offset = parseInt(url.searchParams.get('offset'), 10) || 0
 
   try {
     const db = env.DB
@@ -240,11 +244,24 @@ export async function onRequestGet(context) {
     
     query += ' ORDER BY created_at DESC'
     
+    // 多取 1 条用于判断是否还有下一页，避免额外 COUNT 查询
+    if (limit > 0) {
+      query += ' LIMIT ? OFFSET ?'
+      bindings = bindings.concat([limit + 1, offset])
+    }
+    
     const result = await db.prepare(query).bind(...bindings).all()
+    let rows = result.results || []
+    let hasMore = false
+    if (limit > 0 && rows.length > limit) {
+      rows = rows.slice(0, limit)
+      hasMore = true
+    }
     
     return jsonResponse({
       success: true,
-      data: result.results || []
+      data: rows,
+      hasMore
     })
   } catch (error) {
     return errorResponse(error)

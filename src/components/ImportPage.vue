@@ -58,7 +58,11 @@
             <span class="upload-hint">支持 .xlsx, .xls 格式</span>
           </div>
           <div v-if="fileContent" class="file-preview">
-            <h3>文件内容预览（前3行）</h3>
+            <h3>文件内容预览（前3行，共 {{ fileContent.length }} 行数据）</h3>
+            <!-- 导入前字段校验提示，提前拦截坏数据 -->
+            <div v-if="validationIssues.length" class="validation-issues">
+              <div v-for="(issue, i) in validationIssues" :key="i" class="validation-issue">⚠ {{ issue }}</div>
+            </div>
             <div class="preview-table">
               <table>
                 <thead>
@@ -110,6 +114,10 @@
         <div v-if="importResult.duplicates" class="duplicate-list">
           <div class="duplicate-title">重复数据：</div>
           <div class="duplicate-items">{{ importResult.duplicates.join(', ') }}</div>
+        </div>
+        <div v-if="importResult.failedRows && importResult.failedRows.length" class="duplicate-list">
+          <div class="duplicate-title">失败行明细：</div>
+          <div class="duplicate-items">{{ importResult.failedRows.join('；') }}</div>
         </div>
       </div>
     </div>
@@ -266,6 +274,22 @@ export default {
     },
     isValidFile() {
       return this.parsedData && this.parsedData.length > 0
+    },
+    /** 导入前字段校验：提前发现缺失列/空名称等坏数据 */
+    validationIssues() {
+      if (!Array.isArray(this.fileContent) || this.fileContent.length === 0) return []
+      const issues = []
+      const requiredField = '装备名称'
+      const headers = Object.keys(this.fileContent[0] || {})
+      if (!headers.includes(requiredField)) {
+        issues.push(`缺少必填字段「${requiredField}」，请使用模板格式填写`)
+      } else {
+        const emptyCount = this.fileContent.filter(row => !row[requiredField]).length
+        if (emptyCount > 0) {
+          issues.push(`${emptyCount} 行「${requiredField}」为空，将以空名称导入`)
+        }
+      }
+      return issues
     }
   },
   methods: {
@@ -381,7 +405,8 @@ export default {
 
         if (!result.success) {
           if (response.status === 401) {
-            this.passwordError = '密码错误，请重试'
+            // 区分后端返回的具体密码错误（未输入/错误/未配置）
+            this.passwordError = result.message || '密码错误，请重试'
           }
         } else {
           this.password = ''
@@ -713,6 +738,21 @@ export default {
   font-size: 13px;
   color: var(--text-secondary);
   word-break: break-all;
+}
+
+/* 导入前字段校验提示 */
+.validation-issues {
+  margin-bottom: 12px;
+}
+
+.validation-issue {
+  padding: 8px 12px;
+  background-color: var(--color-warning-bg);
+  border-left: 3px solid var(--color-warning);
+  color: var(--color-warning);
+  font-size: 13px;
+  border-radius: 4px;
+  margin-bottom: 6px;
 }
 
 @media (max-width: 768px) {

@@ -37,6 +37,7 @@
     <div v-if="isLoading && rodData.length === 0 && reelData.length === 0" class="loading-wrapper">
       <div class="loading-spinner"></div>
       <span class="loading-text">正在加载装备数据...</span>
+      <AppSkeleton :rows="6" />
     </div>
 
     <div v-if="dataLoadError" class="error-wrapper">
@@ -46,7 +47,10 @@
 
     <div v-if="!isLoading && !dataLoadError" class="compare-content">
       <div class="equipment-list">
-        <h3>装备列表(点击添加到对比)</h3>
+        <div class="list-header-row">
+          <h3>装备列表(点击添加到对比)</h3>
+          <button class="quick-add-btn" @click="addTopStrength" title="将当前列表中强度前 3 的装备加入对比">+ 强度前3</button>
+        </div>
         <div class="list-container">
           <div
             v-for="equipment in filteredEquipment"
@@ -110,6 +114,11 @@
               :class="['compare-cell', { 'max-value': row.highlight && isFieldMax(equipment, row) }]"
             >
               {{ formatCellValue(equipment, row) }}
+              <span
+                v-if="row.highlight && !isFieldMax(equipment, row) && formatDelta(equipment, row)"
+                class="diff-delta"
+                title="与最优值的差距"
+              >{{ formatDelta(equipment, row) }}</span>
             </div>
           </div>
 
@@ -143,6 +152,7 @@ import { searchAndRankEquipment, sortByPanelTension, EQUIPMENT_SEARCH_FIELDS } f
 import { sanitizeEquipmentFields } from '../utils/sanitize.js'
 import { loadRodAndReelData } from '../utils/equipmentLoader.js'
 import { getMergedAdaptWeight } from '../utils/display.js'
+import AppSkeleton from './common/AppSkeleton.vue'
 
 const COMPARE_ROWS = {
   rod: [
@@ -220,6 +230,9 @@ const TYPE_OPTIONS = [
 
 export default {
   name: 'ComparePage',
+  components: {
+    AppSkeleton
+  },
   data() {
     return {
       typeOptions: TYPE_OPTIONS,
@@ -241,6 +254,7 @@ export default {
   },
   beforeUnmount() {
     if (this.searchTimeout) clearTimeout(this.searchTimeout)
+    if (this._compareSaveTimer) clearTimeout(this._compareSaveTimer)
   },
   watch: {
     searchQuery(val) {
@@ -248,7 +262,13 @@ export default {
       this.searchTimeout = setTimeout(() => {
         this.debouncedSearchQuery = val
       }, 200)
-    }
+    },
+    // 对比列表持久化：刷新/跨会话后自动恢复上次对比项
+    compareEquipmentList: {
+      deep: true,
+      handler() { this.scheduleCompareSave() }
+    },
+    compareType() { this.scheduleCompareSave() }
   },
   computed: {
     categories() {
@@ -357,6 +377,53 @@ export default {
       this.reelData = reelData
       this.dataLoadError = error
       this.isLoading = false
+      this.restoreCompareList()
+    },
+    /** 快捷添加：当前筛选列表中强度（panelTension）前 3 的装备加入对比 */
+    addTopStrength() {
+      const sorted = [...this.filteredEquipment].sort((a, b) =>
+        (this.extractNumber(b.panelTension) || 0) - (this.extractNumber(a.panelTension) || 0)
+      )
+      let added = 0
+      for (const item of sorted) {
+        if (added >= 3) break
+        if (!this.isInCompareList(item)) {
+          this.toggleCompareItem(item)
+          added++
+        }
+      }
+      if (added === 0) this.exportHint = '强度前 3 已在对比列表中'
+      setTimeout(() => { this.exportHint = '' }, 2000)
+    },
+    /** 防抖保存对比列表（只存型号，恢复时重新匹配） */
+    scheduleCompareSave() {
+      if (this._compareSaveTimer) clearTimeout(this._compareSaveTimer)
+      this._compareSaveTimer = setTimeout(() => {
+        try {
+          const payload = {
+            type: this.compareType,
+            items: this.compareEquipmentList.map(item => item.model || item.equipmentName)
+          }
+          localStorage.setItem('compare_list_v1', JSON.stringify(payload))
+        } catch (e) { /* 存储不可用时静默降级 */ }
+      }, 300)
+    },
+    /** 数据加载完成后恢复上次对比列表 */
+    restoreCompareList() {
+      try {
+        const raw = localStorage.getItem('compare_list_v1')
+        if (!raw) return
+        const payload = JSON.parse(raw)
+        if (payload.type === 'rod' || payload.type === 'reel') this.compareType = payload.type
+        if (!Array.isArray(payload.items)) return
+        const pool = this.compareType === 'rod' ? this.rodData : this.reelData
+        for (const model of payload.items) {
+          const item = pool.find(d => d.model === model || d.equipmentName === model)
+          if (item && !this.isInCompareList(item)) this.toggleCompareItem(item)
+        }
+      } catch (e) {
+        console.error('恢复对比列表失败:', e)
+      }
     },
     switchType(type) {
       if (this.compareType === type) return
@@ -429,6 +496,17 @@ export default {
       if (max === null || max === undefined) return false
       const v = this.getRowNumericalValue(equipment, row)
       return !Number.isNaN(v) && v === max
+    },
+    /** 差值提示：非最优值时显示与最优值的差距，如 (-7.5) */
+    formatDelta(equipment, row) {
+      const key = row.key || row.field
+      const max = this.fieldMaxValues[key]
+      if (max === null || max === undefined) return ''
+      const v = this.getRowNumericalValue(equipment, row)
+      if (Number.isNaN(v)) return ''
+      const delta = v - max
+      if (delta >= 0) return ''
+      return `(${Math.round(delta * 100) / 100})`
     },
     /** 差异行检测：对比≥ 2 个装备且此项展示值不完全相同时，标记 ≠ 供用户快速定位差异 */
     isRowDifferent(row) {
@@ -961,6 +1039,10 @@ export default {
   text-align: center;
   min-width: 100px;
   white-space: nowrap;
+  /* 横向滚动时参数列固定可见 */
+  position: sticky;
+  left: 0;
+  z-index: 1;
 }
 
 .compare-equipment-cell {
@@ -1017,6 +1099,43 @@ export default {
   color: var(--color-success);
   font-weight: bold;
   background-color: var(--color-success-bg);
+}
+
+/* 与最优值的差距（非最优单元格内小字显示） */
+.diff-delta {
+  display: inline-block;
+  margin-left: 4px;
+  font-size: 11px;
+  color: var(--color-danger);
+  font-weight: normal;
+}
+
+/* 列表头部：标题 + 快捷添加 */
+.list-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.list-header-row h3 {
+  margin-bottom: 0;
+}
+
+.quick-add-btn {
+  padding: 4px 12px;
+  border: 1px solid var(--color-primary);
+  background: white;
+  color: var(--color-primary);
+  border-radius: 12px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quick-add-btn:hover {
+  background: var(--color-primary);
+  color: white;
 }
 
 /* 差异行：参数标签列淡橙背景 + ≠ 标记，帮助用户快速定位不同项 */

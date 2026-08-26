@@ -111,19 +111,24 @@ async function importItems(db, data, insertSql, bindFn) {
   const stmts = data.map(item => bindFn(db.prepare(insertSql), item))
   try {
     await db.batch(stmts)
-    return { successCount: data.length, failCount: 0 }
+    return { successCount: data.length, failCount: 0, failedRows: [] }
   } catch (_) {
     let successCount = 0
     let failCount = 0
-    for (const stmt of stmts) {
+    const failedRows = []
+    for (let i = 0; i < stmts.length; i++) {
       try {
-        await stmt.run()
+        await stmts[i].run()
         successCount++
       } catch (error) {
         failCount++
+        // 记录失败行号（对应 Excel 数据行）与原因，便于前端展示定位问题数据；最多回传 20 条避免响应过大
+        if (failedRows.length < 20) {
+          failedRows.push(`第${i + 1}行 ${data[i].model || data[i].equipmentName || ''}: ${error.message || '插入失败'}`)
+        }
       }
     }
-    return { successCount, failCount }
+    return { successCount, failCount, failedRows }
   }
 }
 

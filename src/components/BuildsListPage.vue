@@ -93,6 +93,7 @@
           <option value="newest">最新优先</option>
           <option value="oldest">最早优先</option>
           <option value="name">按名称排序</option>
+          <option value="price">按总价排序</option>
         </select>
       </div>
     </div>
@@ -131,7 +132,7 @@
             <span class="build-name">{{ build.name || '未命名方案' }}</span>
           </div>
           <div class="build-meta">
-            <span v-if="!build.is_approved" class="meta-item pending-tag">待审核</span>
+            <span v-if="!build.is_approved" class="meta-item pending-tag" :class="{ rejected: build.reject_reason }" :title="build.reject_reason ? '驳回原因：' + build.reject_reason : '待审核'">{{ build.reject_reason ? '已驳回' : '待审核' }}</span>
             <span class="meta-item">🎣 {{ getFishCount(build.suitable_fish) }} 种鱼</span>
             <span class="meta-item">️ {{ getMapCount(build.suitable_map) }} 张地图</span>
             <span class="meta-item"> {{ formatDate(build.created_at) }}</span>
@@ -143,6 +144,10 @@
         </div>
 
         <div v-if="expandedIndex === build.id" class="build-details">
+          <!-- 驳回原因（管理员驳回时填写，提交者可见） -->
+          <div v-if="!build.is_approved && build.reject_reason" class="reject-reason">
+            ⚠ 驳回原因：{{ build.reject_reason }}
+          </div>
           <!-- 装备搭配 -->
           <div class="equipment-row">
             <div v-if="build.rod_model" class="equip-chip">
@@ -229,6 +234,13 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- 分页加载更多 -->
+    <div v-if="hasMore && !isLoading" class="load-more-wrap">
+      <button class="load-more-builds-btn" :disabled="isLoadingMore" @click="loadMoreBuilds">
+        {{ isLoadingMore ? '加载中...' : '加载更多方案' }}
+      </button>
     </div>
 
     <!-- 空状态 -->
@@ -366,7 +378,10 @@ export default {
       editForm: { id: null, name: '', description: '', suitable_fish: [], suitable_map: [] },
       editFishSearch: '',
       editMapSearch: '',
-      isSaving: false
+      isSaving: false,
+      hasMore: false,
+      isLoadingMore: false,
+      BUILDS_PAGE_SIZE: 30
     }
   },
   computed: {
@@ -422,12 +437,16 @@ export default {
         result.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
       } else if (this.sortBy === 'name') {
         result.sort((a, b) => (a.name || '').localeCompare(b.name || ''))
+      } else if (this.sortBy === 'price') {
+        result.sort((a, b) => this.buildTotalPrice(b) - this.buildTotalPrice(a))
       }
 
       return result
     }
   },
   async mounted() {
+    // 筛选记忆：先恢复上次筛选条件再加载数据
+    this.restoreFilters()
     this.isLoading = true
     await Promise.all([
       this.loadBuilds(),
@@ -445,20 +464,75 @@ export default {
     document.removeEventListener('click', this.handleClickOutside)
     if (this.searchDebounceTimer) clearTimeout(this.searchDebounceTimer)
     if (this.hKeyTimer) clearTimeout(this.hKeyTimer)
+    if (this._filterSaveTimer) clearTimeout(this._filterSaveTimer)
+  },
+  watch: {
+    // 筛选记忆：筛选条件/排序变化后防抖写入 localStorage
+    searchQuery: {
+      deep: true,
+      handler() { this.scheduleSaveFilters() }
+    },
+    sortBy() { this.scheduleSaveFilters() },
+    searchInput() { this.scheduleSaveFilters() }
   },
   methods: {
-    async loadBuilds() {
+    async loadBuilds(append = false) {
       try {
-        const adminParam = this.isAdminMode ? '?admin=true' : ''
-        const response = await fetch(`/api/recommended_builds${adminParam}`)
+        const params = new URLSearchParams()
+        if (this.isAdminMode) params.set('admin', 'true')
+        params.set('limit', String(this.BUILDS_PAGE_SIZE))
+        params.set('offset', append ? String(this.builds.length) : '0')
+        const response = await fetch(`/api/recommended_builds?${params.toString()}`)
         const result = await response.json()
         if (result.success && result.data) {
-          this.builds = result.data
+          this.builds = append ? this.builds.concat(result.data) : result.data
+          this.hasMore = !!result.hasMore
         }
       } catch (error) {
         console.error('加载装备方案失败:', error)
         this.showToast('加载失败：' + error.message, 'error')
       }
+    },
+    /** 分页加载更多方案 */
+    async loadMoreBuilds() {
+      this.isLoadingMore = true
+      await this.loadBuilds(true)
+      this.isLoadingMore = false
+    },
+    /** 方案总价（鱼竿 + 渔轮银价） */
+    buildTotalPrice(build) {
+      return (parsePrice(build.rod_price) || 0) + (parsePrice(build.reel_price) || 0)
+    },
+    /** 恢复上次筛选状态 */
+    restoreFilters() {
+      try {
+        const raw = localStorage.getItem('builds_filters_v1')
+        if (!raw) return
+        const saved = JSON.parse(raw)
+        if (typeof saved.searchInput === 'string') {
+          this.searchInput = saved.searchInput
+          this.searchQuery.name = saved.searchInput
+        }
+        if (saved.searchQuery) {
+          for (const key of ['rod', 'reel', 'fish', 'map']) {
+            if (Array.isArray(saved.searchQuery[key])) this.searchQuery[key] = saved.searchQuery[key]
+          }
+        }
+        if (saved.sortBy) this.sortBy = saved.sortBy
+      } catch (e) { /* 恢复失败时保持默认筛选 */ }
+    },
+    /** 防抖保存筛选状态 */
+    scheduleSaveFilters() {
+      if (this._filterSaveTimer) clearTimeout(this._filterSaveTimer)
+      this._filterSaveTimer = setTimeout(() => {
+        try {
+          localStorage.setItem('builds_filters_v1', JSON.stringify({
+            searchInput: this.searchInput,
+            searchQuery: this.searchQuery,
+            sortBy: this.sortBy
+          }))
+        } catch (e) { /* 存储不可用时静默降级 */ }
+      }, 300)
     },
     async loadRods() {
       try {
@@ -592,17 +666,24 @@ export default {
     async approveBuild(build) {
       const password = prompt('请输入管理员密码：')
       if (password === null) return
+      const newStatus = !build.is_approved
+      // 驳回时必须填写原因，提交者可在卡片详情中看到
+      let rejectReason = ''
+      if (!newStatus) {
+        rejectReason = prompt('请输入驳回原因（提交者可见）：')
+        if (rejectReason === null) return
+      }
       try {
-        const newStatus = !build.is_approved
         const response = await fetch('/api/recommended_builds', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: build.id, isApproved: newStatus, password })
+          body: JSON.stringify({ id: build.id, isApproved: newStatus, password, rejectReason })
         })
         const result = await response.json()
         if (result.success) {
           build.is_approved = newStatus ? 1 : 0
-          this.showToast(newStatus ? '方案已通过审核' : '已取消审核', 'success')
+          build.reject_reason = newStatus ? '' : rejectReason
+          this.showToast(newStatus ? '方案已通过审核' : '方案已驳回', 'success')
         } else {
           this.showToast('审核操作失败：' + (result.error || result.message || '未知错误'), 'error')
         }
@@ -1068,6 +1149,53 @@ export default {
 .apply-btn:hover {
   background-color: var(--color-success-strong);
   color: white;
+}
+
+/* 驳回状态标签（红色系，区别于待审核） */
+.pending-tag.rejected {
+  background-color: #fce4ec;
+  color: var(--color-danger-strong);
+  cursor: help;
+}
+
+/* 驳回原因提示条 */
+.reject-reason {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  background-color: #fce4ec;
+  border-left: 4px solid var(--color-danger);
+  border-radius: 4px;
+  color: var(--color-danger-strong);
+  font-size: 13px;
+}
+
+/* 分页加载更多 */
+.load-more-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.load-more-builds-btn {
+  padding: 10px 32px;
+  border: 2px solid var(--color-primary);
+  background-color: white;
+  color: var(--color-primary);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.load-more-builds-btn:hover:not(:disabled) {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.load-more-builds-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* 待审核标签 */

@@ -63,7 +63,9 @@
         </div>
         <div class="quantity-input-wrapper">
           <label>数量:</label>
+          <button type="button" class="qty-step-btn" :disabled="entry.quantity <= 1" @click="stepQuantity(entry, -1)">−</button>
           <input type="number" v-model.number="entry.quantity" min="1" class="quantity-input" />
+          <button type="button" class="qty-step-btn" @click="stepQuantity(entry, 1)">＋</button>
         </div>
         <div class="entry-subtotal">
           <template v-if="entry.equipment">
@@ -138,7 +140,9 @@
         </div>
         <div class="quantity-input-wrapper">
           <label>数量:</label>
+          <button type="button" class="qty-step-btn" :disabled="entry.quantity <= 1" @click="stepQuantity(entry, -1)">−</button>
           <input type="number" v-model.number="entry.quantity" min="1" class="quantity-input" />
+          <button type="button" class="qty-step-btn" @click="stepQuantity(entry, 1)">＋</button>
         </div>
         <div class="entry-subtotal">
           <template v-if="entry.equipment">
@@ -181,13 +185,20 @@
 
       <div class="summary-card total-card">
         <div class="summary-item">
-          <span class="summary-label">总计</span>
+          <span class="summary-label">总计（{{ totalItems }} 件）</span>
           <span class="summary-value silver total">{{ formatPrice(totalSilver) }} 银币</span>
         </div>
         <div class="summary-item">
           <span class="summary-label"></span>
           <span class="summary-value gold total">{{ formatPrice(totalGold) }} 金币</span>
         </div>
+      </div>
+
+      <!-- 清单操作：复制/清空 -->
+      <div class="summary-actions">
+        <button class="summary-action-btn" @click="copyList">📋 复制清单</button>
+        <button class="summary-action-btn danger" @click="clearAllEntries">🗑 清空清单</button>
+        <span v-if="listHint" class="list-hint">{{ listHint }}</span>
       </div>
     </div>
   </div>
@@ -205,7 +216,8 @@ export default {
       rodList: [],
       reelList: [],
       rodEntries: [],
-      reelEntries: []
+      reelEntries: [],
+      listHint: ''
     }
   },
   computed: {
@@ -234,10 +246,30 @@ export default {
     },
     totalGold() {
       return this.rodTotalGold + this.reelTotalGold
+    },
+    /** 清单总件数（按数量累加） */
+    totalItems() {
+      return [...this.rodEntries, ...this.reelEntries].reduce(
+        (sum, e) => sum + (e.equipment ? (e.quantity || 1) : 0), 0
+      )
     }
   },
   async mounted() {
     await Promise.all([this.loadRods(), this.loadReels()])
+    // 数据就绪后恢复上次统计清单，再开启持久化
+    this.restoreEntries()
+    this._entriesReady = true
+  },
+  watch: {
+    // 清单持久化：装备/数量变化后防抖写入 localStorage，刷新不丢
+    rodEntries: {
+      deep: true,
+      handler() { this.scheduleSaveEntries() }
+    },
+    reelEntries: {
+      deep: true,
+      handler() { this.scheduleSaveEntries() }
+    }
   },
   beforeUnmount() {
     // 清理所有 entry 的搜索防抖计时器
@@ -247,9 +279,88 @@ export default {
     for (const entry of this.reelEntries) {
       if (entry.searchTimer) clearTimeout(entry.searchTimer)
     }
+    if (this._entrySaveTimer) clearTimeout(this._entrySaveTimer)
   },
   methods: {
     getRatingAlias,
+    /** 数量步进（最小 1） */
+    stepQuantity(entry, delta) {
+      entry.quantity = Math.max(1, (Number(entry.quantity) || 1) + delta)
+    },
+    /** 构建 entry，支持预填装备与数量（恢复清单用） */
+    createEntry(equipment, quantity) {
+      return {
+        equipment: equipment || null,
+        quantity: quantity || 1,
+        search: equipment ? equipment.model : '',
+        debouncedSearch: '',
+        searchTimer: null,
+        isDropdownOpen: false,
+        selectedCategory: '',
+        showCategoryFilter: false
+      }
+    },
+    /** 防抖持久化清单（只存型号与数量，恢复时重新匹配） */
+    scheduleSaveEntries() {
+      if (!this._entriesReady) return
+      if (this._entrySaveTimer) clearTimeout(this._entrySaveTimer)
+      this._entrySaveTimer = setTimeout(() => {
+        try {
+          const payload = {
+            rods: this.rodEntries.filter(e => e.equipment).map(e => ({ model: e.equipment.model || e.equipment.equipmentName, quantity: e.quantity || 1 })),
+            reels: this.reelEntries.filter(e => e.equipment).map(e => ({ model: e.equipment.model || e.equipment.equipmentName, quantity: e.quantity || 1 }))
+          }
+          localStorage.setItem('value_list_v1', JSON.stringify(payload))
+        } catch (e) { /* 存储不可用时静默降级 */ }
+      }, 300)
+    },
+    /** 恢复上次统计清单 */
+    restoreEntries() {
+      try {
+        const raw = localStorage.getItem('value_list_v1')
+        if (!raw) return
+        const payload = JSON.parse(raw)
+        for (const saved of payload.rods || []) {
+          const item = this.rodList.find(d => d.model === saved.model || d.equipmentName === saved.model)
+          if (item) this.rodEntries.push(this.createEntry(item, saved.quantity))
+        }
+        for (const saved of payload.reels || []) {
+          const item = this.reelList.find(d => d.model === saved.model || d.equipmentName === saved.model)
+          if (item) this.reelEntries.push(this.createEntry(item, saved.quantity))
+        }
+      } catch (e) {
+        console.error('恢复价值清单失败:', e)
+      }
+    },
+    /** 清空整个清单（二次确认） */
+    clearAllEntries() {
+      if (this.rodEntries.length === 0 && this.reelEntries.length === 0) return
+      if (!confirm('确定清空当前统计清单吗？')) return
+      this.rodEntries = []
+      this.reelEntries = []
+    },
+    /** 复制清单文本到剪贴板 */
+    async copyList() {
+      const lines = ['RF4 装备价值清单', '─'.repeat(30)]
+      const pushEntries = (label, entries) => {
+        for (const e of entries) {
+          if (!e.equipment) continue
+          const silver = (parsePrice(e.equipment.silverPrice) ?? 0) * (e.quantity || 1)
+          lines.push(`${label} ${e.equipment.model || e.equipment.equipmentName} ×${e.quantity || 1} = ${this.formatPrice(silver)} 银币`)
+        }
+      }
+      pushEntries('鱼竿', this.rodEntries)
+      pushEntries('渔轮', this.reelEntries)
+      lines.push('─'.repeat(30))
+      lines.push(`共 ${this.totalItems} 件，总计 ${this.formatPrice(this.totalSilver)} 银币 / ${this.formatPrice(this.totalGold)} 金币`)
+      try {
+        await navigator.clipboard.writeText(lines.join('\n'))
+        this.listHint = '已复制到剪贴板！'
+      } catch (_) {
+        this.listHint = '复制失败，请手动复制'
+      }
+      setTimeout(() => { this.listHint = '' }, 2500)
+    },
     async loadRods() {
       try {
         const res = await fetch('/api/rods')
@@ -758,6 +869,13 @@ export default {
   display: flex;
   gap: 16px;
   margin-bottom: 20px;
+  /* 底部固定汇总条：滚动时始终可见总价 */
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  background-color: var(--bg-page);
+  padding: 10px 0;
+  flex-wrap: wrap;
 }
 
 .summary-card {
@@ -837,5 +955,72 @@ export default {
   .value-summary {
     flex-direction: column;
   }
+}
+
+/* 数量步进按钮 */
+.qty-step-btn {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--color-border);
+  background: white;
+  color: var(--text-main);
+  border-radius: 6px;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.qty-step-btn:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-bg);
+}
+
+.qty-step-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* 清单操作区 */
+.summary-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+
+.summary-action-btn {
+  padding: 8px 16px;
+  border: 1px solid var(--color-primary);
+  background: white;
+  color: var(--color-primary);
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.summary-action-btn:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+.summary-action-btn.danger {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.summary-action-btn.danger:hover {
+  background: var(--color-danger);
+  color: white;
+}
+
+.list-hint {
+  font-size: 12px;
+  color: var(--color-success);
+  text-align: center;
 }
 </style>

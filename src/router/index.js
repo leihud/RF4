@@ -28,6 +28,11 @@ const routes = [
     path: ROUTES.VALUE,
     name: 'Value',
     component: () => import('../components/ValuePage.vue')
+  },
+  {
+    // 未匹配路由统一重定向回首页，避免白屏/404 死页
+    path: '/:pathMatch(.*)*',
+    redirect: ROUTES.CALCULATOR
   }
 ]
 

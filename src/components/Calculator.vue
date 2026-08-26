@@ -92,9 +92,10 @@
     <div v-if="isLoading && equipmentData.length === 0" class="loading-wrapper">
       <div class="loading-spinner"></div>
       <span class="loading-text">正在加载装备数据...</span>
+      <AppSkeleton :rows="6" />
     </div>
 
-    <div class="equipment-selector" :class="{ disabled: !calculationRule }">
+    <div class="equipment-selector" :class="{ disabled: !calculationRule, flash: justApplied }">
       <h2>选择装备类型</h2>
       <div class="type-buttons">
         <div
@@ -149,6 +150,16 @@
                     max="100"
                   />
                   <span class="input-unit">%</span>
+                  <span class="wear-presets">
+                    <button
+                      v-for="p in WEAR_PRESETS"
+                      :key="p"
+                      type="button"
+                      class="wear-preset-btn"
+                      :title="'设为' + p + '% 磨损'"
+                      @click="customEquipment[type].wear = p"
+                    >{{ p }}</button>
+                  </span>
                   <span class="input-label">线径:</span>
                   <input
                     type="number"
@@ -209,6 +220,14 @@
                     max="100"
                   />
                   <span class="wear-unit">%</span>
+                  <button
+                    v-for="p in WEAR_PRESETS"
+                    :key="p"
+                    type="button"
+                    class="wear-preset-btn"
+                    :title="'设为' + p + '% 磨损'"
+                    @click="selectedEquipmentMap[type].wear = p"
+                  >{{ p }}</button>
                 </div>
                 <span v-if="type === '渔轮'" class="friction-input-wrapper">
                   <span class="friction-label">摩擦:</span>
@@ -221,6 +240,14 @@
                     min="0"
                     :max="toSafeNumber(frictionMax)"
                   />
+                  <button
+                    v-for="f in frictionPresets"
+                    :key="f"
+                    type="button"
+                    class="friction-preset-btn"
+                    :title="'设为摩擦值 ' + f"
+                    @click="setFriction(f)"
+                  >{{ f }}</button>
                 </span>
                 <span v-if="type === '鱼竿'" class="actual-tension">
                   实际拉力:{{ formatTension(actualPanelTensionMap[type]) }} kN
@@ -427,6 +454,7 @@ import DisclaimerModal from './calculator/DisclaimerModal.vue'
 import EquipmentSearchDropdown from './calculator/EquipmentSearchDropdown.vue'
 import EquipmentSummary from './calculator/EquipmentSummary.vue'
 import AppToast from './common/AppToast.vue'
+import AppSkeleton from './common/AppSkeleton.vue'
 
 export default {
   name: 'Calculator',
@@ -434,7 +462,8 @@ export default {
     DisclaimerModal,
     EquipmentSearchDropdown,
     EquipmentSummary,
-    AppToast
+    AppToast,
+    AppSkeleton
   },
   data() {
     return {
@@ -451,6 +480,8 @@ export default {
       friction: DEFAULT_FRICTION,
       selectedEquipmentList: [],
       calculationRule: CALC_RULES.GUIDE,
+      justApplied: false,
+      WEAR_PRESETS: [0, 50, 100],
       CALC_RULE_OPTIONS,
       LINE_MATERIALS,
       formatTension,
@@ -501,12 +532,26 @@ export default {
   },
   beforeUnmount() {
     document.removeEventListener('click', this.handleClickOutside)
+    if (this._stateSaveTimer) clearTimeout(this._stateSaveTimer)
   },
   watch: {
     calculationRule(val) {
       if (val) {
         this.friction = clampFriction(this.friction, val)
       }
+      if (this._stateReady) this.scheduleSaveState()
+    },
+    // 状态持久化：装备/线材/摩擦变化后防抖写入 localStorage，刷新页面可恢复
+    selectedEquipmentList: {
+      deep: true,
+      handler() { if (this._stateReady) this.scheduleSaveState() }
+    },
+    customEquipment: {
+      deep: true,
+      handler() { if (this._stateReady) this.scheduleSaveState() }
+    },
+    friction() {
+      if (this._stateReady) this.scheduleSaveState()
     },
     /** 鱼竿切换时，若已选渔轮不兼容则自动清除 */
     'selectedEquipmentMap.鱼竿'(newRod) {
@@ -534,6 +579,11 @@ export default {
     },
     frictionMax() {
       return getFrictionMax(this.calculationRule)
+    },
+    /** 摩擦快捷预设：低/高/上限，去重后展示 */
+    frictionPresets() {
+      const max = this.frictionMax
+      return [...new Set([10, 25, max].filter(v => v > 0 && v <= max))]
     },
     selectedEquipmentMap() {
       const map = {}
@@ -661,6 +711,58 @@ export default {
     isSearchableType(type) {
       return SEARCHABLE_TYPES.includes(type)
     },
+    /** 摩擦快捷设置（自动钉制到当前规则上限） */
+    setFriction(value) {
+      this.friction = clampFriction(value, this.calculationRule)
+    },
+    /** 防抖持久化当前计算状态 */
+    scheduleSaveState() {
+      if (this._stateSaveTimer) clearTimeout(this._stateSaveTimer)
+      this._stateSaveTimer = setTimeout(() => {
+        try {
+          const state = {
+            equipment: this.selectedEquipmentList.map(item => ({
+              type: item.equipmentType,
+              model: item.model || item.equipmentName,
+              wear: item.wear || 0
+            })),
+            custom: this.customEquipment,
+            friction: this.friction,
+            rule: this.calculationRule
+          }
+          localStorage.setItem('calc_state_v1', JSON.stringify(state))
+        } catch (e) { /* 存储不可用（隐私模式/超容量）时静默降级 */ }
+      }, 400)
+    },
+    /** 从 localStorage 恢复上次计算状态（仅当无 URL 方案/一键应用时） */
+    restoreFromSavedState() {
+      try {
+        const raw = localStorage.getItem('calc_state_v1')
+        if (!raw) return
+        const state = JSON.parse(raw)
+        if (state.rule) this.calculationRule = state.rule
+        if (state.friction != null) this.friction = clampFriction(state.friction, this.calculationRule)
+        if (state.custom) {
+          for (const type of ['主线', '引线']) {
+            if (state.custom[type]) Object.assign(this.customEquipment[type], state.custom[type])
+          }
+          if (state.custom['鱼钩'] && state.custom['鱼钩'].name) {
+            this.customEquipment['鱼钩'].name = state.custom['鱼钩'].name
+          }
+        }
+        if (Array.isArray(state.equipment)) {
+          for (const saved of state.equipment) {
+            const item = this.equipmentData.find(d =>
+              d.equipmentType === saved.type &&
+              (d.model === saved.model || d.equipmentName === saved.model)
+            )
+            if (item) this.selectedEquipmentList.push({ ...item, wear: saved.wear || 0 })
+          }
+        }
+      } catch (e) {
+        console.error('恢复本地状态失败:', e)
+      }
+    },
     async loadEquipmentData() {
       this.equipmentData = []
       this.isLoading = true
@@ -675,7 +777,16 @@ export default {
         this.applyRecommendedBuild(this._pendingBuild)
         this.showToast(`已应用方案「${this._pendingBuild.name || '未命名方案'}」`, 'success')
         this._pendingBuild = null
+        this._hadExternalRestore = true
+        // 应用高亮：短暂闪烁装备区，让用户感知哪些内容被方案修改
+        this.justApplied = true
+        setTimeout(() => { this.justApplied = false }, 1500)
       }
+      // 无 URL 方案且无一键应用时，恢复上次本地状态；之后开启持久化
+      if (!this._hadExternalRestore && !this._pendingPreset) {
+        this.restoreFromSavedState()
+      }
+      this._stateReady = true
     },
     calculateCustomActualTension(item) {
       return calculateCustomActualTension(item)
@@ -757,6 +868,7 @@ export default {
     restoreFromUrl() {
       const preset = decodePreset(window.location.search)
       if (!preset) return
+      this._hadExternalRestore = true
       if (preset.calculationRule) this.calculationRule = preset.calculationRule
       if (preset.friction) this.friction = clampFriction(preset.friction, this.calculationRule)
       if (preset.mainLineTension) {
@@ -1115,6 +1227,42 @@ h1 {
 .header-buttons {
   display: flex;
   gap: 10px;
+}
+
+/* 磨损/摩擦快捷预设按钮 */
+.wear-presets {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.wear-preset-btn,
+.friction-preset-btn {
+  padding: 1px 6px;
+  margin-left: 4px;
+  border: 1px solid var(--color-border);
+  background: white;
+  color: var(--text-secondary);
+  border-radius: 10px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.wear-preset-btn:hover,
+.friction-preset-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-bg);
+}
+
+/* 一键应用方案后的短暂高亮 */
+.equipment-selector.flash {
+  animation: apply-flash 1.4s ease;
+}
+
+@keyframes apply-flash {
+  0%, 100% { box-shadow: none; }
+  30% { box-shadow: 0 0 0 3px var(--color-success-bg), 0 0 14px var(--color-success-accent); }
 }
 
 /* 分享方案按钮 */
