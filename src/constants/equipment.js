@@ -37,14 +37,8 @@ export const FRICTION_GUIDE_MAX = 29
 // 论坛规则下的摩擦值上限
 export const FRICTION_FORUM_MAX = 30
 
-// 摩擦值建议阈值
-export const FRICTION_TIP_HIGH = 25
-export const FRICTION_TIP_LOW = 5
-
 // 默认摩擦值（宝典通用规则上限 = 29 / 论坛规则上限 = 30，取两者交集的最大值）
 export const DEFAULT_FRICTION = 29
-
-// 摩擦值建议阈值
 
 /**
  * 装备评级 rating → 中文别名映射。
