@@ -6,6 +6,7 @@
       <div class="header-buttons">
         <button class="compare-nav-btn" @click="goToCompare">参数对比</button>
         <button class="value-nav-btn" @click="goToValue">装备价值计算</button>
+        <button class="localize-nav-btn" @click="goToLocalize">游戏汉化</button>
         <button class="builds-nav-btn" @click="goToBuildsList">装备方案汇总</button>
         <button class="import-nav-btn" @click="goToImport">数据导入</button>
         <button class="rf4-stat-btn" @click="openRf4Stat" rel="noopener noreferrer" target="_blank">RF4 数据站</button>
@@ -760,6 +761,9 @@ export default {
     goToImport() {
       this.$router.push(ROUTES.IMPORT)
     },
+    goToLocalize() {
+      this.$router.push(ROUTES.LOCALIZE)
+    },
     openRf4Stat() {
       // 打开 RF4 中文数据站（新标签页，noopener 防反跟踪，noreferrer 防来源泄露）
       if (typeof window !== 'undefined' && typeof window.open === 'function') {
@@ -1180,6 +1184,23 @@ h1 {
 
 .import-nav-btn:hover {
   background-color: #fff3e0;
+}
+
+/* 游戏汉化按钮 */
+.localize-nav-btn {
+  padding: 10px 24px;
+  border: 2px solid #ff6f00;
+  background-color: white;
+  color: #ff6f00;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.localize-nav-btn:hover {
+  background-color: #fff8e1;
 }
 
 /* 装备方案汇总按钮 */

@@ -28,6 +28,11 @@ const routes = [
     path: ROUTES.VALUE,
     name: 'Value',
     component: () => import('../components/ValuePage.vue')
+  },
+  {
+    path: ROUTES.LOCALIZE,
+    name: 'Localize',
+    component: () => import('../components/LocalizationPage.vue')
   }
 ]
 

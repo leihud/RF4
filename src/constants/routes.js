@@ -12,5 +12,7 @@ export const ROUTES = Object.freeze({
   /** Excel/csv 装备数据导入 */
   IMPORT: '/import',
   /** 装备价值统计 */
-  VALUE: '/value'
+  VALUE: '/value',
+  /** 游戏汉化 */
+  LOCALIZE: '/localize'
 })
