@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20260826-10',
+  currentVersion: 'V20260826-11',
   buildTime: '2026-08-26',
   changelog: [
+    {
+      version: 'V20260826-11',
+      date: '2026-08-26',
+      changes: [
+        '优化：建立CSS设计令牌统一配色，新增全局导航栏，对比页差异高亮与最优值标绿，方案卡片支持一键应用到计算器'
+      ]
+    },
     {
       version: 'V20260826-10',
       date: '2026-08-26',
