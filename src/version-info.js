@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20260826-12',
+  currentVersion: 'V20260826-13',
   buildTime: '2026-08-26',
   changelog: [
+    {
+      version: 'V20260826-13',
+      date: '2026-08-26',
+      changes: [
+        '修复：对比页空值价格/等级行误标差异标记，空值统一显示为横杠'
+      ]
+    },
     {
       version: 'V20260826-12',
       date: '2026-08-26',
