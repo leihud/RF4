@@ -39,20 +39,30 @@
 
 ## 🚀 使用方法
 
-### 基本用法
+### 基本用法（首次汉化）
 
 ```bash
 python scripts/localize.py <输入文件路径> [输出文件路径]
 ```
 
+### 增量翻译（推荐，节省 API 调用）
+
+```bash
+# 首次运行：生成翻译映射表
+python scripts/localize.py resources_ru.assets resources_cn.assets
+
+# 游戏更新后：复用映射表，仅翻译新增内容
+python scripts/localize.py resources_ru_new.assets resources_cn_new.assets translation_map.json
+```
+
 ### 示例
 
 ```bash
-# 使用默认输出文件名（原文件名_cn.assets）
+# 首次汉化（会生成 translation_map.json）
 python scripts/localize.py "C:\Users\book\Desktop\汉化\俄服文件\resources.assets"
 
-# 指定输出文件名
-python scripts/localize.py resources.assets resources_cn.assets
+# 增量更新（复用之前的翻译，仅翻译新增文本）
+python scripts/localize.py resources_v2.assets resources_v2_cn.assets
 ```
 
 ### 无 API Key 模式
