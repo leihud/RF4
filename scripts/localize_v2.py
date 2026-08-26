@@ -109,6 +109,10 @@ class RF4LocalizerV2:
         
         return texts
     
+    def _contains_chinese(self, text):
+        """检查文本是否包含中文字符"""
+        return bool(re.search(r'[一-鿿]', text))
+    
     def _build_translation_map(self, ru_texts, cn_texts):
         """基于位置和结构建立俄文→中文映射"""
         # 简化策略：假设两个文件的对象顺序一致
@@ -154,7 +158,7 @@ class RF4LocalizerV2:
         
         # 记录版本信息
         if not version_tag:
-            version_tag = f"auto_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            version_tag = self._extract_version_from_assets(new_ru_path)
         
         self.version_info = {
             'version': version_tag,
@@ -314,9 +318,58 @@ class RF4LocalizerV2:
         """检查文本是否包含俄语字符"""
         return bool(re.search(r'[\u0400-\u04FF]', text))
     
-    def _contains_chinese(self, text):
-        """检查文本是否包含中文字符"""
-        return bool(re.search(r'[\u4e00-\u9fff]', text))
+    def _extract_version_from_assets(self, assets_path):
+        """从 .assets 文件中提取版本信息"""
+        try:
+            env = UnityPy.load(assets_path)
+                
+            # 遍历所有对象，寻找可能包含版本信息的文本
+            for obj in env.objects:
+                if obj.type.name in ["TextAsset", "MonoBehaviour", "AssetBundle"]:
+                    try:
+                        data = obj.read()
+                            
+                        # 检查各种可能包含版本信息的字段
+                        text_fields = []
+                            
+                        if hasattr(data, 'm_Script') and data.m_Script:
+                            text_fields.append(data.m_Script)
+                            
+                        for attr in ['m_Name', 'name', 'description', 'text', 'title', 'version', 'Version', 'VERSION']:
+                            if hasattr(data, attr):
+                                value = getattr(data, attr)
+                                if value and isinstance(value, str):
+                                    text_fields.append(value)
+                            
+                        # 在文本中查找版本模式
+                        for text in text_fields:
+                            # 匹配版本模式：数字.数字 或 数字.数字.数字 或 RF4/v数字 等
+                            version_patterns = [
+                                r'v?(\d+\.\d+(?:\.\d+)?)',  # v1.2.3, 1.2.3, v1.2
+                                r'([Rr][Ff]4?[\\/]?v?\d+\.\d+)',  # RF4/v1.2, rf4\1.2
+                                r'(\d+\.\d+\.\d+[a-zA-Z]?)',  # 1.2.3a, 1.2.3beta
+                            ]
+                                
+                            for pattern in version_patterns:
+                                matches = re.findall(pattern, text)
+                                if matches:
+                                    # 返回第一个找到的版本号
+                                    version = matches[0]
+                                    print(f"   版本检测: 在对象 {obj.path_id} 中找到版本 '{version}'")
+                                    return version
+                                        
+                    except Exception as e:
+                        continue
+                
+            # 如果没找到版本信息，使用时间戳
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            print(f"   版本检测: 未找到版本信息，使用时间戳 '{timestamp}'")
+            return f"auto_{timestamp}"
+                
+        except Exception as e:
+            print(f"   版本检测: 读取文件时出错 {e}")
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            return f"auto_{timestamp}"
     
     def save_translation_map(self, map_file='translation_map_v2.json'):
         """保存翻译映射表"""

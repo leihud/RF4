@@ -59,11 +59,21 @@ python scripts/localize_v2.py new_ru.assets new_cn.assets base_ru.assets base_cn
 
 ### 版本管理
 
-每次运行后会生成两个文件：
-- `resources_cn.assets` - 汉化后的游戏文件
-- `resources_cn_version.json` - 版本信息和统计
+v2.0 支持自动版本检测功能：
 
-查看版本历史：
+1. **自动提取版本**：从新俄服文件中自动检测版本号（如 `v1.2.3`, `RF4/2.1` 等格式）
+2. **智能命名**：如未找到版本信息，使用时间戳自动命名
+3. **版本追踪**：生成 `resources_cn_version.json` 文件记录详细信息
+
+```bash
+# 自动检测版本（推荐）
+python scripts/localize_v2.py resources_v2.assets
+
+# 手动指定版本标签
+python scripts/localize_v2.py resources_v2.assets resources_v2_cn.assets v2.1_20260826
+```
+
+查看版本信息：
 ```bash
 cat resources_cn_version.json
 ```
