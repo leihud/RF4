@@ -37,28 +37,36 @@
 
 ## 🚀 使用方法
 
-### 基本用法（自动使用本地汉化模板）
+### v2.0 推荐用法（自动检测基底）
 
 ```bash
-# 直接运行，会自动检测并使用 C:\Users\book\Desktop\汉化\汉化文件\resources.assets 作为基础模板
-python scripts/localize.py <新俄服文件路径> [输出文件路径]
-```
-
-### 手动指定基础模板
-
-```bash
-# 如果默认路径不存在，可以手动指定
-python scripts/localize.py resources_ru_new.assets resources_cn_new.assets "C:\path\to\base_template.assets"
+# 最简单的用法 - 自动使用本地基底模板
+python scripts/localize_v2.py <新俄服文件路径> [输出文件路径] [版本标签]
 ```
 
 ### 示例
 
 ```bash
-# 使用默认的汉化模板进行增量翻译
-python scripts/localize.py "C:\Games\RF4_New\resources.assets"
+# 基本用法（自动生成版本标识）
+python scripts/localize_v2.py "C:\Games\RF4_Update\resources.assets"
 
-# 指定输出文件名
-python scripts/localize.py resources_v2.assets resources_v2_cn.assets
+# 指定输出文件名和版本标签
+python scripts/localize_v2.py resources_v2.assets resources_v2_cn.assets v2.1_20260826
+
+# 手动指定基底模板
+python scripts/localize_v2.py new_ru.assets new_cn.assets base_ru.assets base_cn.assets
+```
+
+### 版本管理
+
+每次运行后会生成两个文件：
+- `resources_cn.assets` - 汉化后的游戏文件
+- `resources_cn_version.json` - 版本信息和统计
+
+查看版本历史：
+```bash
+cat resources_cn_version.json
+```
 ```
 
 ### 无 API Key 模式
@@ -67,11 +75,27 @@ python scripts/localize.py resources_v2.assets resources_v2_cn.assets
 
 ## 📊 工作原理
 
-1. **解析文件**：使用 UnityPy 库解析 Unity 序列化格式
-2. **提取文本**：遍历所有 TextAsset 和 MonoBehaviour 对象
-3. **识别俄语**：通过 Unicode 范围检测俄语文本段
-4. **调用翻译**：使用百度翻译 API 进行俄→中翻译
-5. **重建文件**：将翻译后的文本写回 .assets 格式
+### v2.0 双基底模板架构
+
+1. **基底模板建立**
+   - 俄服基线：`C:\Users\book\Desktop\汉化\俄服文件\resources.assets`
+   - 汉化基线：`C:\Users\book\Desktop\汉化\汉化文件\resources.assets`
+   - 通过对比两个文件，建立精确的俄文→中文映射关系
+
+2. **增量检测机制**
+   - 解析新俄服文件的所有文本对象
+   - 与基底模板进行对比，识别新增/修改的文本
+   - 仅对增量部分调用翻译 API
+
+3. **版本标识系统**
+   - 每次生成汉化文件时自动创建版本信息
+   - 保存为 `resources_cn_version.json`
+   - 包含时间戳、统计信息和映射表大小
+
+4. **智能缓存策略**
+   - 翻译结果保存到 `translation_map_v2.json`
+   - 下次运行自动加载，避免重复翻译
+   - 支持跨会话复用
 
 ## ⚠️ 注意事项
 
