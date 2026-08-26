@@ -18,11 +18,9 @@
    pip install UnityPy requests
    ```
 
-3. **配置百度翻译 API（可选）**
-   - 访问 [百度翻译开放平台](https://fanyi-api.baidu.com/)
-   - 注册账号并创建应用
-   - 获取 APP ID 和密钥
-   - 设置环境变量：
+3. **百度翻译 API 配置**
+   - ✅ 已预配置（APP ID: `20260826002673323`）
+   - 如需修改，可通过环境变量覆盖：
      ```bash
      # Windows PowerShell
      $env:BAIDU_APP_ID="your_app_id"
@@ -65,7 +63,7 @@ python scripts/localize.py resources_v2.assets resources_v2_cn.assets
 
 ### 无 API Key 模式
 
-如果不配置百度翻译 API，工具会跳过翻译步骤，仅提取文本结构。此时需要手动准备翻译对照表。
+如果不配置百度翻译 API，工具会跳过翻译步骤，仅提取文本结构。当前已预配置默认 API Key，可直接使用。
 
 ## 📊 工作原理
 

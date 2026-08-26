@@ -274,6 +274,10 @@ def main():
     base_template = sys.argv[3] if len(sys.argv) > 3 else None
     map_file = sys.argv[4] if len(sys.argv) > 4 else 'translation_map.json'
     
+    # 百度翻译 API 配置（默认值）
+    baidu_app_id = os.getenv('BAIDU_APP_ID', '20260826002673323')
+    baidu_key = os.getenv('BAIDU_KEY', '_4R90VkUMKjhh08CmKru')
+    
     if not os.path.exists(input_file):
         print(f"❌ 文件不存在: {input_file}")
         sys.exit(1)
@@ -290,8 +294,12 @@ def main():
     print("🎮 RF4 游戏汉化工具 (Python 版 - 基于现有汉化模板)")
     print("=" * 60)
     
-    # 创建汉化器（自动加载基础模板）
-    localizer = RF4Localizer(base_template_path=base_template)
+    # 创建汉化器（自动加载基础模板 + 百度翻译 API）
+    localizer = RF4Localizer(
+        baidu_app_id=baidu_app_id,
+        baidu_key=baidu_key,
+        base_template_path=base_template
+    )
     
     # 加载额外的 JSON 映射表（如果存在）
     if os.path.exists(map_file):
