@@ -39,29 +39,27 @@
 
 ## 🚀 使用方法
 
-### 基本用法（首次汉化）
+### 基本用法（自动使用本地汉化模板）
 
 ```bash
-python scripts/localize.py <输入文件路径> [输出文件路径]
+# 直接运行，会自动检测并使用 C:\Users\book\Desktop\汉化\汉化文件\resources.assets 作为基础模板
+python scripts/localize.py <新俄服文件路径> [输出文件路径]
 ```
 
-### 增量翻译（推荐，节省 API 调用）
+### 手动指定基础模板
 
 ```bash
-# 首次运行：生成翻译映射表
-python scripts/localize.py resources_ru.assets resources_cn.assets
-
-# 游戏更新后：复用映射表，仅翻译新增内容
-python scripts/localize.py resources_ru_new.assets resources_cn_new.assets translation_map.json
+# 如果默认路径不存在，可以手动指定
+python scripts/localize.py resources_ru_new.assets resources_cn_new.assets "C:\path\to\base_template.assets"
 ```
 
 ### 示例
 
 ```bash
-# 首次汉化（会生成 translation_map.json）
-python scripts/localize.py "C:\Users\book\Desktop\汉化\俄服文件\resources.assets"
+# 使用默认的汉化模板进行增量翻译
+python scripts/localize.py "C:\Games\RF4_New\resources.assets"
 
-# 增量更新（复用之前的翻译，仅翻译新增文本）
+# 指定输出文件名
 python scripts/localize.py resources_v2.assets resources_v2_cn.assets
 ```
 
