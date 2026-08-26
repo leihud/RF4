@@ -3,20 +3,16 @@
 RF4 游戏汉化工具 v2.0 - 基于双基底模板的增量翻译
 
 工作原理：
-1. 使用本地俄服文件和汉化文件作为基底模板
-2. 建立俄文→中文的精确映射关系
-3. 对新俄服文件进行增量检测和翻译
-4. 生成带版本标识的汉化文件
+1. 上传俄服基线文件和汉化基线文件，建立俄文→中文映射
+2. 上传新俄服文件，与基线对比，仅翻译增量部分
+3. 生成带版本标识的汉化文件
 
 用法：
-  python scripts/localize_v2.py <新俄服文件> [输出文件] [基底俄服文件] [基底汉化文件]
+  python scripts/localize_v2.py <俄服基线> <汉化基线> <新俄服文件> [输出文件]
 
 示例：
-  # 使用默认基底（自动检测）
-  python scripts/localize_v2.py "C:\Games\RF4_New\resources.assets"
-  
-  # 手动指定基底
-  python scripts/localize_v2.py new_ru.assets new_cn.assets base_ru.assets base_cn.assets
+  python scripts/localize_v2.py base_ru.assets base_cn.assets new_ru.assets
+  python scripts/localize_v2.py base_ru.assets base_cn.assets new_ru.assets new_cn.assets
 """
 
 import sys
@@ -393,41 +389,29 @@ class RF4LocalizerV2:
 
 
 def main():
-    if len(sys.argv) < 2:
+    if len(sys.argv) < 4:
         print(__doc__)
+        print("错误：需要提供 3 个文件参数")
+        print("用法: python scripts/localize_v2.py <俄服基线> <汉化基线> <新俄服文件> [输出文件]")
         sys.exit(1)
     
-    new_ru_file = sys.argv[1]
-    output_file = sys.argv[2] if len(sys.argv) > 2 else new_ru_file.replace('.assets', '_cn.assets')
+    base_ru_file = sys.argv[1]
+    base_cn_file = sys.argv[2]
+    new_ru_file = sys.argv[3]
+    output_file = sys.argv[4] if len(sys.argv) > 4 else new_ru_file.replace('.assets', '_cn.assets')
     
-    # 基底模板路径（优先使用命令行参数，否则使用默认路径）
-    base_ru_file = sys.argv[3] if len(sys.argv) > 3 else None
-    base_cn_file = sys.argv[4] if len(sys.argv) > 4 else None
-    
-    # 版本标签
-    version_tag = sys.argv[5] if len(sys.argv) > 5 else None
-    
-    if not os.path.exists(new_ru_file):
-        print(f"❌ 新俄服文件不存在: {new_ru_file}")
-        sys.exit(1)
-    
-    # 自动检测基底模板
-    if not base_ru_file or not base_cn_file:
-        default_base_ru = r"C:\Users\book\Desktop\汉化\俄服文件\resources.assets"
-        default_base_cn = r"C:\Users\book\Desktop\汉化\汉化文件\resources.assets"
-        
-        if os.path.exists(default_base_ru) and os.path.exists(default_base_cn):
-            base_ru_file = default_base_ru
-            base_cn_file = default_base_cn
-            print(f"📋 自动检测到基底模板:")
-            print(f"   俄服基线: {base_ru_file}")
-            print(f"   汉化基线: {base_cn_file}")
-        else:
-            print("❌ 未找到基底模板，请手动指定或使用 extract_translation_map.py 先生成映射表")
+    # 验证所有输入文件存在
+    for label, path in [("俄服基线", base_ru_file), ("汉化基线", base_cn_file), ("新俄服文件", new_ru_file)]:
+        if not os.path.exists(path):
+            print(f"❌ {label}文件不存在: {path}")
             sys.exit(1)
     
     print("🎮 RF4 游戏汉化工具 v2.0")
     print("=" * 60)
+    print(f"📂 俄服基线: {base_ru_file}")
+    print(f"📂 汉化基线: {base_cn_file}")
+    print(f"📂 新俄服文件: {new_ru_file}")
+    print(f"📤 输出文件: {output_file}")
     
     # 创建汉化器
     localizer = RF4LocalizerV2()
@@ -439,7 +423,7 @@ def main():
     localizer.load_base_templates(base_ru_file, base_cn_file)
     
     # 执行汉化
-    localizer.localize_new_assets(new_ru_file, output_file, version_tag)
+    localizer.localize_new_assets(new_ru_file, output_file)
     
     # 保存更新后的映射表
     localizer.save_translation_map()

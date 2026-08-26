@@ -4,9 +4,17 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20260826-04',
+  currentVersion: 'V20260826-05',
   buildTime: '2026-08-26',
   changelog: [
+    {
+      version: 'V20260826-05',
+      date: '2026-08-26',
+      changes: [
+        '优化：游戏汉化重构，移除硬编码路径，改为上传俄服基线+汉化基线+新俄服文件',
+        '优化：前端汉化页面支持 3 个文件上传，三栏卡片式布局'
+      ]
+    },
     {
       version: 'V20260826-04',
       date: '2026-08-26',

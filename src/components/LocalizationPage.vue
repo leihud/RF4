@@ -1,21 +1,108 @@
 <template>
   <div class="localize-page">
     <h2>🎮 RF4 游戏汉化</h2>
-    <p class="subtitle">上传俄服 resources.assets，自动生成中文汉化版</p>
+    <p class="subtitle">上传俄服基线文件和汉化基线文件，对新俄服进行增量汉化</p>
 
     <!-- 文件上传区 -->
     <div class="upload-section" v-if="!processing && !result">
-      <div class="upload-area" @dragover.prevent @drop.prevent="handleDrop" @click="triggerFileInput">
-        <input 
-          ref="fileInput" 
-          type="file" 
-          accept=".assets" 
-          @change="handleFileSelect"
-          style="display: none"
-        />
-        <div class="upload-icon">📁</div>
-        <div class="upload-text">点击或拖拽上传 resources.assets 文件</div>
-        <div class="upload-hint">支持 Unity 序列化格式（约 375MB）</div>
+      <div class="upload-grid">
+        <!-- 俄服基线文件 -->
+        <div class="upload-card" :class="{ 'has-file': files.baseRu }">
+          <div class="upload-header">
+            <span class="upload-step">①</span>
+            <span class="upload-title">俄服基线文件</span>
+          </div>
+          <div class="upload-area" @dragover.prevent @drop.prevent="handleDrop('baseRu', $event)" @click="triggerFileInput('baseRu')">
+            <input 
+              ref="baseRuInput" 
+              type="file" 
+              accept=".assets" 
+              @change="handleFileSelect('baseRu', $event)"
+              style="display: none"
+            />
+            <div v-if="!files.baseRu" class="upload-placeholder">
+              <div class="upload-icon">🇷🇺</div>
+              <div class="upload-text">点击上传当前版本俄服文件</div>
+              <div class="upload-hint">resources.assets（约 375MB）</div>
+            </div>
+            <div v-else class="upload-file-info">
+              <div class="file-icon">✅</div>
+              <div class="file-name">{{ files.baseRu.name }}</div>
+              <div class="file-size">{{ formatSize(files.baseRu.size) }}</div>
+              <button class="remove-btn" @click.stop="removeFile('baseRu')">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 汉化基线文件 -->
+        <div class="upload-card" :class="{ 'has-file': files.baseCn }">
+          <div class="upload-header">
+            <span class="upload-step">②</span>
+            <span class="upload-title">汉化基线文件</span>
+          </div>
+          <div class="upload-area" @dragover.prevent @drop.prevent="handleDrop('baseCn', $event)" @click="triggerFileInput('baseCn')">
+            <input 
+              ref="baseCnInput" 
+              type="file" 
+              accept=".assets" 
+              @change="handleFileSelect('baseCn', $event)"
+              style="display: none"
+            />
+            <div v-if="!files.baseCn" class="upload-placeholder">
+              <div class="upload-icon">🇨🇳</div>
+              <div class="upload-text">点击上传当前版本汉化文件</div>
+              <div class="upload-hint">resources.assets（约 375MB）</div>
+            </div>
+            <div v-else class="upload-file-info">
+              <div class="file-icon">✅</div>
+              <div class="file-name">{{ files.baseCn.name }}</div>
+              <div class="file-size">{{ formatSize(files.baseCn.size) }}</div>
+              <button class="remove-btn" @click.stop="removeFile('baseCn')">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 新俄服文件 -->
+        <div class="upload-card" :class="{ 'has-file': files.newRu }">
+          <div class="upload-header">
+            <span class="upload-step">③</span>
+            <span class="upload-title">新俄服文件</span>
+          </div>
+          <div class="upload-area" @dragover.prevent @drop.prevent="handleDrop('newRu', $event)" @click="triggerFileInput('newRu')">
+            <input 
+              ref="newRuInput" 
+              type="file" 
+              accept=".assets" 
+              @change="handleFileSelect('newRu', $event)"
+              style="display: none"
+            />
+            <div v-if="!files.newRu" class="upload-placeholder">
+              <div class="upload-icon">🆕</div>
+              <div class="upload-text">点击上传游戏更新后的新俄服文件</div>
+              <div class="upload-hint">resources.assets（约 375MB）</div>
+            </div>
+            <div v-else class="upload-file-info">
+              <div class="file-icon">✅</div>
+              <div class="file-name">{{ files.newRu.name }}</div>
+              <div class="file-size">{{ formatSize(files.newRu.size) }}</div>
+              <button class="remove-btn" @click.stop="removeFile('newRu')">✕</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 开始汉化按钮 -->
+      <div class="action-bar">
+        <button 
+          class="start-btn" 
+          :disabled="!canStart"
+          @click="startLocalization"
+        >
+          🚀 开始增量汉化
+        </button>
+        <div class="action-hint" v-if="!canStart">
+          请先上传全部 3 个文件
+        </div>
       </div>
     </div>
 
@@ -34,8 +121,20 @@
         <h3>✅ 汉化完成</h3>
         <div class="stats">
           <div class="stat-item">
-            <span class="stat-label">翻译文本数：</span>
-            <span class="stat-value">{{ result.translatedCount }}</span>
+            <span class="stat-label">版本标识：</span>
+            <span class="stat-value">{{ result.version }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">匹配文本：</span>
+            <span class="stat-value">{{ result.matched }} 条</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">新增翻译：</span>
+            <span class="stat-value">{{ result.newTranslated }} 条</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">API 调用：</span>
+            <span class="stat-value">{{ result.apiCalls }} 次</span>
           </div>
           <div class="stat-item">
             <span class="stat-label">文件大小：</span>
@@ -55,13 +154,14 @@
     <div class="info-section">
       <h3>📖 使用说明</h3>
       <ul>
-        <li>1. 从俄服游戏目录找到 <code>resources.assets</code> 文件（约 375MB）</li>
-        <li>2. 上传后系统将自动提取俄语文本并翻译成中文</li>
-        <li>3. 下载生成的汉化版文件，替换原文件即可生效</li>
-        <li>4. 建议先备份原文件，以防万一</li>
+        <li><strong>① 俄服基线文件</strong>：当前游戏版本的俄服 resources.assets（作为对照基准）</li>
+        <li><strong>② 汉化基线文件</strong>：当前游戏版本的汉化 resources.assets（作为翻译模板）</li>
+        <li><strong>③ 新俄服文件</strong>：游戏更新后的新版俄服 resources.assets（需要汉化的目标）</li>
+        <li>系统会从基线文件中提取俄文→中文映射，仅对新文件中的增量文本调用翻译 API</li>
+        <li>生成的汉化文件自带版本标识，方便追踪管理</li>
       </ul>
       <div class="warning-box">
-        ⚠️ <strong>注意：</strong>翻译过程可能需要 5-10 分钟，请耐心等待。请勿关闭浏览器窗口。
+        ⚠️ <strong>注意：</strong>由于文件较大（约 375MB），处理过程可能需要几分钟。基线文件只需在首次或游戏大版本更新时提供一次。
       </div>
     </div>
   </div>
@@ -72,6 +172,11 @@ export default {
   name: 'LocalizationPage',
   data() {
     return {
+      files: {
+        baseRu: null,
+        baseCn: null,
+        newRu: null
+      },
       processing: false,
       progress: 0,
       progressText: '',
@@ -80,76 +185,68 @@ export default {
       outputBlob: null
     }
   },
+  computed: {
+    canStart() {
+      return this.files.baseRu && this.files.baseCn && this.files.newRu
+    }
+  },
   methods: {
-    triggerFileInput() {
-      this.$refs.fileInput.click()
+    triggerFileInput(key) {
+      this.$refs[key + 'Input'].click()
     },
-    handleFileSelect(event) {
+    handleFileSelect(key, event) {
       const file = event.target.files[0]
-      if (file) this.startLocalization(file)
+      if (file) {
+        this.files[key] = file
+      }
     },
-    handleDrop(event) {
+    handleDrop(key, event) {
       const file = event.dataTransfer.files[0]
       if (file && file.name.endsWith('.assets')) {
-        this.startLocalization(file)
+        this.files[key] = file
       } else {
         alert('请上传 .assets 文件')
       }
     },
-    async startLocalization(file) {
+    removeFile(key) {
+      this.files[key] = null
+      if (this.$refs[key + 'Input']) {
+        this.$refs[key + 'Input'].value = ''
+      }
+    },
+    async startLocalization() {
+      if (!this.canStart) return
+      
       this.processing = true
       this.progress = 0
       this.progressText = '正在上传文件...'
+      this.startTime = Date.now()
       
       try {
-        // 步骤1：上传文件到后端
+        // 上传 3 个文件到后端
         const formData = new FormData()
-        formData.append('file', file)
+        formData.append('baseRu', this.files.baseRu)
+        formData.append('baseCn', this.files.baseCn)
+        formData.append('newRu', this.files.newRu)
         
-        const uploadResponse = await fetch('/api/localize/upload', {
+        this.progressText = '正在上传基线文件...'
+        this.progress = 10
+        
+        const response = await fetch('/api/localize', {
           method: 'POST',
           body: formData
         })
         
-        if (!uploadResponse.ok) {
+        if (!response.ok) {
           throw new Error('上传失败')
         }
         
-        const uploadData = await uploadResponse.json()
-        const fileId = uploadData.fileId
+        this.progressText = '正在建立翻译映射...'
+        this.progress = 30
         
-        // 步骤2：开始翻译
-        this.progressText = '正在提取文本...'
-        this.detailText = `文件大小: ${this.formatSize(file.size)}`
-        
-        const translateResponse = await fetch('/api/localize/translate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fileId })
-        })
-        
-        if (!translateResponse.ok) {
-          throw new Error('翻译失败')
-        }
-        
-        // 步骤3：轮询进度
-        await this.pollProgress(fileId)
-        
-        // 步骤4：下载结果
-        this.progressText = '正在生成文件...'
-        const downloadResponse = await fetch(`/api/localize/download/${fileId}`)
-        
-        if (!downloadResponse.ok) {
-          throw new Error('下载失败')
-        }
-        
-        const blob = await downloadResponse.blob()
-        this.outputBlob = blob
-        this.result = {
-          translatedCount: uploadData.textCount || 0,
-          outputSize: blob.size,
-          duration: Math.round((Date.now() - this.startTime) / 1000)
-        }
+        // 轮询进度
+        const taskId = (await response.json()).taskId
+        await this.pollProgress(taskId)
         
       } catch (error) {
         console.error('汉化失败:', error)
@@ -159,26 +256,47 @@ export default {
         this.processing = false
       }
     },
-    async pollProgress(fileId) {
-      this.startTime = Date.now()
-      const maxAttempts = 600 // 最多等待 10 分钟（每秒查询一次）
+    async pollProgress(taskId) {
+      const maxAttempts = 600
       
       for (let i = 0; i < maxAttempts; i++) {
         await new Promise(resolve => setTimeout(resolve, 1000))
         
         try {
-          const response = await fetch(`/api/localize/status/${fileId}`)
+          const response = await fetch(`/api/localize/status/${taskId}`)
           const data = await response.json()
           
           this.progress = data.progress || 0
           this.progressText = data.status || '处理中...'
           this.detailText = data.detail || ''
           
-          if (data.status === 'completed' || data.status === 'failed') {
+          if (data.status === 'completed') {
+            // 下载结果
+            this.progressText = '正在下载结果...'
+            const downloadResponse = await fetch(`/api/localize/download/${taskId}`)
+            const blob = await downloadResponse.blob()
+            this.outputBlob = blob
+            
+            this.result = {
+              version: data.version || '未知',
+              matched: data.matched || 0,
+              newTranslated: data.newTranslated || 0,
+              apiCalls: data.apiCalls || 0,
+              outputSize: blob.size,
+              duration: Math.round((Date.now() - this.startTime) / 1000)
+            }
             break
           }
+          
+          if (data.status === 'failed') {
+            throw new Error(data.error || '处理失败')
+          }
         } catch (e) {
-          console.warn('进度查询失败:', e)
+          if (e.message !== '处理失败') {
+            console.warn('进度查询失败:', e)
+          } else {
+            throw e
+          }
         }
       }
     },
@@ -201,9 +319,12 @@ export default {
       this.detailText = ''
       this.result = null
       this.outputBlob = null
-      if (this.$refs.fileInput) {
-        this.$refs.fileInput.value = ''
-      }
+      this.files = { baseRu: null, baseCn: null, newRu: null }
+      Object.keys(this.$refs).forEach(key => {
+        if (key.endsWith('Input') && this.$refs[key]) {
+          this.$refs[key].value = ''
+        }
+      })
     },
     formatSize(bytes) {
       if (bytes < 1024) return bytes + ' B'
@@ -217,7 +338,7 @@ export default {
 
 <style scoped>
 .localize-page {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 40px 20px;
 }
@@ -234,39 +355,167 @@ h2 {
   margin-bottom: 32px;
 }
 
-.upload-area {
-  border: 2px dashed #ccc;
+.upload-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.upload-card {
+  background: white;
   border-radius: 12px;
-  padding: 60px 20px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s;
+}
+
+.upload-card.has-file {
+  border: 2px solid #4caf50;
+}
+
+.upload-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.upload-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: #667eea;
+  color: white;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.upload-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+}
+
+.upload-area {
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  padding: 24px 12px;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s;
-  background: #fafafa;
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .upload-area:hover {
   border-color: #667eea;
-  background: #f0f4ff;
+  background: #f8f9ff;
+}
+
+.upload-placeholder {
+  width: 100%;
 }
 
 .upload-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
-}
-
-.upload-text {
-  font-size: 16px;
-  color: #333;
+  font-size: 36px;
   margin-bottom: 8px;
 }
 
+.upload-text {
+  font-size: 13px;
+  color: #333;
+  margin-bottom: 4px;
+}
+
 .upload-hint {
+  font-size: 11px;
+  color: #999;
+}
+
+.upload-file-info {
+  position: relative;
+  width: 100%;
+}
+
+.file-icon {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.file-name {
   font-size: 12px;
+  color: #333;
+  word-break: break-all;
+  margin-bottom: 4px;
+}
+
+.file-size {
+  font-size: 11px;
+  color: #888;
+}
+
+.remove-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: #ff5252;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.remove-btn:hover {
+  background: #ff1744;
+}
+
+.action-bar {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.start-btn {
+  padding: 14px 48px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 28px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.start-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.start-btn:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.action-hint {
+  margin-top: 12px;
+  font-size: 13px;
   color: #999;
 }
 
 .progress-section {
-  padding: 40px 20px;
+  padding: 60px 20px;
   text-align: center;
 }
 
@@ -408,5 +657,16 @@ h2 {
   border-radius: 4px;
   font-size: 14px;
   color: #856404;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .upload-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 </style>

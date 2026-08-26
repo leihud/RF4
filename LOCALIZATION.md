@@ -2,11 +2,11 @@
 
 ## 📋 概述
 
-本工具用于将 RF4（Russian Fishing 4）俄服游戏的 `resources.assets` 文件自动翻译为中文版本。
+本工具用于将 RF4（Russian Fishing 4）俄服游戏的 `resources.assets` 文件自动翻译为中文版本。采用双基底模板架构，仅对增量文本调用翻译 API，大幅节省成本。
 
 ## 🔧 前置要求
 
-### 方案 A：Python 脚本（推荐）
+### Python 脚本
 
 1. **安装 Python 3.8+**
    ```bash
@@ -31,88 +31,105 @@
      export BAIDU_KEY="your_key"
      ```
 
-### 方案 B：前端页面（开发中）
+### 前端页面
 
-当前前端 UI 已集成到 RF4 项目中，但后端处理逻辑尚未完全实现。请访问 `/localize` 页面查看进度。
+访问 RF4 网站 → 点击"游戏汉化"按钮 → 上传 3 个文件即可。
 
 ## 🚀 使用方法
 
-### v2.0 推荐用法（自动检测基底）
+### 方式一：Python 命令行
 
 ```bash
-# 最简单的用法 - 自动使用本地基底模板
-python scripts/localize_v2.py <新俄服文件路径> [输出文件路径] [版本标签]
+# 基本用法：提供 3 个文件
+python scripts/localize_v2.py <俄服基线> <汉化基线> <新俄服文件> [输出文件]
 ```
 
-### 示例
+#### 参数说明
+
+| 参数 | 说明 | 必填 |
+|------|------|------|
+| 俄服基线 | 当前版本的俄服 resources.assets | ✅ |
+| 汉化基线 | 当前版本的汉化 resources.assets | ✅ |
+| 新俄服文件 | 游戏更新后的新俄服 resources.assets | ✅ |
+| 输出文件 | 汉化后的输出路径（默认：新俄服文件名_cn.assets） | ❌ |
+
+#### 示例
 
 ```bash
-# 基本用法（自动生成版本标识）
-python scripts/localize_v2.py "C:\Games\RF4_Update\resources.assets"
+# 基本用法
+python scripts/localize_v2.py base_ru.assets base_cn.assets new_ru.assets
 
-# 指定输出文件名和版本标签
-python scripts/localize_v2.py resources_v2.assets resources_v2_cn.assets v2.1_20260826
-
-# 手动指定基底模板
-python scripts/localize_v2.py new_ru.assets new_cn.assets base_ru.assets base_cn.assets
+# 指定输出文件名
+python scripts/localize_v2.py base_ru.assets base_cn.assets new_ru.assets new_cn.assets
 ```
 
-### 版本管理
+### 方式二：前端页面
 
-v2.0 支持自动版本检测功能：
-
-1. **自动提取版本**：从新俄服文件中自动检测版本号（如 `v1.2.3`, `RF4/2.1` 等格式）
-2. **智能命名**：如未找到版本信息，使用时间戳自动命名
-3. **版本追踪**：生成 `resources_cn_version.json` 文件记录详细信息
-
-```bash
-# 自动检测版本（推荐）
-python scripts/localize_v2.py resources_v2.assets
-
-# 手动指定版本标签
-python scripts/localize_v2.py resources_v2.assets resources_v2_cn.assets v2.1_20260826
-```
-
-查看版本信息：
-```bash
-cat resources_cn_version.json
-```
-```
-
-### 无 API Key 模式
-
-如果不配置百度翻译 API，工具会跳过翻译步骤，仅提取文本结构。当前已预配置默认 API Key，可直接使用。
+1. 访问 RF4 网站
+2. 点击导航栏的"游戏汉化"按钮
+3. 依次上传 3 个文件：
+   - ① 俄服基线文件（当前版本俄服 resources.assets）
+   - ② 汉化基线文件（当前版本汉化 resources.assets）
+   - ③ 新俄服文件（游戏更新后的俄服 resources.assets）
+4. 点击"开始增量汉化"
+5. 等待处理完成，下载汉化文件
 
 ## 📊 工作原理
 
-### v2.0 双基底模板架构
+### 双基底模板架构
 
-1. **基底模板建立**
-   - 俄服基线：`C:\Users\book\Desktop\汉化\俄服文件\resources.assets`
-   - 汉化基线：`C:\Users\book\Desktop\汉化\汉化文件\resources.assets`
-   - 通过对比两个文件，建立精确的俄文→中文映射关系
+```
+┌─────────────────┐     ┌─────────────────┐
+│   俄服基线文件   │     │   汉化基线文件   │
+│  (当前版本俄文)  │     │  (当前版本中文)  │
+└────────┬────────┘     └────────┬────────┘
+         │                       │
+         └───────────┬───────────┘
+                     ▼
+         ┌───────────────────────┐
+         │  建立 RU → CN 映射表  │
+         └───────────┬───────────┘
+                     ▼
+         ┌───────────────────────┐
+         │    新俄服文件上传      │
+         │  (游戏更新后的版本)    │
+         └───────────┬───────────┘
+                     ▼
+         ┌───────────────────────┐
+         │     增量检测对比       │
+         │  已有文本 → 直接替换   │
+         │  新增文本 → API 翻译   │
+         └───────────┬───────────┘
+                     ▼
+         ┌───────────────────────┐
+         │  生成汉化文件 + 版本   │
+         └───────────────────────┘
+```
 
-2. **增量检测机制**
-   - 解析新俄服文件的所有文本对象
-   - 与基底模板进行对比，识别新增/修改的文本
-   - 仅对增量部分调用翻译 API
+### 核心特性
 
-3. **版本标识系统**
-   - 每次生成汉化文件时自动创建版本信息
-   - 保存为 `resources_cn_version.json`
-   - 包含时间戳、统计信息和映射表大小
+1. **双基底模板**：通过对比俄服和汉化文件，建立精确的俄文→中文映射
+2. **增量翻译**：仅对新文件中的增量文本调用 API，已有翻译直接复用
+3. **版本标识**：自动从新俄服文件中提取版本号，嵌入汉化结果
+4. **持久化缓存**：翻译映射表保存到 `translation_map_v2.json`，跨会话复用
 
-4. **智能缓存策略**
-   - 翻译结果保存到 `translation_map_v2.json`
-   - 下次运行自动加载，避免重复翻译
-   - 支持跨会话复用
+## 📝 输出文件
+
+每次运行会生成：
+
+| 文件 | 说明 |
+|------|------|
+| `*_cn.assets` | 汉化后的游戏文件 |
+| `*_cn_version.json` | 版本信息和统计（版本号、匹配数、API 调用等） |
+| `translation_map_v2.json` | 翻译映射表（自动更新，下次复用） |
 
 ## ⚠️ 注意事项
 
 1. **备份原文件**：操作前请务必备份原始 `resources.assets`
 2. **文件大小**：处理 375MB 文件可能需要 5-10 分钟
-3. **API 限额**：百度翻译免费版每月 5 万字符，超出需付费
+3. **API 限额**：百度翻译免费版每月 5 万字符，使用增量模式可大幅减少调用
 4. **翻译质量**：机器翻译可能存在误差，建议人工校对关键文本
+5. **基线文件**：首次使用时需要提供一次基线文件，后续游戏更新只需提供新的俄服文件
 
 ## 🔍 验证汉化结果
 
@@ -138,40 +155,13 @@ MemoryError
 ```
 ⚠️  翻译请求异常
 ```
-**解决**：检查网络连接，或暂时跳过翻译步骤
+**解决**：检查网络连接，未翻译的文本会保留原文
 
-## 📝 高级用法
-
-### 自定义翻译映射表
-
-编辑 `scripts/localize.py`，在 `translate_with_baidu` 方法中添加自定义映射：
-
-```python
-def translate_with_baidu(self, text, from_lang='ru', to_lang='zh'):
-    # 自定义映射优先
-    custom_map = {
-        "Катушка": "渔轮",
-        "Удилище": "鱼竿",
-        # ... 添加更多映射
-    }
-    if text in custom_map:
-        return custom_map[text]
-    
-    # 否则调用 API
-    # ...
+### 问题 4：基底文件不存在
 ```
-
-### 批量处理多个文件
-
-```bash
-for file in *.assets; do
-    python scripts/localize.py "$file" "${file%.assets}_cn.assets"
-done
+❌ 俄服基线文件不存在: xxx
 ```
-
-## 🤝 贡献
-
-欢迎提交 Issue 或 Pull Request 改进此工具！
+**解决**：确保提供的 3 个文件路径都正确
 
 ## 📄 许可证
 
