@@ -162,10 +162,10 @@ export default {
 .search-input {
   width: 100%;
   padding: 8px 32px 8px 12px;
-  border: 1px solid #42b983;
+  border: 1px solid var(--color-success-accent);
   border-radius: 4px;
   font-size: 14px;
-  color: #2c3e50;
+  color: var(--text-heading);
   background-color: white;
   box-sizing: border-box;
 }
@@ -176,7 +176,7 @@ export default {
 }
 
 .search-input::placeholder {
-  color: #999;
+  color: var(--text-hint);
 }
 
 .search-icon {
@@ -189,7 +189,7 @@ export default {
 
 .category-filter-header {
   padding: 8px 15px;
-  background-color: #f0fdf4;
+  background-color: var(--color-success-bg-light);
   border-bottom: 1px solid #dcfce7;
 }
 
@@ -213,13 +213,13 @@ export default {
   flex-wrap: wrap;
   gap: 6px;
   padding: 8px 15px;
-  background-color: #f0fdf4;
+  background-color: var(--color-success-bg-light);
   border-bottom: 1px solid #dcfce7;
 }
 
 .category-filter-btn {
   padding: 4px 12px;
-  border: 1px solid #bbf7d0;
+  border: 1px solid var(--color-success-border);
   background-color: white;
   color: #16a34a;
   border-radius: 16px;
@@ -244,7 +244,7 @@ export default {
   left: 0;
   right: 0;
   background-color: white;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   max-height: 200px;
@@ -257,7 +257,7 @@ export default {
   align-items: center;
   padding: 12px 18px;
   cursor: pointer;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid var(--bg-page);
   transition: background-color 0.2s;
   gap: 18px;
 }
@@ -267,7 +267,7 @@ export default {
 }
 
 .dropdown-item:hover {
-  background-color: #e8f5e9;
+  background-color: var(--color-success-bg);
 }
 
 .dropdown-name {
@@ -275,7 +275,7 @@ export default {
   min-width: 0;
   font-size: 16px;
   font-weight: 600;
-  color: #2c3e50;
+  color: var(--text-heading);
   line-height: 1.4;
   /* 允许换行显示完整名称，不再强制单行省略 */
   white-space: normal;
@@ -288,9 +288,9 @@ export default {
   min-width: 68px;
   max-width: 120px;
   padding: 4px 12px;
-  background-color: #f0fdf4;
+  background-color: var(--color-success-bg-light);
   color: #166534;
-  border: 1px solid #bbf7d0;
+  border: 1px solid var(--color-success-border);
   border-radius: 14px;
   font-size: 13px;
   font-weight: 500;
@@ -305,8 +305,8 @@ export default {
   min-width: 60px;
   max-width: 100px;
   padding: 4px 12px;
-  background-color: #fff7ed;
-  color: #c2410c;
+  background-color: var(--color-warning-bg-light);
+  color: var(--color-warning-strong);
   border: 1px solid #fed7aa;
   border-radius: 14px;
   font-size: 13px;
@@ -321,7 +321,7 @@ export default {
 .dropdown-empty {
   padding: 15px;
   text-align: center;
-  color: #999;
+  color: var(--text-hint);
   font-size: 14px;
 }
 

@@ -56,17 +56,17 @@ export default {
 }
 
 .toast-info {
-  background-color: #1565c0;
+  background-color: var(--color-primary);
   color: white;
 }
 
 .toast-error {
-  background-color: #c62828;
+  background-color: var(--color-danger-strong);
   color: white;
 }
 
 .toast-success {
-  background-color: #2e7d32;
+  background-color: var(--color-success);
   color: white;
 }
 

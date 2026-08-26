@@ -135,6 +135,7 @@
             <span class="meta-item">🎣 {{ getFishCount(build.suitable_fish) }} 种鱼</span>
             <span class="meta-item">️ {{ getMapCount(build.suitable_map) }} 张地图</span>
             <span class="meta-item"> {{ formatDate(build.created_at) }}</span>
+            <button class="apply-btn" @click.stop="applyToCalculator(build)" title="在计算器中应用此方案">▶ 应用</button>
             <button v-if="isAdminMode" class="edit-btn" @click.stop="openEditModal(build)" title="编辑方案">✎ 编辑</button>
             <button v-if="isAdminMode" class="approve-btn" @click.stop="approveBuild(build)" :title="build.is_approved ? '取消审核' : '通过审核'">{{ build.is_approved ? '✓ 已审核' : '审核' }}</button>
             <button v-if="showDeleteBtn" class="delete-btn" @click.stop="deleteBuild(build)" title="删除方案">️</button>
@@ -507,6 +508,21 @@ export default {
     toggleExpand(buildId) {
       this.expandedIndex = this.expandedIndex === buildId ? null : buildId
     },
+    /** 一键应用：方案完整存暂 sessionStorage，跳转计算器后由其在装备数据就绪时应用 */
+    applyToCalculator(build) {
+      if (!build) return
+      if (!build.rod_model && !build.reel_model && !(build.main_line_tension > 0)) {
+        this.showToast('该方案没有可应用的装备数据', 'error')
+        return
+      }
+      try {
+        sessionStorage.setItem('apply_build_payload', JSON.stringify(build))
+      } catch (e) {
+        this.showToast('无法暂存方案数据：' + e.message, 'error')
+        return
+      }
+      this.$router.push('/')
+    },
     getFishCount(fishStr) {
       if (!fishStr) return 0
       return fishStr.split(',').filter(f => f.trim()).length
@@ -690,20 +706,20 @@ export default {
   align-items: center;
   margin-bottom: 24px;
   padding-bottom: 16px;
-  border-bottom: 2px solid #e3f2fd;
+  border-bottom: 2px solid var(--color-primary-bg);
 }
 
 .page-header h1 {
   font-size: 28px;
-  color: #1565c0;
+  color: var(--color-primary);
   margin: 0;
 }
 
 .back-btn {
   padding: 10px 24px;
-  border: 2px solid #1565c0;
+  border: 2px solid var(--color-primary);
   background-color: white;
-  color: #1565c0;
+  color: var(--color-primary);
   border-radius: 20px;
   cursor: pointer;
   font-size: 14px;
@@ -712,7 +728,7 @@ export default {
 }
 
 .back-btn:hover {
-  background-color: #e3f2fd;
+  background-color: var(--color-primary-bg);
 }
 
 /* 搜索区域 */
@@ -736,7 +752,7 @@ export default {
 .search-input {
   flex: 1;
   padding: 10px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   font-size: 14px;
   outline: none;
@@ -744,13 +760,13 @@ export default {
 }
 
 .search-input:focus {
-  border-color: #1565c0;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
 }
 
 .sort-select {
   padding: 10px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   font-size: 14px;
   min-width: 150px;
@@ -759,7 +775,7 @@ export default {
 }
 
 .sort-select:focus {
-  border-color: #1565c0;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
 }
 
@@ -774,7 +790,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   padding: 10px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   font-size: 14px;
   cursor: pointer;
@@ -784,21 +800,21 @@ export default {
 }
 
 .multi-select-trigger:hover {
-  border-color: #1565c0;
+  border-color: var(--color-primary);
 }
 
 .placeholder-text {
-  color: #999;
+  color: var(--text-hint);
 }
 
 .selected-count {
-  color: #1565c0;
+  color: var(--color-primary);
   font-weight: 600;
 }
 
 .dropdown-arrow {
   font-size: 10px;
-  color: #999;
+  color: var(--text-hint);
   margin-left: 8px;
 }
 
@@ -809,7 +825,7 @@ export default {
   right: 0;
   max-height: 300px;
   background-color: white;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 1000;
@@ -828,7 +844,7 @@ export default {
 }
 
 .dropdown-search:focus {
-  border-bottom-color: #1565c0;
+  border-bottom-color: var(--color-primary);
 }
 
 .dropdown-list {
@@ -846,27 +862,27 @@ export default {
 }
 
 .dropdown-item:hover {
-  background-color: #f5f5f5;
+  background-color: var(--bg-page);
 }
 
 .dropdown-item.selected {
-  background-color: #e3f2fd;
+  background-color: var(--color-primary-bg);
 }
 
 .checkbox-icon {
   font-size: 14px;
-  color: #999;
+  color: var(--text-hint);
   width: 18px;
   flex-shrink: 0;
 }
 
 .dropdown-item.selected .checkbox-icon {
-  color: #1565c0;
+  color: var(--color-primary);
 }
 
 .item-text {
   font-size: 14px;
-  color: #333;
+  color: var(--text-main);
   flex: 1;
   min-width: 0;
 }
@@ -876,9 +892,9 @@ export default {
   min-width: 56px;
   max-width: 120px;
   padding: 3px 10px;
-  background-color: #f0fdf4;
+  background-color: var(--color-success-bg-light);
   color: #166534;
-  border: 1px solid #bbf7d0;
+  border: 1px solid var(--color-success-border);
   border-radius: 14px;
   font-size: 12px;
   font-weight: 500;
@@ -893,8 +909,8 @@ export default {
   min-width: 50px;
   max-width: 100px;
   padding: 3px 10px;
-  background-color: #fff7ed;
-  color: #c2410c;
+  background-color: var(--color-warning-bg-light);
+  color: var(--color-warning-strong);
   border: 1px solid #fed7aa;
   border-radius: 14px;
   font-size: 12px;
@@ -908,10 +924,10 @@ export default {
 /* 统计信息 */
 .stats-info {
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
   margin-bottom: 15px;
   padding: 10px 15px;
-  background-color: #e3f2fd;
+  background-color: var(--color-primary-bg);
   border-radius: 6px;
 }
 
@@ -925,7 +941,7 @@ export default {
 /* 方案卡片 */
 .build-card {
   background-color: white;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--color-divider);
   border-radius: 8px;
   overflow: hidden;
   transition: all 0.3s;
@@ -936,7 +952,7 @@ export default {
 }
 
 .build-card.expanded {
-  border-color: #1565c0;
+  border-color: var(--color-primary);
 }
 
 /* 卡片头部 */
@@ -951,7 +967,7 @@ export default {
 }
 
 .build-header:hover {
-  background-color: #f5f5f5;
+  background-color: var(--bg-page);
 }
 
 .build-title {
@@ -962,14 +978,14 @@ export default {
 
 .expand-icon {
   font-size: 12px;
-  color: #1565c0;
+  color: var(--color-primary);
   width: 16px;
 }
 
 .build-name {
   font-weight: bold;
   font-size: 16px;
-  color: #333;
+  color: var(--text-main);
 }
 
 .build-meta {
@@ -979,15 +995,15 @@ export default {
 
 .meta-item {
   font-size: 13px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 /* 删除按钮 */
 .delete-btn {
   padding: 4px 8px;
-  border: 1px solid #e53935;
+  border: 1px solid var(--color-danger);
   background-color: white;
-  color: #e53935;
+  color: var(--color-danger);
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
@@ -996,16 +1012,16 @@ export default {
 }
 
 .delete-btn:hover {
-  background-color: #e53935;
+  background-color: var(--color-danger);
   color: white;
 }
 
 /* 审核按钮 */
 .approve-btn {
   padding: 4px 8px;
-  border: 1px solid #43a047;
+  border: 1px solid var(--color-success-strong);
   background-color: white;
-  color: #43a047;
+  color: var(--color-success-strong);
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
@@ -1014,16 +1030,16 @@ export default {
 }
 
 .approve-btn:hover {
-  background-color: #43a047;
+  background-color: var(--color-success-strong);
   color: white;
 }
 
 /* 编辑按钮 */
 .edit-btn {
   padding: 4px 8px;
-  border: 1px solid #1565c0;
+  border: 1px solid var(--color-primary);
   background-color: white;
-  color: #1565c0;
+  color: var(--color-primary);
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
@@ -1032,14 +1048,32 @@ export default {
 }
 
 .edit-btn:hover {
-  background-color: #1565c0;
+  background-color: var(--color-primary);
+  color: white;
+}
+
+/* 一键应用到计算器 */
+.apply-btn {
+  padding: 4px 8px;
+  border: 1px solid var(--color-success-strong);
+  background-color: white;
+  color: var(--color-success-strong);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+  margin-left: 8px;
+}
+
+.apply-btn:hover {
+  background-color: var(--color-success-strong);
   color: white;
 }
 
 /* 待审核标签 */
 .pending-tag {
-  background-color: #fff3e0;
-  color: #e65100;
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning);
   padding: 2px 8px;
   border-radius: 4px;
   font-size: 12px;
@@ -1049,7 +1083,7 @@ export default {
 /* 详情区域 */
 .build-details {
   padding: 16px 20px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--bg-secondary);
   background-color: white;
 }
 
@@ -1074,7 +1108,7 @@ export default {
 }
 
 .equip-chip-label {
-  color: #1565c0;
+  color: var(--color-primary);
   font-weight: 600;
   font-size: 14px;
   white-space: nowrap;
@@ -1082,7 +1116,7 @@ export default {
 }
 
 .equip-chip-value {
-  color: #333;
+  color: var(--text-main);
   font-weight: 500;
   white-space: nowrap;
   font-size: 14px;
@@ -1102,7 +1136,7 @@ export default {
   align-items: center;
   padding: 12px 16px;
   background-color: #fafbfc;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--bg-secondary);
   border-radius: 6px;
   margin-bottom: 14px;
 }
@@ -1122,7 +1156,7 @@ export default {
 .analysis-divider {
   width: 1px;
   height: 20px;
-  background-color: #e0e0e0;
+  background-color: var(--color-divider);
   margin: 0 4px;
   flex-shrink: 0;
 }
@@ -1138,17 +1172,17 @@ export default {
 }
 
 .stat-tension {
-  color: #1565c0;
+  color: var(--color-primary);
 }
 
 .stat-price {
-  color: #e65100;
+  color: var(--color-warning);
 }
 
 .analysis-total {
   margin-left: auto;
   padding-left: 16px;
-  border-left: 1px solid #e0e0e0;
+  border-left: 1px solid var(--color-divider);
 }
 
 .stat-total {
@@ -1202,20 +1236,20 @@ export default {
 }
 
 .tag-fish {
-  background-color: #e3f2fd;
-  color: #1565c0;
+  background-color: var(--color-primary-bg);
+  color: var(--color-primary);
 }
 
 .tag-map {
-  background-color: #e8f5e9;
-  color: #2e7d32;
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
 }
 
 /* 空状态 */
 .empty-state {
   text-align: center;
   padding: 60px 20px;
-  color: #999;
+  color: var(--text-hint);
 }
 
 .empty-state p {
@@ -1232,7 +1266,7 @@ export default {
 
 .create-btn {
   padding: 14px 32px;
-  background-color: #1565c0;
+  background-color: var(--color-primary);
   color: white;
   border: none;
   border-radius: 24px;
@@ -1284,7 +1318,7 @@ export default {
     padding-left: 0;
     border-left: none;
     padding-top: 8px;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid var(--color-divider);
     width: 100%;
   }
 
@@ -1319,7 +1353,7 @@ export default {
 
 .skeleton-line {
   height: 16px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--color-divider) 50%, var(--bg-secondary) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 4px;
@@ -1382,14 +1416,14 @@ export default {
 .modal-header h3 {
   margin: 0;
   font-size: 18px;
-  color: #333;
+  color: var(--text-main);
 }
 
 .modal-close {
   background: none;
   border: none;
   font-size: 20px;
-  color: #999;
+  color: var(--text-hint);
   cursor: pointer;
   padding: 4px 8px;
   border-radius: 4px;
@@ -1397,8 +1431,8 @@ export default {
 }
 
 .modal-close:hover {
-  background-color: #f5f5f5;
-  color: #333;
+  background-color: var(--bg-page);
+  color: var(--text-main);
 }
 
 .modal-body {
@@ -1420,7 +1454,7 @@ export default {
 .form-input {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   font-size: 14px;
   box-sizing: border-box;
@@ -1429,14 +1463,14 @@ export default {
 
 .form-input:focus {
   outline: none;
-  border-color: #1565c0;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
 }
 
 .form-textarea {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   font-size: 14px;
   font-family: inherit;
@@ -1447,7 +1481,7 @@ export default {
 
 .form-textarea:focus {
   outline: none;
-  border-color: #1565c0;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
 }
 
@@ -1461,9 +1495,9 @@ export default {
 
 .btn-cancel {
   padding: 8px 20px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   background-color: white;
-  color: #666;
+  color: var(--text-secondary);
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
@@ -1471,14 +1505,14 @@ export default {
 }
 
 .btn-cancel:hover {
-  background-color: #f5f5f5;
-  border-color: #ccc;
+  background-color: var(--bg-page);
+  border-color: var(--color-border-light);
 }
 
 .btn-save {
   padding: 8px 20px;
   border: none;
-  background-color: #1565c0;
+  background-color: var(--color-primary);
   color: white;
   border-radius: 6px;
   cursor: pointer;
@@ -1520,8 +1554,8 @@ export default {
   align-items: center;
   gap: 4px;
   padding: 4px 10px;
-  background-color: #e3f2fd;
-  color: #1565c0;
+  background-color: var(--color-primary-bg);
+  color: var(--color-primary);
   border-radius: 12px;
   font-size: 13px;
   font-weight: 500;
@@ -1554,7 +1588,7 @@ export default {
   padding: 8px 12px;
   cursor: pointer;
   transition: background-color 0.15s;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--bg-secondary);
 }
 
 .multi-select-item:last-child {
@@ -1566,25 +1600,25 @@ export default {
 }
 
 .multi-select-item.selected {
-  background-color: #e3f2fd;
+  background-color: var(--color-primary-bg);
 }
 
 .checkbox-icon {
   font-size: 14px;
-  color: #1565c0;
+  color: var(--color-primary);
   flex-shrink: 0;
 }
 
 .item-text {
   font-size: 14px;
-  color: #333;
+  color: var(--text-main);
   flex: 1;
 }
 
 .select-hint {
   display: block;
   font-size: 12px;
-  color: #999;
+  color: var(--text-hint);
   margin-top: 4px;
 }
 

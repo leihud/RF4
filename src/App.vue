@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <AppHeader />
     <router-view />
     <!-- 版本信息展示 -->
     <div class="version-badge" @click="showVersionDetail = !showVersionDetail">
@@ -64,9 +65,13 @@
 
 <script>
 import { versionInfo } from './version-info.js'
+import AppHeader from './components/common/AppHeader.vue'
 
 export default {
   name: 'App',
+  components: {
+    AppHeader
+  },
   data() {
     return {
       fatalErrorMessage: '',
@@ -151,6 +156,44 @@ export default {
 </script>
 
 <style>
+/* ── 全局设计令牌：颜色统一由这里定义，组件内一律引用变量，禁止再写硬编码色值 ── */
+:root {
+  /* 品牌主色（蓝色阶梯） */
+  --color-primary: #1565c0;
+  --color-primary-hover: #1e88e5;
+  --color-primary-light: #90caf9;
+  --color-primary-bg: #e3f2fd;
+  /* 成功（绿色阶梯） */
+  --color-success: #2e7d32;
+  --color-success-strong: #43a047;
+  --color-success-accent: #42b983;
+  --color-success-bg: #e8f5e9;
+  --color-success-bg-light: #f0fdf4;
+  --color-success-border: #bbf7d0;
+  /* 警告（橙色阶梯） */
+  --color-warning: #e65100;
+  --color-warning-strong: #c2410c;
+  --color-warning-accent: #ff9800;
+  --color-warning-bg: #fff3e0;
+  --color-warning-bg-light: #fff7ed;
+  /* 危险（红色） */
+  --color-danger: #e53935;
+  --color-danger-strong: #c62828;
+  /* 文本 */
+  --text-heading: #2c3e50;
+  --text-main: #333;
+  --text-secondary: #666;
+  --text-hint: #999;
+  /* 边框与背景 */
+  --color-border: #ddd;
+  --color-border-light: #ccc;
+  --color-divider: #e0e0e0;
+  --bg-page: #f5f5f5;
+  --bg-secondary: #f0f0f0;
+  /* 品牌渐变（版本徽章等） */
+  --gradient-brand: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -159,7 +202,7 @@ export default {
 
 body {
   font-family: Arial, sans-serif;
-  background-color: #f5f5f5;
+  background-color: var(--bg-page);
   min-height: 100vh;
 }
 
@@ -233,8 +276,8 @@ body {
 }
 
 .global-error-btn.primary:hover {
-  background: #1565c0;
-  border-color: #1565c0;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 /* 版本徽章 */
@@ -286,7 +329,7 @@ body {
 
 .version-popup h3 {
   font-size: 18px;
-  color: #333;
+  color: var(--text-main);
   margin-bottom: 20px;
   font-weight: 600;
   text-align: center;
@@ -301,7 +344,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--bg-secondary);
 }
 
 .info-row:last-child {
@@ -310,17 +353,17 @@ body {
 
 .info-label {
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .info-value {
   font-size: 14px;
-  color: #333;
+  color: var(--text-main);
   font-weight: 600;
 }
 
 .status-success {
-  color: #43a047;
+  color: var(--color-success-strong);
 }
 
 .close-btn {
@@ -345,12 +388,12 @@ body {
 .changelog-section {
   margin-top: 24px;
   padding-top: 20px;
-  border-top: 2px solid #f0f0f0;
+  border-top: 2px solid var(--bg-secondary);
 }
 
 .changelog-section h4 {
   font-size: 16px;
-  color: #333;
+  color: var(--text-main);
   margin-bottom: 16px;
   font-weight: 600;
 }
@@ -363,7 +406,7 @@ body {
 .changelog-item {
   margin-bottom: 16px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid var(--bg-page);
 }
 
 .changelog-item:last-child {
@@ -390,7 +433,7 @@ body {
 
 .version-date {
   font-size: 12px;
-  color: #999;
+  color: var(--text-hint);
 }
 
 .changelog-changes {
@@ -441,22 +484,22 @@ body {
 }
 
 .change-type-new {
-  background: #e8f5e9;
-  color: #2e7d32;
+  background: var(--color-success-bg);
+  color: var(--color-success);
 }
 
 .change-type-optimize {
-  background: #e3f2fd;
-  color: #1565c0;
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
 }
 
 .change-type-fix {
-  background: #fff3e0;
+  background: var(--color-warning-bg);
   color: #ef6c00;
 }
 
 .change-type-remove {
   background: #fce4ec;
-  color: #c62828;
+  color: var(--color-danger-strong);
 }
 </style>

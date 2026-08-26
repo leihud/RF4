@@ -53,13 +53,13 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 20px 28px;
-  background-color: #e3f2fd;
+  background-color: var(--color-primary-bg);
   border-bottom: 1px solid #bbdefb;
 }
 
 .disclaimer-header h3 {
   margin: 0;
-  color: #1565c0;
+  color: var(--color-primary);
   font-size: 20px;
   letter-spacing: 2px;
 }
@@ -68,7 +68,7 @@ export default {
   background: none;
   border: none;
   font-size: 24px;
-  color: #666;
+  color: var(--text-secondary);
   cursor: pointer;
   padding: 0;
   width: 30px;
@@ -79,7 +79,7 @@ export default {
 }
 
 .disclaimer-close:hover {
-  color: #1565c0;
+  color: var(--color-primary);
 }
 
 .disclaimer-content {
@@ -88,7 +88,7 @@ export default {
 
 .disclaimer-content p {
   margin: 0 0 18px 0;
-  color: #333;
+  color: var(--text-main);
   font-size: 15px;
   line-height: 1.9;
   text-align: justify;
@@ -112,7 +112,7 @@ export default {
 
 .disclaimer-accept {
   padding: 12px 40px;
-  background-color: #1565c0;
+  background-color: var(--color-primary);
   color: white;
   border: none;
   border-radius: 6px;

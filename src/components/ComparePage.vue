@@ -98,9 +98,12 @@
           <div
             v-for="row in currentCompareRows"
             :key="row.key || row.field || row.label"
-            class="compare-row"
+            :class="['compare-row', { 'diff-row': isRowDifferent(row) }]"
           >
-            <div class="compare-cell compare-label-cell">{{ row.label }}</div>
+            <div class="compare-cell compare-label-cell">
+              {{ row.label }}
+              <span v-if="isRowDifferent(row)" class="diff-mark" title="各装备此项数值不同">≠</span>
+            </div>
             <div
               v-for="equipment in compareEquipmentList"
               :key="getItemKey(equipment)"
@@ -427,6 +430,21 @@ export default {
       const v = this.getRowNumericalValue(equipment, row)
       return !Number.isNaN(v) && v === max
     },
+    /** 差异行检测：对比≥ 2 个装备且此项展示值不完全相同时，标记 ≠ 供用户快速定位差异 */
+    isRowDifferent(row) {
+      const eqs = Array.isArray(this.compareEquipmentList) ? this.compareEquipmentList : []
+      if (eqs.length < 2) return false
+      let first = null
+      for (const eq of eqs) {
+        const display = String(this.formatCellValue(eq, row))
+        if (first === null) {
+          first = display
+        } else if (display !== first) {
+          return true
+        }
+      }
+      return false
+    },
     formatValue(value, fallback = '-') {
       if (value === null || value === undefined || value === '') return fallback
       // 对象禁止直接返回：避免 Vue 模板 {{ obj }} 隐式 toString 抛 Cannot convert object to primitive value
@@ -546,20 +564,20 @@ export default {
   align-items: center;
   margin-bottom: 24px;
   padding-bottom: 16px;
-  border-bottom: 2px solid #e3f2fd;
+  border-bottom: 2px solid var(--color-primary-bg);
 }
 
 .compare-header h1 {
-  color: #1565c0;
+  color: var(--color-primary);
   font-size: 28px;
   margin: 0;
 }
 
 .back-btn {
   padding: 10px 24px;
-  border: 2px solid #1565c0;
+  border: 2px solid var(--color-primary);
   background-color: white;
-  color: #1565c0;
+  color: var(--color-primary);
   border-radius: 20px;
   cursor: pointer;
   font-size: 14px;
@@ -568,7 +586,7 @@ export default {
 }
 
 .back-btn:hover {
-  background-color: #e3f2fd;
+  background-color: var(--color-primary-bg);
 }
 
 .compare-type-selector {
@@ -579,9 +597,9 @@ export default {
 
 .type-btn {
   padding: 12px 36px;
-  border: 2px solid #1565c0;
+  border: 2px solid var(--color-primary);
   background-color: white;
-  color: #1565c0;
+  color: var(--color-primary);
   border-radius: 25px;
   cursor: pointer;
   font-size: 16px;
@@ -590,11 +608,11 @@ export default {
 }
 
 .type-btn:hover {
-  background-color: #e3f2fd;
+  background-color: var(--color-primary-bg);
 }
 
 .type-btn.active {
-  background-color: #1565c0;
+  background-color: var(--color-primary);
   color: white;
 }
 
@@ -616,7 +634,7 @@ export default {
 .search-input {
   width: 100%;
   padding: 12px 40px 12px 18px;
-  border: 2px solid #1565c0;
+  border: 2px solid var(--color-primary);
   border-radius: 25px;
   font-size: 14px;
 }
@@ -636,10 +654,10 @@ export default {
 
 .category-select {
   padding: 10px 20px;
-  border: 2px solid #1e88e5;
+  border: 2px solid var(--color-primary-hover);
   border-radius: 25px;
   font-size: 14px;
-  color: #333;
+  color: var(--text-main);
   background-color: white;
   cursor: pointer;
   outline: none;
@@ -647,7 +665,7 @@ export default {
 }
 
 .category-select:hover {
-  border-color: #1565c0;
+  border-color: var(--color-primary);
 }
 
 .loading-wrapper,
@@ -664,7 +682,7 @@ export default {
   width: 40px;
   height: 40px;
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #1565c0;
+  border-top: 4px solid var(--color-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -676,7 +694,7 @@ export default {
 
 .loading-text {
   margin-top: 15px;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
@@ -686,7 +704,7 @@ export default {
 }
 
 .error-text {
-  color: #c62828;
+  color: var(--color-danger-strong);
   font-size: 16px;
   font-weight: 500;
 }
@@ -703,7 +721,7 @@ export default {
 }
 
 .equipment-list h3 {
-  color: #1565c0;
+  color: var(--color-primary);
   margin-bottom: 16px;
   font-size: 16px;
   font-weight: 600;
@@ -711,7 +729,7 @@ export default {
 
 .list-container {
   background-color: white;
-  border: 2px solid #e3f2fd;
+  border: 2px solid var(--color-primary-bg);
   border-radius: 10px;
   max-height: 650px;
   overflow-y: auto;
@@ -720,7 +738,7 @@ export default {
 
 .equipment-item {
   padding: 14px 18px;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid var(--bg-page);
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
@@ -733,12 +751,12 @@ export default {
 }
 
 .equipment-item:hover {
-  background-color: #e3f2fd;
+  background-color: var(--color-primary-bg);
 }
 
 .equipment-item.selected {
   background-color: #bbdefb;
-  border-left: 4px solid #1565c0;
+  border-left: 4px solid var(--color-primary);
 }
 
 .equipment-category-tag {
@@ -755,8 +773,8 @@ export default {
 /* 评级标签：与计算器下拉的 dropdown-rating 同色系，展示数据库 rating 字段（经别名映射） */
 .equipment-rating-tag {
   font-size: 11px;
-  color: #c2410c;
-  background-color: #fff7ed;
+  color: var(--color-warning-strong);
+  background-color: var(--color-warning-bg-light);
   border: 1px solid #fed7aa;
   padding: 2px 8px;
   border-radius: 4px;
@@ -767,7 +785,7 @@ export default {
 
 .equipment-item .equipment-name {
   font-size: 13px;
-  color: #333;
+  color: var(--text-main);
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -778,27 +796,27 @@ export default {
 .list-empty {
   padding: 40px;
   text-align: center;
-  color: #999;
+  color: var(--text-hint);
 }
 
 .list-loading {
   padding: 15px;
   text-align: center;
-  color: #1565c0;
+  color: var(--color-primary);
   font-size: 14px;
 }
 
 .list-no-more {
   padding: 15px;
   text-align: center;
-  color: #999;
+  color: var(--text-hint);
   font-size: 14px;
 }
 
 .compare-panel {
   flex: 1;
   background-color: white;
-  border: 2px solid #e3f2fd;
+  border: 2px solid var(--color-primary-bg);
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -810,22 +828,22 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 16px 24px;
-  background-color: #e3f2fd;
-  border-bottom: 2px solid #1565c0;
+  background-color: var(--color-primary-bg);
+  border-bottom: 2px solid var(--color-primary);
   border-radius: 8px 8px 0 0;
 }
 
 .panel-header h3 {
-  color: #1565c0;
+  color: var(--color-primary);
   margin: 0;
   font-size: 16px;
 }
 
 .clear-btn {
   padding: 8px 16px;
-  border: 1px solid #90caf9;
+  border: 1px solid var(--color-primary-light);
   background-color: white;
-  color: #1565c0;
+  color: var(--color-primary);
   border-radius: 6px;
   cursor: pointer;
   font-size: 13px;
@@ -834,7 +852,7 @@ export default {
 }
 
 .clear-btn:hover {
-  background-color: #90caf9;
+  background-color: var(--color-primary-light);
   color: white;
 }
 
@@ -845,9 +863,9 @@ export default {
 
 .export-btn {
   padding: 8px 16px;
-  border: 1px solid #43a047;
+  border: 1px solid var(--color-success-strong);
   background-color: white;
-  color: #43a047;
+  color: var(--color-success-strong);
   border-radius: 6px;
   cursor: pointer;
   font-size: 13px;
@@ -856,7 +874,7 @@ export default {
 }
 
 .export-btn:hover:not(:disabled) {
-  background-color: #43a047;
+  background-color: var(--color-success-strong);
   color: white;
 }
 
@@ -867,8 +885,8 @@ export default {
 
 .export-hint-bar {
   padding: 10px 24px;
-  background-color: #e8f5e9;
-  color: #2e7d32;
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
   font-size: 14px;
   font-weight: 600;
   text-align: center;
@@ -885,7 +903,7 @@ export default {
 
 .compare-row {
   display: table-row;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--bg-secondary);
   transition: background-color 0.2s;
 }
 
@@ -898,16 +916,16 @@ export default {
 }
 
 .compare-row:nth-child(even):not(.compare-header-row):hover {
-  background-color: #f0f0f0;
+  background-color: var(--bg-secondary);
 }
 
 .compare-header-row {
-  background-color: #1e88e5;
+  background-color: var(--color-primary-hover);
   color: white;
 }
 
 .compare-header-row:hover {
-  background-color: #1e88e5;
+  background-color: var(--color-primary-hover);
 }
 
 .compare-header-row .compare-cell {
@@ -923,7 +941,7 @@ export default {
 }
 
 .compare-header-row .compare-label-cell {
-  background-color: #1e88e5;
+  background-color: var(--color-primary-hover);
   color: white;
   text-align: center;
 }
@@ -937,9 +955,9 @@ export default {
 }
 
 .compare-label-cell {
-  background-color: #f5f5f5;
+  background-color: var(--bg-page);
   font-weight: 600;
-  color: #333;
+  color: var(--text-main);
   text-align: center;
   min-width: 100px;
   white-space: nowrap;
@@ -959,14 +977,14 @@ export default {
 
 .equipment-header .equipment-name {
   font-weight: bold;
-  color: #1e88e5;
+  color: var(--color-primary-hover);
   font-size: 14px;
   text-align: center;
 }
 
 .equipment-category {
   font-size: 11px;
-  color: #666;
+  color: var(--text-secondary);
   text-align: center;
   display: block;
 }
@@ -990,14 +1008,27 @@ export default {
 }
 
 .remove-btn:hover {
-  background-color: #e53935;
+  background-color: var(--color-danger);
   transform: scale(1.1);
 }
 
+/* 最优值：绿色高亮（含 ★ 语义，与导出文本的 ★ 标记对应） */
 .max-value {
-  color: #e53935;
+  color: var(--color-success);
   font-weight: bold;
-  background-color: #fff3e0;
+  background-color: var(--color-success-bg);
+}
+
+/* 差异行：参数标签列淡橙背景 + ≠ 标记，帮助用户快速定位不同项 */
+.diff-row .compare-label-cell {
+  background-color: var(--color-warning-bg-light);
+}
+
+.diff-mark {
+  display: inline-block;
+  margin-left: 4px;
+  color: var(--color-warning);
+  font-weight: bold;
 }
 
 .empty-panel {
@@ -1007,7 +1038,7 @@ export default {
 
 .empty-hint {
   text-align: center;
-  color: #999;
+  color: var(--text-hint);
 }
 
 .hint-icon {

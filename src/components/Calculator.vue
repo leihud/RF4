@@ -4,11 +4,6 @@
     <div class="header">
       <h1>装备计算器</h1>
       <div class="header-buttons">
-        <button class="compare-nav-btn" @click="goToCompare">参数对比</button>
-        <button class="value-nav-btn" @click="goToValue">装备价值计算</button>
-        <button class="builds-nav-btn" @click="goToBuildsList">装备方案汇总</button>
-        <button class="import-nav-btn" @click="goToImport">数据导入</button>
-        <button class="rf4-stat-btn" @click="openRf4Stat" rel="noopener noreferrer" target="_blank">RF4 数据站</button>
         <button class="share-btn" @click="sharePreset" :title="shareHint || '分享当前装备方案'">
           {{ shareHint || '分享方案' }}
         </button>
@@ -90,7 +85,7 @@
       请先选择计算规则
     </div>
 
-    <div v-if="dataLoadError" class="rule-warning" style="background-color: #ffebee; color: #c62828;">
+    <div v-if="dataLoadError" class="rule-warning" style="background-color: #ffebee; color: var(--color-danger-strong);">
       装备数据加载失败
     </div>
 
@@ -416,7 +411,6 @@ import {
   getCompatibleReelTypes,
   isRodReelCompatible
 } from '../constants/equipment.js'
-import { ROUTES } from '../constants/routes.js'
 import {
   calculateActualLockTension,
   calculateActualPanelTension,
@@ -492,6 +486,16 @@ export default {
       sessionStorage.setItem('disclaimer_shown', '1')
     }
     this.restoreFromUrl()
+    // 读取方案汇总页「一键应用」暂存的方案（立即读出并清除，防止刷新重复应用）
+    try {
+      const payload = sessionStorage.getItem('apply_build_payload')
+      if (payload) {
+        this._pendingBuild = JSON.parse(payload)
+        sessionStorage.removeItem('apply_build_payload')
+      }
+    } catch (e) {
+      console.error('解析待应用方案失败:', e)
+    }
     this.loadMapsAndFishSpecies()
     this.loadRecommendedBuilds()
   },
@@ -666,6 +670,12 @@ export default {
       this.isLoading = false
       // 数据就绪后恢复 URL 中的装备方案
       this.applyPendingPreset()
+      // 应用方案汇总页「一键应用」的方案（显式操作，优先于 URL 恢复）
+      if (this._pendingBuild) {
+        this.applyRecommendedBuild(this._pendingBuild)
+        this.showToast(`已应用方案「${this._pendingBuild.name || '未命名方案'}」`, 'success')
+        this._pendingBuild = null
+      }
     },
     calculateCustomActualTension(item) {
       return calculateCustomActualTension(item)
@@ -742,24 +752,6 @@ export default {
       }
       // 其他点击都视为外部点击：收起下拉（子组件随 selectedType 置空卸载）
       if (this.selectedType) this.selectedType = null
-    },
-    goToCompare() {
-      this.$router.push(ROUTES.COMPARE)
-    },
-    goToValue() {
-      this.$router.push(ROUTES.VALUE)
-    },
-    goToBuildsList() {
-      this.$router.push('/builds')
-    },
-    goToImport() {
-      this.$router.push(ROUTES.IMPORT)
-    },
-    openRf4Stat() {
-      // 打开 RF4 中文数据站（新标签页，noopener 防反跟踪，noreferrer 防来源泄露）
-      if (typeof window !== 'undefined' && typeof window.open === 'function') {
-        window.open('https://cn.rf4-stat.ru/', '_blank', 'noopener,noreferrer')
-      }
     },
     /** 从 URL 参数恢复装备方案 */
     restoreFromUrl() {
@@ -1111,102 +1103,18 @@ export default {
   align-items: center;
   margin-bottom: 24px;
   padding-bottom: 16px;
-  border-bottom: 2px solid #e3f2fd;
+  border-bottom: 2px solid var(--color-primary-bg);
 }
 
 h1 {
-  color: #1565c0;
+  color: var(--color-primary);
   font-size: 28px;
   margin: 0;
-}
-
-.compare-nav-btn {
-  padding: 10px 24px;
-  border: 2px solid #1565c0;
-  background-color: white;
-  color: #1565c0;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  transition: all 0.3s;
-}
-
-.compare-nav-btn:hover {
-  background-color: #e3f2fd;
-}
-
-.value-nav-btn {
-  padding: 10px 24px;
-  border: 2px solid #43a047;
-  background-color: white;
-  color: #43a047;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  transition: all 0.3s;
-}
-
-.value-nav-btn:hover {
-  background-color: #e8f5e9;
 }
 
 .header-buttons {
   display: flex;
   gap: 10px;
-}
-
-.import-nav-btn {
-  padding: 10px 24px;
-  border: 2px solid #1565c0;
-  background-color: white;
-  color: #1565c0;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  transition: all 0.3s;
-}
-
-.import-nav-btn:hover {
-  background-color: #fff3e0;
-}
-
-/* 装备方案汇总按钮 */
-.builds-nav-btn {
-  padding: 10px 24px;
-  border: 2px solid #9c27b0;
-  background-color: white;
-  color: #9c27b0;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  transition: all 0.3s;
-  white-space: nowrap;
-}
-
-.builds-nav-btn:hover {
-  background-color: #f3e5f5;
-}
-
-/* 顶部 header 第三个按钮：外链打开 RF4 中文数据站 */
-.rf4-stat-btn {
-  padding: 10px 24px;
-  border: 2px solid #2e7d32;
-  background-color: white;
-  color: #2e7d32;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  transition: all 0.3s;
-  white-space: nowrap;
-}
-
-.rf4-stat-btn:hover {
-  background-color: #e8f5e9;
 }
 
 /* 分享方案按钮 */
@@ -1230,9 +1138,9 @@ h1 {
 /* 查询按钮 */
 .query-btn {
   padding: 8px 20px;
-  border: 2px solid #42b983;
+  border: 2px solid var(--color-success-accent);
   background-color: white;
-  color: #42b983;
+  color: var(--color-success-accent);
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
@@ -1242,7 +1150,7 @@ h1 {
 }
 
 .query-btn:hover:not(:disabled) {
-  background-color: #e8f5e9;
+  background-color: var(--color-success-bg);
 }
 
 .query-btn:disabled {
@@ -1257,7 +1165,7 @@ h1 {
   gap: 12px;
   margin-bottom: 15px;
   padding: 12px 15px;
-  background-color: #e3f2fd;
+  background-color: var(--color-primary-bg);
   border-radius: 8px;
   flex-wrap: wrap;
   position: relative;
@@ -1265,13 +1173,13 @@ h1 {
 
 .fish-label {
   font-weight: bold;
-  color: #1565c0;
+  color: var(--color-primary);
   font-size: 14px;
 }
 
 .fish-select {
   padding: 6px 12px;
-  border: 1px solid #90caf9;
+  border: 1px solid var(--color-primary-light);
   border-radius: 6px;
   font-size: 14px;
   background-color: white;
@@ -1280,7 +1188,7 @@ h1 {
 }
 
 .fish-select:focus {
-  border-color: #1565c0;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
 }
 
@@ -1292,7 +1200,7 @@ h1 {
 /* 目标鱼种搜索输入框 */
 .fish-search-input {
   padding: 6px 12px;
-  border: 1px solid #90caf9;
+  border: 1px solid var(--color-primary-light);
   border-radius: 6px;
   font-size: 14px;
   background-color: white;
@@ -1301,7 +1209,7 @@ h1 {
 }
 
 .fish-search-input:focus {
-  border-color: #1565c0;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
 }
 
@@ -1314,7 +1222,7 @@ h1 {
   max-height: 300px;
   overflow-y: auto;
   background-color: white;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 1000;
@@ -1329,11 +1237,11 @@ h1 {
 }
 
 .dropdown-item:hover {
-  background-color: #f5f5f5;
+  background-color: var(--bg-page);
 }
 
 .dropdown-item.selected {
-  background-color: #e3f2fd;
+  background-color: var(--color-primary-bg);
   font-weight: bold;
 }
 
@@ -1342,7 +1250,7 @@ h1 {
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: #333;
+  color: var(--text-main);
   flex-wrap: wrap;
 }
 
@@ -1351,7 +1259,7 @@ h1 {
 }
 
 .tips-range {
-  color: #1565c0;
+  color: var(--color-primary);
   font-weight: 600;
   background-color: #bbdefb;
   padding: 2px 8px;
@@ -1360,7 +1268,7 @@ h1 {
 }
 
 h2 {
-  color: #2c3e50;
+  color: var(--text-heading);
   margin-bottom: 15px;
 }
 
@@ -1370,13 +1278,13 @@ h2 {
   gap: 15px;
   margin-bottom: 15px;
   padding: 15px;
-  background-color: #e8f5e9;
+  background-color: var(--color-success-bg);
   border-radius: 8px;
 }
 
 .rule-label {
   font-weight: bold;
-  color: #333;
+  color: var(--text-main);
 }
 
 .rule-btn {
@@ -1391,7 +1299,7 @@ h2 {
 }
 
 .rule-btn:hover {
-  background-color: #e8f5e9;
+  background-color: var(--color-success-bg);
 }
 
 .rule-btn.active {
@@ -1402,8 +1310,8 @@ h2 {
 .rule-warning {
   text-align: center;
   padding: 15px;
-  background-color: #fff3e0;
-  color: #ff9800;
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning-accent);
   border-radius: 8px;
   margin-bottom: 15px;
   font-weight: bold;
@@ -1422,7 +1330,7 @@ h2 {
   width: 40px;
   height: 40px;
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #42b983;
+  border-top: 4px solid var(--color-success-accent);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -1434,7 +1342,7 @@ h2 {
 
 .loading-text {
   margin-top: 15px;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
@@ -1461,7 +1369,7 @@ h2 {
   display: flex;
   align-items: center;
   padding: 16px 24px;
-  border: 2px solid #ddd;
+  border: 2px solid var(--color-border);
   background-color: white;
   border-radius: 8px;
   cursor: pointer;
@@ -1471,19 +1379,19 @@ h2 {
 }
 
 .type-item:hover {
-  border-color: #42b983;
+  border-color: var(--color-success-accent);
   background-color: #f0f8f0;
 }
 
 .type-item.active {
-  border-color: #42b983;
-  background-color: #e8f5e9;
+  border-color: var(--color-success-accent);
+  background-color: var(--color-success-bg);
 }
 
 .type-label {
   min-width: 80px;
   font-weight: bold;
-  color: #2c3e50;
+  color: var(--text-heading);
   font-size: 16px;
 }
 
@@ -1498,7 +1406,7 @@ h2 {
 }
 
 .placeholder {
-  color: #999;
+  color: var(--text-hint);
   font-style: italic;
 }
 
@@ -1517,8 +1425,8 @@ h2 {
 .selected-rating-tag {
   display: inline-block;
   padding: 4px 12px;
-  background-color: #fff7ed;
-  color: #c2410c;
+  background-color: var(--color-warning-bg-light);
+  color: var(--color-warning-strong);
   font-size: 12px;
   font-weight: 600;
   border-radius: 12px;
@@ -1528,7 +1436,7 @@ h2 {
 
 .selected-name {
   font-weight: bold;
-  color: #2c3e50;
+  color: var(--text-heading);
   font-size: 14px;
   min-width: 140px;
   max-width: 320px;
@@ -1556,13 +1464,13 @@ h2 {
 
 .friction-label {
   font-size: 12px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .friction-input {
   width: 60px;
   padding: 4px 8px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   font-size: 13px;
   text-align: center;
@@ -1570,7 +1478,7 @@ h2 {
 
 .friction-input:focus {
   outline: none;
-  border-color: #42b983;
+  border-color: var(--color-success-accent);
   box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.3);
 }
 
@@ -1588,12 +1496,12 @@ h2 {
 
 .material-label {
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .material-select {
   padding: 4px 8px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   font-size: 14px;
   background-color: white;
@@ -1602,13 +1510,13 @@ h2 {
 }
 
 .material-select:focus {
-  border-color: #42b983;
+  border-color: var(--color-success-accent);
   box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.3);
 }
 
 .hook-name-input {
   padding: 4px 8px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   font-size: 14px;
   width: 200px;
@@ -1616,19 +1524,19 @@ h2 {
 }
 
 .hook-name-input:focus {
-  border-color: #42b983;
+  border-color: var(--color-success-accent);
   box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.3);
 }
 
 .input-label {
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .tension-input {
   width: 70px;
   padding: 4px 8px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   font-size: 14px;
   text-align: center;
@@ -1636,7 +1544,7 @@ h2 {
 
 .tension-input:focus {
   outline: none;
-  border-color: #42b983;
+  border-color: var(--color-success-accent);
   box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.3);
 }
 
@@ -1644,7 +1552,7 @@ h2 {
 .length-input {
   width: 70px;
   padding: 4px 8px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   font-size: 14px;
   text-align: center;
@@ -1653,28 +1561,28 @@ h2 {
 .diameter-input:focus,
 .length-input:focus {
   outline: none;
-  border-color: #42b983;
+  border-color: var(--color-success-accent);
   box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.3);
 }
 
 .input-unit {
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .select-btn {
   padding: 8px 16px;
-  border: 1px solid #42b983;
+  border: 1px solid var(--color-success-accent);
   border-radius: 4px;
   background-color: white;
-  color: #42b983;
+  color: var(--color-success-accent);
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .select-btn:hover {
-  background-color: #42b983;
+  background-color: var(--color-success-accent);
   color: white;
 }
 
@@ -1687,13 +1595,13 @@ h2 {
 
 .wear-label {
   font-size: 12px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .wear-input {
   width: 60px;
   padding: 4px 8px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   font-size: 13px;
   text-align: center;
@@ -1701,13 +1609,13 @@ h2 {
 
 .wear-input:focus {
   outline: none;
-  border-color: #42b983;
+  border-color: var(--color-success-accent);
   box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.3);
 }
 
 .wear-unit {
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .clear-btn {
@@ -1733,7 +1641,7 @@ h2 {
   color: #27ae60;
   font-weight: bold;
   padding: 4px 10px;
-  background-color: #e8f5e9;
+  background-color: var(--color-success-bg);
   border-radius: 4px;
   font-size: 14px;
   margin-left: 10px;
@@ -1764,9 +1672,9 @@ h2 {
 
 .submit-build-btn {
   padding: 12px 32px;
-  border: 2px solid #ff9800;
+  border: 2px solid var(--color-warning-accent);
   background-color: white;
-  color: #ff9800;
+  color: var(--color-warning-accent);
   border-radius: 20px;
   cursor: pointer;
   font-size: 16px;
@@ -1775,15 +1683,15 @@ h2 {
 }
 
 .submit-build-btn:hover:not(:disabled) {
-  background-color: #ff9800;
+  background-color: var(--color-warning-accent);
   color: white;
 }
 
 .submit-build-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  border-color: #ccc;
-  color: #ccc;
+  border-color: var(--color-border-light);
+  color: var(--color-border-light);
 }
 
 /* 弹窗样式 */
@@ -1810,7 +1718,7 @@ h2 {
 }
 
 .modal-title {
-  color: #2c3e50;
+  color: var(--text-heading);
   margin: 0 0 20px 0;
   font-size: 20px;
   text-align: center;
@@ -1833,7 +1741,7 @@ h2 {
   flex-direction: column;
   gap: 4px;
   padding: 10px 12px;
-  border: 2px solid #ddd;
+  border: 2px solid var(--color-border);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
@@ -1841,23 +1749,23 @@ h2 {
 }
 
 .mode-option:hover {
-  border-color: #1565c0;
+  border-color: var(--color-primary);
 }
 
 .mode-option:has(input:checked) {
-  border-color: #1565c0;
-  background-color: #e3f2fd;
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-bg);
 }
 
 .mode-option input[type="radio"] {
   margin: 0;
-  accent-color: #1565c0;
+  accent-color: var(--color-primary);
 }
 
 .mode-option > span:first-of-type {
   font-weight: 600;
   font-size: 14px;
-  color: #333;
+  color: var(--text-main);
 }
 
 .mode-desc {
@@ -1896,12 +1804,12 @@ h2 {
 .form-label {
   font-size: 14px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-main);
 }
 
 .form-input {
   padding: 10px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   font-size: 14px;
   outline: none;
@@ -1909,13 +1817,13 @@ h2 {
 }
 
 .form-input:focus {
-  border-color: #42b983;
+  border-color: var(--color-success-accent);
   box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.2);
 }
 
 .form-select {
   padding: 10px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   font-size: 14px;
   background-color: white;
@@ -1925,7 +1833,7 @@ h2 {
 }
 
 .form-select:focus {
-  border-color: #42b983;
+  border-color: var(--color-success-accent);
   box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.2);
 }
 
@@ -1933,7 +1841,7 @@ h2 {
 .search-input {
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   font-size: 14px;
   margin-bottom: 8px;
@@ -1942,7 +1850,7 @@ h2 {
 }
 
 .search-input:focus {
-  border-color: #42b983;
+  border-color: var(--color-success-accent);
   box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.2);
 }
 
@@ -1960,8 +1868,8 @@ h2 {
   align-items: center;
   gap: 4px;
   padding: 3px 10px;
-  background-color: #e3f2fd;
-  color: #1565c0;
+  background-color: var(--color-primary-bg);
+  color: var(--color-primary);
   border-radius: 12px;
   font-size: 13px;
   font-weight: 500;
@@ -1970,20 +1878,20 @@ h2 {
 .tag-remove {
   cursor: pointer;
   font-size: 12px;
-  color: #999;
+  color: var(--text-hint);
   margin-left: 2px;
   line-height: 1;
 }
 
 .tag-remove:hover {
-  color: #e53935;
+  color: var(--color-danger);
 }
 
 /* 多选容器 */
 .multi-select-container {
   max-height: 200px;
   overflow-y: auto;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   background-color: white;
 }
@@ -1995,7 +1903,7 @@ h2 {
   padding: 8px 12px;
   cursor: pointer;
   transition: background-color 0.2s;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--bg-secondary);
 }
 
 .multi-select-item:last-child {
@@ -2003,26 +1911,26 @@ h2 {
 }
 
 .multi-select-item:hover {
-  background-color: #f5f5f5;
+  background-color: var(--bg-page);
 }
 
 .multi-select-item.selected {
-  background-color: #e8f5e9;
+  background-color: var(--color-success-bg);
 }
 
 .checkbox-icon {
   font-size: 16px;
   margin-right: 8px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .multi-select-item.selected .checkbox-icon {
-  color: #42b983;
+  color: var(--color-success-accent);
 }
 
 .item-text {
   font-size: 14px;
-  color: #333;
+  color: var(--text-main);
 }
 
 .form-select-multiple {
@@ -2034,12 +1942,12 @@ h2 {
   display: block;
   margin-top: 4px;
   font-size: 12px;
-  color: #999;
+  color: var(--text-hint);
 }
 
 .form-textarea {
   padding: 10px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   font-size: 14px;
   outline: none;
@@ -2049,7 +1957,7 @@ h2 {
 }
 
 .form-textarea:focus {
-  border-color: #42b983;
+  border-color: var(--color-success-accent);
   box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.2);
 }
 
@@ -2062,9 +1970,9 @@ h2 {
 
 .modal-cancel-btn {
   padding: 10px 24px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   background-color: white;
-  color: #666;
+  color: var(--text-secondary);
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
@@ -2072,13 +1980,13 @@ h2 {
 }
 
 .modal-cancel-btn:hover {
-  background-color: #f5f5f5;
+  background-color: var(--bg-page);
 }
 
 .modal-confirm-btn {
   padding: 10px 24px;
   border: none;
-  background-color: #42b983;
+  background-color: var(--color-success-accent);
   color: white;
   border-radius: 6px;
   cursor: pointer;
@@ -2092,7 +2000,7 @@ h2 {
 }
 
 .modal-confirm-btn:disabled {
-  background-color: #ccc;
+  background-color: var(--color-border-light);
   cursor: not-allowed;
 }
 

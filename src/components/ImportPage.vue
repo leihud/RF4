@@ -422,7 +422,7 @@ export default {
 }
 
 .import-header h1 {
-  color: #42b983;
+  color: var(--color-success-accent);
   margin: 0;
 }
 
@@ -439,7 +439,7 @@ export default {
 }
 
 .back-btn:hover {
-  background-color: #e3f2fd;
+  background-color: var(--color-primary-bg);
 }
 
 .import-container {
@@ -454,7 +454,7 @@ export default {
 }
 
 .import-section h2 {
-  color: #2c3e50;
+  color: var(--text-heading);
   margin-bottom: 15px;
   font-size: 18px;
 }
@@ -466,7 +466,7 @@ export default {
 
 .type-btn {
   padding: 12px 30px;
-  border: 2px solid #ddd;
+  border: 2px solid var(--color-border);
   background-color: white;
   border-radius: 8px;
   cursor: pointer;
@@ -475,13 +475,13 @@ export default {
 }
 
 .type-btn:hover {
-  border-color: #42b983;
+  border-color: var(--color-success-accent);
 }
 
 .type-btn.active {
-  border-color: #42b983;
-  background-color: #e8f5e9;
-  color: #42b983;
+  border-color: var(--color-success-accent);
+  background-color: var(--color-success-bg);
+  color: var(--color-success-accent);
 }
 
 .template-download {
@@ -509,7 +509,7 @@ export default {
 }
 
 .template-hint {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
   margin: 0;
 }
@@ -526,7 +526,7 @@ export default {
 
 .upload-area {
   padding: 40px;
-  border: 2px dashed #ddd;
+  border: 2px dashed var(--color-border);
   border-radius: 10px;
   text-align: center;
   cursor: pointer;
@@ -534,18 +534,18 @@ export default {
 }
 
 .upload-area:hover {
-  border-color: #42b983;
+  border-color: var(--color-success-accent);
   background-color: #f8f9fa;
 }
 
 .upload-area.drag-over {
-  border-color: #42b983;
-  background-color: #e8f5e9;
+  border-color: var(--color-success-accent);
+  background-color: var(--color-success-bg);
 }
 
 .upload-area.has-file {
-  border-color: #42b983;
-  background-color: #e8f5e9;
+  border-color: var(--color-success-accent);
+  background-color: var(--color-success-bg);
 }
 
 .upload-icon {
@@ -557,14 +557,14 @@ export default {
 .upload-text {
   display: block;
   font-size: 16px;
-  color: #333;
+  color: var(--text-main);
   margin-bottom: 5px;
 }
 
 .upload-hint {
   display: block;
   font-size: 13px;
-  color: #999;
+  color: var(--text-hint);
 }
 
 .file-preview {
@@ -576,7 +576,7 @@ export default {
 
 .file-preview h3 {
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
   margin-bottom: 10px;
 }
 
@@ -588,15 +588,15 @@ export default {
 
 .preview-table th,
 .preview-table td {
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   padding: 6px 8px;
   text-align: left;
 }
 
 .preview-table th {
-  background-color: #e3f2fd;
+  background-color: var(--color-primary-bg);
   font-weight: bold;
-  color: #1565c0;
+  color: var(--color-primary);
 }
 
 .preview-table td {
@@ -615,7 +615,7 @@ export default {
 .password-input {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid #ddd;
+  border: 2px solid var(--color-border);
   border-radius: 8px;
   font-size: 16px;
   box-sizing: border-box;
@@ -623,11 +623,11 @@ export default {
 
 .password-input:focus {
   outline: none;
-  border-color: #42b983;
+  border-color: var(--color-success-accent);
 }
 
 .password-error {
-  color: #c62828;
+  color: var(--color-danger-strong);
   font-size: 14px;
 }
 
@@ -638,7 +638,7 @@ export default {
 
 .import-btn {
   padding: 15px 60px;
-  background-color: #42b983;
+  background-color: var(--color-success-accent);
   color: white;
   border: none;
   border-radius: 8px;
@@ -653,7 +653,7 @@ export default {
 }
 
 .import-btn:disabled {
-  background-color: #ccc;
+  background-color: var(--color-border-light);
   cursor: not-allowed;
 }
 
@@ -665,13 +665,13 @@ export default {
 }
 
 .result-section.success {
-  background-color: #e8f5e9;
+  background-color: var(--color-success-bg);
   border: 2px solid #4caf50;
 }
 
 .result-section.error {
   background-color: #ffebee;
-  border: 2px solid #c62828;
+  border: 2px solid var(--color-danger-strong);
 }
 
 .result-icon {
@@ -682,7 +682,7 @@ export default {
 .result-message {
   font-size: 18px;
   font-weight: bold;
-  color: #333;
+  color: var(--text-main);
 }
 
 .result-detail {
@@ -694,7 +694,7 @@ export default {
 
 .result-detail span {
   font-size: 16px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .duplicate-list {
@@ -705,13 +705,13 @@ export default {
 .duplicate-title {
   font-size: 14px;
   font-weight: bold;
-  color: #c62828;
+  color: var(--color-danger-strong);
   margin-bottom: 5px;
 }
 
 .duplicate-items {
   font-size: 13px;
-  color: #666;
+  color: var(--text-secondary);
   word-break: break-all;
 }
 

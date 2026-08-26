@@ -170,14 +170,14 @@ export default {
 
 <style scoped>
 .summary-section {
-  background-color: #e8f5e9;
+  background-color: var(--color-success-bg);
   padding: 20px;
   border-radius: 8px;
-  border: 2px solid #42b983;
+  border: 2px solid var(--color-success-accent);
 }
 
 h2 {
-  color: #2c3e50;
+  color: var(--text-heading);
   margin-bottom: 15px;
 }
 
@@ -201,12 +201,12 @@ h2 {
 
 .summary-label {
   font-weight: bold;
-  color: #2c3e50;
+  color: var(--text-heading);
   font-size: 16px;
 }
 
 .summary-value {
-  color: #42b983;
+  color: var(--color-success-accent);
   font-weight: bold;
   font-size: 16px;
   flex: 1;
