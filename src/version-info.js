@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20260826-09',
+  currentVersion: 'V20260826-10',
   buildTime: '2026-08-26',
   changelog: [
+    {
+      version: 'V20260826-10',
+      date: '2026-08-26',
+      changes: [
+        '优化：Toast抽取为共享组件消除两页重复代码，新增presetShare单元测试，xlsx改为按需动态加载'
+      ]
+    },
     {
       version: 'V20260826-09',
       date: '2026-08-26',
