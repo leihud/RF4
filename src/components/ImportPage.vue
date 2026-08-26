@@ -117,7 +117,15 @@
 </template>
 
 <script>
-import * as XLSX from 'xlsx'
+// xlsx 库按需动态加载：库体积大（400KB+），仅在用户实际解析/下载模板时才拉取，
+// Vite 会自动将其拆分为独立 chunk，降低导入页首屏体积。同一会话内缓存只加载一次。
+let xlsxLoader = null
+function loadXLSX() {
+  if (!xlsxLoader) {
+    xlsxLoader = import('xlsx')
+  }
+  return xlsxLoader
+}
 
 const ROD_FIELD_MAP = {
   '装备名称': 'equipmentName',
@@ -282,8 +290,9 @@ export default {
     },
     readFile(file) {
       const reader = new FileReader()
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         try {
+          const XLSX = await loadXLSX()
           const data = new Uint8Array(e.target.result)
           const workbook = XLSX.read(data, { type: 'array' })
           const sheetName = workbook.SheetNames[0]
@@ -333,7 +342,8 @@ export default {
         headers.map(header => row[header])
       )
     },
-    downloadTemplate() {
+    async downloadTemplate() {
+      const XLSX = await loadXLSX()
       const fieldMap = this.importType === '鱼竿' ? ROD_FIELD_MAP : REEL_FIELD_MAP
       const defaultRow = this.importType === '鱼竿' ? ROD_DEFAULT_ROW : REEL_DEFAULT_ROW
       

@@ -319,21 +319,21 @@
       </div>
     </div>
 
-    <!-- Toast 提示 -->
-    <transition name="toast">
-      <div v-if="toast.visible" class="toast" :class="'toast-' + toast.type">
-        {{ toast.message }}
-      </div>
-    </transition>
+    <!-- Toast 提示（共享组件，自管定时器） -->
+    <AppToast ref="toast" />
   </div>
 </template>
 
 <script>
 import { searchAndRankEquipment, EQUIPMENT_SEARCH_FIELDS } from '../utils/search.js'
 import { formatPrice as formatPriceDisplay, parsePrice } from '../utils/display.js'
+import AppToast from './common/AppToast.vue'
 
 export default {
   name: 'BuildsListPage',
+  components: {
+    AppToast
+  },
   data() {
     return {
       builds: [],
@@ -359,8 +359,6 @@ export default {
       fishSearch: '',
       mapSearch: '',
       isLoading: false,
-      toast: { visible: false, message: '', type: 'info' },
-      toastTimer: null,
       searchInput: '',
       searchDebounceTimer: null,
       showEditModal: false,
@@ -444,7 +442,6 @@ export default {
   beforeUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown)
     document.removeEventListener('click', this.handleClickOutside)
-    if (this.toastTimer) clearTimeout(this.toastTimer)
     if (this.searchDebounceTimer) clearTimeout(this.searchDebounceTimer)
     if (this.hKeyTimer) clearTimeout(this.hKeyTimer)
   },
@@ -667,11 +664,7 @@ export default {
       }
     },
     showToast(message, type = 'info') {
-      this.toast = { visible: true, message, type }
-      if (this.toastTimer) clearTimeout(this.toastTimer)
-      this.toastTimer = setTimeout(() => {
-        this.toast.visible = false
-      }, 3000)
+      this.$refs.toast.show(message, type)
     },
     onSearchInput() {
       if (this.searchDebounceTimer) clearTimeout(this.searchDebounceTimer)
@@ -1352,48 +1345,6 @@ export default {
 @keyframes shimmer {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
-}
-
-/* Toast 提示 */
-.toast {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  z-index: 9999;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  max-width: 90%;
-  word-break: break-word;
-}
-
-.toast-info {
-  background-color: #1565c0;
-  color: white;
-}
-
-.toast-error {
-  background-color: #c62828;
-  color: white;
-}
-
-.toast-success {
-  background-color: #2e7d32;
-  color: white;
-}
-
-.toast-enter-active,
-.toast-leave-active {
-  transition: all 0.3s ease;
-}
-
-.toast-enter-from,
-.toast-leave-to {
-  opacity: 0;
-  transform: translateX(-50%) translateY(20px);
 }
 
 /* 编辑弹窗 */

@@ -398,12 +398,8 @@
       </div>
     </div>
 
-    <!-- Toast 提示 -->
-    <transition name="toast">
-      <div v-if="toast.visible" class="toast" :class="'toast-' + toast.type">
-        {{ toast.message }}
-      </div>
-    </transition>
+    <!-- Toast 提示（共享组件，自管定时器） -->
+    <AppToast ref="toast" />
   </div>
 </template>
 
@@ -436,13 +432,15 @@ import { encodePreset, decodePreset, getShareUrl } from '../utils/presetShare.js
 import DisclaimerModal from './calculator/DisclaimerModal.vue'
 import EquipmentSearchDropdown from './calculator/EquipmentSearchDropdown.vue'
 import EquipmentSummary from './calculator/EquipmentSummary.vue'
+import AppToast from './common/AppToast.vue'
 
 export default {
   name: 'Calculator',
   components: {
     DisclaimerModal,
     EquipmentSearchDropdown,
-    EquipmentSummary
+    EquipmentSummary,
+    AppToast
   },
   data() {
     return {
@@ -482,9 +480,7 @@ export default {
       fishSpeciesList: [],
       recommendedBuilds: [],
       fishSearchKeyword: '',
-      mapSearchKeyword: '',
-      toast: { visible: false, message: '', type: 'info' },
-      toastTimer: null
+      mapSearchKeyword: ''
     }
   },
   mounted() {
@@ -501,7 +497,6 @@ export default {
   },
   beforeUnmount() {
     document.removeEventListener('click', this.handleClickOutside)
-    if (this.toastTimer) clearTimeout(this.toastTimer)
   },
   watch: {
     calculationRule(val) {
@@ -1096,11 +1091,7 @@ export default {
       this.showFishDropdown = !this.showFishDropdown
     },
     showToast(message, type = 'info') {
-      this.toast = { visible: true, message, type }
-      if (this.toastTimer) clearTimeout(this.toastTimer)
-      this.toastTimer = setTimeout(() => {
-        this.toast.visible = false
-      }, 3000)
+      this.$refs.toast.show(message, type)
     }
   }
 }
@@ -2212,48 +2203,6 @@ h2 {
   .tension-input {
     width: 45px;
   }
-}
-
-/* Toast 提示 */
-.toast {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  z-index: 9999;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  max-width: 90%;
-  word-break: break-word;
-}
-
-.toast-info {
-  background-color: #1565c0;
-  color: white;
-}
-
-.toast-error {
-  background-color: #c62828;
-  color: white;
-}
-
-.toast-success {
-  background-color: #2e7d32;
-  color: white;
-}
-
-.toast-enter-active,
-.toast-leave-active {
-  transition: all 0.3s ease;
-}
-
-.toast-enter-from,
-.toast-leave-to {
-  opacity: 0;
-  transform: translateX(-50%) translateY(20px);
 }
 
 /* 提交弹窗移动端：鱼种地图改回纵向 */
