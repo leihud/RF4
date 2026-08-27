@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20260827-04',
+  currentVersion: 'V20260827-05',
   buildTime: '2026-08-27',
   changelog: [
+    {
+      version: 'V20260827-05',
+      date: '2026-08-27',
+      changes: [
+        '删除：移除线材库功能，线材材质保留氟碳线/编织线绳/尼龙线/钢四种默认选项'
+      ]
+    },
     {
       version: 'V20260827-04',
       date: '2026-08-27',
