@@ -103,23 +103,6 @@ function bindReel(stmt, item) {
   )
 }
 
-const LINE_INSERT_SQL = `INSERT OR REPLACE INTO lines (
-  model, material, tensionKn, diameterMm, lengthM, silverPrice, goldPrice, notes
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
-
-function bindLine(stmt, item) {
-  return stmt.bind(
-    item.model || '',
-    item.material || '',
-    item.tensionKn || '',
-    item.diameterMm || '',
-    item.lengthM || '',
-    item.silverPrice || '',
-    item.goldPrice || '',
-    item.notes || ''
-  )
-}
-
 /** 记录最后导入时间到 meta 表（失败不影响导入主流程） */
 async function recordImportTime(db, type) {
   try {
@@ -175,8 +158,8 @@ export async function onRequestPost(context) {
       return jsonResponse({ success: false, message: '请指定类型' }, 400)
     }
     const normalizedType = type.trim()
-    if (normalizedType !== '鱼竿' && normalizedType !== '渔轮' && normalizedType !== '线材') {
-      return jsonResponse({ success: false, message: '请指定正确的类型（鱼竿/渔轮/线材）' }, 400)
+    if (normalizedType !== '鱼竿' && normalizedType !== '渔轮') {
+      return jsonResponse({ success: false, message: '请指定正确的类型（鱼竿或渔轮）' }, 400)
     }
 
     if (!data || !Array.isArray(data) || data.length === 0) {
@@ -186,12 +169,11 @@ export async function onRequestPost(context) {
     const db = env.DB
     const runImport = () => {
       if (normalizedType === '鱼竿') return importItems(db, data, ROD_INSERT_SQL, bindRod)
-      if (normalizedType === '渔轮') return importItems(db, data, REEL_INSERT_SQL, bindReel)
-      return importItems(db, data, LINE_INSERT_SQL, bindLine)
+      return importItems(db, data, REEL_INSERT_SQL, bindReel)
     }
 
-    // upsert 模式：直接覆盖已有型号，跳过查重（线材无查重需求也走此分支）
-    if (upsert || normalizedType === '线材') {
+    // upsert 模式：直接覆盖已有型号，跳过查重
+    if (upsert) {
       const result = await runImport()
       await clearEquipmentCache()
       await recordImportTime(db, normalizedType)

@@ -118,12 +118,6 @@
                   />
                 </template>
                 <template v-else>
-                  <span v-if="(type === '主线' || type === '引线') && linesList.length" class="line-lib-wrapper">
-                    <select class="line-lib-select" aria-label="从线材库选择" @change="applyLineFromLibrary(type, $event)">
-                      <option value="">📚 线材库</option>
-                      <option v-for="l in linesList" :key="l.id" :value="l.id">{{ l.model }}</option>
-                    </select>
-                  </span>
                   <span v-if="type === '主线' || type === '引线'" class="material-wrapper">
                     <span class="material-label">材质:</span>
                     <select
@@ -495,7 +489,6 @@ export default {
       calculationRule: CALC_RULES.GUIDE,
       justApplied: false,
       WEAR_PRESETS: [0, 50, 100],
-      linesList: [],
       CALC_RULE_OPTIONS,
       LINE_MATERIALS,
       formatTension,
@@ -543,7 +536,6 @@ export default {
     }
     this.loadMapsAndFishSpecies()
     this.loadRecommendedBuilds()
-    this.loadLinesLibrary()
   },
   beforeUnmount() {
     document.removeEventListener('click', this.handleClickOutside)
@@ -729,27 +721,6 @@ export default {
     /** 摩擦快捷设置（自动钉制到当前规则上限） */
     setFriction(value) {
       this.friction = clampFriction(value, this.calculationRule)
-    },
-    /** 加载线材参数库（失败静默，不影响主流程） */
-    async loadLinesLibrary() {
-      try {
-        const res = await fetch('/api/lines')
-        const result = await res.json()
-        this.linesList = Array.isArray(result) ? result : []
-      } catch (e) {
-        console.error('加载线材库失败:', e)
-      }
-    },
-    /** 从线材库选择后自动填充拉力/材质/线径到主线/引线 */
-    applyLineFromLibrary(type, event) {
-      const line = this.linesList.find(l => String(l.id) === String(event.target.value))
-      event.target.value = ''
-      if (!line) return
-      const tension = toSafeNumber(line.tensionKn, 0)
-      if (tension > 0) this.customEquipment[type].maxTension = tension
-      if (line.material) this.customEquipment[type].material = line.material
-      if (line.diameterMm) this.customEquipment[type].diameter = toSafeNumber(line.diameterMm, 0)
-      this.showToast(`已从线材库填入 ${line.model}`, 'success')
     },
     /** 防抖持久化当前计算状态 */
     scheduleSaveState() {
@@ -1263,22 +1234,6 @@ h1 {
 .header-buttons {
   display: flex;
   gap: 10px;
-}
-
-/* 线材库快速选择 */
-.line-lib-select {
-  padding: 4px 8px;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  font-size: 12px;
-  color: var(--text-secondary);
-  background-color: var(--color-surface);
-  cursor: pointer;
-  max-width: 140px;
-}
-
-.line-lib-select:hover {
-  border-color: var(--color-primary);
 }
 
 /* 磨损/摩擦快捷预设按钮 */
