@@ -1,4 +1,4 @@
-import { jsonResponse, errorResponse, getClientIP, isValidUserAgent, checkRateLimit, isIPBlacklisted } from './_shared.js'
+import { jsonResponse, errorResponse, getClientIP, isValidUserAgent, checkRateLimit, isIPBlacklisted, getBuildsCachedResponse, putBuildsCache, clearBuildsCache } from './_shared.js'
 
 /** 验证管理员密码（写操作保护） */
 function validateAdminPassword(env, password) {
@@ -65,6 +65,7 @@ export async function onRequestPost(context) {
       0  // 新提交的方案默认未审核
     ).run()
 
+    clearBuildsCache()
     return jsonResponse({
       success: true,
       message: '推荐装备搭配已保存，等待审核',
@@ -75,7 +76,6 @@ export async function onRequestPost(context) {
     return errorResponse(error)
   }
 }
-
 export async function onRequestDelete(context) {
   const { request, env } = context
 
@@ -94,6 +94,7 @@ export async function onRequestDelete(context) {
     const db = env.DB
     await db.prepare('DELETE FROM recommended_builds WHERE id = ?').bind(id).run()
 
+    clearBuildsCache()
     return jsonResponse({ success: true, message: '方案已删除' })
   } catch (error) {
     console.error('删除失败:', error)
@@ -159,6 +160,7 @@ export async function onRequestPatch(context) {
       ).run()
     }
 
+    clearBuildsCache()
     return jsonResponse({ success: true, message: '方案已更新' })
   } catch (error) {
     console.error('更新方案失败:', error)
@@ -187,6 +189,7 @@ export async function onRequestPut(context) {
       .bind(isApproved ? 1 : 0, isApproved ? '' : (rejectReason || ''), id)
       .run()
 
+    clearBuildsCache()
     return jsonResponse({ 
       success: true, 
       message: isApproved ? '方案已通过审核' : '方案已驳回' 
@@ -212,6 +215,10 @@ export async function onRequestGet(context) {
   if (!rateCheck.allowed) {
     return jsonResponse({ success: false, message: rateCheck.message || '请求过于频繁' }, 429)
   }
+
+  // 短 TTL 缓存（300s）：写操作（提交/审核/删除/点赞）后会主动失效
+  const cached = await getBuildsCachedResponse(request)
+  if (cached) return cached
 
   const url = new URL(request.url)
   const fishName = url.searchParams.get('fish')
@@ -258,11 +265,13 @@ export async function onRequestGet(context) {
       hasMore = true
     }
     
-    return jsonResponse({
+    const response = jsonResponse({
       success: true,
       data: rows,
       hasMore
     })
+    putBuildsCache(request, response.clone())
+    return response
   } catch (error) {
     return errorResponse(error)
   }

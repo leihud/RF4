@@ -168,6 +168,44 @@ export async function clearEquipmentCache() {
   } catch (_) {}
 }
 
+/** 方案缓存：独立缓存库 + 较短 TTL（300s），兼顾性能与审核/点赞的时效性 */
+const BUILDS_CACHE_NAME = 'rf4-builds-v1'
+const BUILDS_CACHE_TTL = 300
+
+export async function getBuildsCachedResponse(request) {
+  if (typeof caches === 'undefined') return null
+  try {
+    const cache = await caches.open(BUILDS_CACHE_NAME)
+    return await cache.match(request)
+  } catch (_) {
+    return null
+  }
+}
+
+export async function putBuildsCache(request, response) {
+  if (typeof caches === 'undefined') return
+  try {
+    const cache = await caches.open(BUILDS_CACHE_NAME)
+    const headers = new Headers(response.headers)
+    headers.set('Cache-Control', `public, max-age=${BUILDS_CACHE_TTL}`)
+    const cachedResponse = new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers
+    })
+    await cache.put(request, cachedResponse)
+  } catch (_) {
+    // 缓存写入失败不影响主流程
+  }
+}
+
+export async function clearBuildsCache() {
+  if (typeof caches === 'undefined') return
+  try {
+    await caches.delete(BUILDS_CACHE_NAME)
+  } catch (_) {}
+}
+
 export function jsonResponse(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,

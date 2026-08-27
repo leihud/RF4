@@ -91,6 +91,7 @@
         </div>
         <select v-model="sortBy" class="sort-select">
           <option value="newest">最新优先</option>
+          <option value="popular">最热优先</option>
           <option value="oldest">最早优先</option>
           <option value="name">按名称排序</option>
           <option value="price">按总价排序</option>
@@ -136,6 +137,8 @@
             <span class="meta-item">🎣 {{ getFishCount(build.suitable_fish) }} 种鱼</span>
             <span class="meta-item">️ {{ getMapCount(build.suitable_map) }} 张地图</span>
             <span class="meta-item"> {{ formatDate(build.created_at) }}</span>
+            <button class="like-btn" :class="{ liked: isLiked(build.id) }" :title="isLiked(build.id) ? '取消点赞' : '点赞方案'" :aria-label="isLiked(build.id) ? '取消点赞' : '点赞方案'" @click.stop="toggleLike(build)">❤ {{ build.likes || 0 }}</button>
+            <button class="img-btn" title="生成分享图片" aria-label="生成分享图片" @click.stop="generateBuildImage(build)">🖼</button>
             <button class="apply-btn" @click.stop="applyToCalculator(build)" title="在计算器中应用此方案">▶ 应用</button>
             <button v-if="isAdminMode" class="edit-btn" @click.stop="openEditModal(build)" title="编辑方案">✎ 编辑</button>
             <button v-if="isAdminMode" class="approve-btn" @click.stop="approveBuild(build)" :title="build.is_approved ? '取消审核' : '通过审核'">{{ build.is_approved ? '✓ 已审核' : '审核' }}</button>
@@ -381,7 +384,8 @@ export default {
       isSaving: false,
       hasMore: false,
       isLoadingMore: false,
-      BUILDS_PAGE_SIZE: 30
+      BUILDS_PAGE_SIZE: 30,
+      likedIds: []
     }
   },
   computed: {
@@ -433,6 +437,8 @@ export default {
       // 排序
       if (this.sortBy === 'newest') {
         result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      } else if (this.sortBy === 'popular') {
+        result.sort((a, b) => (b.likes || 0) - (a.likes || 0))
       } else if (this.sortBy === 'oldest') {
         result.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
       } else if (this.sortBy === 'name') {
@@ -447,6 +453,12 @@ export default {
   async mounted() {
     // 筛选记忆：先恢复上次筛选条件再加载数据
     this.restoreFilters()
+    // 恢复本地点赞记录与客户端指纹
+    try {
+      this.likedIds = JSON.parse(localStorage.getItem('build_liked_ids') || '[]')
+    } catch (e) {
+      this.likedIds = []
+    }
     this.isLoading = true
     await Promise.all([
       this.loadBuilds(),
@@ -498,6 +510,94 @@ export default {
       this.isLoadingMore = true
       await this.loadBuilds(true)
       this.isLoadingMore = false
+    },
+    /** 获取/生成客户端指纹（点赞去重用） */
+    getOrCreateClientId() {
+      let id = localStorage.getItem('rf4_client_id')
+      if (!id) {
+        id = 'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10)
+        try { localStorage.setItem('rf4_client_id', id) } catch (e) { /* 存储不可用时每次新生成 */ }
+      }
+      return id
+    },
+    isLiked(buildId) {
+      return this.likedIds.includes(buildId)
+    },
+    /** 点赞/取消点赞：乐观更新 + 后端同步，失败不回滚（下次加载以后端为准） */
+    async toggleLike(build) {
+      const wasLiked = this.isLiked(build.id)
+      build.likes = Math.max(0, (build.likes || 0) + (wasLiked ? -1 : 1))
+      this.likedIds = wasLiked
+        ? this.likedIds.filter(id => id !== build.id)
+        : [...this.likedIds, build.id]
+      try { localStorage.setItem('build_liked_ids', JSON.stringify(this.likedIds)) } catch (e) { /* 忽略 */ }
+      try {
+        await fetch('/api/recommended_builds/like', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: build.id, clientId: this.getOrCreateClientId(), unlike: wasLiked })
+        })
+      } catch (error) {
+        console.error('点赞操作失败:', error)
+      }
+    },
+    /** canvas 绘制方案分享图片并下载 */
+    generateBuildImage(build) {
+      const scale = 2
+      const w = 640
+      const h = 380
+      const canvas = document.createElement('canvas')
+      canvas.width = w * scale
+      canvas.height = h * scale
+      const ctx = canvas.getContext('2d')
+      ctx.scale(scale, scale)
+      // 背景与标题栏
+      ctx.fillStyle = '#f0f7ff'
+      ctx.fillRect(0, 0, w, h)
+      ctx.fillStyle = '#1565c0'
+      ctx.fillRect(0, 0, w, 54)
+      ctx.fillStyle = '#ffffff'
+      ctx.font = 'bold 20px Arial, sans-serif'
+      ctx.fillText('RF4 装备方案', 20, 34)
+      // 方案名
+      ctx.fillStyle = '#2c3e50'
+      ctx.font = 'bold 18px Arial, sans-serif'
+      ctx.fillText(build.name || '未命名方案', 20, 88)
+      // 内容行
+      const fish = build.suitable_fish ? build.suitable_fish.split(',').filter(s => s.trim()).join('、') : '无'
+      const maps = build.suitable_map ? build.suitable_map.split(',').filter(s => s.trim()).join('、') : '无'
+      const total = (parsePrice(build.rod_price) || 0) + (parsePrice(build.reel_price) || 0)
+      const rows = [
+        ['鱼竿', `${build.rod_model || build.rod_name || '无'}（${build.rod_tension || 0} kN）`],
+        ['渔轮', `${build.reel_model || build.reel_name || '无'}（${build.reel_tension || 0} kN）`],
+        ['主线', build.main_line_tension > 0 ? `${build.main_line_material || ''}${build.main_line_tension}kN` : '无'],
+        ['引线', build.leader_line_tension > 0 ? `${build.leader_line_material || ''}${build.leader_line_tension}kN` : '无'],
+        ['适用鱼种', fish],
+        ['适用地图', maps],
+        ['总价', `${this.formatPrice(total)} 银币`]
+      ]
+      let y = 120
+      for (const [label, value] of rows) {
+        ctx.fillStyle = '#666666'
+        ctx.font = '14px Arial, sans-serif'
+        ctx.fillText(label, 20, y)
+        ctx.fillStyle = '#333333'
+        ctx.font = 'bold 14px Arial, sans-serif'
+        let text = String(value)
+        while (ctx.measureText(text).width > w - 150 && text.length > 1) text = text.slice(0, -1)
+        if (text !== String(value)) text += '…'
+        ctx.fillText(text, 110, y)
+        y += 30
+      }
+      // 页脚水印 + 下载
+      ctx.fillStyle = '#999999'
+      ctx.font = '12px Arial, sans-serif'
+      ctx.fillText('由 RF4 装备计算器生成', 20, h - 16)
+      const link = document.createElement('a')
+      link.href = canvas.toDataURL('image/png')
+      link.download = `${(build.name || '装备方案').replace(/[\\/:*?"<>|]/g, '_')}.png`
+      link.click()
+      this.showToast('分享图片已生成并下载', 'success')
     },
     /** 方案总价（鱼竿 + 渔轮银价） */
     buildTotalPrice(build) {
@@ -799,7 +899,7 @@ export default {
 .back-btn {
   padding: 10px 24px;
   border: 2px solid var(--color-primary);
-  background-color: white;
+  background-color: var(--color-surface);
   color: var(--color-primary);
   border-radius: 20px;
   cursor: pointer;
@@ -875,7 +975,7 @@ export default {
   border-radius: 6px;
   font-size: 14px;
   cursor: pointer;
-  background-color: white;
+  background-color: var(--color-surface);
   transition: border-color 0.2s;
   min-height: 20px;
 }
@@ -905,7 +1005,7 @@ export default {
   left: 0;
   right: 0;
   max-height: 300px;
-  background-color: white;
+  background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -1021,7 +1121,7 @@ export default {
 
 /* 方案卡片 */
 .build-card {
-  background-color: white;
+  background-color: var(--color-surface);
   border: 1px solid var(--color-divider);
   border-radius: 8px;
   overflow: hidden;
@@ -1043,7 +1143,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #fafafa;
+  background-color: var(--bg-secondary);
   transition: background-color 0.2s;
 }
 
@@ -1083,7 +1183,7 @@ export default {
 .delete-btn {
   padding: 4px 8px;
   border: 1px solid var(--color-danger);
-  background-color: white;
+  background-color: var(--color-surface);
   color: var(--color-danger);
   border-radius: 4px;
   cursor: pointer;
@@ -1101,7 +1201,7 @@ export default {
 .approve-btn {
   padding: 4px 8px;
   border: 1px solid var(--color-success-strong);
-  background-color: white;
+  background-color: var(--color-surface);
   color: var(--color-success-strong);
   border-radius: 4px;
   cursor: pointer;
@@ -1119,7 +1219,7 @@ export default {
 .edit-btn {
   padding: 4px 8px;
   border: 1px solid var(--color-primary);
-  background-color: white;
+  background-color: var(--color-surface);
   color: var(--color-primary);
   border-radius: 4px;
   cursor: pointer;
@@ -1133,11 +1233,51 @@ export default {
   color: white;
 }
 
+/* 点赞/图片按钮 */
+.like-btn {
+  padding: 4px 8px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  color: var(--text-hint);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+  margin-left: 8px;
+}
+
+.like-btn:hover {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.like-btn.liked {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+  background-color: #fce4ec;
+}
+
+.img-btn {
+  padding: 4px 8px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+  margin-left: 8px;
+}
+
+.img-btn:hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-bg);
+}
+
 /* 一键应用到计算器 */
 .apply-btn {
   padding: 4px 8px;
   border: 1px solid var(--color-success-strong);
-  background-color: white;
+  background-color: var(--color-surface);
   color: var(--color-success-strong);
   border-radius: 4px;
   cursor: pointer;
@@ -1179,7 +1319,7 @@ export default {
 .load-more-builds-btn {
   padding: 10px 32px;
   border: 2px solid var(--color-primary);
-  background-color: white;
+  background-color: var(--color-surface);
   color: var(--color-primary);
   border-radius: 20px;
   cursor: pointer;
@@ -1212,7 +1352,7 @@ export default {
 .build-details {
   padding: 16px 20px;
   border-top: 1px solid var(--bg-secondary);
-  background-color: white;
+  background-color: var(--color-surface);
 }
 
 /* 装备搭配行 */
@@ -1464,7 +1604,7 @@ export default {
 }
 
 .skeleton-card {
-  background: white;
+  background: var(--color-surface);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
@@ -1524,7 +1664,7 @@ export default {
 }
 
 .edit-modal {
-  background: white;
+  background: var(--color-surface);
   border-radius: 12px;
   width: 90%;
   max-width: 700px;
@@ -1624,7 +1764,7 @@ export default {
 .btn-cancel {
   padding: 8px 20px;
   border: 1px solid var(--color-border);
-  background-color: white;
+  background-color: var(--color-surface);
   color: var(--text-secondary);
   border-radius: 6px;
   cursor: pointer;

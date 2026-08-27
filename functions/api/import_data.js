@@ -103,6 +103,33 @@ function bindReel(stmt, item) {
   )
 }
 
+const LINE_INSERT_SQL = `INSERT OR REPLACE INTO lines (
+  model, material, tensionKn, diameterMm, lengthM, silverPrice, goldPrice, notes
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+
+function bindLine(stmt, item) {
+  return stmt.bind(
+    item.model || '',
+    item.material || '',
+    item.tensionKn || '',
+    item.diameterMm || '',
+    item.lengthM || '',
+    item.silverPrice || '',
+    item.goldPrice || '',
+    item.notes || ''
+  )
+}
+
+/** 记录最后导入时间到 meta 表（失败不影响导入主流程） */
+async function recordImportTime(db, type) {
+  try {
+    await db.prepare(
+      `INSERT INTO meta (key, value, updated_at) VALUES ('last_import_at', ?, datetime('now'))
+       ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at`
+    ).bind(`${new Date().toISOString()}|${type}`).run()
+  } catch (_) { /* meta 写入失败不影响导入 */ }
+}
+
 /**
  * D1 batch 批量插入，替代逐条 INSERT + await（N 次往返 → 1 次往返）。
  * batch 整体失败（如个别行违反唯一约束）时回退逐条插入，保留成功/失败计数语义。
@@ -148,8 +175,8 @@ export async function onRequestPost(context) {
       return jsonResponse({ success: false, message: '请指定类型' }, 400)
     }
     const normalizedType = type.trim()
-    if (normalizedType !== '鱼竿' && normalizedType !== '渔轮') {
-      return jsonResponse({ success: false, message: '请指定正确的类型（鱼竿或渔轮）' }, 400)
+    if (normalizedType !== '鱼竿' && normalizedType !== '渔轮' && normalizedType !== '线材') {
+      return jsonResponse({ success: false, message: '请指定正确的类型（鱼竿/渔轮/线材）' }, 400)
     }
 
     if (!data || !Array.isArray(data) || data.length === 0) {
@@ -157,13 +184,17 @@ export async function onRequestPost(context) {
     }
 
     const db = env.DB
+    const runImport = () => {
+      if (normalizedType === '鱼竿') return importItems(db, data, ROD_INSERT_SQL, bindRod)
+      if (normalizedType === '渔轮') return importItems(db, data, REEL_INSERT_SQL, bindReel)
+      return importItems(db, data, LINE_INSERT_SQL, bindLine)
+    }
 
-    // upsert 模式：直接覆盖已有型号，跳过查重
-    if (upsert) {
-      const result = normalizedType === '鱼竿'
-        ? await importItems(db, data, ROD_INSERT_SQL, bindRod)
-        : await importItems(db, data, REEL_INSERT_SQL, bindReel)
+    // upsert 模式：直接覆盖已有型号，跳过查重（线材无查重需求也走此分支）
+    if (upsert || normalizedType === '线材') {
+      const result = await runImport()
       await clearEquipmentCache()
+      await recordImportTime(db, normalizedType)
       return jsonResponse({
         success: true,
         message: `覆盖导入完成，成功${result.successCount}条，失败${result.failCount}条`,
@@ -183,12 +214,11 @@ export async function onRequestPost(context) {
       }, 409)
     }
 
-    const result = normalizedType === '鱼竿'
-      ? await importItems(db, data, ROD_INSERT_SQL, bindRod)
-      : await importItems(db, data, REEL_INSERT_SQL, bindReel)
+    const result = await runImport()
 
-    // 导入成功后清除装备缓存，确保下次请求拿到最新数据
+    // 导入成功后清除装备缓存并记录导入时间，确保下次请求拿到最新数据
     await clearEquipmentCache()
+    await recordImportTime(db, normalizedType)
 
     return jsonResponse({
       success: true,

@@ -2,6 +2,8 @@
   <div id="app">
     <AppHeader />
     <router-view />
+    <!-- 数据新鲜度提示：来自后端 meta 表的最后导入时间 -->
+    <footer v-if="dataUpdatedText" class="app-footer">{{ dataUpdatedText }}</footer>
     <!-- 版本信息展示 -->
     <div class="version-badge" @click="showVersionDetail = !showVersionDetail">
       <span class="version-label">{{ appVersion }}</span>
@@ -79,7 +81,8 @@ export default {
       buildTime: versionInfo.buildTime,
       changelog: versionInfo.changelog,
       showVersionDetail: false,
-      showAllChangelog: false
+      showAllChangelog: false,
+      dataUpdatedAt: ''
     }
   },
   computed: {
@@ -89,14 +92,25 @@ export default {
         return this.changelog
       }
       return this.changelog.slice(0, 1)
+    },
+    /** 装备数据最后更新时间文案（格式：ISO时间|导入类型） */
+    dataUpdatedText() {
+      if (!this.dataUpdatedAt) return ''
+      const [iso, type] = String(this.dataUpdatedAt).split('|')
+      const d = new Date(iso)
+      if (Number.isNaN(d.getTime())) return ''
+      const dateStr = d.toLocaleDateString('zh-CN')
+      return type ? `装备数据更新于 ${dateStr}（${type}）` : `装备数据更新于 ${dateStr}`
     }
   },
   created() {
+    this.loadDataMeta()
     // 全局 Vue 渲染错误兜底（防止组件内部未捕获异常导致整页白屏）
     if (this.$root && this.$root.appContext && this.$root.appContext.config) {
       const originalHandler = this.$root.appContext.config.errorHandler
       this.$root.appContext.config.errorHandler = (err, instance, info) => {
         console.error('[Vue errorHandler] 捕获全局错误:', err, info)
+        this.reportError(err && err.message, err && err.stack)
         this.fatalErrorMessage = `${err && err.message ? err.message : String(err)}（${info || '组件渲染异常'}）`
         if (typeof originalHandler === 'function') {
           try { originalHandler.call(this, err, instance, info) } catch (_) {}
@@ -107,14 +121,16 @@ export default {
     if (typeof window !== 'undefined') {
       window.addEventListener('error', (event) => {
         console.error('[window error] 全局未捕获错误:', event.error || event.message)
+        this.reportError(event.message, event.error && event.error.stack)
         if (!this.fatalErrorMessage) {
           this.fatalErrorMessage = event.message || '脚本执行异常'
         }
       })
       window.addEventListener('unhandledrejection', (event) => {
         console.error('[window unhandledrejection] Promise未处理异常:', event.reason)
+        const reason = event.reason
+        this.reportError(reason && reason.message, reason && reason.stack)
         if (!this.fatalErrorMessage) {
-          const reason = event.reason
           this.fatalErrorMessage = reason && reason.message ? reason.message : String(reason || '异步请求异常')
         }
       })
@@ -126,6 +142,35 @@ export default {
     return false // 继续上抛，保证全局 errorHandler 仍能收到
   },
   methods: {
+    /** 拉取数据更新时间（失败静默，不影响主流程） */
+    async loadDataMeta() {
+      try {
+        const res = await fetch('/api/meta')
+        const result = await res.json()
+        if (result.success && result.data && result.data.last_import_at) {
+          this.dataUpdatedAt = result.data.last_import_at
+        }
+      } catch (e) { /* 静默：页脚不显示即可 */ }
+    },
+    /** 错误上报：全局兜底捕获的异常发到后端，10 秒节流防上报风暴，失败静默 */
+    reportError(message, stack) {
+      const now = Date.now()
+      if (this._lastReportAt && now - this._lastReportAt < 10000) return
+      this._lastReportAt = now
+      try {
+        fetch('/api/error_report', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: String(message || '').slice(0, 500),
+            stack: String(stack || '').slice(0, 2000),
+            url: window.location.href,
+            ua: navigator.userAgent
+          }),
+          keepalive: true
+        }).catch(() => {})
+      } catch (_) { /* 上报失败不影响主流程 */ }
+    },
     reloadPage() {
       window.location.reload()
     },
@@ -190,8 +235,47 @@ export default {
   --color-divider: #e0e0e0;
   --bg-page: #f5f5f5;
   --bg-secondary: #f0f0f0;
+  /* 表面与场景色（卡片/输入框背景、总价/拉力高亮底） */
+  --color-surface: #ffffff;
+  --color-total-bg: #fffbeb;
+  --color-tension-bg: #eff6ff;
+  --color-tension-text: #1d4ed8;
   /* 品牌渐变（版本徽章等） */
   --gradient-brand: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* 暗色主题：仅覆盖令牌，组件无需任何改动 */
+:root[data-theme="dark"] {
+  --color-primary: #6aa9e8;
+  --color-primary-hover: #8bbdf0;
+  --color-primary-light: #3d6a99;
+  --color-primary-bg: #1c2f42;
+  --color-success: #7cc47f;
+  --color-success-strong: #8fd192;
+  --color-success-accent: #66bb6a;
+  --color-success-bg: #16281a;
+  --color-success-bg-light: #1a2f1e;
+  --color-success-border: #2e5233;
+  --color-warning: #ffb74d;
+  --color-warning-strong: #ffb74d;
+  --color-warning-accent: #ffb74d;
+  --color-warning-bg: #33270f;
+  --color-warning-bg-light: #2d2413;
+  --color-danger: #ef7d76;
+  --color-danger-strong: #ef9a9a;
+  --text-heading: #e8eaed;
+  --text-main: #d6d9dc;
+  --text-secondary: #a8afb7;
+  --text-hint: #7d858e;
+  --color-border: #3c434c;
+  --color-border-light: #333a42;
+  --color-divider: #2d343c;
+  --bg-page: #14171b;
+  --bg-secondary: #1f242a;
+  --color-surface: #1f242a;
+  --color-total-bg: #2d2a17;
+  --color-tension-bg: #16233a;
+  --color-tension-text: #93b8f5;
 }
 
 * {
@@ -203,11 +287,30 @@ export default {
 body {
   font-family: Arial, sans-serif;
   background-color: var(--bg-page);
+  color: var(--text-main);
   min-height: 100vh;
 }
 
 #app {
   width: 100%;
+}
+
+.app-footer {
+  text-align: center;
+  padding: 12px;
+  font-size: 12px;
+  color: var(--text-hint);
+}
+
+/* 移动端：底部导航占位 + 版本徽章上移避让 */
+@media (max-width: 600px) {
+  #app {
+    padding-bottom: 64px;
+  }
+
+  .version-badge {
+    bottom: 72px;
+  }
 }
 
 .global-error-overlay {
@@ -222,7 +325,7 @@ body {
 }
 
 .global-error-popup {
-  background: white;
+  background: var(--color-surface);
   border-radius: 12px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
   max-width: 480px;
@@ -258,7 +361,7 @@ body {
   padding: 8px 20px;
   border-radius: 6px;
   border: 1px solid #cfd8dc;
-  background: white;
+  background: var(--color-surface);
   color: #455a64;
   font-size: 14px;
   cursor: pointer;
@@ -319,7 +422,7 @@ body {
 }
 
 .version-popup {
-  background: white;
+  background: var(--color-surface);
   border-radius: 12px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   max-width: 400px;

@@ -63,9 +63,9 @@
         </div>
         <div class="quantity-input-wrapper">
           <label>数量:</label>
-          <button type="button" class="qty-step-btn" :disabled="entry.quantity <= 1" @click="stepQuantity(entry, -1)">−</button>
+          <button type="button" class="qty-step-btn" :disabled="entry.quantity <= 1" aria-label="减少数量" @click="stepQuantity(entry, -1)">−</button>
           <input type="number" v-model.number="entry.quantity" min="1" class="quantity-input" />
-          <button type="button" class="qty-step-btn" @click="stepQuantity(entry, 1)">＋</button>
+          <button type="button" class="qty-step-btn" aria-label="增加数量" @click="stepQuantity(entry, 1)">＋</button>
         </div>
         <div class="entry-subtotal">
           <template v-if="entry.equipment">
@@ -77,7 +77,7 @@
             <span class="subtotal-placeholder">-</span>
           </template>
         </div>
-        <button class="remove-entry-btn" @click="removeRodEntry(index)" title="删除">✕</button>
+        <button class="remove-entry-btn" @click="removeRodEntry(index)" title="删除" aria-label="删除该鱼竿条目">✕</button>
       </div>
       <div v-if="rodEntries.length === 0" class="empty-hint">点击「添加鱼竿」开始统计</div>
     </div>
@@ -140,9 +140,9 @@
         </div>
         <div class="quantity-input-wrapper">
           <label>数量:</label>
-          <button type="button" class="qty-step-btn" :disabled="entry.quantity <= 1" @click="stepQuantity(entry, -1)">−</button>
+          <button type="button" class="qty-step-btn" :disabled="entry.quantity <= 1" aria-label="减少数量" @click="stepQuantity(entry, -1)">−</button>
           <input type="number" v-model.number="entry.quantity" min="1" class="quantity-input" />
-          <button type="button" class="qty-step-btn" @click="stepQuantity(entry, 1)">＋</button>
+          <button type="button" class="qty-step-btn" aria-label="增加数量" @click="stepQuantity(entry, 1)">＋</button>
         </div>
         <div class="entry-subtotal">
           <template v-if="entry.equipment">
@@ -154,7 +154,7 @@
             <span class="subtotal-placeholder">-</span>
           </template>
         </div>
-        <button class="remove-entry-btn" @click="removeReelEntry(index)" title="删除">✕</button>
+        <button class="remove-entry-btn" @click="removeReelEntry(index)" title="删除" aria-label="删除该渔轮条目">✕</button>
       </div>
       <div v-if="reelEntries.length === 0" class="empty-hint">点击「添加渔轮」开始统计</div>
     </div>
@@ -194,9 +194,10 @@
         </div>
       </div>
 
-      <!-- 清单操作：复制/清空 -->
+      <!-- 清单操作：复制/分享/清空 -->
       <div class="summary-actions">
         <button class="summary-action-btn" @click="copyList">📋 复制清单</button>
+        <button class="summary-action-btn" @click="copyShareLink">🔗 分享链接</button>
         <button class="summary-action-btn danger" @click="clearAllEntries">🗑 清空清单</button>
         <span v-if="listHint" class="list-hint">{{ listHint }}</span>
       </div>
@@ -256,8 +257,10 @@ export default {
   },
   async mounted() {
     await Promise.all([this.loadRods(), this.loadReels()])
-    // 数据就绪后恢复上次统计清单，再开启持久化
-    this.restoreEntries()
+    // 优先从分享链接恢复，其次恢复上次本地清单，再开启持久化
+    if (!this.restoreFromShareUrl()) {
+      this.restoreEntries()
+    }
     this._entriesReady = true
   },
   watch: {
@@ -338,6 +341,51 @@ export default {
       if (!confirm('确定清空当前统计清单吗？')) return
       this.rodEntries = []
       this.reelEntries = []
+    },
+    /** 生成分享链接：清单编码进 URL 参数 vl */
+    buildShareUrl() {
+      const payload = {
+        r: this.rodEntries.filter(e => e.equipment).map(e => [e.equipment.model || e.equipment.equipmentName, e.quantity || 1]),
+        l: this.reelEntries.filter(e => e.equipment).map(e => [e.equipment.model || e.equipment.equipmentName, e.quantity || 1])
+      }
+      const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))))
+        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+      return `${window.location.origin}${window.location.pathname}?vl=${encoded}`
+    },
+    /** 复制分享链接到剪贴板 */
+    async copyShareLink() {
+      try {
+        await navigator.clipboard.writeText(this.buildShareUrl())
+        this.listHint = '分享链接已复制！'
+      } catch (_) {
+        this.listHint = '复制失败，请手动复制'
+      }
+      setTimeout(() => { this.listHint = '' }, 2500)
+    },
+    /** 从分享链接恢复清单（成功后清除 URL 参数），无参数返回 false */
+    restoreFromShareUrl() {
+      try {
+        const params = new URLSearchParams(window.location.search)
+        const encoded = params.get('vl')
+        if (!encoded) return false
+        const json = decodeURIComponent(escape(atob(encoded.replace(/-/g, '+').replace(/_/g, '/'))))
+        const payload = JSON.parse(json)
+        this.rodEntries = []
+        this.reelEntries = []
+        for (const [model, qty] of payload.r || []) {
+          const item = this.rodList.find(d => d.model === model || d.equipmentName === model)
+          if (item) this.rodEntries.push(this.createEntry(item, qty))
+        }
+        for (const [model, qty] of payload.l || []) {
+          const item = this.reelList.find(d => d.model === model || d.equipmentName === model)
+          if (item) this.reelEntries.push(this.createEntry(item, qty))
+        }
+        window.history.replaceState({}, '', window.location.pathname)
+        return true
+      } catch (e) {
+        console.error('恢复分享清单失败:', e)
+        return false
+      }
     },
     /** 复制清单文本到剪贴板 */
     async copyList() {
@@ -505,7 +553,7 @@ export default {
 .back-btn {
   padding: 8px 16px;
   border: 1px solid var(--color-primary);
-  background-color: white;
+  background-color: var(--color-surface);
   color: var(--color-primary);
   border-radius: 6px;
   cursor: pointer;
@@ -518,7 +566,7 @@ export default {
 }
 
 .equipment-section {
-  background: white;
+  background: var(--color-surface);
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
@@ -541,7 +589,7 @@ export default {
 .add-btn {
   padding: 8px 16px;
   border: 1px solid var(--color-success-strong);
-  background-color: white;
+  background-color: var(--color-surface);
   color: var(--color-success-strong);
   border-radius: 6px;
   cursor: pointer;
@@ -619,7 +667,7 @@ export default {
   border-radius: 4px;
   font-size: 14px;
   color: var(--text-heading);
-  background-color: white;
+  background-color: var(--color-surface);
   box-sizing: border-box;
 }
 
@@ -673,7 +721,7 @@ export default {
 .category-filter-btn {
   padding: 4px 12px;
   border: 1px solid var(--color-success-border);
-  background-color: white;
+  background-color: var(--color-surface);
   color: #16a34a;
   border-radius: 16px;
   font-size: 12px;
@@ -696,7 +744,7 @@ export default {
   top: 100%;
   left: 0;
   right: 0;
-  background-color: white;
+  background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 4px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -844,7 +892,7 @@ export default {
 .remove-entry-btn {
   padding: 6px 10px;
   border: 1px solid var(--color-danger);
-  background-color: white;
+  background-color: var(--color-surface);
   color: var(--color-danger);
   border-radius: 6px;
   cursor: pointer;
@@ -880,7 +928,7 @@ export default {
 
 .summary-card {
   flex: 1;
-  background: white;
+  background: var(--color-surface);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
@@ -962,7 +1010,7 @@ export default {
   width: 26px;
   height: 26px;
   border: 1px solid var(--color-border);
-  background: white;
+  background: var(--color-surface);
   color: var(--text-main);
   border-radius: 6px;
   font-size: 15px;
@@ -994,7 +1042,7 @@ export default {
 .summary-action-btn {
   padding: 8px 16px;
   border: 1px solid var(--color-primary);
-  background: white;
+  background: var(--color-surface);
   color: var(--color-primary);
   border-radius: 6px;
   font-size: 13px;

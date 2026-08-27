@@ -654,7 +654,7 @@ export default {
 .back-btn {
   padding: 10px 24px;
   border: 2px solid var(--color-primary);
-  background-color: white;
+  background-color: var(--color-surface);
   color: var(--color-primary);
   border-radius: 20px;
   cursor: pointer;
@@ -676,7 +676,7 @@ export default {
 .type-btn {
   padding: 12px 36px;
   border: 2px solid var(--color-primary);
-  background-color: white;
+  background-color: var(--color-surface);
   color: var(--color-primary);
   border-radius: 25px;
   cursor: pointer;
@@ -736,7 +736,7 @@ export default {
   border-radius: 25px;
   font-size: 14px;
   color: var(--text-main);
-  background-color: white;
+  background-color: var(--color-surface);
   cursor: pointer;
   outline: none;
   min-width: 140px;
@@ -806,7 +806,7 @@ export default {
 }
 
 .list-container {
-  background-color: white;
+  background-color: var(--color-surface);
   border: 2px solid var(--color-primary-bg);
   border-radius: 10px;
   max-height: 650px;
@@ -893,7 +893,7 @@ export default {
 
 .compare-panel {
   flex: 1;
-  background-color: white;
+  background-color: var(--color-surface);
   border: 2px solid var(--color-primary-bg);
   border-radius: 10px;
   display: flex;
@@ -920,7 +920,7 @@ export default {
 .clear-btn {
   padding: 8px 16px;
   border: 1px solid var(--color-primary-light);
-  background-color: white;
+  background-color: var(--color-surface);
   color: var(--color-primary);
   border-radius: 6px;
   cursor: pointer;
@@ -942,7 +942,7 @@ export default {
 .export-btn {
   padding: 8px 16px;
   border: 1px solid var(--color-success-strong);
-  background-color: white;
+  background-color: var(--color-surface);
   color: var(--color-success-strong);
   border-radius: 6px;
   cursor: pointer;
@@ -986,11 +986,11 @@ export default {
 }
 
 .compare-row:not(.compare-header-row):hover {
-  background-color: #fafafa;
+  background-color: var(--bg-secondary);
 }
 
 .compare-row:nth-child(even):not(.compare-header-row) {
-  background-color: #fafafa;
+  background-color: var(--bg-secondary);
 }
 
 .compare-row:nth-child(even):not(.compare-header-row):hover {
@@ -1125,7 +1125,7 @@ export default {
 .quick-add-btn {
   padding: 4px 12px;
   border: 1px solid var(--color-primary);
-  background: white;
+  background: var(--color-surface);
   color: var(--color-primary);
   border-radius: 12px;
   font-size: 12px;

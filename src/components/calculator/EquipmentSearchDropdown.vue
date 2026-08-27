@@ -166,7 +166,7 @@ export default {
   border-radius: 4px;
   font-size: 14px;
   color: var(--text-heading);
-  background-color: white;
+  background-color: var(--color-surface);
   box-sizing: border-box;
 }
 
@@ -220,7 +220,7 @@ export default {
 .category-filter-btn {
   padding: 4px 12px;
   border: 1px solid var(--color-success-border);
-  background-color: white;
+  background-color: var(--color-surface);
   color: #16a34a;
   border-radius: 16px;
   font-size: 12px;
@@ -243,7 +243,7 @@ export default {
   top: 100%;
   left: 0;
   right: 0;
-  background-color: white;
+  background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 4px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);

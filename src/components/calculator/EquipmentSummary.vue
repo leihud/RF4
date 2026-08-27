@@ -187,7 +187,7 @@ h2 {
 }
 
 .summary-card {
-  background-color: white;
+  background-color: var(--color-surface);
   padding: 14px 20px;
   border-radius: 8px;
   /* 五行结构：同类项两两并排，首尾行横跨两列 */
@@ -229,11 +229,11 @@ h2 {
 }
 
 .price-row {
-  background-color: #f8fafc;
+  background-color: var(--bg-secondary);
 }
 
 .total-price-row {
-  background-color: #fffbeb;
+  background-color: var(--color-total-bg);
   font-size: 18px;
 }
 
@@ -249,11 +249,11 @@ h2 {
 
 /* 汇总最小拉力行：与 total-price-row 同样的高亮底色，强调是汇总值 */
 .summary-row:has(> .tension-min-value) {
-  background-color: #eff6ff;
+  background-color: var(--color-tension-bg);
 }
 
 .tension-min-value {
-  color: #1d4ed8;
+  color: var(--color-tension-text);
   font-weight: bold;
 }
 

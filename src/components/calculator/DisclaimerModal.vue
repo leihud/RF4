@@ -40,7 +40,7 @@ export default {
 }
 
 .disclaimer-modal {
-  background-color: white;
+  background-color: var(--color-surface);
   border-radius: 12px;
   width: 100%;
   max-width: 620px;
@@ -104,7 +104,7 @@ export default {
 
 .disclaimer-footer {
   padding: 18px 32px;
-  background-color: #f8fafc;
+  background-color: var(--bg-secondary);
   border-top: 1px solid #e2e8f0;
   display: flex;
   justify-content: flex-end;

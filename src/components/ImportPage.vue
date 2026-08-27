@@ -247,13 +247,36 @@ const REEL_DEFAULT_ROW = {
   '防盐性': ''
 }
 
+const LINE_FIELD_MAP = {
+  '装备名称': 'model',
+  '材质': 'material',
+  '拉力': 'tensionKn',
+  '线径': 'diameterMm',
+  '长度': 'lengthM',
+  '银币价格': 'silverPrice',
+  '金币价格': 'goldPrice',
+  '备注': 'notes'
+}
+
+const LINE_DEFAULT_ROW = {
+  '装备名称': '示例线材名称',
+  '材质': '氟碳线',
+  '拉力': '12.5',
+  '线径': '0.35',
+  '长度': '150',
+  '银币价格': '300',
+  '金币价格': '',
+  '备注': ''
+}
+
 export default {
   name: 'ImportPage',
   data() {
     return {
       typeOptions: [
         { value: '鱼竿', label: '鱼竿数据' },
-        { value: '渔轮', label: '渔轮数据' }
+        { value: '渔轮', label: '渔轮数据' },
+        { value: '线材', label: '线材数据' }
       ],
       importType: '鱼竿',
       selectedFile: null,
@@ -295,6 +318,18 @@ export default {
   methods: {
     goBack() {
       this.$router.push('/')
+    },
+    /** 当前导入类型的字段映射（鱼竿/渔轮/线材） */
+    getFieldMap() {
+      if (this.importType === '鱼竿') return ROD_FIELD_MAP
+      if (this.importType === '渔轮') return REEL_FIELD_MAP
+      return LINE_FIELD_MAP
+    },
+    /** 当前导入类型的模板示例行 */
+    getDefaultRow() {
+      if (this.importType === '鱼竿') return ROD_DEFAULT_ROW
+      if (this.importType === '渔轮') return REEL_DEFAULT_ROW
+      return LINE_DEFAULT_ROW
     },
     triggerFileInput() {
       this.$refs.fileInput.click()
@@ -342,7 +377,7 @@ export default {
       reader.readAsArrayBuffer(file)
     },
     convertToEnglishKeys(data) {
-      const fieldMap = this.importType === '鱼竿' ? ROD_FIELD_MAP : REEL_FIELD_MAP
+      const fieldMap = this.getFieldMap()
       return data.map(row => {
         const converted = {}
         for (const [chineseKey, englishKey] of Object.entries(fieldMap)) {
@@ -368,8 +403,8 @@ export default {
     },
     async downloadTemplate() {
       const XLSX = await loadXLSX()
-      const fieldMap = this.importType === '鱼竿' ? ROD_FIELD_MAP : REEL_FIELD_MAP
-      const defaultRow = this.importType === '鱼竿' ? ROD_DEFAULT_ROW : REEL_DEFAULT_ROW
+      const fieldMap = this.getFieldMap()
+      const defaultRow = this.getDefaultRow()
       
       const headers = Object.keys(fieldMap)
       const data = [headers, Object.values(defaultRow)]
@@ -454,7 +489,7 @@ export default {
 .back-btn {
   padding: 8px 20px;
   border: 2px solid #2196f3;
-  background-color: white;
+  background-color: var(--color-surface);
   color: #2196f3;
   border-radius: 20px;
   cursor: pointer;
@@ -468,7 +503,7 @@ export default {
 }
 
 .import-container {
-  background-color: white;
+  background-color: var(--color-surface);
   border-radius: 10px;
   padding: 30px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -492,7 +527,7 @@ export default {
 .type-btn {
   padding: 12px 30px;
   border: 2px solid var(--color-border);
-  background-color: white;
+  background-color: var(--color-surface);
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
