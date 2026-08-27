@@ -454,7 +454,7 @@ import {
   formatTension
 } from '../utils/tension.js'
 import { getMergedAdaptWeight } from '../utils/display.js'
-import { sanitizeEquipmentFields, safeToNumber, safeToString, toSafeNumber, toSafeDisplay } from '../utils/sanitize.js'
+import { sanitizeEquipmentFields, safeToNumber, toSafeNumber, toSafeDisplay } from '../utils/sanitize.js'
 import { loadRodAndReelData } from '../utils/equipmentLoader.js'
 import { encodePreset, decodePreset, getShareUrl } from '../utils/presetShare.js'
 import DisclaimerModal from './calculator/DisclaimerModal.vue'

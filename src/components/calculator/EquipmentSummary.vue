@@ -55,7 +55,7 @@ import {
   buildMinTensionInfo
 } from '../../utils/tension.js'
 import { parsePrice, formatPrice, getMergedAdaptWeight } from '../../utils/display.js'
-import { safeToNumber, safeToString, toSafeNumber, toSafeDisplay } from '../../utils/sanitize.js'
+import { safeToNumber, toSafeNumber, toSafeDisplay } from '../../utils/sanitize.js'
 
 /**
  * 装备组合总览：装备组合文本、锁轮/常规最小拉力、适配重、价格汇总。
@@ -166,9 +166,7 @@ export default {
     }
   },
   methods: {
-    formatPrice,
-    toSafeNumber,
-    toSafeDisplay
+    formatPrice
   }
 }
 </script>

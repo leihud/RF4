@@ -362,12 +362,10 @@ export default {
   },
   methods: {
     extractNumber(str) {
-      if (str == null) return NaN
-      // 对象直接返回 NaN，避免 String(obj) 隐式转换报错
-      if (typeof str === 'object') return NaN
-      const cleaned = String(str).replace(/,/g, '')
-      const match = cleaned.match(/[\d.]+/)
-      return match ? parseFloat(match[0]) : NaN
+      // 复用 display.js 的 parsePrice（含逗号清洗与对象兜底）；
+      // 无有效数字时返回 NaN 以区分“无值”（各调用点已按 0/NaN 同样处理）
+      const n = parsePrice(str)
+      return n > 0 ? n : NaN
     },
     async loadData() {
       this.isLoading = true
