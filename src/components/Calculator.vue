@@ -264,7 +264,6 @@
                 >
                   适配重:{{ getMergedAdaptWeight(selectedEquipmentMap[type], type) }}
                 </span>
-                <button class="clear-btn" @click.stop="clearEquipmentByType(type)">×</button>
               </template>
               <span v-else class="placeholder">未选择</span>
             </template>
@@ -286,6 +285,13 @@
           >
             {{ selectedEquipmentMap[type] ? '更换装备' : '选择装备' }}
           </button>
+          <!-- 移除按钮紧跟在更换装备后面，避免被参数区裁剪而不可见 -->
+          <button
+            v-if="selectedEquipmentMap[type]"
+            class="clear-btn"
+            title="移除该装备"
+            @click.stop="clearEquipmentByType(type)"
+          >×</button>
         </div>
       </div>
     </div>
@@ -1727,6 +1733,8 @@ h2 {
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
+  /* 参数区溢出裁剪时仍固定在行尾可见 */
+  flex-shrink: 0;
 }
 
 .select-btn:hover {
@@ -1777,6 +1785,9 @@ h2 {
   font-size: 18px;
   display: flex;
   align-items: center;
+  /* 行尾固定，不随参数区伸缩 */
+  flex-shrink: 0;
+  margin-left: 8px;
   justify-content: center;
   transition: all 0.2s;
 }
