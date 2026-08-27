@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20260827-01',
+  currentVersion: 'V20260827-02',
   buildTime: '2026-08-27',
   changelog: [
+    {
+      version: 'V20260827-02',
+      date: '2026-08-27',
+      changes: [
+        '优化：装备组合总览改为左右双栏布局，收紧行距减少空旷感'
+      ]
+    },
     {
       version: 'V20260827-01',
       date: '2026-08-27',
