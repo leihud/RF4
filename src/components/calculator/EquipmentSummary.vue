@@ -2,48 +2,47 @@
   <div class="summary-section">
     <h2>装备组合总览</h2>
     <div class="summary-card">
-      <!-- 左栏：组合与拉力结果 -->
-      <div class="summary-col">
-        <div class="summary-row">
-          <span class="summary-label">装备组合:</span>
-          <span class="summary-value">{{ equipmentSummaryText }}</span>
-        </div>
-        <div class="summary-row" v-if="lockTensionMinInfo">
-          <span class="summary-label">锁轮下最小拉力:</span>
-          <span class="summary-value tension-min-value">{{ `${lockTensionMinInfo.label}: ${lockTensionMinInfo.valueText}` }}</span>
-        </div>
-        <div class="summary-row" v-if="panelTensionMinInfo">
-          <span class="summary-label">常规下最小拉力:</span>
-          <span class="summary-value tension-min-value">{{ `${panelTensionMinInfo.label}: ${panelTensionMinInfo.valueText}` }}</span>
-        </div>
+      <!-- 第一行：装备组合（整行） -->
+      <div class="summary-row full-row">
+        <span class="summary-label">装备组合:</span>
+        <span class="summary-value">{{ equipmentSummaryText }}</span>
       </div>
-      <!-- 右栏：适配重与价格 -->
-      <div class="summary-col">
-        <div
-          v-for="item in summaryAdaptWeightRows"
-          :key="'adapt-' + item.type"
-          class="summary-row"
-        >
-          <span class="summary-label">{{ item.label }}:</span>
-          <span class="summary-value" :class="{ 'empty-value': !item.value }">
-            {{ item.value || '未设置' }}
-          </span>
-        </div>
-        <div v-for="item in selectedEquipmentList" :key="item.equipmentType" class="summary-row price-row">
-          <span class="summary-label">{{ item.equipmentType }}价格:</span>
-          <span class="summary-value">
-            <span v-if="item.silverPrice" class="silver-price">银币：{{ formatPrice(item.silverPrice, 2) }}</span>
-            <span v-if="item.goldPrice" class="gold-price">金币：{{ formatPrice(item.goldPrice, 2) }}</span>
-            <span v-if="!item.silverPrice && !item.goldPrice">无</span>
-          </span>
-        </div>
-        <div class="summary-row total-price-row">
-          <span class="summary-label">总价格:</span>
-          <span class="summary-value">
-            <span v-if="totalSilverPrice" class="silver-price">银币：{{ formatPrice(totalSilverPrice, 2) }}</span>
-            <span v-if="totalGoldPrice" class="gold-price">金币：{{ formatPrice(totalGoldPrice, 2) }}</span>
-          </span>
-        </div>
+      <!-- 第二行：两种最小拉力并排 -->
+      <div class="summary-row" v-if="lockTensionMinInfo">
+        <span class="summary-label">锁轮下最小拉力:</span>
+        <span class="summary-value tension-min-value">{{ `${lockTensionMinInfo.label}: ${lockTensionMinInfo.valueText}` }}</span>
+      </div>
+      <div class="summary-row" v-if="panelTensionMinInfo">
+        <span class="summary-label">常规下最小拉力:</span>
+        <span class="summary-value tension-min-value">{{ `${panelTensionMinInfo.label}: ${panelTensionMinInfo.valueText}` }}</span>
+      </div>
+      <!-- 第三行：鱼竿/渔轮适配重并排 -->
+      <div
+        v-for="item in summaryAdaptWeightRows"
+        :key="'adapt-' + item.type"
+        class="summary-row"
+      >
+        <span class="summary-label">{{ item.label }}:</span>
+        <span class="summary-value" :class="{ 'empty-value': !item.value }">
+          {{ item.value || '未设置' }}
+        </span>
+      </div>
+      <!-- 第四行：鱼竿/渔轮价格并排 -->
+      <div v-for="item in selectedEquipmentList" :key="item.equipmentType" class="summary-row price-row">
+        <span class="summary-label">{{ item.equipmentType }}价格:</span>
+        <span class="summary-value">
+          <span v-if="item.silverPrice" class="silver-price">银币：{{ formatPrice(item.silverPrice, 2) }}</span>
+          <span v-if="item.goldPrice" class="gold-price">金币：{{ formatPrice(item.goldPrice, 2) }}</span>
+          <span v-if="!item.silverPrice && !item.goldPrice">无</span>
+        </span>
+      </div>
+      <!-- 第五行：装备总价格（整行） -->
+      <div class="summary-row total-price-row full-row">
+        <span class="summary-label">装备总价格:</span>
+        <span class="summary-value">
+          <span v-if="totalSilverPrice" class="silver-price">银币：{{ formatPrice(totalSilverPrice, 2) }}</span>
+          <span v-if="totalGoldPrice" class="gold-price">金币：{{ formatPrice(totalGoldPrice, 2) }}</span>
+        </span>
       </div>
     </div>
   </div>
@@ -191,14 +190,15 @@ h2 {
   background-color: white;
   padding: 14px 20px;
   border-radius: 8px;
-  /* 左右双栏：左栏组合与拉力结果，右栏适配重与价格 */
+  /* 五行结构：同类项两两并排，首尾行横跨两列 */
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 24px;
 }
 
-.summary-col {
-  min-width: 0;
+/* 整行横跨两列（装备组合/总价格） */
+.full-row {
+  grid-column: 1 / -1;
 }
 
 .summary-row {
