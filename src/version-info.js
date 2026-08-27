@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20260826-13',
-  buildTime: '2026-08-26',
+  currentVersion: 'V20260827-01',
+  buildTime: '2026-08-27',
   changelog: [
+    {
+      version: 'V20260827-01',
+      date: '2026-08-27',
+      changes: [
+        '优化：装备移除×按钮挪到更换装备按钮后面，修复参数过长时被裁剪不可见'
+      ]
+    },
     {
       version: 'V20260826-13',
       date: '2026-08-26',
