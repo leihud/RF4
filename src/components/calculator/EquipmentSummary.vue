@@ -2,42 +2,48 @@
   <div class="summary-section">
     <h2>装备组合总览</h2>
     <div class="summary-card">
-      <div class="summary-row">
-        <span class="summary-label">装备组合:</span>
-        <span class="summary-value">{{ equipmentSummaryText }}</span>
+      <!-- 左栏：组合与拉力结果 -->
+      <div class="summary-col">
+        <div class="summary-row">
+          <span class="summary-label">装备组合:</span>
+          <span class="summary-value">{{ equipmentSummaryText }}</span>
+        </div>
+        <div class="summary-row" v-if="lockTensionMinInfo">
+          <span class="summary-label">锁轮下最小拉力:</span>
+          <span class="summary-value tension-min-value">{{ `${lockTensionMinInfo.label}: ${lockTensionMinInfo.valueText}` }}</span>
+        </div>
+        <div class="summary-row" v-if="panelTensionMinInfo">
+          <span class="summary-label">常规下最小拉力:</span>
+          <span class="summary-value tension-min-value">{{ `${panelTensionMinInfo.label}: ${panelTensionMinInfo.valueText}` }}</span>
+        </div>
       </div>
-      <div class="summary-row" v-if="lockTensionMinInfo">
-        <span class="summary-label">锁轮下最小拉力:</span>
-        <span class="summary-value tension-min-value">{{ `${lockTensionMinInfo.label}: ${lockTensionMinInfo.valueText}` }}</span>
-      </div>
-      <div class="summary-row" v-if="panelTensionMinInfo">
-        <span class="summary-label">常规下最小拉力:</span>
-        <span class="summary-value tension-min-value">{{ `${panelTensionMinInfo.label}: ${panelTensionMinInfo.valueText}` }}</span>
-      </div>
-      <div
-        v-for="item in summaryAdaptWeightRows"
-        :key="'adapt-' + item.type"
-        class="summary-row"
-      >
-        <span class="summary-label">{{ item.label }}:</span>
-        <span class="summary-value" :class="{ 'empty-value': !item.value }">
-          {{ item.value || '未设置' }}
-        </span>
-      </div>
-      <div v-for="item in selectedEquipmentList" :key="item.equipmentType" class="summary-row price-row">
-        <span class="summary-label">{{ item.equipmentType }}价格:</span>
-        <span class="summary-value">
-          <span v-if="item.silverPrice" class="silver-price">银币：{{ formatPrice(item.silverPrice, 2) }}</span>
-          <span v-if="item.goldPrice" class="gold-price">金币：{{ formatPrice(item.goldPrice, 2) }}</span>
-          <span v-if="!item.silverPrice && !item.goldPrice">无</span>
-        </span>
-      </div>
-      <div class="summary-row total-price-row">
-        <span class="summary-label">总价格:</span>
-        <span class="summary-value">
-          <span v-if="totalSilverPrice" class="silver-price">银币：{{ formatPrice(totalSilverPrice, 2) }}</span>
-          <span v-if="totalGoldPrice" class="gold-price">金币：{{ formatPrice(totalGoldPrice, 2) }}</span>
-        </span>
+      <!-- 右栏：适配重与价格 -->
+      <div class="summary-col">
+        <div
+          v-for="item in summaryAdaptWeightRows"
+          :key="'adapt-' + item.type"
+          class="summary-row"
+        >
+          <span class="summary-label">{{ item.label }}:</span>
+          <span class="summary-value" :class="{ 'empty-value': !item.value }">
+            {{ item.value || '未设置' }}
+          </span>
+        </div>
+        <div v-for="item in selectedEquipmentList" :key="item.equipmentType" class="summary-row price-row">
+          <span class="summary-label">{{ item.equipmentType }}价格:</span>
+          <span class="summary-value">
+            <span v-if="item.silverPrice" class="silver-price">银币：{{ formatPrice(item.silverPrice, 2) }}</span>
+            <span v-if="item.goldPrice" class="gold-price">金币：{{ formatPrice(item.goldPrice, 2) }}</span>
+            <span v-if="!item.silverPrice && !item.goldPrice">无</span>
+          </span>
+        </div>
+        <div class="summary-row total-price-row">
+          <span class="summary-label">总价格:</span>
+          <span class="summary-value">
+            <span v-if="totalSilverPrice" class="silver-price">银币：{{ formatPrice(totalSilverPrice, 2) }}</span>
+            <span v-if="totalGoldPrice" class="gold-price">金币：{{ formatPrice(totalGoldPrice, 2) }}</span>
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -183,15 +189,24 @@ h2 {
 
 .summary-card {
   background-color: white;
-  padding: 20px;
+  padding: 14px 20px;
   border-radius: 8px;
+  /* 左右双栏：左栏组合与拉力结果，右栏适配重与价格 */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 24px;
+}
+
+.summary-col {
+  min-width: 0;
 }
 
 .summary-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 0;
+  gap: 8px;
+  padding: 8px 0;
   border-bottom: 1px solid #eee;
 }
 
@@ -258,7 +273,7 @@ h2 {
 
 @media (min-width: 768px) and (max-width: 1200px) {
   .summary-row {
-    padding: 12px 0;
+    padding: 6px 0;
   }
 
   .summary-label,
@@ -274,14 +289,16 @@ h2 {
   }
 
   .summary-card {
-    padding: 15px;
+    padding: 12px 15px;
+    /* 窄屏回退单列纵向布局 */
+    grid-template-columns: 1fr;
   }
 
   .summary-row {
     flex-direction: column;
     align-items: flex-start;
     gap: 5px;
-    padding: 10px 0;
+    padding: 8px 0;
   }
 
   .summary-label,
