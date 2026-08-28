@@ -1,10 +1,15 @@
 // @vitest-environment jsdom
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import AppToast from '../src/components/common/AppToast.vue'
 import EquipmentSummary from '../src/components/calculator/EquipmentSummary.vue'
 import ComparePage from '../src/components/ComparePage.vue'
+import Calculator from '../src/components/Calculator.vue'
+import BuildsListPage from '../src/components/BuildsListPage.vue'
+import ValuePage from '../src/components/ValuePage.vue'
+import ImportPage from '../src/components/ImportPage.vue'
+import AppHeader from '../src/components/common/AppHeader.vue'
 
 describe('AppToast 共享提示组件', () => {
   it('show() 后显示消息与类型样式', async () => {
@@ -125,5 +130,68 @@ describe('ComparePage 参数对比', () => {
     await nextTick()
     expect(wrapper.vm.compareEquipmentList.length).toBe(2)
     expect(wrapper.text()).toContain('强度')
+  })
+})
+
+describe('各页面挂载冒烟测试（暴露未定义引用/模板错误）', () => {
+  const rod = { id: 1, model: '测试竿A', equipmentName: '测试竿A', category: '海竿', form: '海竿', strengthKg: '30', panelTension: 30, lockTension: 25, silverPrice: '1,000', goldPrice: '', rating: '', adaptWeight: '15-50' }
+  const reel = { id: 2, model: '测试轮B', equipmentName: '测试轮B', category: '纺车式', form: '纺车式', lockTension: '40', frictionForce: '20', panelTension: 20, silverPrice: '2,000', goldPrice: '10', rating: '' }
+
+  const setupFetch = () => {
+    global.fetch = async (url) => {
+      const u = String(url)
+      let body = []
+      if (u.includes('/api/recommended_builds')) body = { success: true, data: [], hasMore: false }
+      else if (u.includes('/api/meta')) body = { success: true, data: {} }
+      else if (u.includes('/api/maps')) body = [{ name: 'm1', display_name: '测试地图' }]
+      else if (u.includes('/api/fish_species')) body = [{ name: 'f1', display_name: '测试鱼种' }]
+      else if (u.includes('/api/rods')) body = [rod]
+      else if (u.includes('/api/reels')) body = [reel]
+      return { ok: true, json: async () => body }
+    }
+  }
+
+  beforeEach(() => {
+    localStorage.clear()
+    sessionStorage.clear()
+    setupFetch()
+  })
+
+  it('Calculator 挂载渲染无异常', async () => {
+    const wrapper = mount(Calculator)
+    await flushPromises()
+    await nextTick()
+    expect(wrapper.find('.equipment-selector').exists()).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('BuildsListPage 挂载渲染无异常', async () => {
+    const wrapper = mount(BuildsListPage)
+    await flushPromises()
+    await nextTick()
+    expect(wrapper.find('.builds-list-page').exists()).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('ValuePage 挂载渲染无异常', async () => {
+    const wrapper = mount(ValuePage)
+    await flushPromises()
+    await nextTick()
+    expect(wrapper.find('.value-page').exists()).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('ImportPage 挂载渲染无异常', async () => {
+    const wrapper = mount(ImportPage)
+    await flushPromises()
+    await nextTick()
+    expect(wrapper.find('.import-page').exists()).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('AppHeader 挂载渲染无异常', () => {
+    const wrapper = mount(AppHeader)
+    expect(wrapper.find('.app-header').exists()).toBe(true)
+    wrapper.unmount()
   })
 })
