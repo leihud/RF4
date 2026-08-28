@@ -151,7 +151,7 @@
 import { searchAndRankEquipment, sortByPanelTension, EQUIPMENT_SEARCH_FIELDS } from '../utils/search.js'
 import { sanitizeEquipmentFields } from '../utils/sanitize.js'
 import { loadRodAndReelData } from '../utils/equipmentLoader.js'
-import { getMergedAdaptWeight } from '../utils/display.js'
+import { getMergedAdaptWeight, parsePrice } from '../utils/display.js'
 import AppSkeleton from './common/AppSkeleton.vue'
 
 const COMPARE_ROWS = {
