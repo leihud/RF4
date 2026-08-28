@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20260827-06',
-  buildTime: '2026-08-27',
+  currentVersion: 'V20260829-01',
+  buildTime: '2026-08-28',
   changelog: [
+    {
+      version: 'V20260829-01',
+      date: '2026-08-28',
+      changes: [
+        '修复：对比页选择装备报错，补齐parsePrice导入，新增选择装备回归测试'
+      ]
+    },
     {
       version: 'V20260827-06',
       date: '2026-08-27',
