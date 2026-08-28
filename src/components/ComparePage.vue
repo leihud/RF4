@@ -106,7 +106,6 @@
           >
             <div class="compare-cell compare-label-cell">
               {{ row.label }}
-              <span v-if="isRowDifferent(row)" class="diff-mark" title="各装备此项数值不同">≠</span>
             </div>
             <div
               v-for="equipment in compareEquipmentList"
@@ -1136,16 +1135,9 @@ export default {
   color: white;
 }
 
-/* 差异行：参数标签列淡橙背景 + ≠ 标记，帮助用户快速定位不同项 */
+/* 差异行：参数标签列淡橙背景，帮助用户快速定位不同项 */
 .diff-row .compare-label-cell {
   background-color: var(--color-warning-bg-light);
-}
-
-.diff-mark {
-  display: inline-block;
-  margin-left: 4px;
-  color: var(--color-warning);
-  font-weight: bold;
 }
 
 .empty-panel {
