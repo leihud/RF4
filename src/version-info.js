@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20260903-10',
+  currentVersion: 'V20260903-11',
   buildTime: '2026-09-03',
   changelog: [
+    {
+      version: 'V20260903-11',
+      date: '2026-09-03',
+      changes: [
+        '修复：grid-template-columns改用计算属性内联style，避免CSS变量兼容问题'
+      ]
+    },
     {
       version: 'V20260903-10',
       date: '2026-09-03',
