@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20260903-05',
+  currentVersion: 'V20260903-06',
   buildTime: '2026-09-03',
   changelog: [
+    {
+      version: 'V20260903-06',
+      date: '2026-09-03',
+      changes: [
+        '修复：对比表格改用原生table元素彻底解决列对齐'
+      ]
+    },
     {
       version: 'V20260903-05',
       date: '2026-09-03',
