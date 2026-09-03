@@ -79,60 +79,57 @@
             <button class="clear-btn" @click="clearCompareList">清空</button>
           </div>
         </div>
-        <table class="compare-table">
-          <thead>
-            <tr class="compare-header-row">
-              <th class="compare-cell compare-label-cell">参数</th>
-              <th
-                v-for="equipment in compareEquipmentList"
-                :key="getItemKey(equipment)"
-                class="compare-cell compare-equipment-cell"
-              >
-                <span class="equipment-name-inline">{{ formatValue(equipment.model || equipment.equipmentName) }}</span>
-                <button
-                  class="remove-btn-inline"
-                  aria-label="移除对比项"
-                  @click.stop="removeCompareItem(equipment)"
-                >×</button>
-                <span class="equipment-category-inline">{{ formatValue(equipment.subCategory || equipment.category) }}</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="row in currentCompareRows"
-              :key="row.key || row.field || row.label"
-              :class="['compare-row', { 'diff-row': isRowDifferent(row) }]"
+        <div class="compare-grid" :style="{ '--col-count': compareEquipmentList.length }">
+          <div class="grid-row grid-header-row">
+            <div class="grid-cell grid-label-cell">参数</div>
+            <div
+              v-for="equipment in compareEquipmentList"
+              :key="getItemKey(equipment)"
+              class="grid-cell grid-equipment-cell"
             >
-              <td class="compare-cell compare-label-cell">
-                {{ row.label }}
-              </td>
-              <td
-                v-for="equipment in compareEquipmentList"
-                :key="getItemKey(equipment)"
-                :class="['compare-cell', { 'max-value': row.highlight && isFieldMax(equipment, row) }]"
-              >
-                {{ formatCellValue(equipment, row) }}
-                <span
-                  v-if="row.highlight && !isFieldMax(equipment, row) && formatDelta(equipment, row)"
-                  class="diff-delta"
-                  title="与最优值的差距"
-                >{{ formatDelta(equipment, row) }}</span>
-              </td>
-            </tr>
-
-            <tr v-for="row in costEffectivenessRows" :key="row.field" class="compare-row">
-              <td class="compare-cell compare-label-cell">{{ row.label }}</td>
-              <td
-                v-for="equipment in compareEquipmentList"
-                :key="getItemKey(equipment)"
-                :class="['compare-cell', { 'max-value': isBestCostEffectiveness(equipment, row.field) }]"
-              >
-                {{ formatCostEffectiveness(equipment, row.field) }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              <span class="equipment-name-inline">{{ formatValue(equipment.model || equipment.equipmentName) }}</span>
+              <button
+                class="remove-btn-inline"
+                aria-label="移除对比项"
+                @click.stop="removeCompareItem(equipment)"
+              >×</button>
+              <span class="equipment-category-inline">{{ formatValue(equipment.subCategory || equipment.category) }}</span>
+            </div>
+          </div>
+          <div
+            v-for="(row, idx) in currentCompareRows"
+            :key="row.key || row.field || row.label"
+            :class="['grid-row', { 'diff-row': isRowDifferent(row), 'grid-row-striped': idx % 2 === 1 }]"
+          >
+            <div class="grid-cell grid-label-cell">{{ row.label }}</div>
+            <div
+              v-for="equipment in compareEquipmentList"
+              :key="getItemKey(equipment)"
+              :class="['grid-cell', { 'max-value': row.highlight && isFieldMax(equipment, row) }]"
+            >
+              {{ formatCellValue(equipment, row) }}
+              <span
+                v-if="row.highlight && !isFieldMax(equipment, row) && formatDelta(equipment, row)"
+                class="diff-delta"
+                title="与最优值的差距"
+              >{{ formatDelta(equipment, row) }}</span>
+            </div>
+          </div>
+          <div
+            v-for="(row, idx) in costEffectivenessRows"
+            :key="row.field"
+            :class="['grid-row', { 'grid-row-striped': (currentCompareRows.length + idx) % 2 === 1 }]"
+          >
+            <div class="grid-cell grid-label-cell">{{ row.label }}</div>
+            <div
+              v-for="equipment in compareEquipmentList"
+              :key="getItemKey(equipment)"
+              :class="['grid-cell', { 'max-value': isBestCostEffectiveness(equipment, row.field) }]"
+            >
+              {{ formatCostEffectiveness(equipment, row.field) }}
+            </div>
+          </div>
+        </div>
       </div>
 
       <div v-else class="compare-panel empty-panel">
@@ -977,89 +974,71 @@ export default {
   border-radius: 0 0 8px 8px;
 }
 
-.compare-table {
-  width: 100%;
-  border-collapse: collapse;
+.compare-grid {
+  display: grid;
+  grid-template-columns: 15% repeat(var(--col-count, 1), 1fr);
   flex: 1;
-  table-layout: fixed;
+  overflow-x: auto;
 }
 
-.compare-table .compare-label-cell {
-  width: 15%;
+.grid-row {
+  display: contents;
 }
 
-.compare-row {
-  transition: background-color 0.2s;
-}
-
-.compare-row:not(.compare-header-row):hover {
-  background-color: var(--bg-secondary);
-}
-
-.compare-row:nth-child(even):not(.compare-header-row) {
-  background-color: var(--bg-secondary);
-}
-
-.compare-row:nth-child(even):not(.compare-header-row):hover {
-  background-color: var(--bg-secondary);
-}
-
-.compare-header-row {
-  background-color: var(--color-primary-hover);
-  color: white;
-}
-
-.compare-header-row:hover {
-  background-color: var(--color-primary-hover);
-}
-
-.compare-header-row .compare-cell {
-  color: white;
-}
-
-.compare-header-row .equipment-name-inline {
-  color: white;
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.compare-header-row .equipment-category-inline {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 11px;
-  display: block;
-  text-align: center;
-}
-
-.compare-header-row .compare-label-cell {
-  background-color: var(--color-primary-hover);
-  color: white;
-}
-
-.compare-cell {
+.grid-cell {
   padding: 12px 16px;
   font-size: 13px;
   text-align: center;
   vertical-align: middle;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  word-break: break-word;
 }
 
-.compare-label-cell {
+.grid-label-cell {
   background-color: var(--bg-page);
   font-weight: 600;
   color: var(--text-main);
-  text-align: center;
-  min-width: 100px;
   white-space: nowrap;
 }
 
-.compare-equipment-cell {
+.grid-equipment-cell {
   position: relative;
+  flex-wrap: wrap;
+}
+
+.grid-header-row .grid-cell {
+  background-color: var(--color-primary-hover);
+  color: white;
+  font-weight: bold;
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.grid-header-row .grid-label-cell {
+  background-color: var(--color-primary-hover);
+  color: white;
+}
+
+.grid-row-striped .grid-cell {
+  background-color: var(--bg-secondary);
+}
+
+.grid-row-striped .grid-label-cell {
+  background-color: var(--bg-secondary);
+}
+
+.grid-row:not(.grid-header-row):hover .grid-cell {
+  background-color: var(--bg-secondary);
 }
 
 /* 表头装备名称（内联，无嵌套div） */
 .equipment-name-inline {
   display: inline-block;
   font-weight: bold;
-  color: var(--color-primary-hover);
+  color: white;
   font-size: 14px;
   text-align: center;
 }
@@ -1080,6 +1059,7 @@ export default {
   margin-left: 6px;
   vertical-align: middle;
   transition: transform 0.2s;
+  flex-shrink: 0;
 }
 
 .remove-btn-inline:hover {
@@ -1090,8 +1070,9 @@ export default {
 /* 表头分类（块级，换行显示） */
 .equipment-category-inline {
   display: block;
+  width: 100%;
   font-size: 11px;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.8);
   text-align: center;
   margin-top: 4px;
 }
@@ -1196,19 +1177,15 @@ export default {
 
 <style>
 /* 夜间模式专属覆盖（不受 scoped 限制） */
-:root[data-theme="dark"] .compare-header-row {
+:root[data-theme="dark"] .grid-header-row .grid-cell {
   background-color: var(--color-primary-bg);
 }
 
-:root[data-theme="dark"] .compare-header-row:hover {
+:root[data-theme="dark"] .grid-header-row .grid-label-cell {
   background-color: var(--color-primary-bg);
 }
 
-:root[data-theme="dark"] .compare-header-row .compare-label-cell {
-  background-color: var(--color-primary-bg);
-}
-
-:root[data-theme="dark"] .compare-label-cell {
+:root[data-theme="dark"] .grid-label-cell {
   background-color: transparent;
 }
 
