@@ -4,9 +4,17 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20260903-16',
+  currentVersion: 'V20260903-17',
   buildTime: '2026-09-03',
   changelog: [
+    {
+      version: 'V20260903-17',
+      date: '2026-09-03',
+      changes: [
+        '修复：对比面板各行被拉伸导致比例失调（左栏绝对定位等高 + 网格禁拉伸）',
+        '修复：计算器磨损拉力曲线报错（消除 yMax/wearSeries 循环依赖）'
+      ]
+    },
     {
       version: 'V20260903-16',
       date: '2026-09-03',
