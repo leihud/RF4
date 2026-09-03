@@ -904,6 +904,7 @@ export default {
   display: flex;
   flex-direction: column;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
 }
 
 .panel-header {
@@ -980,6 +981,7 @@ export default {
   width: 100%;
   border-collapse: collapse;
   flex: 1;
+  table-layout: auto;
 }
 
 .compare-row {
@@ -1043,10 +1045,6 @@ export default {
   text-align: center;
   min-width: 100px;
   white-space: nowrap;
-  /* 横向滚动时参数列固定可见 */
-  position: sticky;
-  left: 0;
-  z-index: 1;
 }
 
 .compare-equipment-cell {
