@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20260829-03',
-  buildTime: '2026-08-28',
+  currentVersion: 'V20260903-01',
+  buildTime: '2026-09-03',
   changelog: [
+    {
+      version: 'V20260903-01',
+      date: '2026-09-03',
+      changes: [
+        '修复：装备对比页左侧装备列表与右侧对比面板顶部对齐'
+      ]
+    },
     {
       version: 'V20260829-03',
       date: '2026-08-28',
