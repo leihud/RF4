@@ -795,6 +795,7 @@ export default {
   flex-shrink: 0;
   /* 与右侧 compare-panel 保持一致的卡片结构：顶边对齐，头部栏在卡片内部 */
   align-self: flex-start;
+  height: fit-content;
   display: flex;
   flex-direction: column;
   background-color: var(--color-surface);
@@ -1053,14 +1054,12 @@ export default {
 }
 
 .equipment-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   margin-bottom: 6px;
   position: relative;
 }
 
 .equipment-header .equipment-name {
+  display: block;
   font-weight: bold;
   color: var(--color-primary-hover);
   font-size: 14px;
