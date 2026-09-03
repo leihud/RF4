@@ -85,7 +85,7 @@
       请先选择计算规则
     </div>
 
-    <div v-if="dataLoadError" class="rule-warning" style="background-color: #ffebee; color: var(--color-danger-strong);">
+    <div v-if="dataLoadError" class="rule-warning" style="background-color: var(--color-warning-bg); color: var(--color-danger-strong);">
       装备数据加载失败
     </div>
 
@@ -1287,7 +1287,7 @@ h1 {
 }
 
 .share-btn:hover {
-  background-color: #f3e5f5;
+  background-color: var(--color-warning-bg-light);
 }
 
 /* 查询按钮 */
@@ -1338,6 +1338,7 @@ h1 {
   border-radius: 6px;
   font-size: 14px;
   background-color: var(--color-surface);
+  color: var(--text-main);
   cursor: pointer;
   outline: none;
 }
@@ -1359,6 +1360,7 @@ h1 {
   border-radius: 6px;
   font-size: 14px;
   background-color: var(--color-surface);
+  color: var(--text-main);
   outline: none;
   min-width: 150px;
 }
@@ -1416,7 +1418,7 @@ h1 {
 .tips-range {
   color: var(--color-primary);
   font-weight: 600;
-  background-color: #bbdefb;
+  background-color: var(--color-primary-bg);
   padding: 2px 8px;
   border-radius: 4px;
   font-size: 12px;
@@ -1444,9 +1446,9 @@ h2 {
 
 .rule-btn {
   padding: 8px 20px;
-  border: 2px solid #4caf50;
+  border: 2px solid var(--color-success-accent);
   background-color: var(--color-surface);
-  color: #4caf50;
+  color: var(--color-success-accent);
   border-radius: 20px;
   cursor: pointer;
   transition: all 0.3s;
@@ -1458,7 +1460,7 @@ h2 {
 }
 
 .rule-btn.active {
-  background-color: #4caf50;
+  background-color: var(--color-success-accent);
   color: white;
 }
 
@@ -1484,7 +1486,7 @@ h2 {
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid #f3f3f3;
+  border: 4px solid var(--color-border);
   border-top: 4px solid var(--color-success-accent);
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -1502,11 +1504,17 @@ h2 {
 }
 
 .equipment-selector {
-  background-color: #f8f9fa;
+  background-color: var(--color-surface);
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 20px;
   transition: opacity 0.3s;
+}
+
+.equipment-selector h2 {
+  color: var(--text-heading);
+  font-size: 18px;
+  margin: 0 0 16px 0;
 }
 
 .equipment-selector.disabled {
@@ -1535,7 +1543,7 @@ h2 {
 
 .type-item:hover {
   border-color: var(--color-success-accent);
-  background-color: #f0f8f0;
+  background-color: var(--color-success-bg-light);
 }
 
 .type-item.active {
@@ -1568,8 +1576,8 @@ h2 {
 .selected-category-tag {
   display: inline-block;
   padding: 4px 12px;
-  background-color: #e0f2fe;
-  color: #0369a1;
+  background-color: var(--color-primary-bg);
+  color: var(--color-primary);
   font-size: 12px;
   font-weight: 600;
   border-radius: 12px;
@@ -1602,9 +1610,9 @@ h2 {
 }
 
 .selected-tension {
-  color: #9b59b6;
+  color: var(--color-primary);
   padding: 4px 12px;
-  background-color: #f5f0fa;
+  background-color: var(--color-primary-bg);
   border-radius: 4px;
   font-size: 13px;
   white-space: nowrap;
@@ -2282,5 +2290,24 @@ h2 {
   .form-col .multi-select-container {
     max-height: 200px;
   }
+}
+</style>
+
+<style>
+/* 夜间模式：Calculator 页面暗色覆盖 */
+:root[data-theme="dark"] .fish-select,
+:root[data-theme="dark"] .fish-search-input {
+  color: var(--text-main);
+  background-color: var(--color-surface);
+}
+
+:root[data-theme="dark"] .fish-select option {
+  background-color: var(--color-surface);
+  color: var(--text-main);
+}
+
+:root[data-theme="dark"] .fish-search-input::placeholder,
+:root[data-theme="dark"] .fish-select option[value=""] {
+  color: var(--text-hint);
 }
 </style>
