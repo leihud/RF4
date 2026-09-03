@@ -79,60 +79,60 @@
             <button class="clear-btn" @click="clearCompareList">清空</button>
           </div>
         </div>
-        <div class="compare-table">
-          <!-- 表头行 -->
-          <div class="compare-row compare-header-row">
-            <div class="compare-cell compare-label-cell">参数</div>
-            <div
-              v-for="equipment in compareEquipmentList"
-              :key="getItemKey(equipment)"
-              class="compare-cell compare-equipment-cell"
+        <table class="compare-table">
+          <thead>
+            <tr class="compare-header-row">
+              <th class="compare-cell compare-label-cell">参数</th>
+              <th
+                v-for="equipment in compareEquipmentList"
+                :key="getItemKey(equipment)"
+                class="compare-cell compare-equipment-cell"
+              >
+                <span class="equipment-name-inline">{{ formatValue(equipment.model || equipment.equipmentName) }}</span>
+                <button
+                  class="remove-btn-inline"
+                  aria-label="移除对比项"
+                  @click.stop="removeCompareItem(equipment)"
+                >×</button>
+                <span class="equipment-category-inline">{{ formatValue(equipment.subCategory || equipment.category) }}</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="row in currentCompareRows"
+              :key="row.key || row.field || row.label"
+              :class="['compare-row', { 'diff-row': isRowDifferent(row) }]"
             >
-              <span class="equipment-name-inline">{{ formatValue(equipment.model || equipment.equipmentName) }}</span>
-              <button
-                class="remove-btn-inline"
-                aria-label="移除对比项"
-                @click.stop="removeCompareItem(equipment)"
-              >×</button>
-              <span class="equipment-category-inline">{{ formatValue(equipment.subCategory || equipment.category) }}</span>
-            </div>
-          </div>
+              <td class="compare-cell compare-label-cell">
+                {{ row.label }}
+              </td>
+              <td
+                v-for="equipment in compareEquipmentList"
+                :key="getItemKey(equipment)"
+                :class="['compare-cell', { 'max-value': row.highlight && isFieldMax(equipment, row) }]"
+              >
+                {{ formatCellValue(equipment, row) }}
+                <span
+                  v-if="row.highlight && !isFieldMax(equipment, row) && formatDelta(equipment, row)"
+                  class="diff-delta"
+                  title="与最优值的差距"
+                >{{ formatDelta(equipment, row) }}</span>
+              </td>
+            </tr>
 
-          <!-- 数据行 -->
-          <div
-            v-for="row in currentCompareRows"
-            :key="row.key || row.field || row.label"
-            :class="['compare-row', { 'diff-row': isRowDifferent(row) }]"
-          >
-            <div class="compare-cell compare-label-cell">
-              {{ row.label }}
-            </div>
-            <div
-              v-for="equipment in compareEquipmentList"
-              :key="getItemKey(equipment)"
-              :class="['compare-cell', { 'max-value': row.highlight && isFieldMax(equipment, row) }]"
-            >
-              {{ formatCellValue(equipment, row) }}
-              <span
-                v-if="row.highlight && !isFieldMax(equipment, row) && formatDelta(equipment, row)"
-                class="diff-delta"
-                title="与最优值的差距"
-              >{{ formatDelta(equipment, row) }}</span>
-            </div>
-          </div>
-
-          <!-- 性价比行 -->
-          <div v-for="row in costEffectivenessRows" :key="row.field" class="compare-row">
-            <div class="compare-cell compare-label-cell">{{ row.label }}</div>
-            <div
-              v-for="equipment in compareEquipmentList"
-              :key="getItemKey(equipment)"
-              :class="['compare-cell', { 'max-value': isBestCostEffectiveness(equipment, row.field) }]"
-            >
-              {{ formatCostEffectiveness(equipment, row.field) }}
-            </div>
-          </div>
-        </div>
+            <tr v-for="row in costEffectivenessRows" :key="row.field" class="compare-row">
+              <td class="compare-cell compare-label-cell">{{ row.label }}</td>
+              <td
+                v-for="equipment in compareEquipmentList"
+                :key="getItemKey(equipment)"
+                :class="['compare-cell', { 'max-value': isBestCostEffectiveness(equipment, row.field) }]"
+              >
+                {{ formatCostEffectiveness(equipment, row.field) }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <div v-else class="compare-panel empty-panel">
@@ -977,14 +977,12 @@ export default {
 }
 
 .compare-table {
-  display: table;
   width: 100%;
   border-collapse: collapse;
   flex: 1;
 }
 
 .compare-row {
-  display: table-row;
   transition: background-color 0.2s;
 }
 
@@ -1032,7 +1030,6 @@ export default {
 }
 
 .compare-cell {
-  display: table-cell;
   padding: 12px 16px;
   font-size: 13px;
   text-align: center;
