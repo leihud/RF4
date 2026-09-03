@@ -90,31 +90,38 @@ export async function checkRateLimit(ip, db) {
   try {
     const now = Date.now()
     const windowStart = now - ANTI_SCRAPING_CONFIG.RATE_LIMIT.WINDOW_MS
+    const nowIso = new Date(now).toISOString()
     
-    // 清理过期记录
-    await db.prepare(
-      'DELETE FROM rate_limits WHERE ip = ? AND created_at < ?'
-    ).bind(ip, new Date(windowStart).toISOString()).run()
+    // 读取该 IP 当前记录（rate_limits 表 UNIQUE(ip)，每 IP 仅一行）
+    const row = await db.prepare(
+      'SELECT request_count, last_request_at FROM rate_limits WHERE ip = ?'
+    ).bind(ip).first()
     
-    // 统计当前窗口内的请求数
-    const countResult = await db.prepare(
-      'SELECT COUNT(*) as count FROM rate_limits WHERE ip = ? AND created_at > ?'
-    ).bind(ip, new Date(windowStart).toISOString()).first()
-    
-    const currentCount = countResult?.count || 0
+    // 上次请求仍在窗口内则累加计数，否则重置为 0
+    let currentCount = 0
+    if (row && row.last_request_at) {
+      const lastTime = new Date(row.last_request_at).getTime()
+      if (!Number.isNaN(lastTime) && lastTime > windowStart) {
+        currentCount = row.request_count || 0
+      }
+    }
     
     if (currentCount >= maxRequests) {
-      // 超过限制，标记为可疑
+      // 超限：标记可疑（upsert 避免 UNIQUE 冲突）
       await db.prepare(
-        'INSERT OR REPLACE INTO rate_limits (ip, request_count, last_request_at, is_suspicious) VALUES (?, ?, ?, 1)'
-      ).bind(ip, currentCount + 1, new Date().toISOString()).run()
+        `INSERT INTO rate_limits (ip, request_count, last_request_at, is_suspicious)
+         VALUES (?, 1, ?, 1)
+         ON CONFLICT(ip) DO UPDATE SET request_count = request_count + 1, last_request_at = ?, is_suspicious = 1`
+      ).bind(ip, nowIso, nowIso).run()
       return { allowed: false, remaining: 0 }
     }
     
-    // 记录本次请求
+    // 未超限：单次 upsert 累加计数，替代原 DELETE+COUNT+INSERT 三次操作
     await db.prepare(
-      'INSERT INTO rate_limits (ip, request_count, last_request_at) VALUES (?, 1, ?)'
-    ).bind(ip, new Date().toISOString()).run()
+      `INSERT INTO rate_limits (ip, request_count, last_request_at)
+       VALUES (?, 1, ?)
+       ON CONFLICT(ip) DO UPDATE SET request_count = ?, last_request_at = ?`
+    ).bind(ip, nowIso, currentCount + 1, nowIso).run()
     
     return { allowed: true, remaining: maxRequests - currentCount - 1 }
   } catch (e) {
@@ -411,7 +418,11 @@ export function createEquipmentHandler(tableName, sanitizeType) {
       const result = await env.DB.prepare(sql).bind(...binds).all()
       const sanitizedResults = result.results.map(row => sanitizeEquipmentData(row, sanitizeType))
       const response = jsonResponse(sanitizedResults)
-      if (cacheable) putCache(request, response.clone())
+      // 用 waitUntil 确保缓存写入在响应返回后仍能完成；
+      // 直接 fire-and-forget 会因执行上下文销毁而取消写入，导致缓存永不命中
+      if (cacheable && typeof context.waitUntil === 'function') {
+        context.waitUntil(putCache(request, response.clone()))
+      }
       return response
     } catch (error) {
       console.error('Database query error:', error)

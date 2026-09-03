@@ -122,7 +122,7 @@ describe('ComparePage 参数对比', () => {
     await nextTick()
 
     expect(wrapper.vm.compareEquipmentList.length).toBe(1)
-    expect(wrapper.find('.compare-table').exists()).toBe(true)
+    expect(wrapper.find('.compare-grid').exists()).toBe(true)
     expect(wrapper.text()).toContain('测试竿A')
 
     // 再加一件触发差异行/差值渲染路径
