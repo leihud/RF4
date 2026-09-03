@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20260903-15',
+  currentVersion: 'V20260903-16',
   buildTime: '2026-09-03',
   changelog: [
+    {
+      version: 'V20260903-16',
+      date: '2026-09-03',
+      changes: [
+        '优化：交互与视觉统一（Toast/自定义确认弹窗/滚动锁定与Esc/深色模式token化）、对比表参数列sticky+列高亮、计算器磨损拉力曲线、装备详情弹窗、移动端导航精简，修复对比页装备列表未填满'
+      ]
+    },
     {
       version: 'V20260903-15',
       date: '2026-09-03',
