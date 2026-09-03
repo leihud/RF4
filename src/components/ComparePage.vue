@@ -868,17 +868,18 @@ export default {
 }
 
 .compare-content {
-  display: flex;
-  gap: 24px;
+  /* 高度由右侧对比面板内容决定；左侧装备列表绝对定位填满同高区域，
+     避免列表内容把整行撑高、导致对比网格各行被 align-content 拉伸 */
+  position: relative;
   min-height: 550px;
 }
 
 .equipment-list {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
   width: 360px;
-  flex-shrink: 0;
-  /* 与右侧 compare-panel 等高：align-self 保持 stretch（flex 默认），
-     无论哪一侧内容更高，两张卡片顶边/底边都对齐，避免选完装备后参差 */
-  align-self: stretch;
   display: flex;
   flex-direction: column;
   background-color: var(--color-surface);
@@ -983,7 +984,9 @@ export default {
 }
 
 .compare-panel {
-  flex: 1;
+  /* 右侧面板主导整块高度：左边距为装备列表宽 + 间距 */
+  margin-left: 384px;
+  min-height: 100%;
   background-color: var(--color-surface);
   border: 2px solid var(--color-primary-bg);
   border-radius: 10px;
@@ -1056,6 +1059,8 @@ export default {
 .compare-grid {
   display: grid;
   flex: 1;
+  /* 防止面板存在残余高度时将各行拉高导致比例失调 */
+  align-content: flex-start;
   overflow-x: auto;
 }
 
@@ -1239,18 +1244,22 @@ export default {
 }
 
 @media (max-width: 768px) {
-  .compare-content {
-    flex-direction: column;
-  }
-
+  /* 移动端上下堆叠：装备列表回归普通文档流，面板取消左侧留白 */
   .equipment-list {
+    position: static;
     width: 100%;
+    height: auto;
   }
 
-  /* 移动端上下堆叠布局：恢复为按内容高度上限 300px 滚动 */
   .list-container {
     flex: 0 1 auto;
     max-height: 300px;
+  }
+
+  .compare-panel {
+    margin-left: 0;
+    margin-top: 24px;
+    min-height: 0;
   }
 
   .compare-header h1 {

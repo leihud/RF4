@@ -135,25 +135,16 @@ export default {
     xTicks() {
       return [0, 25, 50, 75, 100].map((wear) => ({ wear }))
     },
-    yMax() {
-      let max = 1
-      for (const s of this.wearSeries) {
-        for (const p of s.pts) if (p[1] > max) max = p[1]
-      }
-      return max * 1.08
-    },
     palette() {
       return ['#1565c0', '#e65100', '#2e7d32', '#7b1fa2', '#00695c']
     },
-    wearSeries() {
+    /** 纯数据（不含 path），供 yMax 与 wearSeries 复用，避免循环依赖 */
+    seriesData() {
       return this.candidates.map((c) => {
         const pts = []
         for (let wear = 0; wear <= 100; wear += 2) {
           pts.push([wear, tensionAt(c.item, c.type, this.calcRule, this.friction, this.mode, wear)])
         }
-        const path = pts
-          .map((p, idx) => `${idx === 0 ? 'M' : 'L'}${this.xAt(p[0]).toFixed(1)},${this.yAt(p[1] / this.yMax).toFixed(1)}`)
-          .join(' ')
         const itemWear = toSafeNumber(c.item && c.item.wear, 0)
         const curValue = tensionAt(c.item, c.type, this.calcRule, this.friction, this.mode, itemWear)
         return {
@@ -161,9 +152,23 @@ export default {
           name: c.name,
           wear: itemWear,
           pts,
-          path,
           curValue: fmtNum(curValue)
         }
+      })
+    },
+    yMax() {
+      let max = 1
+      for (const s of this.seriesData) {
+        for (const p of s.pts) if (p[1] > max) max = p[1]
+      }
+      return max * 1.08
+    },
+    wearSeries() {
+      return this.seriesData.map((s) => {
+        const path = s.pts
+          .map((p, idx) => `${idx === 0 ? 'M' : 'L'}${this.xAt(p[0]).toFixed(1)},${this.yAt(p[1] / this.yMax).toFixed(1)}`)
+          .join(' ')
+        return { ...s, path }
       })
     }
   },
