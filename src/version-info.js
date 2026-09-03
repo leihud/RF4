@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20260903-06',
+  currentVersion: 'V20260903-07',
   buildTime: '2026-09-03',
   changelog: [
+    {
+      version: 'V20260903-07',
+      date: '2026-09-03',
+      changes: [
+        '修复：移除sticky定位并添加横向滚动解决表格对齐'
+      ]
+    },
     {
       version: 'V20260903-06',
       date: '2026-09-03',
