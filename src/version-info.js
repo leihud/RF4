@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20260903-12',
+  currentVersion: 'V20260903-13',
   buildTime: '2026-09-03',
   changelog: [
+    {
+      version: 'V20260903-13',
+      date: '2026-09-03',
+      changes: [
+        '修复：grid-cell移除display:flex，改用text-align:center实现文本居中'
+      ]
+    },
     {
       version: 'V20260903-12',
       date: '2026-09-03',
