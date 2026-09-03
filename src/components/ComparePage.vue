@@ -793,22 +793,28 @@ export default {
 .equipment-list {
   width: 360px;
   flex-shrink: 0;
+  /* 与右侧 compare-panel 保持一致的卡片结构：顶边对齐，头部栏在卡片内部 */
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-surface);
+  border: 2px solid var(--color-primary-bg);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
 }
 
 .equipment-list h3 {
   color: var(--color-primary);
-  margin-bottom: 16px;
+  margin: 0;
   font-size: 16px;
   font-weight: 600;
 }
 
 .list-container {
   background-color: var(--color-surface);
-  border: 2px solid var(--color-primary-bg);
-  border-radius: 10px;
   max-height: 650px;
   overflow-y: auto;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .equipment-item {
@@ -1107,27 +1113,31 @@ export default {
   font-weight: normal;
 }
 
-/* 列表头部：标题 + 快捷添加 */
+/* 列表头部：标题 + 快捷添加（与对比面板 panel-header 顶部对齐） */
 .list-header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  padding: 16px 18px;
+  background-color: var(--color-primary-bg);
+  border-bottom: 2px solid var(--color-primary);
 }
 
 .list-header-row h3 {
-  margin-bottom: 0;
+  margin: 0;
 }
 
 .quick-add-btn {
-  padding: 4px 12px;
+  padding: 8px 14px;
   border: 1px solid var(--color-primary);
   background: var(--color-surface);
   color: var(--color-primary);
-  border-radius: 12px;
-  font-size: 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .quick-add-btn:hover {
