@@ -97,10 +97,14 @@
               :data-col="colIdx"
               class="grid-cell grid-equipment-cell"
             >
-              <span class="equipment-name-inline">{{ formatValue(equipment.model || equipment.equipmentName) }}</span>
+              <span
+                class="equipment-name-inline"
+                :title="formatValue(equipment.model || equipment.equipmentName)"
+              >{{ formatValue(equipment.model || equipment.equipmentName) }}</span>
               <button
                 class="remove-btn-inline"
                 aria-label="移除对比项"
+                :title="`移除 ${formatValue(equipment.model || equipment.equipmentName)}`"
                 @click.stop="removeCompareItem(equipment)"
               >×</button>
               <span class="equipment-category-inline">{{ formatValue(equipment.subCategory || equipment.category) }}</span>
@@ -111,7 +115,7 @@
             :key="row.key || row.field || row.label"
             :class="['grid-row', { 'diff-row': isRowDifferent(row), 'grid-row-striped': idx % 2 === 1 }]"
           >
-            <div class="grid-cell grid-label-cell">{{ row.label }}</div>
+            <div class="grid-cell grid-label-cell" :title="row.label">{{ row.label }}</div>
             <div
               v-for="(equipment, colIdx) in compareEquipmentList"
               :key="getItemKey(equipment)"
@@ -131,7 +135,7 @@
             :key="row.field"
             :class="['grid-row', { 'grid-row-striped': (currentCompareRows.length + idx) % 2 === 1 }]"
           >
-            <div class="grid-cell grid-label-cell">{{ row.label }}</div>
+            <div class="grid-cell grid-label-cell" :title="row.label">{{ row.label }}</div>
             <div
               v-for="(equipment, colIdx) in compareEquipmentList"
               :key="getItemKey(equipment)"
@@ -332,7 +336,8 @@ export default {
   computed: {
     gridCols() {
       const n = this.compareEquipmentList.length || 1
-      return `15% repeat(${n}, 1fr)`
+      // 参数列最小 140px，避免长标签溢出；装备列共享剩余空间
+      return `minmax(140px, 15%) repeat(${n}, 1fr)`
     },
     categories() {
       const data = this.compareType === 'rod' ? this.rodData : this.reelData
@@ -1084,6 +1089,8 @@ export default {
   font-weight: 600;
   color: var(--text-main);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   /* 横向滚动时固定“参数”列，方便对照 */
   position: sticky;
   left: 0;
@@ -1093,7 +1100,13 @@ export default {
 
 .grid-equipment-cell {
   position: relative;
-  flex-wrap: wrap;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* 给绝对定位的删除按钮留空 */
+  padding-right: 28px;
 }
 
 .grid-header-row .grid-cell {
@@ -1123,15 +1136,22 @@ export default {
 
 /* 表头装备名称（内联，无嵌套div） */
 .equipment-name-inline {
-  display: inline-block;
+  display: block;
+  width: 100%;
   font-weight: bold;
   color: white;
   font-size: 14px;
   text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* 表头删除按钮（绝对定位，不影响table-cell宽度计算） */
 .remove-btn-inline {
+  position: absolute;
+  top: 6px;
+  right: 6px;
   width: 20px;
   height: 20px;
   border: none;
@@ -1143,10 +1163,7 @@ export default {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: 6px;
-  vertical-align: middle;
   transition: transform 0.2s;
-  flex-shrink: 0;
 }
 
 .remove-btn-inline:hover {
@@ -1162,6 +1179,9 @@ export default {
   color: rgba(255, 255, 255, 0.8);
   text-align: center;
   margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* 最优值：绿色高亮（含 ★ 语义，与导出文本的 ★ 标记对应） */
