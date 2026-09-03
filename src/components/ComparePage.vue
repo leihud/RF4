@@ -981,7 +981,11 @@ export default {
   width: 100%;
   border-collapse: collapse;
   flex: 1;
-  table-layout: auto;
+  table-layout: fixed;
+}
+
+.compare-table .compare-label-cell {
+  width: 15%;
 }
 
 .compare-row {
@@ -1048,7 +1052,6 @@ export default {
 }
 
 .compare-equipment-cell {
-  min-width: 180px;
   position: relative;
 }
 
