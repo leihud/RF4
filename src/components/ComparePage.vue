@@ -79,7 +79,7 @@
             <button class="clear-btn" @click="clearCompareList">清空</button>
           </div>
         </div>
-        <div class="compare-grid" :style="{ '--col-count': compareEquipmentList.length }">
+        <div class="compare-grid" :style="{ gridTemplateColumns: gridCols }">
           <div class="grid-row grid-header-row">
             <div class="grid-cell grid-label-cell">参数</div>
             <div
@@ -268,6 +268,10 @@ export default {
     compareType() { this.scheduleCompareSave() }
   },
   computed: {
+    gridCols() {
+      const n = this.compareEquipmentList.length || 1
+      return `15% repeat(${n}, 1fr)`
+    },
     categories() {
       const data = this.compareType === 'rod' ? this.rodData : this.reelData
       if (!Array.isArray(data)) return []
@@ -976,7 +980,6 @@ export default {
 
 .compare-grid {
   display: grid;
-  grid-template-columns: 15% repeat(var(--col-count, 1), 1fr);
   flex: 1;
   overflow-x: auto;
 }
