@@ -992,13 +992,11 @@ export default {
   padding: 12px 16px;
   font-size: 13px;
   text-align: center;
-  vertical-align: middle;
   border-bottom: 1px solid var(--color-border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   min-height: 44px;
   word-break: break-word;
+  display: block;
+  line-height: 1.6;
 }
 
 .grid-label-cell {
