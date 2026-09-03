@@ -343,6 +343,7 @@
 <script>
 import { searchAndRankEquipment, EQUIPMENT_SEARCH_FIELDS } from '../utils/search.js'
 import { formatPrice as formatPriceDisplay, parsePrice } from '../utils/display.js'
+import { loadRodAndReelData } from '../utils/equipmentLoader.js'
 import AppToast from './common/AppToast.vue'
 
 export default {
@@ -636,16 +637,14 @@ export default {
     },
     async loadRods() {
       try {
-        const res = await fetch('/api/rods')
-        const result = await res.json()
-        this.rodList = Array.isArray(result) ? result : (result.data || [])
+        const { rodData } = await loadRodAndReelData()
+        this.rodList = rodData
       } catch (e) { console.error('加载鱼竿失败:', e) }
     },
     async loadReels() {
       try {
-        const res = await fetch('/api/reels')
-        const result = await res.json()
-        this.reelList = Array.isArray(result) ? result : (result.data || [])
+        const { reelData } = await loadRodAndReelData()
+        this.reelList = reelData
       } catch (e) { console.error('加载渔轮失败:', e) }
     },
     async loadFishSpecies() {

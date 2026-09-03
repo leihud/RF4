@@ -795,9 +795,9 @@ export default {
 .equipment-list {
   width: 360px;
   flex-shrink: 0;
-  /* 与右侧 compare-panel 保持一致的卡片结构：顶边对齐，头部栏在卡片内部 */
-  align-self: flex-start;
-  height: fit-content;
+  /* 与右侧 compare-panel 等高：align-self 保持 stretch（flex 默认），
+     无论哪一侧内容更高，两张卡片顶边/底边都对齐，避免选完装备后参差 */
+  align-self: stretch;
   display: flex;
   flex-direction: column;
   background-color: var(--color-surface);
