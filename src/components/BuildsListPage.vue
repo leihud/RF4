@@ -345,6 +345,7 @@ import { searchAndRankEquipment, EQUIPMENT_SEARCH_FIELDS } from '../utils/search
 import { formatPrice as formatPriceDisplay, parsePrice } from '../utils/display.js'
 import { loadRodAndReelData } from '../utils/equipmentLoader.js'
 import AppToast from './common/AppToast.vue'
+import { lockScroll, bindEscape } from '../utils/modal.js'
 
 export default {
   name: 'BuildsListPage',
@@ -478,6 +479,11 @@ export default {
     if (this.searchDebounceTimer) clearTimeout(this.searchDebounceTimer)
     if (this.hKeyTimer) clearTimeout(this.hKeyTimer)
     if (this._filterSaveTimer) clearTimeout(this._filterSaveTimer)
+    if (this._escOff) {
+      this._escOff()
+      this._escOff = null
+    }
+    if (this.showEditModal) lockScroll(false)
   },
   watch: {
     // 筛选记忆：筛选条件/排序变化后防抖写入 localStorage
@@ -486,7 +492,20 @@ export default {
       handler() { this.scheduleSaveFilters() }
     },
     sortBy() { this.scheduleSaveFilters() },
-    searchInput() { this.scheduleSaveFilters() }
+    searchInput() { this.scheduleSaveFilters() },
+    /** 编辑弹窗：打开时锁定 body 滚动并支持 Esc 关闭 */
+    showEditModal(open) {
+      if (open) {
+        lockScroll(true)
+        this._escOff = bindEscape(this.closeEditModal)
+      } else {
+        lockScroll(false)
+        if (this._escOff) {
+          this._escOff()
+          this._escOff = null
+        }
+      }
+    }
   },
   methods: {
     async loadBuilds(append = false) {
@@ -1091,7 +1110,7 @@ export default {
   padding: 3px 10px;
   background-color: var(--color-warning-bg-light);
   color: var(--color-warning-strong);
-  border: 1px solid #fed7aa;
+  border: 1px solid var(--color-warning-border);
   border-radius: 14px;
   font-size: 12px;
   font-weight: 500;

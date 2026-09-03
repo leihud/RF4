@@ -63,7 +63,11 @@
               v-if="equipment.ratingAlias && equipment.ratingAlias !== '常规'"
               class="equipment-rating-tag"
             >{{ formatValue(equipment.ratingAlias) }}</span>
-            <span class="equipment-name">{{ formatValue(equipment.model || equipment.equipmentName) }}</span>
+            <span
+              class="equipment-name"
+              title="点击查看详情"
+              @click.stop="openDetail(equipment)"
+            >{{ formatValue(equipment.model || equipment.equipmentName) }}</span>
           </div>
           <div v-if="filteredEquipment.length === 0" class="list-empty">
             未找到匹配的装备
@@ -79,12 +83,18 @@
             <button class="clear-btn" @click="clearCompareList">清空</button>
           </div>
         </div>
-        <div class="compare-grid" :style="{ gridTemplateColumns: gridCols }">
+        <div
+          class="compare-grid"
+          :style="{ gridTemplateColumns: gridCols }"
+          @mouseover="onGridMouseOver"
+          @mouseleave="onGridMouseLeave"
+        >
           <div class="grid-row grid-header-row">
             <div class="grid-cell grid-label-cell">参数</div>
             <div
-              v-for="equipment in compareEquipmentList"
+              v-for="(equipment, colIdx) in compareEquipmentList"
               :key="getItemKey(equipment)"
+              :data-col="colIdx"
               class="grid-cell grid-equipment-cell"
             >
               <span class="equipment-name-inline">{{ formatValue(equipment.model || equipment.equipmentName) }}</span>
@@ -103,9 +113,10 @@
           >
             <div class="grid-cell grid-label-cell">{{ row.label }}</div>
             <div
-              v-for="equipment in compareEquipmentList"
+              v-for="(equipment, colIdx) in compareEquipmentList"
               :key="getItemKey(equipment)"
-              :class="['grid-cell', { 'max-value': row.highlight && isFieldMax(equipment, row) }]"
+              :data-col="colIdx"
+              :class="['grid-cell', { 'max-value': row.highlight && isFieldMax(equipment, row), 'col-hover': hoverColumn === colIdx }]"
             >
               {{ formatCellValue(equipment, row) }}
               <span
@@ -122,9 +133,10 @@
           >
             <div class="grid-cell grid-label-cell">{{ row.label }}</div>
             <div
-              v-for="equipment in compareEquipmentList"
+              v-for="(equipment, colIdx) in compareEquipmentList"
               :key="getItemKey(equipment)"
-              :class="['grid-cell', { 'max-value': isBestCostEffectiveness(equipment, row.field) }]"
+              :data-col="colIdx"
+              :class="['grid-cell', { 'max-value': isBestCostEffectiveness(equipment, row.field), 'col-hover': hoverColumn === colIdx }]"
             >
               {{ formatCostEffectiveness(equipment, row.field) }}
             </div>
@@ -139,8 +151,41 @@
           <p>支持选择多个装备进行参数对比</p>
         </div>
       </div>
-      <div v-if="exportHint" class="export-hint-bar">{{ exportHint }}</div>
     </div>
+
+    <!-- 装备详情弹窗：点击列表中的装备名称打开 -->
+    <div v-if="detailEquipment" class="detail-mask" @click.self="closeDetailModal">
+      <div class="detail-modal" role="dialog" aria-modal="true" aria-label="装备详情">
+        <button class="detail-close-btn" aria-label="关闭详情" @click="closeDetailModal">×</button>
+        <div class="detail-head">
+          <span class="equipment-category-tag">{{ formatValue(detailEquipment.category) }}</span>
+          <span
+            v-if="detailEquipment.ratingAlias && detailEquipment.ratingAlias !== '常规'"
+            class="equipment-rating-tag"
+          >{{ formatValue(detailEquipment.ratingAlias) }}</span>
+          <h3 class="detail-title">{{ formatValue(detailEquipment.model || detailEquipment.equipmentName) }}</h3>
+        </div>
+        <div class="detail-rows">
+          <div v-for="row in detailRows" :key="row.key || row.field || row.label" class="detail-row">
+            <span class="detail-row-label">{{ row.label }}</span>
+            <span class="detail-row-value">{{ formatCellValue(detailEquipment, row) }}</span>
+          </div>
+        </div>
+        <div class="detail-footer">
+          <button
+            class="detail-toggle-btn"
+            :class="{ active: isInCompareList(detailEquipment) }"
+            @click="toggleCompareItem(detailEquipment)"
+          >
+            {{ isInCompareList(detailEquipment) ? '已在对比中，点击移除' : '加入对比' }}
+          </button>
+          <button class="detail-close-ok" @click="closeDetailModal">关闭</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast 提示（共享组件，自管定时器） -->
+    <AppToast ref="toast" />
   </div>
 </template>
 
@@ -150,6 +195,8 @@ import { sanitizeEquipmentFields } from '../utils/sanitize.js'
 import { loadRodAndReelData } from '../utils/equipmentLoader.js'
 import { getMergedAdaptWeight, parsePrice } from '../utils/display.js'
 import AppSkeleton from './common/AppSkeleton.vue'
+import AppToast from './common/AppToast.vue'
+import { lockScroll, bindEscape } from '../utils/modal.js'
 
 const COMPARE_ROWS = {
   rod: [
@@ -228,7 +275,8 @@ const TYPE_OPTIONS = [
 export default {
   name: 'ComparePage',
   components: {
-    AppSkeleton
+    AppSkeleton,
+    AppToast
   },
   data() {
     return {
@@ -243,7 +291,8 @@ export default {
       isLoading: false,
       dataLoadError: false,
       searchTimeout: null,
-      exportHint: ''
+      hoverColumn: -1,
+      detailEquipment: null
     }
   },
   mounted() {
@@ -265,7 +314,20 @@ export default {
       deep: true,
       handler() { this.scheduleCompareSave() }
     },
-    compareType() { this.scheduleCompareSave() }
+    compareType() { this.scheduleCompareSave() },
+    /** 详情弹窗：打开时锁定 body 滚动并支持 Esc 关闭 */
+    detailEquipment(equipment) {
+      if (equipment) {
+        lockScroll(true)
+        this._escOff = bindEscape(this.closeDetailModal)
+      } else {
+        lockScroll(false)
+        if (this._escOff) {
+          this._escOff()
+          this._escOff = null
+        }
+      }
+    }
   },
   computed: {
     gridCols() {
@@ -308,6 +370,10 @@ export default {
     },
     currentCompareRows() {
       return COMPARE_ROWS[this.compareType] || []
+    },
+    /** 详情弹窗参数行：直接复用对比表的参数行定义，保持口径一致 */
+    detailRows() {
+      return this.currentCompareRows
     },
     costEffectivenessRows() {
       if (this.compareEquipmentList.length === 0) return []
@@ -391,8 +457,7 @@ export default {
           added++
         }
       }
-      if (added === 0) this.exportHint = '强度前 3 已在对比列表中'
-      setTimeout(() => { this.exportHint = '' }, 2000)
+      if (added === 0) this.showToast('强度前 3 已在对比列表中', 'info')
     },
     /** 防抖保存对比列表（只存型号，恢复时重新匹配） */
     scheduleCompareSave() {
@@ -560,6 +625,23 @@ export default {
     clearCompareList() {
       this.compareEquipmentList = []
     },
+    showToast(message, type = 'info') {
+      this.$refs.toast.show(message, type)
+    },
+    /** 表格列 hover：事件委托定位所在列，仅当移动到含 data-col 的单元格时更新 */
+    onGridMouseOver(e) {
+      const cell = e.target && e.target.closest ? e.target.closest('.grid-cell[data-col]') : null
+      if (cell) this.hoverColumn = Number(cell.dataset.col)
+    },
+    onGridMouseLeave() {
+      this.hoverColumn = -1
+    },
+    openDetail(equipment) {
+      this.detailEquipment = equipment
+    },
+    closeDetailModal() {
+      this.detailEquipment = null
+    },
     /** 将对比表格导出为文本并复制到剪贴板 */
     async exportCompare() {
       if (this.compareEquipmentList.length === 0) return
@@ -590,11 +672,10 @@ export default {
       const text = lines.join('\n')
       try {
         await navigator.clipboard.writeText(text)
-        this.exportHint = '已复制到剪贴板！'
+        this.showToast('对比文本已复制到剪贴板', 'success')
       } catch (_) {
-        this.exportHint = text
+        this.showToast('复制失败，请手动复制', 'error')
       }
-      setTimeout(() => { this.exportHint = '' }, 3000)
     },
     removeCompareItem(equipment) {
       const key = this.getItemKey(equipment)
@@ -816,7 +897,10 @@ export default {
 
 .list-container {
   background-color: var(--color-surface);
-  max-height: 650px;
+  /* 填满 equipment-list 卡片扣除头部后的剩余高度，与右侧对比面板等高；
+     装备较少时留白为卡片底色，不再出现“列表到底、下方空一大块”的断层 */
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
 }
 
@@ -859,7 +943,7 @@ export default {
   font-size: 11px;
   color: var(--color-warning-strong);
   background-color: var(--color-warning-bg-light);
-  border: 1px solid #fed7aa;
+  border: 1px solid var(--color-warning-border);
   padding: 2px 8px;
   border-radius: 4px;
   flex-shrink: 0;
@@ -875,6 +959,7 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
   margin-right: 0;
+  cursor: pointer;
 }
 
 .list-empty {
@@ -968,16 +1053,6 @@ export default {
   cursor: not-allowed;
 }
 
-.export-hint-bar {
-  padding: 10px 24px;
-  background-color: var(--color-success-bg);
-  color: var(--color-success);
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-  border-radius: 0 0 8px 8px;
-}
-
 .compare-grid {
   display: grid;
   flex: 1;
@@ -1004,6 +1079,11 @@ export default {
   font-weight: 600;
   color: var(--text-main);
   white-space: nowrap;
+  /* 横向滚动时固定“参数”列，方便对照 */
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  box-shadow: 1px 0 0 var(--color-border);
 }
 
 .grid-equipment-cell {
@@ -1021,6 +1101,7 @@ export default {
 .grid-header-row .grid-label-cell {
   background-color: var(--color-primary-hover);
   color: white;
+  z-index: 3;
 }
 
 .grid-row-striped .grid-cell {
@@ -1083,6 +1164,11 @@ export default {
   color: var(--color-success);
   font-weight: bold;
   background-color: var(--color-success-bg);
+}
+
+/* 列 hover 高亮：内描边提示正在查看的装备列，不覆盖行背景色 */
+.grid-cell.col-hover {
+  box-shadow: inset 0 0 0 1.5px var(--color-primary-accent);
 }
 
 /* 与最优值的差距（非最优单元格内小字显示） */
@@ -1161,7 +1247,9 @@ export default {
     width: 100%;
   }
 
+  /* 移动端上下堆叠布局：恢复为按内容高度上限 300px 滚动 */
   .list-container {
+    flex: 0 1 auto;
     max-height: 300px;
   }
 
@@ -1173,6 +1261,139 @@ export default {
     padding: 8px 20px;
     font-size: 14px;
   }
+}
+
+/* ===== 装备详情弹窗 ===== */
+.detail-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 16px;
+}
+
+.detail-modal {
+  position: relative;
+  background: var(--color-surface);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+  max-width: 520px;
+  width: 100%;
+  max-height: 86vh;
+  overflow-y: auto;
+  padding: 24px 28px;
+  animation: detail-modal-in 0.2s ease;
+}
+
+@keyframes detail-modal-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.detail-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  line-height: 1;
+}
+
+.detail-close-btn:hover {
+  background: var(--color-danger-bg);
+  color: var(--color-danger-strong);
+}
+
+.detail-head {
+  padding-right: 32px;
+  margin-bottom: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.detail-title {
+  font-size: 18px;
+  color: var(--text-main);
+  margin: 6px 0 0;
+  width: 100%;
+  word-break: break-word;
+}
+
+.detail-rows {
+  border-top: 1px solid var(--color-border);
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 2px;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 14px;
+}
+
+.detail-row-label {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.detail-row-value {
+  color: var(--text-main);
+  font-weight: 500;
+  text-align: right;
+  word-break: break-word;
+}
+
+.detail-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.detail-toggle-btn,
+.detail-close-ok {
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.detail-toggle-btn {
+  border: 1px solid var(--color-primary);
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+}
+
+.detail-toggle-btn.active {
+  background: var(--color-success);
+  border-color: var(--color-success);
+  color: white;
+}
+
+.detail-close-ok {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--text-secondary);
+}
+
+.detail-close-ok:hover {
+  background: var(--bg-secondary);
 }
 </style>
 
@@ -1187,7 +1408,7 @@ export default {
 }
 
 :root[data-theme="dark"] .grid-label-cell {
-  background-color: transparent;
+  background-color: var(--color-surface);
 }
 
 :root[data-theme="dark"] .search-input {

@@ -199,9 +199,23 @@
         <button class="summary-action-btn" @click="copyList">📋 复制清单</button>
         <button class="summary-action-btn" @click="copyShareLink">🔗 分享链接</button>
         <button class="summary-action-btn danger" @click="clearAllEntries">🗑 清空清单</button>
-        <span v-if="listHint" class="list-hint">{{ listHint }}</span>
       </div>
     </div>
+
+    <!-- 清空清单确认弹窗 -->
+    <div v-if="showClearModal" class="modal-mask" @click.self="closeClearModal">
+      <div class="modal-box" role="dialog" aria-modal="true" aria-label="清空清单确认">
+        <h3 class="modal-title">清空清单</h3>
+        <p class="modal-desc">确定清空当前统计清单吗？清空后不可恢复。</p>
+        <div class="modal-footer">
+          <button class="modal-cancel-btn" @click="closeClearModal">取消</button>
+          <button class="modal-confirm-btn danger" @click="confirmClearEntries">确认清空</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast 提示（共享组件，自管定时器） -->
+    <AppToast ref="toast" />
   </div>
 </template>
 
@@ -210,16 +224,21 @@ import { searchAndRankEquipment, sortByPanelTension, EQUIPMENT_SEARCH_FIELDS } f
 import { getRatingAlias } from '../constants/equipment.js'
 import { formatPrice as formatPriceDisplay, parsePrice } from '../utils/display.js'
 import { loadRodAndReelData } from '../utils/equipmentLoader.js'
+import AppToast from './common/AppToast.vue'
+import { lockScroll, bindEscape } from '../utils/modal.js'
 
 export default {
   name: 'ValuePage',
+  components: {
+    AppToast
+  },
   data() {
     return {
       rodList: [],
       reelList: [],
       rodEntries: [],
       reelEntries: [],
-      listHint: ''
+      showClearModal: false
     }
   },
   computed: {
@@ -273,6 +292,19 @@ export default {
     reelEntries: {
       deep: true,
       handler() { this.scheduleSaveEntries() }
+    },
+    // 清空确认弹窗：打开锁定 body 滚动并支持 Esc 关闭
+    showClearModal(open) {
+      if (open) {
+        lockScroll(true)
+        this._escOff = bindEscape(this.closeClearModal)
+      } else {
+        lockScroll(false)
+        if (this._escOff) {
+          this._escOff()
+          this._escOff = null
+        }
+      }
     }
   },
   beforeUnmount() {
@@ -284,6 +316,11 @@ export default {
       if (entry.searchTimer) clearTimeout(entry.searchTimer)
     }
     if (this._entrySaveTimer) clearTimeout(this._entrySaveTimer)
+    if (this._escOff) {
+      this._escOff()
+      this._escOff = null
+    }
+    if (this.showClearModal) lockScroll(false)
   },
   methods: {
     getRatingAlias,
@@ -336,12 +373,25 @@ export default {
         console.error('恢复价值清单失败:', e)
       }
     },
-    /** 清空整个清单（二次确认） */
+    /** 清空整个清单：先弹出二次确认弹窗 */
     clearAllEntries() {
-      if (this.rodEntries.length === 0 && this.reelEntries.length === 0) return
-      if (!confirm('确定清空当前统计清单吗？')) return
+      if (this.rodEntries.length === 0 && this.reelEntries.length === 0) {
+        this.showToast('清单已是空的', 'info')
+        return
+      }
+      this.showClearModal = true
+    },
+    closeClearModal() {
+      this.showClearModal = false
+    },
+    confirmClearEntries() {
       this.rodEntries = []
       this.reelEntries = []
+      this.closeClearModal()
+      this.showToast('清单已清空', 'success')
+    },
+    showToast(message, type = 'info') {
+      this.$refs.toast.show(message, type)
     },
     /** 生成分享链接：清单编码进 URL 参数 vl */
     buildShareUrl() {
@@ -357,11 +407,10 @@ export default {
     async copyShareLink() {
       try {
         await navigator.clipboard.writeText(this.buildShareUrl())
-        this.listHint = '分享链接已复制！'
+        this.showToast('分享链接已复制', 'success')
       } catch (_) {
-        this.listHint = '复制失败，请手动复制'
+        this.showToast('复制失败，请手动复制', 'error')
       }
-      setTimeout(() => { this.listHint = '' }, 2500)
     },
     /** 从分享链接恢复清单（成功后清除 URL 参数），无参数返回 false */
     restoreFromShareUrl() {
@@ -404,11 +453,10 @@ export default {
       lines.push(`共 ${this.totalItems} 件，总计 ${this.formatPrice(this.totalSilver)} 银币 / ${this.formatPrice(this.totalGold)} 金币`)
       try {
         await navigator.clipboard.writeText(lines.join('\n'))
-        this.listHint = '已复制到剪贴板！'
+        this.showToast('清单已复制到剪贴板', 'success')
       } catch (_) {
-        this.listHint = '复制失败，请手动复制'
+        this.showToast('复制失败，请手动复制', 'error')
       }
-      setTimeout(() => { this.listHint = '' }, 2500)
     },
     async loadRods() {
       try {
@@ -651,7 +699,7 @@ export default {
 .tag-rating {
   padding: 3px 10px;
   background-color: var(--color-success-bg-light);
-  color: #166534;
+  color: var(--color-success-text);
   border: 1px solid var(--color-success-border);
   border-radius: 12px;
   font-size: 12px;
@@ -690,14 +738,14 @@ export default {
 .category-filter-header {
   padding: 8px 15px;
   background-color: var(--color-success-bg-light);
-  border-bottom: 1px solid #dcfce7;
+  border-bottom: 1px solid var(--color-success-border);
 }
 
 .category-toggle-btn {
   padding: 4px 12px;
   border: none;
   background-color: transparent;
-  color: #16a34a;
+  color: var(--color-success-text);
   font-size: 13px;
   font-weight: bold;
   cursor: pointer;
@@ -705,7 +753,7 @@ export default {
 }
 
 .category-toggle-btn:hover {
-  color: #22c55e;
+  color: var(--color-success-strong);
 }
 
 .category-filter-wrapper {
@@ -714,14 +762,14 @@ export default {
   gap: 6px;
   padding: 8px 15px;
   background-color: var(--color-success-bg-light);
-  border-bottom: 1px solid #dcfce7;
+  border-bottom: 1px solid var(--color-success-border);
 }
 
 .category-filter-btn {
   padding: 4px 12px;
   border: 1px solid var(--color-success-border);
   background-color: var(--color-surface);
-  color: #16a34a;
+  color: var(--color-success-text);
   border-radius: 16px;
   font-size: 12px;
   cursor: pointer;
@@ -729,13 +777,13 @@ export default {
 }
 
 .category-filter-btn:hover {
-  background-color: #dcfce7;
+  background-color: var(--color-success-border);
 }
 
 .category-filter-btn.active {
-  background-color: #22c55e;
+  background-color: var(--color-success-strong);
   color: white;
-  border-color: #22c55e;
+  border-color: var(--color-success-strong);
 }
 
 .dropdown-list {
@@ -801,7 +849,7 @@ export default {
   flex: 0 0 80px;
   padding: 4px 12px;
   background-color: var(--color-success-bg-light);
-  color: #166534;
+  color: var(--color-success-text);
   border: 1px solid var(--color-success-border);
   border-radius: 14px;
   font-size: 13px;
@@ -817,7 +865,7 @@ export default {
   padding: 4px 12px;
   background-color: var(--color-warning-bg-light);
   color: var(--color-warning-strong);
-  border: 1px solid #fed7aa;
+  border: 1px solid var(--color-warning-border);
   border-radius: 14px;
   font-size: 13px;
   font-weight: 500;
@@ -1065,9 +1113,91 @@ export default {
   color: white;
 }
 
-.list-hint {
-  font-size: 12px;
-  color: var(--color-success);
-  text-align: center;
+/* 清空确认弹窗 */
+.modal-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 16px;
+}
+
+.modal-box {
+  background: var(--color-surface);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  max-width: 400px;
+  width: 100%;
+  padding: 24px 28px;
+  animation: value-modal-in 0.2s ease;
+}
+
+@keyframes value-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-title {
+  font-size: 17px;
+  color: var(--text-main);
+  margin-bottom: 12px;
+}
+
+.modal-desc {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-cancel-btn,
+.modal-confirm-btn {
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-cancel-btn {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--text-secondary);
+}
+
+.modal-cancel-btn:hover {
+  background: var(--bg-secondary);
+}
+
+.modal-confirm-btn {
+  border: 1px solid var(--color-danger);
+  background: var(--color-danger);
+  color: white;
+}
+
+.modal-confirm-btn:hover {
+  opacity: 0.9;
+}
+
+/* 深色主题下筛选激活态保持白字可读 */
+:root[data-theme="dark"] .category-filter-btn.active {
+  background-color: var(--color-success);
+  border-color: var(--color-success);
 }
 </style>

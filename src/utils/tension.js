@@ -9,7 +9,7 @@ import {
  * 安全转数值：对象/数组/NaN/非数值字符串一律兜底为 0
  * 防止 "Cannot convert object to primitive value" 等隐式转换异常
  */
-function toSafeNumber(v, fallback = 0) {
+export function toSafeNumber(v, fallback = 0) {
   if (typeof v === 'number') return Number.isFinite(v) ? v : fallback
   if (v == null) return fallback
   // 跳过对象类型（包括数组、Date），避免 valueOf/toString 抛出隐式转换异常

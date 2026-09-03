@@ -305,6 +305,15 @@
       :actual-panel-tension-map="actualPanelTensionMap"
     />
 
+    <!-- 磨损-拉力衰减曲线 -->
+    <WearCurveChart
+      v-if="allEquipmentSelected && wearCurveCandidates.length > 1"
+      :candidates="wearCurveCandidates"
+      :calc-rule="calculationRule"
+      :friction="friction"
+      mode="lock"
+    />
+
     <!-- 提交推荐装备按钮 -->
     <div class="submit-section">
       <button 
@@ -460,8 +469,10 @@ import { encodePreset, decodePreset, getShareUrl } from '../utils/presetShare.js
 import DisclaimerModal from './calculator/DisclaimerModal.vue'
 import EquipmentSearchDropdown from './calculator/EquipmentSearchDropdown.vue'
 import EquipmentSummary from './calculator/EquipmentSummary.vue'
+import WearCurveChart from './calculator/WearCurveChart.vue'
 import AppToast from './common/AppToast.vue'
 import AppSkeleton from './common/AppSkeleton.vue'
+import { lockScroll, bindEscape } from '../utils/modal.js'
 
 export default {
   name: 'Calculator',
@@ -469,6 +480,7 @@ export default {
     DisclaimerModal,
     EquipmentSearchDropdown,
     EquipmentSummary,
+    WearCurveChart,
     AppToast,
     AppSkeleton
   },
@@ -540,6 +552,11 @@ export default {
   beforeUnmount() {
     document.removeEventListener('click', this.handleClickOutside)
     if (this._stateSaveTimer) clearTimeout(this._stateSaveTimer)
+    if (this._escOff) {
+      this._escOff()
+      this._escOff = null
+    }
+    if (this.showSubmitModal) lockScroll(false)
   },
   watch: {
     calculationRule(val) {
@@ -578,6 +595,19 @@ export default {
       if (!newMap) {
         this.selectedBuild = null
       }
+    },
+    /** 提交弹窗：打开时锁定 body 滚动并支持 Esc 关闭 */
+    showSubmitModal(open) {
+      if (open) {
+        lockScroll(true)
+        this._escOff = bindEscape(this.closeSubmitModal)
+      } else {
+        lockScroll(false)
+        if (this._escOff) {
+          this._escOff()
+          this._escOff = null
+        }
+      }
     }
   },
   computed: {
@@ -598,6 +628,22 @@ export default {
         map[item.equipmentType] = item
       }
       return map
+    },
+    /** 磨损曲线候选件：竿/轮 + 已录入的主线/引线 */
+    wearCurveCandidates() {
+      const out = []
+      const add = (key, name, type, item) => {
+        if (item) out.push({ key, name, type, item })
+      }
+      const rod = this.selectedEquipmentMap['鱼竿']
+      if (rod) add('rod', rod.model || rod.equipmentName || '鱼竿', 'rod', rod)
+      const reel = this.selectedEquipmentMap['渔轮']
+      if (reel) add('reel', reel.model || reel.equipmentName || '渔轮', 'reel', reel)
+      const line = this.customEquipment['主线']
+      if (line && Number(line.maxTension) > 0) add('line', '主线', 'line', line)
+      const leader = this.customEquipment['引线']
+      if (leader && Number(leader.maxTension) > 0) add('leader', '引线', 'line', leader)
+      return out
     },
     actualLockTensionMap() {
       const map = {}
@@ -937,12 +983,13 @@ export default {
       const url = getShareUrl(state)
       try {
         await navigator.clipboard.writeText(url)
-        this.shareHint = '链接已复制！'
+        this.showToast('分享链接已复制', 'success')
+        this.shareHint = ''
       } catch (_) {
-        // 剪贴板 API 不可用时回退到 prompt
+        // 剪贴板 API 不可用时，将链接直接展示在按钮位置供手动复制
         this.shareHint = url
+        this.showToast('复制失败，链接已显示在按钮上，请手动复制', 'error')
       }
-      setTimeout(() => { this.shareHint = '' }, 3000)
     },
     /** 从数据库加载地图和鱼种列表 */
     async loadMapsAndFishSpecies() {

@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <AppHeader />
-    <router-view />
+    <transition name="page-fade" mode="out-in">
+      <router-view />
+    </transition>
     <!-- 数据新鲜度提示：来自后端 meta 表的最后导入时间 -->
     <footer v-if="dataUpdatedText" class="app-footer">{{ dataUpdatedText }}</footer>
     <!-- 版本信息展示 -->
@@ -68,6 +70,7 @@
 <script>
 import { versionInfo } from './version-info.js'
 import AppHeader from './components/common/AppHeader.vue'
+import { lockScroll, bindEscape } from './utils/modal.js'
 
 export default {
   name: 'App',
@@ -102,6 +105,28 @@ export default {
       const dateStr = d.toLocaleDateString('zh-CN')
       return type ? `装备数据更新于 ${dateStr}（${type}）` : `装备数据更新于 ${dateStr}`
     }
+  },
+  watch: {
+    // 版本弹窗：打开时锁定 body 滚动并支持 Esc 关闭
+    showVersionDetail(open) {
+      if (open) {
+        lockScroll(true)
+        this._escOff = bindEscape(this.closeVersionDetail)
+      } else {
+        lockScroll(false)
+        if (this._escOff) {
+          this._escOff()
+          this._escOff = null
+        }
+      }
+    }
+  },
+  beforeUnmount() {
+    if (this._escOff) {
+      this._escOff()
+      this._escOff = null
+    }
+    if (this.showVersionDetail) lockScroll(false)
   },
   created() {
     this.loadDataMeta()
@@ -177,6 +202,9 @@ export default {
     dismissError() {
       this.fatalErrorMessage = ''
     },
+    closeVersionDetail() {
+      this.showVersionDetail = false
+    },
     // 解析变更类型前缀（新增/优化/修复/删除）
     getChangeTypeClass(change) {
       if (change.startsWith('新增：') || change.startsWith('新增:')) return 'change-type-new'
@@ -215,15 +243,18 @@ export default {
   --color-success-bg: #e8f5e9;
   --color-success-bg-light: #f0fdf4;
   --color-success-border: #bbf7d0;
+  --color-success-text: #166534;
   /* 警告（橙色阶梯） */
   --color-warning: #e65100;
   --color-warning-strong: #c2410c;
   --color-warning-accent: #ff9800;
   --color-warning-bg: #fff3e0;
   --color-warning-bg-light: #fff7ed;
+  --color-warning-border: #fed7aa;
   /* 危险（红色） */
   --color-danger: #e53935;
   --color-danger-strong: #c62828;
+  --color-danger-bg: #fce4ec;
   /* 文本 */
   --text-heading: #2c3e50;
   --text-main: #333;
@@ -256,13 +287,16 @@ export default {
   --color-success-bg: #16281a;
   --color-success-bg-light: #1a2f1e;
   --color-success-border: #2e5233;
+  --color-success-text: #8fd192;
   --color-warning: #ffb74d;
   --color-warning-strong: #ffb74d;
   --color-warning-accent: #ffb74d;
   --color-warning-bg: #33270f;
   --color-warning-bg-light: #2d2413;
+  --color-warning-border: #6b4a24;
   --color-danger: #ef7d76;
   --color-danger-strong: #ef9a9a;
+  --color-danger-bg: #3a1d1f;
   --text-heading: #e8eaed;
   --text-main: #d6d9dc;
   --text-secondary: #a8afb7;
@@ -285,10 +319,28 @@ export default {
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
   background-color: var(--bg-page);
   color: var(--text-main);
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 页面切换过渡 */
+.page-fade-enter-active,
+.page-fade-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.page-fade-enter-from {
+  opacity: 0;
+  transform: translateY(4px);
+}
+
+.page-fade-leave-to {
+  opacity: 0;
 }
 
 #app {
@@ -335,7 +387,7 @@ body {
 
 .global-error-popup h3 {
   font-size: 18px;
-  color: #d32f2f;
+  color: var(--color-danger-strong);
   margin-bottom: 16px;
   font-weight: 600;
 }
@@ -343,8 +395,8 @@ body {
 .global-error-text {
   font-size: 14px;
   line-height: 1.7;
-  color: #37474f;
-  background: #fff8e1;
+  color: var(--text-main);
+  background: var(--color-total-bg);
   padding: 12px 16px;
   border-radius: 6px;
   margin-bottom: 24px;
@@ -360,21 +412,21 @@ body {
 .global-error-btn {
   padding: 8px 20px;
   border-radius: 6px;
-  border: 1px solid #cfd8dc;
+  border: 1px solid var(--color-border);
   background: var(--color-surface);
-  color: #455a64;
+  color: var(--text-secondary);
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .global-error-btn:hover {
-  background: #eceff1;
+  background: var(--bg-secondary);
 }
 
 .global-error-btn.primary {
-  background: #1976d2;
-  border-color: #1976d2;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
   color: white;
 }
 
@@ -547,7 +599,7 @@ body {
 
 .changelog-changes li {
   font-size: 13px;
-  color: #555;
+  color: var(--text-secondary);
   line-height: 1.6;
   margin-bottom: 4px;
 }
@@ -598,11 +650,11 @@ body {
 
 .change-type-fix {
   background: var(--color-warning-bg);
-  color: #ef6c00;
+  color: var(--color-warning-strong);
 }
 
 .change-type-remove {
-  background: #fce4ec;
+  background: var(--color-danger-bg);
   color: var(--color-danger-strong);
 }
 </style>

@@ -307,7 +307,7 @@ export default {
   padding: 4px 12px;
   background-color: var(--color-warning-bg-light);
   color: var(--color-warning-strong);
-  border: 1px solid #fed7aa;
+  border: 1px solid var(--color-warning-border);
   border-radius: 14px;
   font-size: 13px;
   font-weight: 500;

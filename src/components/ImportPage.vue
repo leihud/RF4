@@ -461,9 +461,9 @@ export default {
 
 .back-btn {
   padding: 8px 20px;
-  border: 2px solid #2196f3;
+  border: 2px solid var(--color-primary);
   background-color: var(--color-surface);
-  color: #2196f3;
+  color: var(--color-primary);
   border-radius: 20px;
   cursor: pointer;
   font-size: 14px;
@@ -526,7 +526,7 @@ export default {
 .download-btn {
   display: inline-block;
   padding: 12px 24px;
-  background-color: #2196f3;
+  background-color: var(--color-primary);
   color: white;
   text-decoration: none;
   border-radius: 8px;
@@ -538,7 +538,7 @@ export default {
 }
 
 .download-btn:hover {
-  background-color: #1976d2;
+  background-color: var(--color-primary-hover);
 }
 
 .template-hint {
@@ -568,7 +568,7 @@ export default {
 
 .upload-area:hover {
   border-color: var(--color-success-accent);
-  background-color: #f8f9fa;
+  background-color: var(--bg-secondary);
 }
 
 .upload-area.drag-over {
@@ -601,7 +601,7 @@ export default {
 }
 
 .file-preview {
-  background-color: #f8f9fa;
+  background-color: var(--bg-secondary);
   border-radius: 8px;
   padding: 15px;
   overflow-x: auto;
@@ -682,7 +682,7 @@ export default {
 }
 
 .import-btn:hover:not(:disabled) {
-  background-color: #379a6b;
+  background-color: var(--color-success-strong);
 }
 
 .import-btn:disabled {
@@ -699,11 +699,11 @@ export default {
 
 .result-section.success {
   background-color: var(--color-success-bg);
-  border: 2px solid #4caf50;
+  border: 2px solid var(--color-success-accent);
 }
 
 .result-section.error {
-  background-color: #ffebee;
+  background-color: var(--color-danger-bg);
   border: 2px solid var(--color-danger-strong);
 }
 
