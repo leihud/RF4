@@ -837,7 +837,7 @@ export default {
 }
 
 .equipment-item.selected {
-  background-color: #bbdefb;
+  background-color: var(--color-primary-bg);
   border-left: 4px solid var(--color-primary);
 }
 
@@ -1191,5 +1191,32 @@ export default {
     padding: 8px 20px;
     font-size: 14px;
   }
+}
+</style>
+
+<style>
+/* 夜间模式专属覆盖（不受 scoped 限制） */
+:root[data-theme="dark"] .compare-header-row {
+  background-color: var(--color-primary-bg);
+}
+
+:root[data-theme="dark"] .compare-header-row:hover {
+  background-color: var(--color-primary-bg);
+}
+
+:root[data-theme="dark"] .compare-label-cell {
+  background-color: transparent;
+}
+
+:root[data-theme="dark"] .search-input {
+  background-color: var(--color-surface);
+  color: var(--text-main);
+  border-color: var(--color-border);
+}
+
+:root[data-theme="dark"] .category-select {
+  background-color: var(--color-surface);
+  color: var(--text-main);
+  border-color: var(--color-border);
 }
 </style>
