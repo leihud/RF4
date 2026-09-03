@@ -2,6 +2,12 @@ import { getRatingAlias } from '../constants/equipment.js'
 import { sanitizeEquipmentList } from './sanitize.js'
 import { parsePrice } from './display.js'
 
+/** 客户端内存缓存：避免页面切换时重复请求 API */
+let _rodCache = null
+let _reelCache = null
+let _cacheTime = 0
+const CLIENT_CACHE_TTL = 5 * 60 * 1000 // 5 分钟
+
 /**
  * 从 API 加载装备数据的共享逻辑。
  * Calculator 与 ComparePage 共用，消除重复的 fetch + 清洗 + 字段补齐代码。
@@ -48,6 +54,11 @@ export async function loadEquipmentData(apiPath, options = {}) {
  * @returns {Promise<{ rodData: Array, reelData: Array, error: boolean }>}
  */
 export async function loadRodAndReelData() {
+  // 命中客户端缓存时直接返回，无需发起网络请求
+  if (_rodCache && _reelCache && Date.now() - _cacheTime < CLIENT_CACHE_TTL) {
+    return { rodData: _rodCache, reelData: _reelCache, error: false }
+  }
+
   const [rodResult, reelResult] = await Promise.allSettled([
     loadEquipmentData('/api/rods', {
       enrich: (item) => ({ panelTension: parsePrice(item.strengthKg) || 0 })
@@ -62,6 +73,13 @@ export async function loadRodAndReelData() {
   // loadEquipmentData 自身不抛异常（内部已捕获），这里兼容 rejected 状态双保险
   const rod = rodResult.status === 'fulfilled' ? rodResult.value : { data: [], error: true }
   const reel = reelResult.status === 'fulfilled' ? reelResult.value : { data: [], error: true }
+
+  // 仅当两份数据都成功时写入缓存，避免缓存空数据
+  if (!rod.error && !reel.error) {
+    _rodCache = rod.data
+    _reelCache = reel.data
+    _cacheTime = Date.now()
+  }
 
   return {
     rodData: rod.data,
