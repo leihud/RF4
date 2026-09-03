@@ -79,7 +79,8 @@
             <button class="clear-btn" @click="clearCompareList">清空</button>
           </div>
         </div>
-        <div class="compare-table" :style="{ '--col-count': compareEquipmentList.length }">
+        <div class="compare-table">
+          <!-- 表头行 -->
           <div class="compare-row compare-header-row">
             <div class="compare-cell compare-label-cell">参数</div>
             <div
@@ -87,18 +88,17 @@
               :key="getItemKey(equipment)"
               class="compare-cell compare-equipment-cell"
             >
-              <div class="equipment-header">
-                <span class="equipment-name">{{ formatValue(equipment.model || equipment.equipmentName) }}</span>
-                <button
-                  class="remove-btn"
-                  aria-label="移除对比项"
-                  @click.stop="removeCompareItem(equipment)"
-                >×</button>
-              </div>
-              <span class="equipment-category">{{ formatValue(equipment.subCategory || equipment.category) }}</span>
+              <span class="equipment-name-inline">{{ formatValue(equipment.model || equipment.equipmentName) }}</span>
+              <button
+                class="remove-btn-inline"
+                aria-label="移除对比项"
+                @click.stop="removeCompareItem(equipment)"
+              >×</button>
+              <span class="equipment-category-inline">{{ formatValue(equipment.subCategory || equipment.category) }}</span>
             </div>
           </div>
 
+          <!-- 数据行 -->
           <div
             v-for="row in currentCompareRows"
             :key="row.key || row.field || row.label"
@@ -121,6 +121,7 @@
             </div>
           </div>
 
+          <!-- 性价比行 -->
           <div v-for="row in costEffectivenessRows" :key="row.field" class="compare-row">
             <div class="compare-cell compare-label-cell">{{ row.label }}</div>
             <div
@@ -976,39 +977,53 @@ export default {
 }
 
 .compare-table {
-  display: grid;
-  /* 第1列固定宽度（参数名），其余列等分剩余空间 */
-  grid-template-columns: 180px repeat(var(--col-count, 1), 1fr);
+  display: table;
   width: 100%;
+  border-collapse: collapse;
   flex: 1;
-  overflow-x: auto;
 }
 
 .compare-row {
-  /* 每行作为 grid 的完整一行，子元素自动落入对应列 */
-  display: contents;
+  display: table-row;
+  transition: background-color 0.2s;
 }
 
-.compare-row:not(.compare-header-row):hover .compare-cell {
+.compare-row:not(.compare-header-row):hover {
   background-color: var(--bg-secondary);
 }
 
-/* 斑马纹：第1个子元素是 header-row，所以数据行从第2个开始 */
-.compare-row:nth-child(even):not(.compare-header-row) .compare-cell {
+.compare-row:nth-child(even):not(.compare-header-row) {
   background-color: var(--bg-secondary);
 }
 
-.compare-header-row .compare-cell {
+.compare-row:nth-child(even):not(.compare-header-row):hover {
+  background-color: var(--bg-secondary);
+}
+
+.compare-header-row {
   background-color: var(--color-primary-hover);
   color: white;
 }
 
-.compare-header-row .equipment-header .equipment-name {
+.compare-header-row:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.compare-header-row .compare-cell {
   color: white;
 }
 
-.compare-header-row .equipment-category {
+.compare-header-row .equipment-name-inline {
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.compare-header-row .equipment-category-inline {
   color: rgba(255, 255, 255, 0.8);
+  font-size: 11px;
+  display: block;
+  text-align: center;
 }
 
 .compare-header-row .compare-label-cell {
@@ -1017,11 +1032,11 @@ export default {
 }
 
 .compare-cell {
+  display: table-cell;
   padding: 12px 16px;
   font-size: 13px;
   text-align: center;
   vertical-align: middle;
-  border-bottom: 1px solid var(--bg-secondary);
 }
 
 .compare-label-cell {
@@ -1038,50 +1053,49 @@ export default {
 }
 
 .compare-equipment-cell {
-  /* 列宽由 grid-template-columns 的 1fr 统一控制 */
-}
-
-.equipment-header {
-  margin-bottom: 6px;
+  min-width: 180px;
   position: relative;
 }
 
-.equipment-header .equipment-name {
-  display: block;
+/* 表头装备名称（内联，无嵌套div） */
+.equipment-name-inline {
+  display: inline-block;
   font-weight: bold;
   color: var(--color-primary-hover);
   font-size: 14px;
   text-align: center;
 }
 
-.equipment-category {
-  font-size: 11px;
-  color: var(--text-secondary);
-  text-align: center;
-  display: block;
-}
-
-.remove-btn {
-  width: 24px;
-  height: 24px;
+/* 表头删除按钮（绝对定位，不影响table-cell宽度计算） */
+.remove-btn-inline {
+  width: 20px;
+  height: 20px;
   border: none;
   background-color: #ef5350;
   color: white;
   border-radius: 50%;
   cursor: pointer;
-  font-size: 16px;
-  display: flex;
+  font-size: 14px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  position: absolute;
-  right: -8px;
-  top: -8px;
+  margin-left: 6px;
+  vertical-align: middle;
   transition: transform 0.2s;
 }
 
-.remove-btn:hover {
+.remove-btn-inline:hover {
   background-color: var(--color-danger);
   transform: scale(1.1);
+}
+
+/* 表头分类（块级，换行显示） */
+.equipment-category-inline {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-top: 4px;
 }
 
 /* 最优值：绿色高亮（含 ★ 语义，与导出文本的 ★ 标记对应） */
@@ -1184,7 +1198,15 @@ export default {
 
 <style>
 /* 夜间模式专属覆盖（不受 scoped 限制） */
-:root[data-theme="dark"] .compare-header-row .compare-cell {
+:root[data-theme="dark"] .compare-header-row {
+  background-color: var(--color-primary-bg);
+}
+
+:root[data-theme="dark"] .compare-header-row:hover {
+  background-color: var(--color-primary-bg);
+}
+
+:root[data-theme="dark"] .compare-header-row .compare-label-cell {
   background-color: var(--color-primary-bg);
 }
 
