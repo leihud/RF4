@@ -79,7 +79,7 @@
             <button class="clear-btn" @click="clearCompareList">清空</button>
           </div>
         </div>
-        <div class="compare-table">
+        <div class="compare-table" :style="{ '--col-count': compareEquipmentList.length }">
           <div class="compare-row compare-header-row">
             <div class="compare-cell compare-label-cell">参数</div>
             <div
@@ -976,41 +976,30 @@ export default {
 }
 
 .compare-table {
-  display: table;
+  display: grid;
+  /* 第1列固定宽度（参数名），其余列等分剩余空间 */
+  grid-template-columns: 180px repeat(var(--col-count, 1), 1fr);
   width: 100%;
-  border-collapse: collapse;
   flex: 1;
   overflow-x: auto;
 }
 
 .compare-row {
-  display: table-row;
-  border-bottom: 1px solid var(--bg-secondary);
-  transition: background-color 0.2s;
+  /* 每行作为 grid 的完整一行，子元素自动落入对应列 */
+  display: contents;
 }
 
-.compare-row:not(.compare-header-row):hover {
+.compare-row:not(.compare-header-row):hover .compare-cell {
   background-color: var(--bg-secondary);
 }
 
-.compare-row:nth-child(even):not(.compare-header-row) {
+/* 斑马纹：第1个子元素是 header-row，所以数据行从第2个开始 */
+.compare-row:nth-child(even):not(.compare-header-row) .compare-cell {
   background-color: var(--bg-secondary);
-}
-
-.compare-row:nth-child(even):not(.compare-header-row):hover {
-  background-color: var(--bg-secondary);
-}
-
-.compare-header-row {
-  background-color: var(--color-primary-hover);
-  color: white;
-}
-
-.compare-header-row:hover {
-  background-color: var(--color-primary-hover);
 }
 
 .compare-header-row .compare-cell {
+  background-color: var(--color-primary-hover);
   color: white;
 }
 
@@ -1025,15 +1014,14 @@ export default {
 .compare-header-row .compare-label-cell {
   background-color: var(--color-primary-hover);
   color: white;
-  text-align: center;
 }
 
 .compare-cell {
-  display: table-cell;
   padding: 12px 16px;
   font-size: 13px;
   text-align: center;
   vertical-align: middle;
+  border-bottom: 1px solid var(--bg-secondary);
 }
 
 .compare-label-cell {
@@ -1050,7 +1038,7 @@ export default {
 }
 
 .compare-equipment-cell {
-  min-width: 200px;
+  /* 列宽由 grid-template-columns 的 1fr 统一控制 */
 }
 
 .equipment-header {
@@ -1196,11 +1184,7 @@ export default {
 
 <style>
 /* 夜间模式专属覆盖（不受 scoped 限制） */
-:root[data-theme="dark"] .compare-header-row {
-  background-color: var(--color-primary-bg);
-}
-
-:root[data-theme="dark"] .compare-header-row:hover {
+:root[data-theme="dark"] .compare-header-row .compare-cell {
   background-color: var(--color-primary-bg);
 }
 
