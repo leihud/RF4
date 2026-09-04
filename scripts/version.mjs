@@ -59,8 +59,9 @@ function updateVersionInfo(version, date, changes) {
   const filePath = join(ROOT, 'src', 'version-info.js')
   let content = readFileSync(filePath, 'utf-8')
   
-  // 构建新的 changelog 条目
-  const changesStr = changes.map(c => `        '${c}'`).join(',\n')
+  // 构建新的 changelog 条目（对单引号/反斜杠转义，防止提交文案破坏生成文件语法）
+  const escapeJsString = (s) => String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+  const changesStr = changes.map(c => `        '${escapeJsString(c)}'`).join(',\n')
   const newEntry = `    {
       version: '${version}',
       date: '${date}',

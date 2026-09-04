@@ -190,7 +190,12 @@ describe('各页面挂载冒烟测试（暴露未定义引用/模板错误）', 
   })
 
   it('AppHeader 挂载渲染无异常', () => {
-    const wrapper = mount(AppHeader)
+    const wrapper = mount(AppHeader, {
+      global: {
+        // 路由组件由入口 main.js 安装，组件测试环境不引入 router，stub 避免 Vue warn 噪音
+        stubs: { RouterLink: true }
+      }
+    })
     expect(wrapper.find('.app-header').exists()).toBe(true)
     wrapper.unmount()
   })

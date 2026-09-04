@@ -128,6 +128,9 @@ export default {
       this._escOff = null
     }
     if (this.showVersionDetail) lockScroll(false)
+    if (this._cleanupWindowErrors) {
+      this._cleanupWindowErrors()
+    }
   },
   created() {
     this.loadDataMeta()
@@ -141,23 +144,33 @@ export default {
         this.fatalErrorMessage = `${err && err.message ? err.message : String(err)}（${info || '组件渲染异常'}）`
       }
     }
-    // 全局 window 级错误兜底（脚本错误/Promise rejection）
+    // 全局 window 级错误兜底（脚本错误/Promise rejection）。
+    // 以具名引用注册并在卸载时移除，避免重复挂载（HMR/热重载）后监听叠加造成重复上报。
     if (typeof window !== 'undefined') {
-      window.addEventListener('error', (event) => {
+      this._onWindowError = (event) => {
         console.error('[window error] 全局未捕获错误:', event.error || event.message)
         this.reportError(event.message, event.error && event.error.stack)
         if (!this.fatalErrorMessage) {
           this.fatalErrorMessage = event.message || '脚本执行异常'
         }
-      })
-      window.addEventListener('unhandledrejection', (event) => {
+      }
+      this._onUnhandledRejection = (event) => {
         console.error('[window unhandledrejection] Promise未处理异常:', event.reason)
         const reason = event.reason
         this.reportError(reason && reason.message, reason && reason.stack)
         if (!this.fatalErrorMessage) {
           this.fatalErrorMessage = reason && reason.message ? reason.message : String(reason || '异步请求异常')
         }
-      })
+      }
+      window.addEventListener('error', this._onWindowError)
+      window.addEventListener('unhandledrejection', this._onUnhandledRejection)
+      this._cleanupWindowErrors = () => {
+        window.removeEventListener('error', this._onWindowError)
+        window.removeEventListener('unhandledrejection', this._onUnhandledRejection)
+        this._onWindowError = null
+        this._onUnhandledRejection = null
+        this._cleanupWindowErrors = null
+      }
     }
   },
   methods: {
