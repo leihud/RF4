@@ -9,6 +9,19 @@ function validateAdminPassword(env, password) {
   return password === importPassword
 }
 
+/** 随机 64 位十六进制 token，标记“方案属于哪个提交者” */
+function generateOwnerToken() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID().replace(/-/g, '') + crypto.randomUUID().replace(/-/g, '')
+  }
+  const bytes = new Uint8Array(32)
+  for (let i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256)
+  return Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('')
+}
+
+/** owner_token 格式校验：64 位小写十六进制 */
+const OWNER_TOKEN_RE = /^[0-9a-f]{64}$/
+
 const INSERT_SQL = `INSERT INTO recommended_builds (
   name,
   rod_model, rod_name, rod_category, rod_price, rod_tension,
@@ -18,8 +31,9 @@ const INSERT_SQL = `INSERT INTO recommended_builds (
   hook_name,
   calculation_rule, friction,
   description, suitable_fish, suitable_map,
-  is_approved
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  is_approved,
+  owner_token
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 
 export async function onRequestPost(context) {
   const { request, env } = context
@@ -31,6 +45,10 @@ export async function onRequestPost(context) {
     if (!build) {
       return jsonResponse({ success: false, message: '缺少装备数据' }, 400)
     }
+
+    // 每次新提交生成独立的 owner_token 返回给提交者，
+    // 提交者保存在本地，凭其可在“我的提交”中查看/删除自己的方案
+    const ownerToken = generateOwnerToken()
 
     const db = env.DB
     const stmt = db.prepare(INSERT_SQL)
@@ -62,14 +80,16 @@ export async function onRequestPost(context) {
       build.description || '',
       build.suitableFish || '',
       build.suitableMap || '',
-      0  // 新提交的方案默认未审核
+      0,  // 新提交的方案默认未审核
+      ownerToken
     ).run()
 
     clearBuildsCache()
     return jsonResponse({
       success: true,
       message: '推荐装备搭配已保存，等待审核',
-      id: result.meta.last_row_id
+      id: result.meta.last_row_id,
+      ownerToken
     })
   } catch (error) {
     console.error('保存失败:', error)
@@ -81,18 +101,36 @@ export async function onRequestDelete(context) {
 
   try {
     const body = await request.json()
-    const { id, password } = body
+    const { id, password, ownerToken } = body
 
-    if (!validateAdminPassword(env, password)) {
-      return jsonResponse({ success: false, message: '需要管理员密码' }, 403)
-    }
-
-    if (!id) {
-      return jsonResponse({ success: false, message: '缺少方案ID' }, 400)
+    const buildId = Number(id)
+    if (!Number.isInteger(buildId) || buildId <= 0) {
+      return jsonResponse({ success: false, message: '缺少有效的方案ID' }, 400)
     }
 
     const db = env.DB
-    await db.prepare('DELETE FROM recommended_builds WHERE id = ?').bind(id).run()
+
+    if (ownerToken) {
+      // 提交者删除自己提交的方案：owner_token 即“我拥有该方案”的凭据
+      if (typeof ownerToken !== 'string' || !OWNER_TOKEN_RE.test(ownerToken)) {
+        return jsonResponse({ success: false, message: '无效的提交凭证' }, 400)
+      }
+      const build = await db
+        .prepare('SELECT id, owner_token FROM recommended_builds WHERE id = ?')
+        .bind(buildId)
+        .first()
+      if (!build) {
+        return jsonResponse({ success: false, message: '方案不存在' }, 404)
+      }
+      if (build.owner_token !== ownerToken) {
+        return jsonResponse({ success: false, message: '无权删除该方案' }, 403)
+      }
+    } else if (!validateAdminPassword(env, password)) {
+      // 管理员删除路径：仍要求管理员密码
+      return jsonResponse({ success: false, message: '需要管理员密码' }, 403)
+    }
+
+    await db.prepare('DELETE FROM recommended_builds WHERE id = ?').bind(buildId).run()
 
     clearBuildsCache()
     return jsonResponse({ success: true, message: '方案已删除' })
@@ -219,19 +257,30 @@ export async function onRequestGet(context) {
   const url = new URL(request.url)
   const fishName = url.searchParams.get('fish')
   const adminMode = url.searchParams.get('admin') === 'true'
+  // 我的提交：提交者凭本地保存的 owner_token（支持重复参数传多个）查回自己的方案
+  const mineTokens = url.searchParams
+    .getAll('mine')
+    .map(t => t.trim())
+    .filter(Boolean)
+  if (mineTokens.length > 100) {
+    return jsonResponse({ success: false, message: '参数过多' }, 400)
+  }
+  if (mineTokens.some(t => !OWNER_TOKEN_RE.test(t))) {
+    return jsonResponse({ success: false, message: '无效的提交凭证' }, 400)
+  }
   // 分页参数：limit 上限 200 防止滥用，不传则返回全部（兼容旧客户端）
   const limit = Math.min(parseInt(url.searchParams.get('limit'), 10) || 0, 200)
   const offset = parseInt(url.searchParams.get('offset'), 10) || 0
 
-  // 管理视图（浏览未审核/已驳回方案）必须校验管理员密码，与写操作同一把锁；
-  // 且管理响应绝不读写共享缓存，避免越权数据经 Cache API 泄漏给无密码请求
-  if (adminMode) {
+  // mine 视图携带唯一性隐私凭证，绝不读写共享缓存；
+  // 管理视图必须校验管理员密码且同样不缓存；仅公开列表使用短 TTL 缓存
+  if (mineTokens.length === 0 && adminMode) {
     const adminPassword =
       request.headers.get('x-admin-password') || url.searchParams.get('password') || ''
     if (!validateAdminPassword(env, adminPassword)) {
       return jsonResponse({ success: false, message: '需要管理员密码' }, 401)
     }
-  } else {
+  } else if (mineTokens.length === 0) {
     // 短 TTL 缓存（300s）：仅公开列表可缓存，写操作（提交/审核/删除/点赞）后会主动失效
     const cached = await getBuildsCachedResponse(request)
     if (cached) return cached
@@ -244,8 +293,12 @@ export async function onRequestGet(context) {
     let bindings = []
     const conditions = []
 
-    // 非管理员模式只显示已审核的方案
-    if (!adminMode) {
+    if (mineTokens.length > 0) {
+      // 我的提交：返回本人全部方案（含待审核/已驳回），保留 reject_reason 供提交者查看驳回原因
+      conditions.push(`owner_token IN (${mineTokens.map(() => '?').join(', ')})`)
+      bindings = bindings.concat(mineTokens)
+    } else if (!adminMode) {
+      // 非管理员公开模式只显示已审核的方案
       conditions.push('is_approved = 1')
     }
 
@@ -275,18 +328,24 @@ export async function onRequestGet(context) {
       hasMore = true
     }
 
-    // 公开响应最小化：仅剔除管理专用字段 reject_reason（驳回原因可能含管理侧措辞）；
+    // 任何视图都不回传 owner_token（提交者本人也无需重复回显）；
+    // 公开列表额外剔除管理专用字段 reject_reason（驳回原因可能含管理侧措辞）。
     // is_approved 保留（公开行恒为 1），页面模板依赖它判断“待审核/已驳回”标签的显隐
-    if (!adminMode) {
-      rows = rows.map(({ reject_reason, ...rest }) => rest)
-    }
+    rows = rows.map(row => {
+      const { owner_token, ...rest } = row
+      if (mineTokens.length === 0 && !adminMode) {
+        const { reject_reason, ...publicRow } = rest
+        return publicRow
+      }
+      return rest
+    })
 
     const response = jsonResponse({
       success: true,
       data: rows,
       hasMore
     })
-    if (!adminMode) putBuildsCache(request, response.clone())
+    if (mineTokens.length === 0 && !adminMode) putBuildsCache(request, response.clone())
     return response
   } catch (error) {
     console.error('查询方案失败:', error)

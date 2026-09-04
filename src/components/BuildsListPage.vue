@@ -2,7 +2,18 @@
   <div class="builds-list-page">
     <div class="page-header">
       <h1>装备方案汇总</h1>
-      <button class="back-btn" @click="$router.back()">← 返回计算器</button>
+      <div class="header-actions">
+        <button class="back-btn" @click="$router.back()">← 返回计算器</button>
+        <button
+          v-if="!isAdminMode"
+          class="view-switch-btn"
+          :class="{ active: viewMode === 'mine' }"
+          :title="viewMode === 'mine' ? '浏览全部公开方案' : '查看自己提交的方案（含审核状态与驳回原因）'"
+          @click="switchBuildView(viewMode === 'mine' ? 'all' : 'mine')"
+        >
+          {{ viewMode === 'mine' ? '浏览全部方案' : mineRecords.length > 0 ? `我的提交(${mineRecords.length})` : '我的提交' }}
+        </button>
+      </div>
     </div>
 
     <!-- 搜索过滤区域 -->
@@ -101,7 +112,11 @@
 
     <!-- 统计信息 -->
     <div class="stats-info">
-      共找到 {{ filteredBuilds.length }} 个方案
+      <template v-if="viewMode === 'mine'">
+        <template v-if="mineRecords.length > 0">我的提交：本地记录 {{ mineRecords.length }} 条，当前显示 {{ filteredBuilds.length }} 条</template>
+        <template v-else>你还没有提交过方案</template>
+      </template>
+      <template v-else>共找到 {{ filteredBuilds.length }} 个方案</template>
     </div>
 
     <!-- 加载骨架屏 -->
@@ -140,6 +155,7 @@
             <button class="like-btn" :class="{ liked: isLiked(build.id) }" :title="isLiked(build.id) ? '取消点赞' : '点赞方案'" :aria-label="isLiked(build.id) ? '取消点赞' : '点赞方案'" @click.stop="toggleLike(build)">❤ {{ build.likes || 0 }}</button>
             <button class="img-btn" title="生成分享图片" aria-label="生成分享图片" @click.stop="generateBuildImage(build)">🖼</button>
             <button class="apply-btn" @click.stop="applyToCalculator(build)" title="在计算器中应用此方案">▶ 应用</button>
+            <button v-if="viewMode === 'mine'" class="delete-btn own-delete-btn" @click.stop="deleteMyBuild(build)" :title="build.is_approved ? '删除我的提交（删除后将同时从公开列表移除）' : '删除我的提交'">🗑 删除</button>
             <button v-if="isAdminMode" class="edit-btn" @click.stop="openEditModal(build)" title="编辑方案">✎ 编辑</button>
             <button v-if="isAdminMode" class="approve-btn" @click.stop="approveBuild(build)" :title="build.is_approved ? '取消审核' : '通过审核'">{{ build.is_approved ? '✓ 已审核' : '审核' }}</button>
             <button v-if="showDeleteBtn" class="delete-btn" @click.stop="deleteBuild(build)" title="删除方案">️</button>
@@ -248,7 +264,9 @@
 
     <!-- 空状态 -->
     <div v-if="filteredBuilds.length === 0" class="empty-state">
-      <p>暂无匹配的装备方案</p>
+      <p v-if="viewMode === 'mine' && mineRecords.length === 0">你还没有提交过方案，可在装备计算器中「提交推荐装备搭配」，之后到这里查看审核状态</p>
+      <p v-else-if="viewMode === 'mine'">我的提交中没有匹配当前筛选的方案</p>
+      <p v-else>暂无匹配的装备方案</p>
     </div>
 
     <!-- 创建方案按钮（常驻） -->
@@ -344,6 +362,7 @@
 import { searchAndRankEquipment, EQUIPMENT_SEARCH_FIELDS } from '../utils/search.js'
 import { formatPrice as formatPriceDisplay, parsePrice } from '../utils/display.js'
 import { loadRodAndReelData } from '../utils/equipmentLoader.js'
+import { getMySubmissions, removeMySubmission } from '../utils/mineSubmissions.js'
 import AppToast from './common/AppToast.vue'
 import { lockScroll, bindEscape } from '../utils/modal.js'
 
@@ -368,6 +387,9 @@ export default {
       isAdminMode: false,
       // 管理员密码：进入管理模式时 prompt 输入，仅存内存用于请求鉴权，退出即清空
       adminPassword: '',
+      // 视图切换：'all' 全部方案 / 'mine' 我的提交
+      viewMode: 'all',
+      mineRecords: [],
       hKeyTimer: null,
       showDropdown: null,
       rodList: [],
@@ -472,6 +494,7 @@ export default {
       this.loadMaps()
     ])
     this.isLoading = false
+    this.refreshMineRecords()
     document.addEventListener('keydown', this.handleKeyDown)
     document.addEventListener('click', this.handleClickOutside)
   },
@@ -539,6 +562,76 @@ export default {
       } catch (error) {
         console.error('加载装备方案失败:', error)
         this.showToast('加载失败：' + error.message, 'error')
+      }
+    },
+    /** 读取本地保存的“我的提交”记录 */
+    refreshMineRecords() {
+      this.mineRecords = getMySubmissions()
+    },
+    /** 切换视图：全部方案 / 我的提交（凭本地 owner_token 查回自己的方案） */
+    async switchBuildView(mode) {
+      if (mode === this.viewMode) return
+      this.viewMode = mode
+      this.expandedIndex = null
+      this.refreshMineRecords()
+      if (mode === 'all') {
+        this.isLoading = true
+        await this.loadBuilds()
+        this.isLoading = false
+        return
+      }
+      // “我的提交”视图：无本地记录时无需请求后端
+      if (this.mineRecords.length === 0) {
+        this.builds = []
+        this.hasMore = false
+        return
+      }
+      this.isLoading = true
+      try {
+        const params = new URLSearchParams()
+        this.mineRecords.forEach(r => params.append('mine', r.token))
+        params.set('limit', '200')
+        const response = await fetch(`/api/recommended_builds?${params.toString()}`)
+        const result = await response.json()
+        if (result.success && result.data) {
+          this.builds = result.data
+          this.hasMore = false
+        } else {
+          this.showToast(result.message || '加载我的提交失败', 'error')
+        }
+      } catch (error) {
+        console.error('加载我的提交失败:', error)
+        this.showToast('加载失败：' + error.message, 'error')
+      } finally {
+        this.isLoading = false
+      }
+    },
+    /** 在“我的提交”中删除自己的方案（凭本地 owner_token，无需管理员密码） */
+    async deleteMyBuild(build) {
+      const record = this.mineRecords.find(r => Number(r.id) === Number(build.id))
+      if (!record) {
+        this.showToast('本地记录缺失，无法删除', 'error')
+        return
+      }
+      if (!window.confirm(`确定删除「${build.name || '未命名方案'}」吗？删除后不可恢复。`)) return
+      try {
+        const response = await fetch('/api/recommended_builds', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: build.id, ownerToken: record.token })
+        })
+        const result = await response.json()
+        if (result.success) {
+          removeMySubmission(build.id)
+          this.refreshMineRecords()
+          this.builds = this.builds.filter(b => b.id !== build.id)
+          this.showToast('方案已删除', 'success')
+        } else {
+          this.showToast(result.message || '删除失败', 'error')
+        }
+      } catch (error) {
+        console.error('删除我的提交失败:', error)
+        this.showToast('删除失败：' + error.message, 'error')
       }
     },
     /** 分页加载更多方案 */
@@ -785,6 +878,8 @@ export default {
     },
     /** 管理员模式开关：进入时要求输入密码（仅存内存，不落 localStorage），退出时清空 */
     async toggleAdminMode() {
+      // 管理视图始终以“全部方案”列表展示，避免与“我的提交”视图状态混淆
+      this.viewMode = 'all'
       const entering = !this.isAdminMode
       if (entering) {
         const password = prompt('请输入管理员密码：')
@@ -1954,6 +2049,39 @@ export default {
   margin-top: 4px;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* “我的提交 / 全部方案” 视图切换 */
+.view-switch-btn {
+  padding: 10px 24px;
+  border: 2px solid var(--color-primary);
+  border-radius: 8px;
+  background-color: transparent;
+  color: var(--color-primary);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.view-switch-btn:hover,
+.view-switch-btn.active {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+/* “我的提交”视图内的删除按钮（同样式蓝色，仅小间距微调） */
+.own-delete-btn {
+  margin-left: 2px;
+}
+
 /* 移动端响应式 */
 @media (max-width: 600px) {
   .form-row {
@@ -1962,6 +2090,14 @@ export default {
   }
   .edit-modal {
     max-width: 95%;
+  }
+  .page-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .view-switch-btn {
+    padding: 8px 16px;
+    font-size: 14px;
   }
 }
 </style>

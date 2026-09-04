@@ -466,6 +466,7 @@ import { getMergedAdaptWeight } from '../utils/display.js'
 import { sanitizeEquipmentFields, safeToNumber, toSafeNumber, toSafeDisplay } from '../utils/sanitize.js'
 import { loadRodAndReelData } from '../utils/equipmentLoader.js'
 import { encodePreset, decodePreset, getShareUrl } from '../utils/presetShare.js'
+import { addMySubmission } from '../utils/mineSubmissions.js'
 import DisclaimerModal from './calculator/DisclaimerModal.vue'
 import EquipmentSearchDropdown from './calculator/EquipmentSearchDropdown.vue'
 import EquipmentSummary from './calculator/EquipmentSummary.vue'
@@ -1112,8 +1113,13 @@ export default {
         }
         result = await response.json()
         if (result.success) {
-          const msg = this.submitMode === 'overwrite' ? '方案已更新' : '方案已提交，等待审核通过后展示'
+          const isNewSubmit = this.submitMode !== 'overwrite'
+          const msg = isNewSubmit ? '方案已提交，等待审核通过后展示' : '方案已更新'
           this.showToast(msg, 'success')
+          // 新提交：保存服务器返回的 owner_token，供“方案汇总-我的提交”查看审核状态/驳回原因/删除
+          if (isNewSubmit && result.ownerToken) {
+            addMySubmission({ id: result.id, token: result.ownerToken, name: this.submitForm.name })
+          }
           this.closeSubmitModal()
           this.submitForm = { name: '', description: '', suitableFish: [], suitableMap: [] }
           this._sourceBuild = null

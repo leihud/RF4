@@ -6,8 +6,15 @@ import {
   errorResponse,
   isIPBlacklisted
 } from '../functions/api/_shared.js'
-import { onRequestGet as getRecommendedBuilds } from '../functions/api/recommended_builds.js'
+import {
+  onRequestGet as getRecommendedBuilds,
+  onRequestPost as submitBuild,
+  onRequestDelete as deleteBuild
+} from '../functions/api/recommended_builds.js'
 import { onRequestPost as postLike } from '../functions/api/recommended_builds/like.js'
+
+const TOKEN_A = 'a'.repeat(64)
+const TOKEN_B = 'b'.repeat(64)
 
 const BROWSER_UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
@@ -78,8 +85,8 @@ describe('functions/api/_shared.js 反扒工具', () => {
 })
 
 describe('functions/api/recommended_builds.js 管理视图鉴权', () => {
-  const row = { id: 1, name: '测试方案', is_approved: 0, reject_reason: '待人工复核', likes: 0 }
-  const approvedRow = { id: 2, name: '已过审', is_approved: 1, reject_reason: '', likes: 1 }
+  const row = { id: 1, name: '测试方案', is_approved: 0, reject_reason: '待人工复核', likes: 0, owner_token: TOKEN_A }
+  const approvedRow = { id: 2, name: '已过审', is_approved: 1, reject_reason: '', likes: 1, owner_token: TOKEN_B }
 
   function dbStub(rows) {
     const queries = []
@@ -138,6 +145,8 @@ describe('functions/api/recommended_builds.js 管理视图鉴权', () => {
     expect(queries[0]).not.toContain('is_approved = 1')
     expect(queries[0]).toContain('LIMIT ? OFFSET ?')
     expect(body.data[0].reject_reason).toBe('待人工复核')
+    // 管理视图也不回传 owner_token，避免令牌泄漏
+    expect(body.data[0].owner_token).toBeUndefined()
   })
 
   it('公开列表仅返回已审核数据且剥离管理字段', async () => {
@@ -149,10 +158,124 @@ describe('functions/api/recommended_builds.js 管理视图鉴权', () => {
     expect(res.status).toBe(200)
     const body = await res.json()
     expect(queries[0]).toContain('is_approved = 1')
-    // 公开行保留 is_approved（页面模板依赖其判断标签显隐），但剥离 reject_reason
+    // 公开行保留 is_approved（页面模板依赖其判断标签显隐），但剥离 reject_reason 与 owner_token
     expect(body.data[0].reject_reason).toBeUndefined()
+    expect(body.data[0].owner_token).toBeUndefined()
     expect(body.data[0].is_approved).toBe(1)
     expect(body.data[0].likes).toBe(1)
+  })
+})
+
+describe('functions/api/recommended_builds.js 我的提交(owner_token)', () => {
+  const mineRow = { id: 11, name: '我的方案', is_approved: 0, reject_reason: '请补充说明', likes: 0, owner_token: TOKEN_A }
+  const otherRow = { id: 22, name: '别人的方案', is_approved: 1, reject_reason: '', likes: 3, owner_token: TOKEN_B }
+
+  function dbStub(rows) {
+    const queries = []
+    let lastBinds = []
+    const q = {
+      bind: (...args) => {
+        lastBinds = args
+        return q
+      },
+      all: async () => {
+        const sql = queries[queries.length - 1]
+        let out = rows
+        // 模拟 SQL 过滤语义：按 owner_token 列表 / is_approved 过滤，与真实 DB 行为一致
+        if (sql.includes('owner_token IN')) {
+          const tokens = lastBinds.filter(t => typeof t === 'string' && /^[0-9a-f]{64}$/.test(t))
+          out = rows.filter(r => tokens.includes(r.owner_token))
+        }
+        if (sql.includes('is_approved = 1')) {
+          out = out.filter(r => r.is_approved === 1)
+        }
+        return { results: out }
+      },
+      first: async () => rows[0] || null,
+      run: async () => ({ meta: { changes: 1, last_row_id: 11 } })
+    }
+    return {
+      db: {
+        prepare(sql) {
+          queries.push(sql)
+          return q
+        }
+      },
+      queries
+    }
+  }
+
+  const envWithPassword = (db) => ({ DB: db, IMPORT_PASSWORD: 's3cret-pass' })
+
+  it('POST 提交返回 64 位十六进制 owner_token 且写入数据', async () => {
+    const { db, queries } = dbStub([])
+    const res = await submitBuild({
+      request: makeRequest('/api/recommended_builds', {
+        method: 'POST',
+        body: { build: { name: '新方案', rodModel: 'R1' } }
+      }),
+      env: envWithPassword(db)
+    })
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.success).toBe(true)
+    expect(body.ownerToken).toMatch(/^[0-9a-f]{64}$/)
+    const insertSql = queries.find((sql) => sql.includes('INSERT INTO recommended_builds'))
+    expect(insertSql).toContain('owner_token')
+  })
+
+  it('GET mine=token 仅返回本人方案并保留驳回原因、剥离 owner_token', async () => {
+    const { db, queries } = dbStub([mineRow, otherRow])
+    const res = await getRecommendedBuilds({
+      request: makeRequest(`/api/recommended_builds?mine=${TOKEN_A}&limit=200`),
+      env: envWithPassword(db)
+    })
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(queries[0]).toContain('owner_token IN (?)')
+    expect(queries[0]).not.toContain('is_approved = 1')
+    expect(body.data).toHaveLength(1)
+    expect(body.data[0].id).toBe(11)
+    // 提交者需要看到自己的审核状态与驳回原因
+    expect(body.data[0].is_approved).toBe(0)
+    expect(body.data[0].reject_reason).toBe('请补充说明')
+    expect(body.data[0].owner_token).toBeUndefined()
+  })
+
+  it('GET mine 非法 token 返回 400 且不执行查询', async () => {
+    const { db, queries } = dbStub([])
+    const res = await getRecommendedBuilds({
+      request: makeRequest('/api/recommended_builds?mine=bad-token!'),
+      env: envWithPassword(db)
+    })
+    expect(res.status).toBe(400)
+    expect(queries.length).toBe(0)
+  })
+
+  it('DELETE 凭正确 owner_token 可删除自己的方案', async () => {
+    const { db, queries } = dbStub([mineRow])
+    const res = await deleteBuild({
+      request: makeRequest('/api/recommended_builds', {
+        method: 'DELETE',
+        body: { id: 11, ownerToken: TOKEN_A }
+      }),
+      env: envWithPassword(db)
+    })
+    expect(res.status).toBe(200)
+    expect(queries.some((sql) => sql.includes('DELETE FROM recommended_builds'))).toBe(true)
+  })
+
+  it('DELETE owner_token 不匹配时返回 403', async () => {
+    const { db, queries } = dbStub([otherRow])
+    const res = await deleteBuild({
+      request: makeRequest('/api/recommended_builds', {
+        method: 'DELETE',
+        body: { id: 22, ownerToken: TOKEN_A }
+      }),
+      env: envWithPassword(db)
+    })
+    expect(res.status).toBe(403)
+    expect(queries.some((sql) => sql.includes('DELETE FROM recommended_builds'))).toBe(false)
   })
 })
 
