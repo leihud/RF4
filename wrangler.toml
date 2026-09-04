@@ -18,7 +18,7 @@ migrations_dir = "./migrations"
 #   3. Optional: override the default vision model with [vars] RECOGNITION_MODEL.
 #
 # [vars]
-# RECOGNITION_MODEL = "@cf/moondream/moondream3.1-9b-a2b"
+# RECOGNITION_MODEL = "@cf/moondream/moondream3.1-9B-A2B"
 
 # IMPORT_PASSWORD 不再放在明文 vars 中，改用 secret：
 #   生产环境：npx wrangler pages secret put IMPORT_PASSWORD --project-name rf4

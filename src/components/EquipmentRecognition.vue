@@ -130,8 +130,8 @@ import { fetchWithTimeout } from '../utils/fetch.js'
 import { formatPrice } from '../utils/display.js'
 
 const MAX_ORIGINAL_SIZE = 10 * 1024 * 1024
-const MAX_UPLOAD_PIXELS = 1600
-const MAX_BODY_BYTES = 2_800_000
+const MAX_UPLOAD_PIXELS = 1280
+const MAX_BODY_BYTES = 1_000_000
 
 export default {
   name: 'EquipmentRecognition',
@@ -192,6 +192,7 @@ export default {
       this.errorMessage = ''
       this.items = []
 
+      let response
       try {
         this.currentDataUrl = await this.compressImage(this.currentFile)
         const bodySize = Math.round(this.currentDataUrl.length * 0.75)
@@ -200,7 +201,7 @@ export default {
           return
         }
 
-        const response = await fetchWithTimeout(
+        response = await fetchWithTimeout(
           '/api/recognize',
           {
             method: 'POST',
@@ -210,7 +211,16 @@ export default {
           45000
         )
 
-        const result = await response.json()
+        let result
+        try {
+          result = await response.json()
+        } catch (parseErr) {
+          console.error('recognize response parse error:', parseErr)
+          const text = await response.text().catch(() => '')
+          this.setError(`服务器返回异常（HTTP ${response.status}），请稍后重试。${text ? '详情：' + text.slice(0, 100) : ''}`)
+          return
+        }
+
         if (!response.ok || !result.success) {
           const code = result.code
           if (code === 'AI_NOT_CONFIGURED') {
@@ -218,7 +228,7 @@ export default {
           } else if (code === 'AI_CALL_FAILED') {
             this.setError('AI 识别服务调用失败，请稍后重试。')
           } else {
-            this.setError(result.message || '识别失败，请稍后重试')
+            this.setError(result.message || `识别失败（HTTP ${response.status}），请稍后重试`)
           }
           return
         }
@@ -239,9 +249,13 @@ export default {
         console.error('recognize error:', err)
         if (err?.name === 'AbortError') {
           this.setError('识别请求超时，请稍后重试')
-        } else {
-          this.setError('网络异常，请检查连接后重试')
+          return
         }
+        if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+          this.setError('本地开发模式：识别接口未连通，请先另开终端运行 npx wrangler pages dev dist --port 8788')
+          return
+        }
+        this.setError('网络异常，请检查连接后重试')
       }
     },
     compressImage(file) {
@@ -263,11 +277,11 @@ export default {
           ctx.fillRect(0, 0, width, height)
           ctx.drawImage(img, 0, 0, width, height)
 
-          let quality = 0.92
+          let quality = 0.88
           let dataUrl = canvas.toDataURL('image/jpeg', quality)
           // 若压缩后仍过大，继续降低质量
-          while (dataUrl.length * 0.75 > MAX_BODY_BYTES && quality > 0.5) {
-            quality -= 0.1
+          while (dataUrl.length * 0.75 > MAX_BODY_BYTES && quality > 0.45) {
+            quality -= 0.08
             dataUrl = canvas.toDataURL('image/jpeg', quality)
           }
           resolve(dataUrl)

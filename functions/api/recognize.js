@@ -14,7 +14,7 @@ import {
  *    @cf/qwen/qwen2.5-vl-7b-instruct
  *  可在 Cloudflare Dashboard > Pages > Functions 中添加变量 RECOGNITION_MODEL 覆盖
  */
-const DEFAULT_MODEL = '@cf/moondream/moondream3.1-9b-a2b'
+const DEFAULT_MODEL = '@cf/moondream/moondream3.1-9B-A2B'
 
 /** 单次识别最多返回的装备项数（控制输出与匹配成本） */
 const MAX_ITEMS = 15
