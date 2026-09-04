@@ -125,6 +125,8 @@
 </template>
 
 <script>
+import { fetchWithTimeout } from '../utils/fetch.js'
+
 // xlsx 库按需动态加载：库体积大（400KB+），仅在用户实际解析/下载模板时才拉取，
 // Vite 会自动将其拆分为独立 chunk，降低导入页首屏体积。同一会话内缓存只加载一次。
 let xlsxLoader = null
@@ -396,7 +398,7 @@ export default {
       this.importResult = null
 
       try {
-        const response = await fetch('/api/import_data', {
+        const response = await fetchWithTimeout('/api/import_data', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

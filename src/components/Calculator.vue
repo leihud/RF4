@@ -331,7 +331,7 @@
       <div class="modal-popup">
         <h3 class="modal-title">提交推荐装备搭配</h3>
         <!-- 加载方案时显示提交模式选择 -->
-        <div v-if="_sourceBuild" class="submit-mode-selector">
+        <div v-if="sourceBuild" class="submit-mode-selector">
           <label class="mode-option">
             <input type="radio" v-model="submitMode" value="new" />
             <span>新增提交</span>
@@ -340,7 +340,7 @@
           <label class="mode-option">
             <input type="radio" v-model="submitMode" value="overwrite" />
             <span>覆盖提交</span>
-            <span class="mode-desc">覆盖原方案「{{ _sourceBuild.name }}」，需管理员密码</span>
+            <span class="mode-desc">覆盖原方案「{{ sourceBuild.name }}」，需管理员密码</span>
           </label>
         </div>
         <div class="modal-body">
@@ -450,7 +450,6 @@ import {
   DEFAULT_FRICTION,
   CALC_RULES,
   LINE_MATERIALS,
-  getRatingAlias,
   getCompatibleReelTypes,
   isRodReelCompatible
 } from '../constants/equipment.js'
@@ -463,9 +462,9 @@ import {
   formatTension
 } from '../utils/tension.js'
 import { getMergedAdaptWeight } from '../utils/display.js'
-import { sanitizeEquipmentFields, safeToNumber, toSafeNumber, toSafeDisplay } from '../utils/sanitize.js'
+import { sanitizeEquipmentFields, toSafeNumber, toSafeDisplay } from '../utils/sanitize.js'
 import { loadRodAndReelData } from '../utils/equipmentLoader.js'
-import { encodePreset, decodePreset, getShareUrl } from '../utils/presetShare.js'
+import { decodePreset, getShareUrl } from '../utils/presetShare.js'
 import { addMySubmission } from '../utils/mineSubmissions.js'
 import DisclaimerModal from './calculator/DisclaimerModal.vue'
 import EquipmentSearchDropdown from './calculator/EquipmentSearchDropdown.vue'
@@ -474,6 +473,7 @@ import WearCurveChart from './calculator/WearCurveChart.vue'
 import AppToast from './common/AppToast.vue'
 import AppSkeleton from './common/AppSkeleton.vue'
 import { lockScroll, bindEscape } from '../utils/modal.js'
+import { fetchWithTimeout } from '../utils/fetch.js'
 
 export default {
   name: 'Calculator',
@@ -519,7 +519,7 @@ export default {
         suitableFish: [],
         suitableMap: []
       },
-      _sourceBuild: null,
+      sourceBuild: null,
       submitMode: 'new', // 'new' | 'overwrite'
       mapsList: [],
       fishSpeciesList: [],
@@ -996,8 +996,8 @@ export default {
     async loadMapsAndFishSpecies() {
       try {
         const [mapsRes, fishRes] = await Promise.allSettled([
-          fetch('/api/maps'),
-          fetch('/api/fish_species')
+          fetchWithTimeout('/api/maps'),
+          fetchWithTimeout('/api/fish_species')
         ])
         if (mapsRes.status === 'fulfilled' && mapsRes.value.ok) {
           try {
@@ -1021,7 +1021,7 @@ export default {
     /** 加载所有推荐装备搭配 */
     async loadRecommendedBuilds() {
       try {
-        const response = await fetch('/api/recommended_builds')
+        const response = await fetchWithTimeout('/api/recommended_builds')
         const result = await response.json()
         if (result.success && result.data) {
           this.recommendedBuilds = result.data
@@ -1035,8 +1035,8 @@ export default {
     },
     openSubmitModal() {
       // 如果之前应用过推荐方案，预填表单
-      if (this._sourceBuild) {
-        const b = this._sourceBuild
+      if (this.sourceBuild) {
+        const b = this.sourceBuild
         this.submitForm = {
           name: b.name || '',
           description: b.description || '',
@@ -1055,7 +1055,7 @@ export default {
     },
     closeSubmitModal() {
       this.showSubmitModal = false
-      this._sourceBuild = null
+      this.sourceBuild = null
     },
     async submitBuild() {
       const rod = this.selectedEquipmentMap['鱼竿']
@@ -1094,18 +1094,18 @@ export default {
       this.isSubmitting = true
       try {
         let response, result
-        if (this.submitMode === 'overwrite' && this._sourceBuild) {
+        if (this.submitMode === 'overwrite' && this.sourceBuild) {
           // 覆盖提交：需要管理员密码
           const password = prompt('覆盖提交需要管理员密码：')
           if (password === null) { this.isSubmitting = false; return }
-          response = await fetch('/api/recommended_builds', {
+          response = await fetchWithTimeout('/api/recommended_builds', {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: this._sourceBuild.id, build, password })
+            body: JSON.stringify({ id: this.sourceBuild.id, build, password })
           })
         } else {
           // 新增提交
-          response = await fetch('/api/recommended_builds', {
+          response = await fetchWithTimeout('/api/recommended_builds', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ build })
@@ -1122,7 +1122,7 @@ export default {
           }
           this.closeSubmitModal()
           this.submitForm = { name: '', description: '', suitableFish: [], suitableMap: [] }
-          this._sourceBuild = null
+          this.sourceBuild = null
           // 刷新方案列表
           this.loadRecommendedBuilds()
         } else {
@@ -1161,7 +1161,7 @@ export default {
     /** 应用推荐装备搭配到当前选择 */
     applyRecommendedBuild(build) {
       // 保存方案元数据，供提交弹窗预填
-      this._sourceBuild = build
+      this.sourceBuild = build
       
       // 清空当前选择
       this.selectedEquipmentList = []

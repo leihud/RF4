@@ -1,6 +1,7 @@
 import { getRatingAlias } from '../constants/equipment.js'
 import { sanitizeEquipmentList } from './sanitize.js'
 import { parsePrice } from './display.js'
+import { fetchWithTimeout } from './fetch.js'
 
 /**
  * 装备数据加载共享模块（Calculator / ComparePage / BuildsList 等页面共用）。
@@ -71,7 +72,7 @@ export async function loadEquipmentData(apiPath, options = {}) {
 
   try {
     const url = equipmentType ? `${apiPath}?type=${encodeURIComponent(equipmentType)}` : apiPath
-    const response = await fetch(url)
+    const response = await fetchWithTimeout(url)
 
     if (!response.ok) {
       const errorText = await response.text()

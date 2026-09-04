@@ -52,7 +52,7 @@
 
 <script>
 import { searchAndRankEquipment, sortByPanelTension, EQUIPMENT_SEARCH_FIELDS } from '../../utils/search.js'
-import { safeToString, toSafeDisplay } from '../../utils/sanitize.js'
+import { toSafeDisplay } from '../../utils/sanitize.js'
 
 /** 下拉一次最多渲染的条数：无搜索词时全量列表可达数百行，超出的提示输入关键字精确定位 */
 const MAX_DROPDOWN_OPTIONS = 60

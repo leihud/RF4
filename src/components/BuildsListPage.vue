@@ -365,6 +365,7 @@ import { loadRodAndReelData } from '../utils/equipmentLoader.js'
 import { getMySubmissions, removeMySubmission } from '../utils/mineSubmissions.js'
 import AppToast from './common/AppToast.vue'
 import { lockScroll, bindEscape } from '../utils/modal.js'
+import { fetchWithTimeout } from '../utils/fetch.js'
 
 export default {
   name: 'BuildsListPage',
@@ -543,7 +544,7 @@ export default {
         const headers = this.isAdminMode && this.adminPassword
           ? { 'x-admin-password': this.adminPassword }
           : {}
-        const response = await fetch(`/api/recommended_builds?${params.toString()}`, { headers })
+        const response = await fetchWithTimeout(`/api/recommended_builds?${params.toString()}`, { headers })
         const result = await response.json()
         if (result.success && result.data) {
           this.builds = append ? this.builds.concat(result.data) : result.data
@@ -591,7 +592,7 @@ export default {
         const params = new URLSearchParams()
         this.mineRecords.forEach(r => params.append('mine', r.token))
         params.set('limit', '200')
-        const response = await fetch(`/api/recommended_builds?${params.toString()}`)
+        const response = await fetchWithTimeout(`/api/recommended_builds?${params.toString()}`)
         const result = await response.json()
         if (result.success && result.data) {
           this.builds = result.data
@@ -615,7 +616,7 @@ export default {
       }
       if (!window.confirm(`确定删除「${build.name || '未命名方案'}」吗？删除后不可恢复。`)) return
       try {
-        const response = await fetch('/api/recommended_builds', {
+        const response = await fetchWithTimeout('/api/recommended_builds', {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id: build.id, ownerToken: record.token })
@@ -661,7 +662,7 @@ export default {
         : [...this.likedIds, build.id]
       this.persistLikedIds()
       try {
-        const response = await fetch('/api/recommended_builds/like', {
+        const response = await fetchWithTimeout('/api/recommended_builds/like', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id: build.id, clientId: this.getOrCreateClientId(), unlike: wasLiked })
@@ -790,14 +791,14 @@ export default {
     },
     async loadFishSpecies() {
       try {
-        const res = await fetch('/api/fish_species')
+        const res = await fetchWithTimeout('/api/fish_species')
         const result = await res.json()
         this.fishList = Array.isArray(result) ? result : (result.data || [])
       } catch (e) { console.error('加载鱼种失败:', e) }
     },
     async loadMaps() {
       try {
-        const res = await fetch('/api/maps')
+        const res = await fetchWithTimeout('/api/maps')
         const result = await res.json()
         this.mapList = Array.isArray(result) ? result : (result.data || [])
       } catch (e) { console.error('加载地图失败:', e) }
@@ -904,7 +905,7 @@ export default {
       const password = prompt('请输入管理员密码：')
       if (password === null) return
       try {
-        const response = await fetch('/api/recommended_builds', {
+        const response = await fetchWithTimeout('/api/recommended_builds', {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id: build.id, password })
@@ -933,7 +934,7 @@ export default {
         if (rejectReason === null) return
       }
       try {
-        const response = await fetch('/api/recommended_builds', {
+        const response = await fetchWithTimeout('/api/recommended_builds', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id: build.id, isApproved: newStatus, password, rejectReason })
@@ -991,7 +992,7 @@ export default {
           suitable_fish: this.editForm.suitable_fish.join(','),
           suitable_map: this.editForm.suitable_map.join(',')
         }
-        const response = await fetch('/api/recommended_builds', {
+        const response = await fetchWithTimeout('/api/recommended_builds', {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id: this.editForm.id, build: buildData, password })

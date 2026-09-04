@@ -71,6 +71,7 @@
 import { versionInfo } from './version-info.js'
 import AppHeader from './components/common/AppHeader.vue'
 import { lockScroll, bindEscape } from './utils/modal.js'
+import { fetchWithTimeout } from './utils/fetch.js'
 
 export default {
   name: 'App',
@@ -163,7 +164,7 @@ export default {
     /** 拉取数据更新时间（失败静默，不影响主流程） */
     async loadDataMeta() {
       try {
-        const res = await fetch('/api/meta')
+        const res = await fetchWithTimeout('/api/meta')
         const result = await res.json()
         if (result.success && result.data && result.data.last_import_at) {
           this.dataUpdatedAt = result.data.last_import_at
@@ -176,7 +177,7 @@ export default {
       if (this._lastReportAt && now - this._lastReportAt < 10000) return
       this._lastReportAt = now
       try {
-        fetch('/api/error_report', {
+        fetchWithTimeout('/api/error_report', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

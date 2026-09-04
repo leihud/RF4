@@ -558,7 +558,7 @@ export default {
         entry.debouncedSearch = entry.search
       }, 200)
     },
-    onSearchBlur(entry, type, index) {
+    onSearchBlur(entry, _type, _index) {
       // 延迟关闭，让点击事件先触发
       setTimeout(() => {
         entry.isDropdownOpen = false
