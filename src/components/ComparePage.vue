@@ -65,9 +65,14 @@
             >{{ formatValue(equipment.ratingAlias) }}</span>
             <span
               class="equipment-name"
-              title="点击查看详情"
-              @click.stop="openDetail(equipment)"
+              :title="formatValue(equipment.model || equipment.equipmentName, '')"
             >{{ formatValue(equipment.model || equipment.equipmentName) }}</span>
+            <button
+              class="detail-btn-inline"
+              title="查看该装备的参数详情"
+              aria-label="查看参数详情"
+              @click.stop="openDetail(equipment)"
+            >详情</button>
           </div>
           <div v-if="filteredEquipment.length === 0" class="list-empty">
             未找到匹配的装备
@@ -965,7 +970,26 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
   margin-right: 0;
+}
+
+/* 详情按钮：行尾独立入口，点击查看参数详情（不影响整行单击加入对比） */
+.detail-btn-inline {
+  flex-shrink: 0;
+  margin-left: 10px;
+  padding: 3px 10px;
+  font-size: 12px;
+  line-height: 1.4;
+  border: 1px solid var(--color-primary-light);
+  background-color: var(--color-surface);
+  color: var(--color-primary);
+  border-radius: 4px;
   cursor: pointer;
+  transition: all 0.2s;
+}
+
+.detail-btn-inline:hover {
+  background-color: var(--color-primary);
+  color: white;
 }
 
 .list-empty {
