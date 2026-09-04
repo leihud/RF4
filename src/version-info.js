@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20260904-01',
+  currentVersion: 'V20260904-02',
   buildTime: '2026-09-04',
   changelog: [
+    {
+      version: 'V20260904-02',
+      date: '2026-09-04',
+      changes: [
+        '新增：提交者可查看和管理自己的提交方案'
+      ]
+    },
     {
       version: 'V20260904-01',
       date: '2026-09-04',
