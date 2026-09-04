@@ -366,6 +366,8 @@ export default {
       expandedIndex: null,
       showDeleteBtn: false,
       isAdminMode: false,
+      // 管理员密码：进入管理模式时 prompt 输入，仅存内存用于请求鉴权，退出即清空
+      adminPassword: '',
       hKeyTimer: null,
       showDropdown: null,
       rodList: [],
@@ -514,11 +516,25 @@ export default {
         if (this.isAdminMode) params.set('admin', 'true')
         params.set('limit', String(this.BUILDS_PAGE_SIZE))
         params.set('offset', append ? String(this.builds.length) : '0')
-        const response = await fetch(`/api/recommended_builds?${params.toString()}`)
+        // 管理视图接口需带密码请求（仅存内存，不落 localStorage）
+        const headers = this.isAdminMode && this.adminPassword
+          ? { 'x-admin-password': this.adminPassword }
+          : {}
+        const response = await fetch(`/api/recommended_builds?${params.toString()}`, { headers })
         const result = await response.json()
         if (result.success && result.data) {
           this.builds = append ? this.builds.concat(result.data) : result.data
           this.hasMore = !!result.hasMore
+        } else if (this.isAdminMode && !append) {
+          // 管理视图鉴权失败（密码错误/未授权）：退出管理员模式并清空管理数据
+          this.showToast(result.message || '管理员密码错误，已退出管理员模式', 'error')
+          this.isAdminMode = false
+          this.showDeleteBtn = false
+          this.adminPassword = ''
+          this.builds = []
+          this.hasMore = false
+        } else if (!response.ok) {
+          console.error('加载方案失败:', result.message || response.statusText)
         }
       } catch (error) {
         console.error('加载装备方案失败:', error)
@@ -543,23 +559,36 @@ export default {
     isLiked(buildId) {
       return this.likedIds.includes(buildId)
     },
-    /** 点赞/取消点赞：乐观更新 + 后端同步，失败不回滚（下次加载以后端为准） */
+    /** 点赞/取消点赞：乐观更新 + 后端同步；同步失败时回滚本地乐观状态 */
     async toggleLike(build) {
       const wasLiked = this.isLiked(build.id)
       build.likes = Math.max(0, (build.likes || 0) + (wasLiked ? -1 : 1))
       this.likedIds = wasLiked
         ? this.likedIds.filter(id => id !== build.id)
         : [...this.likedIds, build.id]
-      try { localStorage.setItem('build_liked_ids', JSON.stringify(this.likedIds)) } catch (e) { /* 忽略 */ }
+      this.persistLikedIds()
       try {
-        await fetch('/api/recommended_builds/like', {
+        const response = await fetch('/api/recommended_builds/like', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id: build.id, clientId: this.getOrCreateClientId(), unlike: wasLiked })
         })
+        if (!response.ok) {
+          // 后端拒绝（方案已删除/未发布/限流等）：回滚本地乐观状态
+          console.warn('点赞同步失败，已回滚本地状态:', response.status)
+          build.likes = Math.max(0, (build.likes || 0) + (wasLiked ? 1 : -1))
+          this.likedIds = wasLiked
+            ? [...this.likedIds, build.id]
+            : this.likedIds.filter(id => id !== build.id)
+          this.persistLikedIds()
+        }
       } catch (error) {
         console.error('点赞操作失败:', error)
       }
+    },
+    /** 持久化已点赞方案 id 列表（存储不可用时静默降级） */
+    persistLikedIds() {
+      try { localStorage.setItem('build_liked_ids', JSON.stringify(this.likedIds)) } catch (e) { /* 忽略 */ }
     },
     /** canvas 绘制方案分享图片并下载 */
     generateBuildImage(build) {
@@ -742,14 +771,10 @@ export default {
     handleKeyDown(e) {
       if (e.key === 'h' || e.key === 'H') {
         if (this.hKeyTimer) {
-          // 第二次按下，切换管理员模式
-          this.isAdminMode = !this.isAdminMode
-          this.showDeleteBtn = this.isAdminMode
+          // 第二次按下，切换管理员模式（进入前需输入密码）
           clearTimeout(this.hKeyTimer)
           this.hKeyTimer = null
-          // 重新加载数据
-          this.loadBuilds()
-          this.showToast(this.isAdminMode ? '已进入管理员模式' : '已退出管理员模式', 'info')
+          this.toggleAdminMode()
         } else {
           // 第一次按下，设置计时器
           this.hKeyTimer = setTimeout(() => {
@@ -757,6 +782,27 @@ export default {
           }, 500)
         }
       }
+    },
+    /** 管理员模式开关：进入时要求输入密码（仅存内存，不落 localStorage），退出时清空 */
+    async toggleAdminMode() {
+      const entering = !this.isAdminMode
+      if (entering) {
+        const password = prompt('请输入管理员密码：')
+        if (password === null || password === '') {
+          this.showToast('已取消进入管理员模式', 'info')
+          return
+        }
+        this.adminPassword = password
+        this.isAdminMode = true
+        this.showDeleteBtn = true
+        this.showToast('已进入管理员模式', 'info')
+      } else {
+        this.isAdminMode = false
+        this.showDeleteBtn = false
+        this.adminPassword = ''
+        this.showToast('已退出管理员模式', 'info')
+      }
+      await this.loadBuilds()
     },
     async deleteBuild(build) {
       if (!confirm(`确定要删除方案 "${build.name || '未命名'}" 吗？`)) return

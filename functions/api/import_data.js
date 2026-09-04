@@ -208,6 +208,8 @@ export async function onRequestPost(context) {
       ...result
     })
   } catch (error) {
-    return jsonResponse({ success: false, message: error.message }, 500)
+    console.error('导入失败:', error)
+    // 不向前端回传 DB 内部细节
+    return jsonResponse({ success: false, message: '服务器处理请求失败，请稍后重试' }, 500)
   }
 }

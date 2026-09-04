@@ -1,0 +1,9 @@
+修复：API 安全加固与前后端健壮性优化
+
+- 后端：recommended_builds 管理视图需管理员密码；公开响应剥离 reject_reason；管理响应不进共享缓存
+- 后端：点赞校验方案存在/过审、client_id 合法性，失败回滚乐观态并修复缓存放大
+- 后端：限流 fail-closed、自动拉黑消费 is_suspicious、拒绝伪造 X-Forwarded-For、UA 拦截脚本客户端
+- 后端：统一错误契约 {success:false,message}，不泄露 DB 内部细节；meta/maps/fish 加缓存；error_report 限 body
+- 前端：双击 h 进入管理员模式输入密码并带鉴权头，错误自动退出；点赞失败回滚
+- 前端：全局错误处理收敛至 App.vue；清理 Calculator 过期类名与内联样式；下拉结果截断
+- 工程：vite dev 代理 /api；新增 functions 层 13 个测试；修复 pre-push 中文参数 Windows 乱码

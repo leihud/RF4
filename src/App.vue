@@ -130,16 +130,14 @@ export default {
   },
   created() {
     this.loadDataMeta()
-    // 全局 Vue 渲染错误兜底（防止组件内部未捕获异常导致整页白屏）
+    // 全局 Vue 渲染错误兜底：统一收敛在此处注册 app.config.errorHandler
+    // （main.js 不再重复注册）。子组件渲染/生命周期异常冒泡到这里，
+    // 展示错误覆盖层并静默上报，避免整页白屏。
     if (this.$root && this.$root.appContext && this.$root.appContext.config) {
-      const originalHandler = this.$root.appContext.config.errorHandler
       this.$root.appContext.config.errorHandler = (err, instance, info) => {
         console.error('[Vue errorHandler] 捕获全局错误:', err, info)
         this.reportError(err && err.message, err && err.stack)
         this.fatalErrorMessage = `${err && err.message ? err.message : String(err)}（${info || '组件渲染异常'}）`
-        if (typeof originalHandler === 'function') {
-          try { originalHandler.call(this, err, instance, info) } catch (_) {}
-        }
       }
     }
     // 全局 window 级错误兜底（脚本错误/Promise rejection）
@@ -160,11 +158,6 @@ export default {
         }
       })
     }
-  },
-  errorCaptured(err, instance, info) {
-    console.error('[App errorCaptured] 错误捕获:', err, info)
-    this.fatalErrorMessage = `${err && err.message ? err.message : String(err)}（${info || '组件内部错误'}）`
-    return false // 继续上抛，保证全局 errorHandler 仍能收到
   },
   methods: {
     /** 拉取数据更新时间（失败静默，不影响主流程） */

@@ -85,7 +85,7 @@
       请先选择计算规则
     </div>
 
-    <div v-if="dataLoadError" class="rule-warning" style="background-color: var(--color-warning-bg); color: var(--color-danger-strong);">
+    <div v-if="dataLoadError" class="rule-warning rule-warning--error">
       装备数据加载失败
     </div>
 
@@ -892,8 +892,8 @@ export default {
         return
       }
       
-      // 点击免责声明区域时不处理
-      const disclaimers = document.querySelectorAll('.disclaimer-mask, .disclaimer-popup, .disclaimer-footer')
+      // 点击免责声明弹窗内部时不处理（遮罩层点击会由弹窗自身 emit close 关闭）
+      const disclaimers = document.querySelectorAll('.disclaimer-modal, .disclaimer-header, .disclaimer-content, .disclaimer-footer')
       for (const el2 of disclaimers) {
         if (el2 && el2.contains && el2.contains(event.target)) return
       }
@@ -1519,6 +1519,11 @@ h2 {
   border-radius: 8px;
   margin-bottom: 15px;
   font-weight: bold;
+}
+
+/* 错误类提示：红色文字强调（替代原内联样式） */
+.rule-warning--error {
+  color: var(--color-danger-strong);
 }
 
 .loading-wrapper {

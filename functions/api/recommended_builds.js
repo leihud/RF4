@@ -216,10 +216,6 @@ export async function onRequestGet(context) {
     return jsonResponse({ success: false, message: rateCheck.message || '请求过于频繁' }, 429)
   }
 
-  // 短 TTL 缓存（300s）：写操作（提交/审核/删除/点赞）后会主动失效
-  const cached = await getBuildsCachedResponse(request)
-  if (cached) return cached
-
   const url = new URL(request.url)
   const fishName = url.searchParams.get('fish')
   const adminMode = url.searchParams.get('admin') === 'true'
@@ -227,36 +223,50 @@ export async function onRequestGet(context) {
   const limit = Math.min(parseInt(url.searchParams.get('limit'), 10) || 0, 200)
   const offset = parseInt(url.searchParams.get('offset'), 10) || 0
 
+  // 管理视图（浏览未审核/已驳回方案）必须校验管理员密码，与写操作同一把锁；
+  // 且管理响应绝不读写共享缓存，避免越权数据经 Cache API 泄漏给无密码请求
+  if (adminMode) {
+    const adminPassword =
+      request.headers.get('x-admin-password') || url.searchParams.get('password') || ''
+    if (!validateAdminPassword(env, adminPassword)) {
+      return jsonResponse({ success: false, message: '需要管理员密码' }, 401)
+    }
+  } else {
+    // 短 TTL 缓存（300s）：仅公开列表可缓存，写操作（提交/审核/删除/点赞）后会主动失效
+    const cached = await getBuildsCachedResponse(request)
+    if (cached) return cached
+  }
+
   try {
     const db = env.DB
-    
+
     let query = 'SELECT * FROM recommended_builds'
     let bindings = []
     const conditions = []
-    
+
     // 非管理员模式只显示已审核的方案
     if (!adminMode) {
       conditions.push('is_approved = 1')
     }
-    
+
     // 如果指定了鱼种，添加过滤条件
     if (fishName) {
       conditions.push('suitable_fish LIKE ?')
       bindings.push(`%${fishName}%`)
     }
-    
+
     if (conditions.length > 0) {
       query += ' WHERE ' + conditions.join(' AND ')
     }
-    
+
     query += ' ORDER BY created_at DESC'
-    
+
     // 多取 1 条用于判断是否还有下一页，避免额外 COUNT 查询
     if (limit > 0) {
       query += ' LIMIT ? OFFSET ?'
       bindings = bindings.concat([limit + 1, offset])
     }
-    
+
     const result = await db.prepare(query).bind(...bindings).all()
     let rows = result.results || []
     let hasMore = false
@@ -264,15 +274,22 @@ export async function onRequestGet(context) {
       rows = rows.slice(0, limit)
       hasMore = true
     }
-    
+
+    // 公开响应最小化：仅剔除管理专用字段 reject_reason（驳回原因可能含管理侧措辞）；
+    // is_approved 保留（公开行恒为 1），页面模板依赖它判断“待审核/已驳回”标签的显隐
+    if (!adminMode) {
+      rows = rows.map(({ reject_reason, ...rest }) => rest)
+    }
+
     const response = jsonResponse({
       success: true,
       data: rows,
       hasMore
     })
-    putBuildsCache(request, response.clone())
+    if (!adminMode) putBuildsCache(request, response.clone())
     return response
   } catch (error) {
+    console.error('查询方案失败:', error)
     return errorResponse(error)
   }
 }

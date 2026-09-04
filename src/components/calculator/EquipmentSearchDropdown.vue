@@ -27,7 +27,7 @@
     </div>
     <div v-if="isDropdownOpen" class="dropdown-list">
       <div
-        v-for="(equipment, eqIdx) in filteredEquipment"
+        v-for="(equipment, eqIdx) in visibleEquipment"
         :key="toSafeDisplay(equipment.model || equipment.equipmentName, String(equipment.id || eqIdx))"
         class="dropdown-item"
         @click.stop="$emit('select', equipment)"
@@ -39,6 +39,10 @@
           class="dropdown-rating"
         >{{ toSafeDisplay(equipment.ratingAlias) }}</span>
       </div>
+      <!-- 全量结果过多时仅渲染前 MAX_DROPDOWN_OPTIONS 条，避免一次性生成过多 DOM -->
+      <div v-if="hiddenEquipmentCount > 0" class="dropdown-more-hint">
+        共 {{ filteredEquipment.length }} 条结果，输入名称关键字可定位其余 {{ hiddenEquipmentCount }} 条
+      </div>
       <div v-if="filteredEquipment.length === 0" class="dropdown-empty">
         {{ emptyHint || autoEmptyHint }}
       </div>
@@ -49,6 +53,9 @@
 <script>
 import { searchAndRankEquipment, sortByPanelTension, EQUIPMENT_SEARCH_FIELDS } from '../../utils/search.js'
 import { safeToString, toSafeDisplay } from '../../utils/sanitize.js'
+
+/** 下拉一次最多渲染的条数：无搜索词时全量列表可达数百行，超出的提示输入关键字精确定位 */
+const MAX_DROPDOWN_OPTIONS = 60
 
 /**
  * 装备搜索下拉：自持搜索词（200ms 防抖）、分类筛选与下拉展开状态，
@@ -127,6 +134,15 @@ export default {
       }
 
       return filtered
+    },
+    /** 渲染用列表：最多显示前 MAX_DROPDOWN_OPTIONS 条 */
+    visibleEquipment() {
+      return this.filteredEquipment.slice(0, MAX_DROPDOWN_OPTIONS)
+    },
+    /** 被截断未渲染的条数 */
+    hiddenEquipmentCount() {
+      const total = this.filteredEquipment.length
+      return total > MAX_DROPDOWN_OPTIONS ? total - MAX_DROPDOWN_OPTIONS : 0
     },
     /** 根据当前筛选状态自动生成空状态提示 */
     autoEmptyHint() {
@@ -323,6 +339,14 @@ export default {
   text-align: center;
   color: var(--text-hint);
   font-size: 14px;
+}
+
+.dropdown-more-hint {
+  padding: 8px 15px;
+  text-align: center;
+  color: var(--text-hint);
+  font-size: 12px;
+  border-top: 1px dashed var(--color-border);
 }
 
 @media (min-width: 768px) and (max-width: 1200px) {

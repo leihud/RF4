@@ -19,13 +19,25 @@ export const ANTI_SCRAPING_CONFIG = {
     MAX_REQUESTS_PER_MINUTE: 60,
     WINDOW_MS: 60000
   },
-  // User-Agent 白名单关键词（允许包含这些关键词的UA访问）
-  ALLOWED_UA_KEYWORDS: ['Mozilla', 'Chrome', 'Safari', 'Firefox', 'Edge'],
+  // 自动拉黑阈值：累计被限流的请求数达到该值（≈连续 5 分钟持续超限）即视为脚本滥用
+  AUTO_BAN_THRESHOLD: 60 * 5,
+  // 自动解封时长：黑名单记录超过该时长未再活跃则自动解除（动态 IP 可能已易主）
+  BAN_DURATION_MS: 7 * 24 * 60 * 60 * 1000,
   // IP 黑名单存储键前缀
   BLACKLIST_PREFIX: 'rf4-blacklist:',
   // 速率限制计数存储键前缀
   RATE_LIMIT_PREFIX: 'rf4-ratelimit:'
 }
+
+/** 明显非浏览器的脚本/爬虫 UA 关键词（命中即拒绝，先于放行判断） */
+const BLOCKED_UA_KEYWORDS = Object.freeze([
+  'bot', 'crawl', 'spider', 'scrapy', 'curl', 'wget', 'libwww', 'python',
+  'aiohttp', 'go-http-client', 'axios', 'node-fetch', 'postman', 'insomnia',
+  'okhttp', 'httpclient', 'apache-httpclient', 'java/', 'phantomjs',
+  'headlesschrome', 'headless', 'urllib', 'requests', 'fetch/',
+  'googlebot', 'bingbot', 'bingpreview', 'baiduspider', 'yandex',
+  'facebookexternalhit', 'slackbot', 'discordbot', 'telegrambot', 'whatsapp'
+])
 
 /**
  * 获取客户端真实 IP
@@ -33,10 +45,11 @@ export const ANTI_SCRAPING_CONFIG = {
  * @returns {string}
  */
 export function getClientIP(request) {
-  // Cloudflare 会通过 CF-Connecting-IP 头传递真实 IP
-  return request.headers.get('cf-connecting-ip') || 
-         request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-         'unknown'
+  // 仅信任 Cloudflare 边缘注入的 CF-Connecting-IP。
+  // 不再回退到 X-Forwarded-For：该头可由客户端伪造，
+  // 回退会为「伪造 IP 绕过限流/黑名单」留出通道。
+  const ip = request.headers.get('cf-connecting-ip')
+  return (ip && ip.trim()) || 'unknown'
 }
 
 /**
@@ -45,13 +58,16 @@ export function getClientIP(request) {
  * @returns {boolean}
  */
 export function isValidUserAgent(request) {
-  const ua = request.headers.get('user-agent') || ''
+  const ua = (request.headers.get('user-agent') || '').trim()
   if (!ua) return false
-  
-  // 检查是否包含允许的关键词
-  return ANTI_SCRAPING_CONFIG.ALLOWED_UA_KEYWORDS.some(keyword => 
-    ua.includes(keyword)
-  )
+
+  // 命中明显的脚本/爬虫 UA 直接拒绝
+  const low = ua.toLowerCase()
+  if (BLOCKED_UA_KEYWORDS.some(keyword => low.includes(keyword))) return false
+
+  // 真实浏览器（含移动端 WebView）UA 均以 "Mozilla/" 开头；
+  // 基础层反爬到此为止，更严格的 Bot 防护需在 Cloudflare WAF/机器人管理侧配置
+  return /^mozilla\//.test(low)
 }
 
 /**
@@ -62,12 +78,23 @@ export function isValidUserAgent(request) {
  */
 export async function isIPBlacklisted(ip, db) {
   if (!db || ip === 'unknown') return false
-  
+
   try {
     const result = await db.prepare(
-      'SELECT 1 FROM rate_limits WHERE ip = ? AND is_blacklisted = 1 LIMIT 1'
+      'SELECT id, last_request_at FROM rate_limits WHERE ip = ? AND is_blacklisted = 1 LIMIT 1'
     ).bind(ip).first()
-    return !!result
+    if (!result) return false
+
+    // 自动解封：黑名单记录长期无新请求多半属于动态 IP 已易主，
+    // 避免永久误伤 NAT / 运营商共享 IP 的后继使用者
+    const last = result.last_request_at ? new Date(result.last_request_at).getTime() : Number.NaN
+    if (!Number.isNaN(last) && Date.now() - last > ANTI_SCRAPING_CONFIG.BAN_DURATION_MS) {
+      await db.prepare(
+        'UPDATE rate_limits SET is_blacklisted = 0, is_suspicious = 0, request_count = 0 WHERE id = ?'
+      ).bind(result.id).run()
+      return false
+    }
+    return true
   } catch (e) {
     console.error('检查黑名单失败:', e)
     return false
@@ -107,12 +134,16 @@ export async function checkRateLimit(ip, db) {
     }
     
     if (currentCount >= maxRequests) {
-      // 超限：标记可疑（upsert 避免 UNIQUE 冲突）
+      // 超限：标记可疑并累加计数（upsert 避免 UNIQUE 冲突）。
+      // 累计超过阈值（≈连续 5 分钟持续超限）自动升级为黑名单，供 isIPBlacklisted 消费
       await db.prepare(
         `INSERT INTO rate_limits (ip, request_count, last_request_at, is_suspicious)
          VALUES (?, 1, ?, 1)
-         ON CONFLICT(ip) DO UPDATE SET request_count = request_count + 1, last_request_at = ?, is_suspicious = 1`
+         ON CONFLICT(ip) DO UPDATE SET request_count = rate_limits.request_count + 1, last_request_at = excluded.last_request_at, is_suspicious = 1`
       ).bind(ip, nowIso, nowIso).run()
+      await db.prepare(
+        'UPDATE rate_limits SET is_blacklisted = 1 WHERE ip = ? AND is_blacklisted = 0 AND request_count >= ?'
+      ).bind(ip, ANTI_SCRAPING_CONFIG.AUTO_BAN_THRESHOLD).run()
       return { allowed: false, remaining: 0 }
     }
     
@@ -126,8 +157,9 @@ export async function checkRateLimit(ip, db) {
     return { allowed: true, remaining: maxRequests - currentCount - 1 }
   } catch (e) {
     console.error('检查速率限制失败:', e)
-    // 表不存在或其他错误时放行，避免阻塞正常请求
-    return { allowed: true, remaining: maxRequests }
+    // 限流状态不可用（表异常/DB 故障）时按保守策略拒绝而非放行，
+    // 避免「DB 抖动 = 限流失效」的绕过路径；DB 恢复后自动恢复
+    return { allowed: false, remaining: 0, message: '请求过于频繁，请稍后重试' }
   }
 }
 
@@ -147,13 +179,13 @@ export async function getCachedResponse(request) {
  * @param {Request} request 原始请求
  * @param {Response} response 待缓存的响应
  */
-export async function putCache(request, response) {
+export async function putCache(request, response, ttl = EQUIPMENT_CACHE_TTL) {
   if (typeof caches === 'undefined') return
   try {
     const cache = await caches.open(CACHE_PREFIX)
     // Cache API 要求响应带有 Content-Length 或 Transfer-Encoding
     const headers = new Headers(response.headers)
-    headers.set('Cache-Control', `public, max-age=${EQUIPMENT_CACHE_TTL}`)
+    headers.set('Cache-Control', `public, max-age=${ttl}`)
     const cachedResponse = new Response(response.body, {
       status: response.status,
       statusText: response.statusText,
@@ -222,8 +254,10 @@ export function jsonResponse(data, status = 200) {
   })
 }
 
-export function errorResponse(error) {
-  return jsonResponse({ error: error.message }, 500)
+export function errorResponse(error, status = 500) {
+  // 统一错误契约 { success:false, message }；
+  // 不向前端回传 DB 等内部实现细节，调用方应先在 catch 中用 console.error 记录原始错误
+  return jsonResponse({ success: false, message: '服务器处理请求失败，请稍后重试' }, status)
 }
 
 /**
