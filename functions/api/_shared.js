@@ -254,6 +254,43 @@ export function jsonResponse(data, status = 200) {
   })
 }
 
+/**
+ * 写操作统一反爬前置检查：UA 验证 → IP 黑名单 → 请求频率限制。
+ * 供需要新增防护的写端点（提交方案/数据导入等）复用，
+ * 三段检查顺序与 like.js / error_report.js 内联版本保持一致。
+ * @param {Request} request
+ * @param {D1Database} db
+ * @returns {Promise<{allowed: boolean, status?: number, message?: string}>}
+ */
+export async function clientGuard(request, db) {
+  if (!isValidUserAgent(request)) {
+    return { allowed: false, status: 403, message: 'Access denied' }
+  }
+  const clientIP = getClientIP(request)
+  if (await isIPBlacklisted(clientIP, db)) {
+    return { allowed: false, status: 403, message: 'Access denied' }
+  }
+  const rateCheck = await checkRateLimit(clientIP, db)
+  if (!rateCheck.allowed) {
+    return { allowed: false, status: 429, message: rateCheck.message || '请求过于频繁' }
+  }
+  return { allowed: true }
+}
+
+/**
+ * 请求体上限守卫：按 Content-Length 预检，超限直接拒绝（不读 body）。
+ * @param {Request} request
+ * @param {number} maxBytes
+ * @returns {{ok: true}|{ok: false, response: Response}}
+ */
+export function enforceBodyLimit(request, maxBytes) {
+  const contentLength = Number(request.headers.get('content-length') || 0)
+  if (contentLength > maxBytes) {
+    return { ok: false, response: jsonResponse({ success: false, message: '请求体过大' }, 413) }
+  }
+  return { ok: true }
+}
+
 export function errorResponse(error, status = 500) {
   // 统一错误契约 { success:false, message }；
   // 不向前端回传 DB 等内部实现细节，调用方应先在 catch 中用 console.error 记录原始错误

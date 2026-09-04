@@ -1,4 +1,4 @@
-import { jsonResponse, errorResponse, getClientIP, isValidUserAgent, checkRateLimit, isIPBlacklisted, getBuildsCachedResponse, putBuildsCache, clearBuildsCache } from './_shared.js'
+import { jsonResponse, errorResponse, getClientIP, isValidUserAgent, checkRateLimit, isIPBlacklisted, clientGuard, enforceBodyLimit, getBuildsCachedResponse, putBuildsCache, clearBuildsCache } from './_shared.js'
 
 /** 验证管理员密码（写操作保护） */
 function validateAdminPassword(env, password) {
@@ -22,6 +22,59 @@ function generateOwnerToken() {
 /** owner_token 格式校验：64 位小写十六进制 */
 const OWNER_TOKEN_RE = /^[0-9a-f]{64}$/
 
+/** 写操作请求体上限：提交方案含约 30 个短字段，正常远低于 64KB */
+const MAX_BODY_BYTES = 64 * 1024
+const MAX_SMALL_BODY_BYTES = 16 * 1024
+
+/** 文本字段上限（DB 列为 TEXT，此上限仅为防脚本灌超长文本；正常填写远低于该值） */
+const MAX_TEXT_LEN = 300
+const MAX_DESCRIPTION_LEN = 1000
+const MAX_REASON_LEN = 200
+
+function cleanText(value, max = MAX_TEXT_LEN) {
+  if (value == null) return ''
+  const s = String(value)
+  return s.length > max ? s.slice(0, max) : s
+}
+
+function cleanNumber(value, max = 999999999) {
+  const n = Number(value)
+  if (!Number.isFinite(n)) return 0
+  return n > max ? max : n
+}
+
+/**
+ * 提交/更新前就地清洗 build 对象：文本截断 + 数值合法化。
+ * 兼容 camelCase（计算器提交）与 snake_case（管理员编辑）两套字段名。
+ */
+function sanitizeBuildFields(build) {
+  const textKeys = [
+    'rodModel', 'rodName', 'rodCategory',
+    'reelModel', 'reelName', 'reelCategory',
+    'mainLineMaterial', 'leaderLineMaterial', 'hookName', 'calculationRule',
+    'suitableFish', 'suitableMap',
+    'rod_model', 'rod_name', 'rod_category',
+    'reel_model', 'reel_name', 'reel_category',
+    'suitable_fish', 'suitable_map'
+  ]
+  for (const key of textKeys) {
+    if (build[key] != null) build[key] = cleanText(build[key])
+  }
+  if (build.name != null) build.name = cleanText(build.name)
+  if (build.description != null) build.description = cleanText(build.description, MAX_DESCRIPTION_LEN)
+  const numKeys = [
+    'rodPrice', 'rodTension', 'reelPrice', 'reelTension',
+    'mainLineTension', 'mainLineWear', 'mainLineDiameter', 'mainLineLength',
+    'leaderLineTension', 'leaderLineWear', 'leaderLineDiameter', 'leaderLineLength',
+    'friction',
+    'rod_price', 'rod_tension', 'reel_price', 'reel_tension'
+  ]
+  for (const key of numKeys) {
+    if (build[key] != null) build[key] = cleanNumber(build[key])
+  }
+  return build
+}
+
 const INSERT_SQL = `INSERT INTO recommended_builds (
   name,
   rod_model, rod_name, rod_category, rod_price, rod_tension,
@@ -39,12 +92,21 @@ export async function onRequestPost(context) {
   const { request, env } = context
 
   try {
+    // 写操作反爬保护（UA/黑名单/限流）+ 请求体上限，先于解析挡掉脚本流量
+    const bodyLimit = enforceBodyLimit(request, MAX_BODY_BYTES)
+    if (!bodyLimit.ok) return bodyLimit.response
+    const guard = await clientGuard(request, env.DB)
+    if (!guard.allowed) {
+      return jsonResponse({ success: false, message: guard.message }, guard.status)
+    }
+
     const body = await request.json()
     const { build } = body
 
-    if (!build) {
+    if (!build || typeof build !== 'object' || Array.isArray(build)) {
       return jsonResponse({ success: false, message: '缺少装备数据' }, 400)
     }
+    sanitizeBuildFields(build)
 
     // 每次新提交生成独立的 owner_token 返回给提交者，
     // 提交者保存在本地，凭其可在“我的提交”中查看/删除自己的方案
@@ -100,6 +162,14 @@ export async function onRequestDelete(context) {
   const { request, env } = context
 
   try {
+    // 反爬保护 + 请求体上限（body 仅含 id/password/ownerToken，远小于 16KB）
+    const bodyLimit = enforceBodyLimit(request, MAX_SMALL_BODY_BYTES)
+    if (!bodyLimit.ok) return bodyLimit.response
+    const guard = await clientGuard(request, env.DB)
+    if (!guard.allowed) {
+      return jsonResponse({ success: false, message: guard.message }, guard.status)
+    }
+
     const body = await request.json()
     const { id, password, ownerToken } = body
 
@@ -160,6 +230,14 @@ export async function onRequestPatch(context) {
   const { request, env } = context
 
   try {
+    // 反爬保护 + 请求体上限
+    const bodyLimit = enforceBodyLimit(request, MAX_SMALL_BODY_BYTES)
+    if (!bodyLimit.ok) return bodyLimit.response
+    const guard = await clientGuard(request, env.DB)
+    if (!guard.allowed) {
+      return jsonResponse({ success: false, message: guard.message }, guard.status)
+    }
+
     const body = await request.json()
     const { id, build, password } = body
 
@@ -167,9 +245,10 @@ export async function onRequestPatch(context) {
       return jsonResponse({ success: false, message: '需要管理员密码' }, 403)
     }
 
-    if (!id || !build) {
+    if (!id || !build || typeof build !== 'object' || Array.isArray(build)) {
       return jsonResponse({ success: false, message: '缺少方案ID或数据' }, 400)
     }
+    sanitizeBuildFields(build)
 
     const db = env.DB
 
@@ -210,6 +289,14 @@ export async function onRequestPut(context) {
   const { request, env } = context
 
   try {
+    // 反爬保护 + 请求体上限（body 仅含 id/isApproved/password/rejectReason）
+    const bodyLimit = enforceBodyLimit(request, MAX_SMALL_BODY_BYTES)
+    if (!bodyLimit.ok) return bodyLimit.response
+    const guard = await clientGuard(request, env.DB)
+    if (!guard.allowed) {
+      return jsonResponse({ success: false, message: guard.message }, guard.status)
+    }
+
     const body = await request.json()
     const { id, isApproved, password, rejectReason } = body
 
@@ -222,9 +309,10 @@ export async function onRequestPut(context) {
     }
 
     const db = env.DB
+    const rejectReasonText = cleanText(rejectReason, MAX_REASON_LEN)
     // 通过审核时清空驳回原因；驳回时记录原因供提交者查看
     await db.prepare('UPDATE recommended_builds SET is_approved = ?, reject_reason = ? WHERE id = ?')
-      .bind(isApproved ? 1 : 0, isApproved ? '' : (rejectReason || ''), id)
+      .bind(isApproved ? 1 : 0, isApproved ? '' : rejectReasonText, id)
       .run()
 
     clearBuildsCache()

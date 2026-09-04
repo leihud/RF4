@@ -1,4 +1,9 @@
-import { jsonResponse, clearEquipmentCache } from './_shared.js'
+import { jsonResponse, clearEquipmentCache, clientGuard, enforceBodyLimit } from './_shared.js'
+
+/** 请求体上限：正常单次导入（≤2000 行）远低于此值 */
+const MAX_BODY_BYTES = 10 * 1024 * 1024
+/** 单次导入条数上限：防超大数组拖垮 D1 batch 写入配额 */
+const MAX_IMPORT_ITEMS = 2000
 
 function validatePassword(env, password) {
   const importPassword = env.IMPORT_PASSWORD
@@ -146,6 +151,14 @@ export async function onRequestPost(context) {
   const { request, env } = context
 
   try {
+    // 反爬保护：请求体上限 + UA/黑名单/限流，先于密码校验过滤脚本流量
+    const bodyLimit = enforceBodyLimit(request, MAX_BODY_BYTES)
+    if (!bodyLimit.ok) return bodyLimit.response
+    const guard = await clientGuard(request, env.DB)
+    if (!guard.allowed) {
+      return jsonResponse({ success: false, message: guard.message }, guard.status)
+    }
+
     const body = await request.json()
     const { password, type, data, upsert } = body
 
@@ -164,6 +177,9 @@ export async function onRequestPost(context) {
 
     if (!data || !Array.isArray(data) || data.length === 0) {
       return jsonResponse({ success: false, message: '数据不能为空' }, 400)
+    }
+    if (data.length > MAX_IMPORT_ITEMS) {
+      return jsonResponse({ success: false, message: `单次导入不能超过 ${MAX_IMPORT_ITEMS} 条` }, 400)
     }
 
     const db = env.DB
