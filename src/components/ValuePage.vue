@@ -5,6 +5,9 @@
       <button class="back-btn" @click="$router.back()">← 返回计算器</button>
     </div>
 
+    <!-- 截图识别装备 -->
+    <EquipmentRecognition @add="onRecognizedAdd" />
+
     <!-- 鱼竿列表 -->
     <div class="equipment-section">
       <div class="section-header">
@@ -225,12 +228,14 @@ import { getRatingAlias } from '../constants/equipment.js'
 import { formatPrice as formatPriceDisplay, parsePrice } from '../utils/display.js'
 import { loadRodAndReelData } from '../utils/equipmentLoader.js'
 import AppToast from './common/AppToast.vue'
+import EquipmentRecognition from './EquipmentRecognition.vue'
 import { lockScroll, bindEscape } from '../utils/modal.js'
 
 export default {
   name: 'ValuePage',
   components: {
-    AppToast
+    AppToast,
+    EquipmentRecognition
   },
   data() {
     return {
@@ -238,7 +243,10 @@ export default {
       reelList: [],
       rodEntries: [],
       reelEntries: [],
-      showClearModal: false
+      showClearModal: false,
+      entriesReady: false,
+      entrySaveTimer: null,
+      escOff: null
     }
   },
   computed: {
@@ -268,44 +276,48 @@ export default {
     totalGold() {
       return this.rodTotalGold + this.reelTotalGold
     },
-    /** 清单总件数（按数量累加） */
     totalItems() {
       return [...this.rodEntries, ...this.reelEntries].reduce(
         (sum, e) => sum + (e.equipment ? (e.quantity || 1) : 0), 0
       )
     }
   },
-  async mounted() {
-    await Promise.all([this.loadRods(), this.loadReels()])
-    // 优先从分享链接恢复，其次恢复上次本地清单，再开启持久化
-    if (!this.restoreFromShareUrl()) {
-      this.restoreEntries()
-    }
-    this._entriesReady = true
-  },
   watch: {
     // 清单持久化：装备/数量变化后防抖写入 localStorage，刷新不丢
     rodEntries: {
       deep: true,
-      handler() { this.scheduleSaveEntries() }
+      handler() {
+        this.scheduleSaveEntries()
+      }
     },
     reelEntries: {
       deep: true,
-      handler() { this.scheduleSaveEntries() }
-    },
-    // 清空确认弹窗：打开锁定 body 滚动并支持 Esc 关闭
-    showClearModal(open) {
-      if (open) {
-        lockScroll(true)
-        this._escOff = bindEscape(this.closeClearModal)
-      } else {
-        lockScroll(false)
-        if (this._escOff) {
-          this._escOff()
-          this._escOff = null
-        }
+      handler() {
+        this.scheduleSaveEntries()
       }
     }
+  },
+  async mounted() {
+    await Promise.all([this.loadRods(), this.loadReels()])
+    this.entriesReady = true
+
+    // 优先从分享链接恢复，其次从本地存储恢复
+    if (!this.restoreFromShareUrl()) {
+      this.restoreEntries()
+    }
+
+    this.$watch('showClearModal', (val) => {
+      if (val) {
+        lockScroll(true)
+        this.escOff = bindEscape(this.closeClearModal)
+      } else {
+        lockScroll(false)
+        if (this.escOff) {
+          this.escOff()
+          this.escOff = null
+        }
+      }
+    })
   },
   beforeUnmount() {
     // 清理所有 entry 的搜索防抖计时器
@@ -315,10 +327,10 @@ export default {
     for (const entry of this.reelEntries) {
       if (entry.searchTimer) clearTimeout(entry.searchTimer)
     }
-    if (this._entrySaveTimer) clearTimeout(this._entrySaveTimer)
-    if (this._escOff) {
-      this._escOff()
-      this._escOff = null
+    if (this.entrySaveTimer) clearTimeout(this.entrySaveTimer)
+    if (this.escOff) {
+      this.escOff()
+      this.escOff = null
     }
     if (this.showClearModal) lockScroll(false)
   },
@@ -343,9 +355,9 @@ export default {
     },
     /** 防抖持久化清单（只存型号与数量，恢复时重新匹配） */
     scheduleSaveEntries() {
-      if (!this._entriesReady) return
-      if (this._entrySaveTimer) clearTimeout(this._entrySaveTimer)
-      this._entrySaveTimer = setTimeout(() => {
+      if (!this.entriesReady) return
+      if (this.entrySaveTimer) clearTimeout(this.entrySaveTimer)
+      this.entrySaveTimer = setTimeout(() => {
         try {
           const payload = {
             rods: this.rodEntries.filter(e => e.equipment).map(e => ({ model: e.equipment.model || e.equipment.equipmentName, quantity: e.quantity || 1 })),
@@ -568,6 +580,19 @@ export default {
         }
       }, 200)
     },
+    onRecognizedAdd({ type, equipment, quantity }) {
+      const list = type === 'rod' ? this.rodEntries : this.reelEntries
+      const existing = list.find(
+        (e) => e.equipment && (e.equipment.model === equipment.model || e.equipment.equipmentName === equipment.equipmentName)
+      )
+      if (existing) {
+        existing.quantity = Math.max(1, (Number(existing.quantity) || 1) + (Number(quantity) || 1))
+        this.showToast(`${equipment.model} 数量已累加`, 'success')
+      } else {
+        list.push(this.createEntry(equipment, quantity))
+        this.showToast(`${equipment.model} 已加入清单`, 'success')
+      }
+    },
     formatPrice(price) {
       return formatPriceDisplay(price)
     },
@@ -578,92 +603,94 @@ export default {
 
 <style scoped>
 .value-page {
-  max-width: 1600px;
+  padding: 16px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 30px;
-  width: 100%;
 }
 
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .page-header h1 {
-  font-size: 24px;
-  color: var(--text-main);
   margin: 0;
+  font-size: 22px;
+  color: var(--text-main);
 }
 
 .back-btn {
-  padding: 8px 16px;
-  border: 1px solid var(--color-primary);
-  background-color: var(--color-surface);
-  color: var(--color-primary);
-  border-radius: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--text-secondary);
   cursor: pointer;
   font-size: 14px;
   transition: all 0.2s;
 }
 
 .back-btn:hover {
-  background-color: var(--color-primary-bg);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .equipment-section {
   background: var(--color-surface);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  margin-bottom: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .section-header h2 {
+  margin: 0;
   font-size: 18px;
   color: var(--text-main);
-  margin: 0;
 }
 
 .add-btn {
-  padding: 8px 16px;
-  border: 1px solid var(--color-success-strong);
-  background-color: var(--color-surface);
-  color: var(--color-success-strong);
-  border-radius: 6px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+  font-weight: 600;
   cursor: pointer;
   font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s;
+  transition: background-color 0.2s;
 }
 
 .add-btn:hover {
-  background-color: var(--color-success-bg);
+  background: var(--color-primary);
+  color: #fff;
 }
 
 .entry-row {
   display: flex;
-  gap: 16px;
-  margin-bottom: 16px;
   align-items: center;
-}
-
-.entry-row:last-child {
-  margin-bottom: 0;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: var(--bg-secondary);
 }
 
 .search-dropdown {
   position: relative;
   flex: 1;
-  min-width: 0;
+  min-width: 260px;
 }
 
 .search-row {
@@ -674,116 +701,92 @@ export default {
 
 .search-input-wrapper {
   position: relative;
-  display: flex;
-  align-items: center;
+  flex: 1;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 12px 8px 32px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--text-main);
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  border-color: var(--color-primary);
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-hint);
 }
 
 .selected-tags {
   display: flex;
   gap: 6px;
-  margin-left: 8px;
   flex-shrink: 0;
 }
 
-.tag-type {
-  padding: 3px 10px;
-  background-color: var(--color-primary-bg);
-  color: var(--color-primary);
-  border: 1px solid var(--color-primary-light);
-  border-radius: 12px;
+.tag-type,
+.tag-rating {
   font-size: 12px;
-  font-weight: 500;
-  white-space: nowrap;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
 }
 
 .tag-rating {
-  padding: 3px 10px;
-  background-color: var(--color-success-bg-light);
-  color: var(--color-success-text);
-  border: 1px solid var(--color-success-border);
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.search-input {
-  width: 100%;
-  padding: 8px 32px 8px 12px;
-  border: 1px solid var(--color-success-accent);
-  border-radius: 4px;
-  font-size: 14px;
-  color: var(--text-heading);
-  background-color: var(--color-surface);
-  box-sizing: border-box;
-}
-
-.search-input:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.3);
-}
-
-.search-input::placeholder {
-  color: var(--text-hint);
-}
-
-.search-icon {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 16px;
+  background: var(--color-success-bg);
+  color: var(--color-success);
 }
 
 .category-filter-header {
-  padding: 8px 15px;
-  background-color: var(--color-success-bg-light);
-  border-bottom: 1px solid var(--color-success-border);
+  margin-top: 6px;
 }
 
 .category-toggle-btn {
-  padding: 4px 12px;
+  background: none;
   border: none;
-  background-color: transparent;
-  color: var(--color-success-text);
-  font-size: 13px;
-  font-weight: bold;
+  color: var(--text-secondary);
+  font-size: 12px;
   cursor: pointer;
-  transition: all 0.2s;
-}
-
-.category-toggle-btn:hover {
-  color: var(--color-success-strong);
+  padding: 0;
 }
 
 .category-filter-wrapper {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  padding: 8px 15px;
-  background-color: var(--color-success-bg-light);
-  border-bottom: 1px solid var(--color-success-border);
+  margin-top: 6px;
+  padding: 8px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
 }
 
 .category-filter-btn {
-  padding: 4px 12px;
-  border: 1px solid var(--color-success-border);
-  background-color: var(--color-surface);
-  color: var(--color-success-text);
-  border-radius: 16px;
+  padding: 4px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--text-secondary);
   font-size: 12px;
   cursor: pointer;
-  transition: all 0.2s;
 }
 
-.category-filter-btn:hover {
-  background-color: var(--color-success-border);
-}
-
+.category-filter-btn:hover,
 .category-filter-btn.active {
-  background-color: var(--color-success-strong);
-  color: white;
-  border-color: var(--color-success-strong);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-bg);
 }
 
 .dropdown-list {
@@ -791,23 +794,24 @@ export default {
   top: 100%;
   left: 0;
   right: 0;
-  background-color: var(--color-surface);
+  margin-top: 4px;
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  max-height: 200px;
+  border-radius: 8px;
+  max-height: 240px;
   overflow-y: auto;
-  z-index: 100;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .dropdown-item {
+  padding: 10px 12px;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  padding: 12px 18px;
-  cursor: pointer;
-  border-bottom: 1px solid var(--bg-page);
-  transition: background-color 0.2s;
-  gap: 18px;
+  gap: 10px;
+  border-bottom: 1px solid var(--color-divider);
+  font-size: 13px;
 }
 
 .dropdown-item:last-child {
@@ -815,200 +819,175 @@ export default {
 }
 
 .dropdown-item:hover {
-  background-color: var(--color-success-bg);
+  background: var(--color-primary-bg);
 }
 
 .dropdown-name {
-  flex: 1 1 auto;
-  min-width: 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-heading);
-  line-height: 1.4;
-  white-space: normal;
-  word-break: break-word;
-  overflow-wrap: anywhere;
+  flex: 1;
+  font-weight: 500;
+  color: var(--text-main);
 }
 
 .dropdown-type {
-  flex: 0 0 80px;
-  padding: 4px 12px;
-  background-color: var(--color-primary-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--color-primary-bg);
   color: var(--color-primary);
-  border: 1px solid var(--color-primary-light);
-  border-radius: 14px;
-  font-size: 13px;
-  font-weight: 500;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 12px;
+}
+
+.dropdown-category,
+.dropdown-rating {
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 
 .dropdown-category {
-  flex: 0 0 80px;
-  padding: 4px 12px;
-  background-color: var(--color-success-bg-light);
-  color: var(--color-success-text);
-  border: 1px solid var(--color-success-border);
-  border-radius: 14px;
-  font-size: 13px;
-  font-weight: 500;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  background: var(--color-success-bg);
+  color: var(--color-success);
 }
 
 .dropdown-rating {
-  flex: 0 0 80px;
-  padding: 4px 12px;
-  background-color: var(--color-warning-bg-light);
-  color: var(--color-warning-strong);
-  border: 1px solid var(--color-warning-border);
-  border-radius: 14px;
-  font-size: 13px;
-  font-weight: 500;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
 }
 
 .dropdown-empty {
-  padding: 15px;
+  padding: 12px;
   text-align: center;
   color: var(--text-hint);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .quantity-input-wrapper {
   display: flex;
   align-items: center;
-  gap: 8px;
-  min-width: 120px;
+  gap: 6px;
   flex-shrink: 0;
 }
 
 .quantity-input-wrapper label {
+  font-size: 13px;
   color: var(--text-secondary);
-  font-size: 14px;
-  white-space: nowrap;
+}
+
+.qty-step-btn {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-main);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.qty-step-btn:disabled {
+  color: var(--text-hint);
+  cursor: not-allowed;
 }
 
 .quantity-input {
-  width: 60px;
-  padding: 8px 10px;
+  width: 50px;
+  padding: 4px 6px;
+  text-align: center;
   border: 1px solid var(--color-border);
   border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--text-main);
   font-size: 14px;
-  text-align: center;
-}
-
-.quantity-input:focus {
-  outline: none;
-  border-color: var(--color-primary);
 }
 
 .entry-subtotal {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  min-width: 150px;
+  gap: 2px;
+  min-width: 110px;
   flex-shrink: 0;
 }
 
 .subtotal-silver {
-  color: var(--color-primary);
-  font-size: 13px;
   font-weight: 600;
+  color: var(--color-primary);
+  font-size: 14px;
 }
 
 .subtotal-gold {
-  color: var(--color-warning);
+  color: var(--color-warning-strong);
   font-size: 13px;
-  font-weight: 600;
 }
 
 .subtotal-placeholder {
-  color: var(--color-border-light);
-  font-size: 13px;
-  min-height: 18px;
+  color: var(--text-hint);
+  font-size: 14px;
 }
 
 .remove-entry-btn {
-  padding: 6px 10px;
-  border: 1px solid var(--color-danger);
-  background-color: var(--color-surface);
-  color: var(--color-danger);
-  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--text-hint);
   cursor: pointer;
-  font-size: 14px;
-  transition: all 0.2s;
+  font-size: 16px;
+  border-radius: 50%;
   flex-shrink: 0;
 }
 
 .remove-entry-btn:hover {
-  background-color: var(--color-danger);
-  color: white;
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
 }
 
 .empty-hint {
   text-align: center;
+  padding: 24px;
   color: var(--text-hint);
-  padding: 20px;
   font-size: 14px;
 }
 
 .value-summary {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 20px;
-  /* 底部固定汇总条：滚动时始终可见总价 */
-  position: sticky;
-  bottom: 0;
-  z-index: 20;
-  background-color: var(--bg-page);
-  padding: 10px 0;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
 }
 
 .summary-card {
-  flex: 1;
   background: var(--color-surface);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .total-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-}
-
-.total-card .summary-label {
-  color: rgba(255, 255, 255, 0.9);
+  border-color: var(--color-primary);
+  background: var(--color-total-bg);
 }
 
 .summary-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
-}
-
-.summary-item:last-child {
-  margin-bottom: 0;
 }
 
 .summary-label {
-  color: var(--text-secondary);
   font-size: 14px;
+  color: var(--text-secondary);
 }
 
 .summary-value {
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .summary-value.silver {
@@ -1016,91 +995,35 @@ export default {
 }
 
 .summary-value.gold {
-  color: var(--color-warning);
+  color: var(--color-warning-strong);
 }
 
 .summary-value.total {
-  font-size: 20px;
+  font-size: 18px;
 }
 
-.total-card .summary-value.silver,
-.total-card .summary-value.gold {
-  color: white;
-}
-
-@media (max-width: 768px) {
-  .entry-row {
-    flex-wrap: wrap;
-  }
-
-  .search-dropdown {
-    min-width: 100%;
-  }
-
-  .quantity-input-wrapper {
-    min-width: auto;
-  }
-
-  .entry-subtotal {
-    min-width: auto;
-    flex-direction: row;
-    gap: 12px;
-  }
-
-  .value-summary {
-    flex-direction: column;
-  }
-}
-
-/* 数量步进按钮 */
-.qty-step-btn {
-  width: 26px;
-  height: 26px;
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--text-main);
-  border-radius: 6px;
-  font-size: 15px;
-  line-height: 1;
-  cursor: pointer;
-  transition: all 0.2s;
-  flex-shrink: 0;
-}
-
-.qty-step-btn:hover:not(:disabled) {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-  background: var(--color-primary-bg);
-}
-
-.qty-step-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-/* 清单操作区 */
 .summary-actions {
+  grid-column: 1 / -1;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 8px;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .summary-action-btn {
-  padding: 8px 16px;
-  border: 1px solid var(--color-primary);
+  padding: 10px 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
   background: var(--color-surface);
-  color: var(--color-primary);
-  border-radius: 6px;
-  font-size: 13px;
+  color: var(--text-secondary);
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
-  white-space: nowrap;
 }
 
 .summary-action-btn:hover {
-  background: var(--color-primary);
-  color: white;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .summary-action-btn.danger {
@@ -1113,7 +1036,6 @@ export default {
   color: white;
 }
 
-/* 清空确认弹窗 */
 .modal-mask {
   position: fixed;
   inset: 0;
@@ -1121,42 +1043,29 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10000;
-  padding: 16px;
+  z-index: 100;
 }
 
 .modal-box {
   background: var(--color-surface);
   border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-  max-width: 400px;
-  width: 100%;
-  padding: 24px 28px;
-  animation: value-modal-in 0.2s ease;
-}
-
-@keyframes value-modal-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  padding: 20px;
+  width: 90%;
+  max-width: 380px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 .modal-title {
-  font-size: 17px;
+  margin: 0 0 12px;
+  font-size: 18px;
   color: var(--text-main);
-  margin-bottom: 12px;
 }
 
 .modal-desc {
-  font-size: 14px;
-  line-height: 1.7;
   color: var(--text-secondary);
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .modal-footer {
@@ -1167,12 +1076,10 @@ export default {
 
 .modal-cancel-btn,
 .modal-confirm-btn {
-  padding: 8px 18px;
-  border-radius: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
   font-size: 14px;
-  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
 }
 
 .modal-cancel-btn {
@@ -1181,12 +1088,14 @@ export default {
   color: var(--text-secondary);
 }
 
-.modal-cancel-btn:hover {
-  background: var(--bg-secondary);
+.modal-confirm-btn {
+  border: 1px solid var(--color-primary);
+  background: var(--color-primary);
+  color: white;
 }
 
-.modal-confirm-btn {
-  border: 1px solid var(--color-danger);
+.modal-confirm-btn.danger {
+  border-color: var(--color-danger);
   background: var(--color-danger);
   color: white;
 }
@@ -1196,8 +1105,31 @@ export default {
 }
 
 /* 深色主题下筛选激活态保持白字可读 */
-:root[data-theme="dark"] .category-filter-btn.active {
+::v-deep(:root[data-theme="dark"]) .category-filter-btn.active {
   background-color: var(--color-success);
   border-color: var(--color-success);
+  color: var(--color-surface);
+}
+
+@media (max-width: 720px) {
+  .entry-row {
+    flex-wrap: wrap;
+  }
+
+  .search-dropdown {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .quantity-input-wrapper,
+  .entry-subtotal,
+  .remove-entry-btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .summary-actions {
+    justify-content: center;
+  }
 }
 </style>

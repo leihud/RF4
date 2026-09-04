@@ -11,6 +11,15 @@ database_name = "rf4"
 database_id = "bead5b3b-5a98-4fd3-82fa-c63115544ccd"
 migrations_dir = "./migrations"
 
+# Screenshot recognition relies on Cloudflare Workers AI.
+# To enable:
+#   1. In Cloudflare Dashboard > Pages > rf4 > Functions > Bindings, add an "AI" binding.
+#   2. Workers AI requires a paid Workers plan or Workers AI subscription.
+#   3. Optional: override the default vision model with [vars] RECOGNITION_MODEL.
+#
+# [vars]
+# RECOGNITION_MODEL = "@cf/moondream/moondream3.1-9b-a2b"
+
 # IMPORT_PASSWORD 不再放在明文 vars 中，改用 secret：
 #   生产环境：npx wrangler pages secret put IMPORT_PASSWORD --project-name rf4
 #   本地开发：在项目根目录创建 .dev.vars 文件，写入 IMPORT_PASSWORD=xxx（已加入 .gitignore）
