@@ -5,9 +5,6 @@
       <button class="back-btn" @click="$router.back()">← 返回计算器</button>
     </div>
 
-    <!-- 截图识别装备 -->
-    <EquipmentRecognition @add="onRecognizedAdd" />
-
     <!-- 鱼竿列表 -->
     <div class="equipment-section">
       <div class="section-header">
@@ -228,14 +225,12 @@ import { getRatingAlias } from '../constants/equipment.js'
 import { formatPrice as formatPriceDisplay, parsePrice } from '../utils/display.js'
 import { loadRodAndReelData } from '../utils/equipmentLoader.js'
 import AppToast from './common/AppToast.vue'
-import EquipmentRecognition from './EquipmentRecognition.vue'
 import { lockScroll, bindEscape } from '../utils/modal.js'
 
 export default {
   name: 'ValuePage',
   components: {
-    AppToast,
-    EquipmentRecognition
+    AppToast
   },
   data() {
     return {
@@ -579,19 +574,6 @@ export default {
           entry.search = entry.equipment.model
         }
       }, 200)
-    },
-    onRecognizedAdd({ type, equipment, quantity }) {
-      const list = type === 'rod' ? this.rodEntries : this.reelEntries
-      const existing = list.find(
-        (e) => e.equipment && (e.equipment.model === equipment.model || e.equipment.equipmentName === equipment.equipmentName)
-      )
-      if (existing) {
-        existing.quantity = Math.max(1, (Number(existing.quantity) || 1) + (Number(quantity) || 1))
-        this.showToast(`${equipment.model} 数量已累加`, 'success')
-      } else {
-        list.push(this.createEntry(equipment, quantity))
-        this.showToast(`${equipment.model} 已加入清单`, 'success')
-      }
     },
     formatPrice(price) {
       return formatPriceDisplay(price)
