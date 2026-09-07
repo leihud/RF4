@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20260904-04',
-  buildTime: '2026-09-04',
+  currentVersion: 'V20260907-01',
+  buildTime: '2026-09-07',
   changelog: [
+    {
+      version: 'V20260907-01',
+      date: '2026-09-07',
+      changes: [
+        '删除：移除装备截图AI识别功能（前端组件、后端 API、相关测试与配置注释）'
+      ]
+    },
     {
       version: 'V20260904-04',
       date: '2026-09-04',
