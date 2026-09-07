@@ -1163,6 +1163,8 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  /* 防止 flex column 子元素被压缩成一条线 */
+  flex-shrink: 0;
 }
 
 /* 表头删除按钮（绝对定位，不影响table-cell宽度计算） */
@@ -1200,6 +1202,8 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  /* 防止 flex column 子元素被压缩成一条线 */
+  flex-shrink: 0;
 }
 
 /* 最优值：绿色高亮（含 ★ 语义，与导出文本的 ★ 标记对应） */
