@@ -15,7 +15,7 @@ const routes = [
     component: () => import('../components/ComparePage.vue')
   },
   {
-    path: '/builds',
+    path: ROUTES.BUILDS,
     name: 'BuildsList',
     component: () => import('../components/BuildsListPage.vue')
   },

@@ -224,6 +224,7 @@ import { searchAndRankEquipment, sortByPanelTension, EQUIPMENT_SEARCH_FIELDS } f
 import { getRatingAlias } from '../constants/equipment.js'
 import { formatPrice as formatPriceDisplay, parsePrice } from '../utils/display.js'
 import { loadRodAndReelData } from '../utils/equipmentLoader.js'
+import { readStorage, writeStorage, STORAGE_KEYS } from '../utils/storage.js'
 import AppToast from './common/AppToast.vue'
 import { lockScroll, bindEscape } from '../utils/modal.js'
 
@@ -293,7 +294,7 @@ export default {
     }
   },
   async mounted() {
-    await Promise.all([this.loadRods(), this.loadReels()])
+    await this.loadEquipment()
     this.entriesReady = true
 
     // 优先从分享链接恢复，其次从本地存储恢复
@@ -358,16 +359,15 @@ export default {
             rods: this.rodEntries.filter(e => e.equipment).map(e => ({ model: e.equipment.model || e.equipment.equipmentName, quantity: e.quantity || 1 })),
             reels: this.reelEntries.filter(e => e.equipment).map(e => ({ model: e.equipment.model || e.equipment.equipmentName, quantity: e.quantity || 1 }))
           }
-          localStorage.setItem('value_list_v1', JSON.stringify(payload))
+          writeStorage(STORAGE_KEYS.valueList, payload)
         } catch (e) { /* 存储不可用时静默降级 */ }
       }, 300)
     },
     /** 恢复上次统计清单 */
     restoreEntries() {
       try {
-        const raw = localStorage.getItem('value_list_v1')
-        if (!raw) return
-        const payload = JSON.parse(raw)
+        const payload = readStorage(STORAGE_KEYS.valueList)
+        if (!payload) return
         for (const saved of payload.rods || []) {
           const item = this.rodList.find(d => d.model === saved.model || d.equipmentName === saved.model)
           if (item) this.rodEntries.push(this.createEntry(item, saved.quantity))
@@ -465,17 +465,12 @@ export default {
         this.showToast('复制失败，请手动复制', 'error')
       }
     },
-    async loadRods() {
+    async loadEquipment() {
       try {
-        const { rodData } = await loadRodAndReelData()
+        const { rodData, reelData } = await loadRodAndReelData()
         this.rodList = rodData
-      } catch (e) { console.error('加载鱼竿失败:', e) }
-    },
-    async loadReels() {
-      try {
-        const { reelData } = await loadRodAndReelData()
         this.reelList = reelData
-      } catch (e) { console.error('加载渔轮失败:', e) }
+      } catch (e) { console.error('加载装备数据失败:', e) }
     },
     getRodCategoryOptions() {
       if (!Array.isArray(this.rodList)) return []

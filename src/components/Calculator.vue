@@ -319,8 +319,8 @@
       <button 
         class="submit-build-btn" 
         @click="openSubmitModal"
-        :disabled="!hasSelectedEquipment"
-        :title="hasSelectedEquipment ? '' : '请先选择鱼竿、渔轮等装备'"
+        :disabled="!allEquipmentSelected"
+        :title="allEquipmentSelected ? '' : '请先选择鱼竿、渔轮等装备'"
       >
         提交推荐装备搭配
       </button>
@@ -464,6 +464,7 @@ import {
 import { getMergedAdaptWeight } from '../utils/display.js'
 import { sanitizeEquipmentFields, toSafeNumber, toSafeDisplay } from '../utils/sanitize.js'
 import { loadRodAndReelData } from '../utils/equipmentLoader.js'
+import { readStorage, writeStorage, STORAGE_KEYS } from '../utils/storage.js'
 import { decodePreset, getShareUrl } from '../utils/presetShare.js'
 import { addMySubmission } from '../utils/mineSubmissions.js'
 import DisclaimerModal from './calculator/DisclaimerModal.vue'
@@ -749,16 +750,12 @@ export default {
         fish.display_name.toLowerCase().includes(keyword)
       )
     },
-    /** 判断是否选择了必要的装备 */
-    hasSelectedEquipment() {
-      // 必须选择鱼竿，其他为可选
-      return !!this.selectedEquipmentMap['鱼竿']
-    }
   },
   methods: {
     toSafeNumber,
     toSafeDisplay,
     getMergedAdaptWeight,
+    calculateCustomActualTension,
     isCustomInputType(type) {
       return CUSTOM_INPUT_TYPES.includes(type)
     },
@@ -784,16 +781,15 @@ export default {
             friction: this.friction,
             rule: this.calculationRule
           }
-          localStorage.setItem('calc_state_v1', JSON.stringify(state))
+          writeStorage(STORAGE_KEYS.calcState, state)
         } catch (e) { /* 存储不可用（隐私模式/超容量）时静默降级 */ }
       }, 400)
     },
     /** 从 localStorage 恢复上次计算状态（仅当无 URL 方案/一键应用时） */
     restoreFromSavedState() {
       try {
-        const raw = localStorage.getItem('calc_state_v1')
-        if (!raw) return
-        const state = JSON.parse(raw)
+        const state = readStorage(STORAGE_KEYS.calcState)
+        if (!state) return
         if (state.rule) this.calculationRule = state.rule
         if (state.friction != null) this.friction = clampFriction(state.friction, this.calculationRule)
         if (state.custom) {
@@ -841,9 +837,6 @@ export default {
         this.restoreFromSavedState()
       }
       this._stateReady = true
-    },
-    calculateCustomActualTension(item) {
-      return calculateCustomActualTension(item)
     },
     onFrictionChange(event) {
       this.friction = clampFriction(parseFloat(event.target.value), this.calculationRule)
@@ -1249,10 +1242,6 @@ export default {
     onFishSearchFocus() {
       this.targetFishSearch = ''
       this.showFishDropdown = true
-    },
-    /** 显示/隐藏鱼种下拉列表 */
-    toggleFishDropdown() {
-      this.showFishDropdown = !this.showFishDropdown
     },
     showToast(message, type = 'info') {
       this.$refs.toast.show(message, type)
@@ -2047,22 +2036,6 @@ h2 {
   box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.2);
 }
 
-.form-select {
-  padding: 10px 12px;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  font-size: 14px;
-  background-color: var(--color-surface);
-  outline: none;
-  cursor: pointer;
-  transition: border-color 0.2s;
-}
-
-.form-select:focus {
-  border-color: var(--color-success-accent);
-  box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.2);
-}
-
 /* 搜索输入框 */
 .search-input {
   width: 100%;
@@ -2157,11 +2130,6 @@ h2 {
 .item-text {
   font-size: 14px;
   color: var(--text-main);
-}
-
-.form-select-multiple {
-  height: auto;
-  min-height: 120px;
 }
 
 .select-hint {

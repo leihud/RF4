@@ -202,6 +202,7 @@
 import { searchAndRankEquipment, sortByPanelTension, EQUIPMENT_SEARCH_FIELDS } from '../utils/search.js'
 import { sanitizeEquipmentFields } from '../utils/sanitize.js'
 import { loadRodAndReelData } from '../utils/equipmentLoader.js'
+import { readStorage, writeStorage, STORAGE_KEYS } from '../utils/storage.js'
 import { getMergedAdaptWeight, parsePrice } from '../utils/display.js'
 import AppSkeleton from './common/AppSkeleton.vue'
 import AppToast from './common/AppToast.vue'
@@ -478,16 +479,15 @@ export default {
             type: this.compareType,
             items: this.compareEquipmentList.map(item => item.model || item.equipmentName)
           }
-          localStorage.setItem('compare_list_v1', JSON.stringify(payload))
+          writeStorage(STORAGE_KEYS.compareList, payload)
         } catch (e) { /* 存储不可用时静默降级 */ }
       }, 300)
     },
     /** 数据加载完成后恢复上次对比列表 */
     restoreCompareList() {
       try {
-        const raw = localStorage.getItem('compare_list_v1')
-        if (!raw) return
-        const payload = JSON.parse(raw)
+        const payload = readStorage(STORAGE_KEYS.compareList)
+        if (!payload) return
         if (payload.type === 'rod' || payload.type === 'reel') this.compareType = payload.type
         if (!Array.isArray(payload.items)) return
         const pool = this.compareType === 'rod' ? this.rodData : this.reelData
@@ -1002,20 +1002,6 @@ export default {
   color: var(--text-hint);
 }
 
-.list-loading {
-  padding: 15px;
-  text-align: center;
-  color: var(--color-primary);
-  font-size: 14px;
-}
-
-.list-no-more {
-  padding: 15px;
-  text-align: center;
-  color: var(--text-hint);
-  font-size: 14px;
-}
-
 .compare-panel {
   /* 右侧面板主导整块高度：左边距为装备列表宽 + 间距 */
   margin-left: 384px;
@@ -1270,7 +1256,7 @@ export default {
 }
 
 /* 差异行：参数标签列淡橙背景，帮助用户快速定位不同项 */
-.diff-row .compare-label-cell {
+.diff-row .grid-label-cell {
   background-color: var(--color-warning-bg-light);
 }
 

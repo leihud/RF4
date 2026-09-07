@@ -4,32 +4,25 @@
  * 不对外泄露）；方案汇总页据此 token 调 /api/recommended_builds?mine=xxx
  * 查回自己全部方案的审核状态与驳回原因，并支持删除。
  */
-const STORAGE_KEY = 'rf4_my_submissions'
+import { readStorage, writeStorage, STORAGE_KEYS } from './storage.js'
+
+const STORAGE_KEY = STORAGE_KEYS.mineBuilds
 /** 本地最多保留的提交记录条数，防止无上限膨胀 */
 const MAX_RECORDS = 100
 /** 与后端一致：64 位小写十六进制 */
 const TOKEN_RE = /^[0-9a-f]{64}$/
 
 function readAll() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    const list = raw ? JSON.parse(raw) : []
-    if (!Array.isArray(list)) return []
-    return list.filter(item => {
-      if (!item || typeof item.token !== 'string' || !TOKEN_RE.test(item.token)) return false
-      return Number.isFinite(Number(item.id)) && Number(item.id) > 0
-    })
-  } catch (e) {
-    return []
-  }
+  const list = readStorage(STORAGE_KEY, [])
+  if (!Array.isArray(list)) return []
+  return list.filter(item => {
+    if (!item || typeof item.token !== 'string' || !TOKEN_RE.test(item.token)) return false
+    return Number.isFinite(Number(item.id)) && Number(item.id) > 0
+  })
 }
 
 function writeAll(list) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list))
-  } catch (e) {
-    /* 存储不可用（隐私模式/超配额）时静默降级，不影响主流程 */
-  }
+  writeStorage(STORAGE_KEY, list)
 }
 
 /** 读取全部“我的提交”记录 */

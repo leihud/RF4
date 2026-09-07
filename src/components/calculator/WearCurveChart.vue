@@ -83,11 +83,8 @@
 </template>
 
 <script>
-import {
-  calculateActualLockTension,
-  calculateActualPanelTension,
-  toSafeNumber
-} from '../../utils/tension.js'
+import { calculateActualLockTension, calculateActualPanelTension } from '../../utils/tension.js'
+import { toSafeNumber } from '../../utils/sanitize.js'
 
 /** 单件在某磨损下的拉力 */
 function tensionAt(item, type, calcRule, friction, mode, wear) {

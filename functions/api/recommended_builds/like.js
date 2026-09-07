@@ -1,4 +1,4 @@
-import { jsonResponse, errorResponse, getClientIP, isValidUserAgent, isIPBlacklisted, checkRateLimit, clearBuildsCache } from '../_shared.js'
+import { jsonResponse, errorResponse, clientGuard, clearBuildsCache } from '../_shared.js'
 
 /** client_id 规范：8~64 位字母/数字/下划线/中划线（前端生成格式为 c_<时间戳36>_<随机36>） */
 const CLIENT_ID_RE = /^[A-Za-z0-9_-]{8,64}$/
@@ -11,16 +11,10 @@ export async function onRequestPost(context) {
   const { request, env } = context
 
   try {
-    if (!isValidUserAgent(request)) {
-      return jsonResponse({ success: false, message: 'Access denied' }, 403)
-    }
-    const clientIP = getClientIP(request)
-    if (await isIPBlacklisted(clientIP, env.DB)) {
-      return jsonResponse({ success: false, message: 'Access denied' }, 403)
-    }
-    const rateCheck = await checkRateLimit(clientIP, env.DB)
-    if (!rateCheck.allowed) {
-      return jsonResponse({ success: false, message: rateCheck.message || '请求过于频繁' }, 429)
+    // 反爬保护：UA/黑名单/限流，先于解析过滤脚本流量
+    const guard = await clientGuard(request, env.DB)
+    if (!guard.allowed) {
+      return jsonResponse({ success: false, message: guard.message }, guard.status)
     }
 
     const body = await request.json()

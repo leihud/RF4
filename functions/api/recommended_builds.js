@@ -1,13 +1,4 @@
-import { jsonResponse, errorResponse, getClientIP, isValidUserAgent, checkRateLimit, isIPBlacklisted, clientGuard, enforceBodyLimit, getBuildsCachedResponse, putBuildsCache, clearBuildsCache } from './_shared.js'
-
-/** 验证管理员密码（写操作保护） */
-function validateAdminPassword(env, password) {
-  const importPassword = env.IMPORT_PASSWORD
-  if (!importPassword) {
-    return password && password.length > 0
-  }
-  return password === importPassword
-}
+import { jsonResponse, errorResponse, clientGuard, enforceBodyLimit, validateAdminPassword, getBuildsCachedResponse, putBuildsCache, clearBuildsCache } from './_shared.js'
 
 /** 随机 64 位十六进制 token，标记“方案属于哪个提交者” */
 function generateOwnerToken() {
@@ -330,16 +321,9 @@ export async function onRequestGet(context) {
   const { env, request } = context
 
   // 反扒保护
-  if (!isValidUserAgent(request)) {
-    return jsonResponse({ success: false, message: 'Access denied' }, 403)
-  }
-  const clientIP = getClientIP(request)
-  if (await isIPBlacklisted(clientIP, env.DB)) {
-    return jsonResponse({ success: false, message: 'Access denied' }, 403)
-  }
-  const rateCheck = await checkRateLimit(clientIP, env.DB)
-  if (!rateCheck.allowed) {
-    return jsonResponse({ success: false, message: rateCheck.message || '请求过于频繁' }, 429)
+  const guard = await clientGuard(request, env.DB)
+  if (!guard.allowed) {
+    return jsonResponse({ success: false, message: guard.message }, guard.status)
   }
 
   const url = new URL(request.url)

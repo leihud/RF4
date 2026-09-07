@@ -1,4 +1,4 @@
-import { jsonResponse, errorResponse, getClientIP, checkRateLimit, isValidUserAgent, isIPBlacklisted } from './_shared.js'
+import { jsonResponse, errorResponse, clientGuard, enforceBodyLimit } from './_shared.js'
 
 /** 错误摘要最大长度，防止恶意超大上报 */
 const MAX_MESSAGE = 500
@@ -14,23 +14,12 @@ export async function onRequestPost(context) {
   const { request, env } = context
 
   try {
-    // 只接受浏览器端上报（垃圾上报多来自无 UA / 脚本客户端）
-    if (!isValidUserAgent(request)) {
-      return jsonResponse({ success: false, message: 'Access denied' }, 403)
-    }
-
-    const contentLength = Number(request.headers.get('content-length') || 0)
-    if (contentLength > MAX_BODY_BYTES) {
-      return jsonResponse({ success: false, message: '请求体过大' }, 413)
-    }
-
-    const clientIP = getClientIP(request)
-    if (await isIPBlacklisted(clientIP, env.DB)) {
-      return jsonResponse({ success: false, message: 'Access denied' }, 403)
-    }
-    const rateCheck = await checkRateLimit(clientIP, env.DB)
-    if (!rateCheck.allowed) {
-      return jsonResponse({ success: false, message: rateCheck.message || '请求过于频繁' }, 429)
+    // 反爬保护：请求体上限 + UA/黑名单/限流，先于解析过滤脚本流量
+    const bodyLimit = enforceBodyLimit(request, MAX_BODY_BYTES)
+    if (!bodyLimit.ok) return bodyLimit.response
+    const guard = await clientGuard(request, env.DB)
+    if (!guard.allowed) {
+      return jsonResponse({ success: false, message: guard.message }, guard.status)
     }
 
     const body = await request.json()

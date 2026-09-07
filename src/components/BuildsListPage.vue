@@ -158,7 +158,7 @@
             <button v-if="viewMode === 'mine'" class="delete-btn own-delete-btn" @click.stop="deleteMyBuild(build)" :title="build.is_approved ? '删除我的提交（删除后将同时从公开列表移除）' : '删除我的提交'">🗑 删除</button>
             <button v-if="isAdminMode" class="edit-btn" @click.stop="openEditModal(build)" title="编辑方案">✎ 编辑</button>
             <button v-if="isAdminMode" class="approve-btn" @click.stop="approveBuild(build)" :title="build.is_approved ? '取消审核' : '通过审核'">{{ build.is_approved ? '✓ 已审核' : '审核' }}</button>
-            <button v-if="showDeleteBtn" class="delete-btn" @click.stop="deleteBuild(build)" title="删除方案">️</button>
+            <button v-if="isAdminMode" class="delete-btn" @click.stop="deleteBuild(build)" title="删除方案">️</button>
           </div>
         </div>
 
@@ -362,6 +362,7 @@
 import { searchAndRankEquipment, EQUIPMENT_SEARCH_FIELDS } from '../utils/search.js'
 import { formatPrice as formatPriceDisplay, parsePrice } from '../utils/display.js'
 import { loadRodAndReelData } from '../utils/equipmentLoader.js'
+import { readStorage, writeStorage, readText, writeText, STORAGE_KEYS } from '../utils/storage.js'
 import { getMySubmissions, removeMySubmission } from '../utils/mineSubmissions.js'
 import AppToast from './common/AppToast.vue'
 import { lockScroll, bindEscape } from '../utils/modal.js'
@@ -384,7 +385,6 @@ export default {
       },
       sortBy: 'newest',
       expandedIndex: null,
-      showDeleteBtn: false,
       isAdminMode: false,
       // 管理员密码：进入管理模式时 prompt 输入，仅存内存用于请求鉴权，退出即清空
       adminPassword: '',
@@ -481,16 +481,11 @@ export default {
     // 筛选记忆：先恢复上次筛选条件再加载数据
     this.restoreFilters()
     // 恢复本地点赞记录与客户端指纹
-    try {
-      this.likedIds = JSON.parse(localStorage.getItem('build_liked_ids') || '[]')
-    } catch (e) {
-      this.likedIds = []
-    }
+    this.likedIds = readStorage(STORAGE_KEYS.likedIds, [])
     this.isLoading = true
     await Promise.all([
       this.loadBuilds(),
-      this.loadRods(),
-      this.loadReels(),
+      this.loadEquipment(),
       this.loadFishSpecies(),
       this.loadMaps()
     ])
@@ -553,7 +548,6 @@ export default {
           // 管理视图鉴权失败（密码错误/未授权）：退出管理员模式并清空管理数据
           this.showToast(result.message || '管理员密码错误，已退出管理员模式', 'error')
           this.isAdminMode = false
-          this.showDeleteBtn = false
           this.adminPassword = ''
           this.builds = []
           this.hasMore = false
@@ -643,10 +637,10 @@ export default {
     },
     /** 获取/生成客户端指纹（点赞去重用） */
     getOrCreateClientId() {
-      let id = localStorage.getItem('rf4_client_id')
+      let id = readText(STORAGE_KEYS.clientId)
       if (!id) {
         id = 'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10)
-        try { localStorage.setItem('rf4_client_id', id) } catch (e) { /* 存储不可用时每次新生成 */ }
+        writeText(STORAGE_KEYS.clientId, id)
       }
       return id
     },
@@ -682,7 +676,7 @@ export default {
     },
     /** 持久化已点赞方案 id 列表（存储不可用时静默降级） */
     persistLikedIds() {
-      try { localStorage.setItem('build_liked_ids', JSON.stringify(this.likedIds)) } catch (e) { /* 忽略 */ }
+      writeStorage(STORAGE_KEYS.likedIds, this.likedIds)
     },
     /** canvas 绘制方案分享图片并下载 */
     generateBuildImage(build) {
@@ -749,9 +743,8 @@ export default {
     /** 恢复上次筛选状态 */
     restoreFilters() {
       try {
-        const raw = localStorage.getItem('builds_filters_v1')
-        if (!raw) return
-        const saved = JSON.parse(raw)
+        const saved = readStorage(STORAGE_KEYS.buildsFilters)
+        if (!saved) return
         if (typeof saved.searchInput === 'string') {
           this.searchInput = saved.searchInput
           this.searchQuery.name = saved.searchInput
@@ -768,26 +761,19 @@ export default {
     scheduleSaveFilters() {
       if (this._filterSaveTimer) clearTimeout(this._filterSaveTimer)
       this._filterSaveTimer = setTimeout(() => {
-        try {
-          localStorage.setItem('builds_filters_v1', JSON.stringify({
-            searchInput: this.searchInput,
-            searchQuery: this.searchQuery,
-            sortBy: this.sortBy
-          }))
-        } catch (e) { /* 存储不可用时静默降级 */ }
+        writeStorage(STORAGE_KEYS.buildsFilters, {
+          searchInput: this.searchInput,
+          searchQuery: this.searchQuery,
+          sortBy: this.sortBy
+        })
       }, 300)
     },
-    async loadRods() {
+    async loadEquipment() {
       try {
-        const { rodData } = await loadRodAndReelData()
+        const { rodData, reelData } = await loadRodAndReelData()
         this.rodList = rodData
-      } catch (e) { console.error('加载鱼竿失败:', e) }
-    },
-    async loadReels() {
-      try {
-        const { reelData } = await loadRodAndReelData()
         this.reelList = reelData
-      } catch (e) { console.error('加载渔轮失败:', e) }
+      } catch (e) { console.error('加载装备数据失败:', e) }
     },
     async loadFishSpecies() {
       try {
@@ -2031,16 +2017,8 @@ export default {
   background-color: var(--color-primary-bg);
 }
 
-.checkbox-icon {
-  font-size: 14px;
+.multi-select-item.selected .checkbox-icon {
   color: var(--color-primary);
-  flex-shrink: 0;
-}
-
-.item-text {
-  font-size: 14px;
-  color: var(--text-main);
-  flex: 1;
 }
 
 .select-hint {

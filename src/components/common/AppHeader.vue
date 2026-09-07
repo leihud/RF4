@@ -6,7 +6,7 @@
       </router-link>
       <nav class="nav-links">
         <router-link :to="routes.CALCULATOR" class="nav-link" exact-active-class="active">装备计算</router-link>
-        <router-link to="/builds" class="nav-link" active-class="active">方案汇总</router-link>
+        <router-link :to="routes.BUILDS" class="nav-link" active-class="active">方案汇总</router-link>
         <router-link :to="routes.COMPARE" class="nav-link" active-class="active">参数对比</router-link>
         <router-link :to="routes.VALUE" class="nav-link" active-class="active">价值统计</router-link>
         <router-link :to="routes.IMPORT" class="nav-link desktop-only" active-class="active">数据导入</router-link>
@@ -24,6 +24,7 @@
 
 <script>
 import { ROUTES } from '../../constants/routes.js'
+import { readText, writeText, STORAGE_KEYS } from '../../utils/storage.js'
 
 /**
  * 全局顶部导航栏：所有页面共享，router-link 自动高亮当前路由。
@@ -36,15 +37,13 @@ export default {
     return { routes: ROUTES, isDarkTheme: false }
   },
   created() {
-    try {
-      this.isDarkTheme = localStorage.getItem('rf4_theme') === 'dark'
-    } catch (e) { /* 存储不可用时默认亮色 */ }
+    this.isDarkTheme = readText(STORAGE_KEYS.theme, 'light') === 'dark'
     this.applyTheme()
   },
   methods: {
     toggleTheme() {
       this.isDarkTheme = !this.isDarkTheme
-      try { localStorage.setItem('rf4_theme', this.isDarkTheme ? 'dark' : 'light') } catch (e) { /* 忽略 */ }
+      writeText(STORAGE_KEYS.theme, this.isDarkTheme ? 'dark' : 'light')
       this.applyTheme()
     },
     applyTheme() {

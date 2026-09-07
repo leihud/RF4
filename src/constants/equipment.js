@@ -50,7 +50,7 @@ export const DEFAULT_FRICTION = 29
  *    避免以后填了新值前端显示空
  *  - rawRating 为空：返回 '常规'（不突出，不干扰大部分装备的默认展示）
  */
-const RATING_ALIAS_RAW = {
+export const RATING_ALIAS = Object.freeze({
   '1': '一星级',
   '2': '二星级',
   '3': '三星级',
@@ -67,15 +67,7 @@ const RATING_ALIAS_RAW = {
   'S': '稀有级',
   'SS': '传说级',
   'SSS': '神话级'
-}
-
-/** Object.freeze：JS 对象键始终为字符串，数字键 1-5 与字符串键 '1'-'5' 重复，已移除 */
-export const RATING_ALIAS = Object.freeze(
-  Object.keys(RATING_ALIAS_RAW).reduce((acc, k) => {
-    acc[k] = RATING_ALIAS_RAW[k]
-    return acc
-  }, {})
-)
+})
 
 /**
  * ── 鱼竿-渔轮兼容性规则 ──

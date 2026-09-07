@@ -1,4 +1,4 @@
-import { jsonResponse, clearEquipmentCache, clientGuard, enforceBodyLimit } from './_shared.js'
+import { jsonResponse, clearEquipmentCache, clientGuard, enforceBodyLimit, validateAdminPassword } from './_shared.js'
 
 /** 请求体上限：正常单次导入（≤2000 行）远低于此值 */
 const MAX_BODY_BYTES = 10 * 1024 * 1024
@@ -6,14 +6,13 @@ const MAX_BODY_BYTES = 10 * 1024 * 1024
 const MAX_IMPORT_ITEMS = 2000
 
 function validatePassword(env, password) {
-  const importPassword = env.IMPORT_PASSWORD
-  if (!importPassword) {
+  if (!env.IMPORT_PASSWORD) {
     return { valid: false, message: '未配置导入密码' }
   }
   if (!password) {
     return { valid: false, message: '请输入密码' }
   }
-  if (password !== importPassword) {
+  if (!validateAdminPassword(env, password)) {
     return { valid: false, message: '密码错误' }
   }
   return { valid: true, message: '' }

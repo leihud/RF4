@@ -14,7 +14,7 @@
 
 import { readFileSync, writeFileSync } from 'fs'
 import { join, dirname } from 'path'
-import { fileURLToPath } from 'url'
+import { fileURLToPath, pathToFileURL } from 'url'
 import { execSync } from 'child_process'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -22,11 +22,6 @@ const ROOT = join(__dirname, '..')
 
 // 解析命令行参数
 const changes = process.argv.slice(2)
-if (changes.length === 0) {
-  console.error('请提供版本变更描述，例如：')
-  console.error('  node scripts/version.mjs 新增：版本展示功能 优化：编辑弹窗体验')
-  process.exit(1)
-}
 
 // 生成版本号
 function generateVersion() {
@@ -85,9 +80,39 @@ ${changesStr}
     /buildTime:\s*'[^']*'/,
     `buildTime: '${date}'`
   )
-  
+
+  // changelog 只保留最近 MAX 条，防止文件无限膨胀
+  content = trimChangelog(content)
+
   writeFileSync(filePath, content, 'utf-8')
   console.log(`✓ 更新 src/version-info.js`)
+}
+
+// changelog 最多保留的条数（超出即丢弃最旧版本记录）
+export const MAX_CHANGELOG_ENTRIES = 40
+
+/**
+ * 裁剪 version-info.js 的 changelog 数组：仅保留最近 maxEntries 条，丢弃最旧的。
+ * 基于版本脚本自身生成的固定条目格式（\n    { 开头 / version: 'Vyyyymmdd-nn'）定位。
+ */
+export function trimChangelog(content, maxEntries = MAX_CHANGELOG_ENTRIES) {
+  const openIdx = content.indexOf('changelog: [')
+  if (openIdx === -1) return content
+  const bodyStart = openIdx + 'changelog: ['.length
+  const closeIdx = content.indexOf('\n  ]', bodyStart)
+  if (closeIdx === -1) return content
+
+  const entryStarts = []
+  const entryRe = /\n    \{\n      version: 'V\d{8}-\d{2}'/g
+  const limited = content.slice(0, closeIdx)
+  let match
+  while ((match = entryRe.exec(limited)) !== null) {
+    if (match.index >= bodyStart) entryStarts.push(match.index)
+  }
+  if (entryStarts.length <= maxEntries) return content
+
+  const keep = content.slice(0, entryStarts[maxEntries]).replace(/\n?\s*$/, '')
+  return keep + content.slice(closeIdx)
 }
 
 // 更新 package.json
@@ -103,20 +128,33 @@ function updatePackageJson(version) {
 
 
 // 主流程
-const version = generateVersion()
-const date = new Date().toISOString().split('T')[0]
+function main() {
+  if (changes.length === 0) {
+    console.error('请提供版本变更描述，例如：')
+    console.error('  node scripts/version.mjs 新增：版本展示功能 优化：编辑弹窗体验')
+    process.exit(1)
+  }
 
-console.log(`\n📦 发布版本：${version}`)
-console.log(`📅 发布日期：${date}`)
-console.log(`📝 变更内容：`)
-changes.forEach(c => console.log(`   • ${c}`))
-console.log('')
+  const version = generateVersion()
+  const date = new Date().toISOString().split('T')[0]
 
-updateVersionInfo(version, date, changes)
-updatePackageJson(version)
+  console.log(`\n📦 发布版本：${version}`)
+  console.log(`📅 发布日期：${date}`)
+  console.log(`📝 变更内容：`)
+  changes.forEach(c => console.log(`   • ${c}`))
+  console.log('')
 
-console.log(`\n✅ 版本信息已更新完成！`)
-console.log(`\n下一步：`)
-console.log(`  git add -A`)
-console.log(`  git commit -m "发布 ${version}: ${changes[0]}"`)
-console.log(`  git push origin main`)
+  updateVersionInfo(version, date, changes)
+  updatePackageJson(version)
+
+  console.log(`\n✅ 版本信息已更新完成！`)
+  console.log(`\n下一步：`)
+  console.log(`  git add -A`)
+  console.log(`  git commit -m "发布 ${version}: ${changes[0]}"`)
+  console.log(`  git push origin main`)
+}
+
+// 直接执行（node scripts/version.mjs ...）时运行主流程；被 import（测试等）时跳过
+if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) {
+  main()
+}

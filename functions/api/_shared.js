@@ -256,8 +256,7 @@ export function jsonResponse(data, status = 200) {
 
 /**
  * 写操作统一反爬前置检查：UA 验证 → IP 黑名单 → 请求频率限制。
- * 供需要新增防护的写端点（提交方案/数据导入等）复用，
- * 三段检查顺序与 like.js / error_report.js 内联版本保持一致。
+ * 供各写端点（提交方案/数据导入/点赞/错误上报）与公开列表 GET 统一复用。
  * @param {Request} request
  * @param {D1Database} db
  * @returns {Promise<{allowed: boolean, status?: number, message?: string}>}
@@ -289,6 +288,17 @@ export function enforceBodyLimit(request, maxBytes) {
     return { ok: false, response: jsonResponse({ success: false, message: '请求体过大' }, 413) }
   }
   return { ok: true }
+}
+
+/**
+ * 管理员密码校验（写操作保护）：import_data / recommended_builds 统一入口。
+ * 未配置 IMPORT_PASSWORD 时一律拒绝，避免“任意非空密码放行”的降级风险。
+ * @returns {boolean}
+ */
+export function validateAdminPassword(env, password) {
+  const importPassword = env.IMPORT_PASSWORD
+  if (!importPassword) return false
+  return password === importPassword
 }
 
 export function errorResponse(error, status = 500) {

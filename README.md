@@ -16,15 +16,15 @@ npm run hooks:install   # 安装 git hooks（push 时自动更新版本号）
 npm run dev             # 启动 Vite 开发服务器
 ```
 
-需要访问 `/api/*` 时使用本地模拟：
+需要访问 `/api/*` 时使用本地模拟（项目未提供 `dev:api` script，直接调用 wrangler）：
 
 ```bash
-npm run dev:api         # 本地模拟 Pages Functions（需先配置 .dev.vars）
+npm run build
+npx wrangler pages dev dist --port 8788   # 需先 npm run build 生成 dist，并配置好 .dev.vars
 ```
 
 `wrangler.toml` 中已声明 D1 数据库绑定 `DB`。本地联调依赖：
-- `ADMIN_PASSWORD`：管理密码（.dev.vars）
-- `DEV_PASSWORD`：开发模式管理密码（.dev.vars，dev 环境由代码设定）
+- `IMPORT_PASSWORD`：装备导入 / 方案审核与删除的管理密码（.dev.vars，与生产 secret 同名）
 
 首次开发需要同步数据库结构：
 
@@ -40,7 +40,7 @@ npx wrangler d1 migrations apply rf4-db --local
 | `npm test` | 运行全部单元测试（Vitest） |
 | `npm run lint` | ESLint 静态检查（src 与 tests） |
 | `npm run build` | 生产构建 |
-| `npm run dev:api` | 本地 Pages Functions 联调 |
+| `npx wrangler pages dev dist` | 本地 Pages Functions 联调 |
 | `npm run version:release` | 手动更新版本信息文件 |
 
 ## 发布与版本号
@@ -68,10 +68,9 @@ npx wrangler d1 migrations apply rf4-db --remote
 
 | 变量 | 用途 |
 | --- | --- |
-| `ADMIN_PASSWORD` | 装备导入 / 方案审核与删除的管理密码（secret） |
-| `DEV_PASSWORD` | 仅本地开发环境使用的管理密码 |
+| `IMPORT_PASSWORD` | 装备导入 / 方案审核与删除的管理密码（secret，本地 .dev.vars 与生产 secret 同名） |
 
-生产 secrets 在 CF Dashboard 或 `wrangler secret put ADMIN_PASSWORD` 配置。
+生产 secrets 在 CF Dashboard 或 `wrangler secret put IMPORT_PASSWORD` 配置。
 
 ## 目录结构
 
