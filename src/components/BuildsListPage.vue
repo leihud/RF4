@@ -292,58 +292,20 @@
           </div>
           <!-- 鱼种和地图左右布局 -->
           <div class="form-row">
-            <div class="form-group form-col">
-              <label>适用鱼种（可多选）</label>
-              <!-- 已选标签 -->
-              <div v-if="editForm.suitable_fish.length" class="selected-tags">
-                <span v-for="(fish, i) in editForm.suitable_fish" :key="i" class="selected-tag">
-                  {{ fish }}
-                  <span class="tag-remove" @click="toggleEditFishSelection(fish)">✕</span>
-                </span>
-              </div>
-              <!-- 搜索框 -->
-              <input v-model="editFishSearch" type="text" class="form-input" placeholder="输入鱼种名称搜索..." />
-              <!-- 多选列表 -->
-              <div class="multi-select-container">
-                <div 
-                  v-for="fish in filteredEditFishList" 
-                  :key="fish.name"
-                  class="multi-select-item"
-                  :class="{ selected: editForm.suitable_fish.includes(fish.display_name) }"
-                  @click="toggleEditFishSelection(fish.display_name)"
-                >
-                  <span class="checkbox-icon">{{ editForm.suitable_fish.includes(fish.display_name) ? '☑' : '☐' }}</span>
-                  <span class="item-text">{{ fish.display_name }}</span>
-                </div>
-              </div>
-              <span class="select-hint">已选择 {{ editForm.suitable_fish.length }} 个鱼种</span>
-            </div>
-            <div class="form-group form-col">
-              <label>适用地图（可多选）</label>
-              <!-- 已选标签 -->
-              <div v-if="editForm.suitable_map.length" class="selected-tags">
-                <span v-for="(map, i) in editForm.suitable_map" :key="i" class="selected-tag">
-                  {{ map }}
-                  <span class="tag-remove" @click="toggleEditMapSelection(map)">✕</span>
-                </span>
-              </div>
-              <!-- 搜索框 -->
-              <input v-model="editMapSearch" type="text" class="form-input" placeholder="输入地图名称搜索..." />
-              <!-- 多选列表 -->
-              <div class="multi-select-container">
-                <div 
-                  v-for="map in filteredEditMapList" 
-                  :key="map.name"
-                  class="multi-select-item"
-                  :class="{ selected: editForm.suitable_map.includes(map.display_name) }"
-                  @click="toggleEditMapSelection(map.display_name)"
-                >
-                  <span class="checkbox-icon">{{ editForm.suitable_map.includes(map.display_name) ? '☑' : '☐' }}</span>
-                  <span class="item-text">{{ map.display_name }}</span>
-                </div>
-              </div>
-              <span class="select-hint">已选择 {{ editForm.suitable_map.length }} 张地图</span>
-            </div>
+            <FishMapMultiSelect
+              v-model="editForm.suitable_fish"
+              :options="fishList"
+              label="适用鱼种（可多选）"
+              placeholder="输入鱼种名称搜索..."
+              unit="个鱼种"
+            />
+            <FishMapMultiSelect
+              v-model="editForm.suitable_map"
+              :options="mapList"
+              label="适用地图（可多选）"
+              placeholder="输入地图名称搜索..."
+              unit="张地图"
+            />
           </div>
         </div>
         <div class="modal-footer">
@@ -365,13 +327,15 @@ import { loadRodAndReelData } from '../utils/equipmentLoader.js'
 import { readStorage, writeStorage, readText, writeText, STORAGE_KEYS } from '../utils/storage.js'
 import { getMySubmissions, removeMySubmission } from '../utils/mineSubmissions.js'
 import AppToast from './common/AppToast.vue'
+import FishMapMultiSelect from './common/FishMapMultiSelect.vue'
 import { lockScroll, bindEscape } from '../utils/modal.js'
 import { fetchWithTimeout } from '../utils/fetch.js'
 
 export default {
   name: 'BuildsListPage',
   components: {
-    AppToast
+    AppToast,
+    FishMapMultiSelect
   },
   data() {
     return {
@@ -406,8 +370,6 @@ export default {
       searchDebounceTimer: null,
       showEditModal: false,
       editForm: { id: null, name: '', description: '', suitable_fish: [], suitable_map: [] },
-      editFishSearch: '',
-      editMapSearch: '',
       isSaving: false,
       hasMore: false,
       isLoadingMore: false,
@@ -431,16 +393,6 @@ export default {
     filteredMapList() {
       if (!this.mapSearch.trim()) return this.mapList
       return searchAndRankEquipment(this.mapList, this.mapSearch, ['display_name'])
-    },
-    // 编辑弹窗鱼种过滤
-    filteredEditFishList() {
-      if (!this.editFishSearch.trim()) return this.fishList
-      return searchAndRankEquipment(this.fishList, this.editFishSearch, ['display_name'])
-    },
-    // 编辑弹窗地图过滤
-    filteredEditMapList() {
-      if (!this.editMapSearch.trim()) return this.mapList
-      return searchAndRankEquipment(this.mapList, this.editMapSearch, ['display_name'])
     },
     filteredBuilds() {
       let result = this.builds.filter(build => {
@@ -945,27 +897,11 @@ export default {
         suitable_fish: build.suitable_fish ? build.suitable_fish.split(',').map(s => s.trim()).filter(Boolean) : [],
         suitable_map: build.suitable_map ? build.suitable_map.split(',').map(s => s.trim()).filter(Boolean) : []
       }
-      this.editFishSearch = ''
-      this.editMapSearch = ''
       this.showEditModal = true
     },
     closeEditModal() {
       this.showEditModal = false
       this.editForm = { id: null, name: '', description: '', suitable_fish: [], suitable_map: [] }
-      this.editFishSearch = ''
-      this.editMapSearch = ''
-    },
-    toggleEditFishSelection(fishName) {
-      const arr = this.editForm.suitable_fish
-      const idx = arr.indexOf(fishName)
-      if (idx > -1) arr.splice(idx, 1)
-      else arr.push(fishName)
-    },
-    toggleEditMapSelection(mapName) {
-      const arr = this.editForm.suitable_map
-      const idx = arr.indexOf(mapName)
-      if (idx > -1) arr.splice(idx, 1)
-      else arr.push(mapName)
     },
     async saveEditBuild() {
       const password = prompt('请输入管理员密码：')

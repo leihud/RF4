@@ -1,11 +1,11 @@
 <template>
-  <div class="search-dropdown">
+  <div class="search-dropdown" :class="{ fluid }">
     <div class="search-input-wrapper">
       <input
         type="text"
         class="search-input"
         v-model="searchQuery"
-        placeholder="搜索装备名称..."
+        :placeholder="placeholder"
         @click.stop="isDropdownOpen = !isDropdownOpen"
       />
       <span class="search-icon">🔍</span>
@@ -30,7 +30,7 @@
         v-for="(equipment, eqIdx) in visibleEquipment"
         :key="toSafeDisplay(equipment.model || equipment.equipmentName, String(equipment.id || eqIdx))"
         class="dropdown-item"
-        @click.stop="$emit('select', equipment)"
+        @click.stop="onSelect(equipment)"
       >
         <span class="dropdown-name">{{ toSafeDisplay(equipment.model || equipment.equipmentName, '-') }}</span>
         <span class="dropdown-category">{{ toSafeDisplay(equipment.form || equipment.category, '') }}</span>
@@ -61,6 +61,8 @@ const MAX_DROPDOWN_OPTIONS = 60
  * 装备搜索下拉：自持搜索词（200ms 防抖）、分类筛选与下拉展开状态，
  * 父组件仅需传入当前类型的装备列表并监听 select 事件。
  * 组件随父级 v-if 卸载时状态自动重置，无需父级手动清空。
+ * 可选能力：initialSearch 支持受控初始搜索词（如已选装备型号），
+ * fluid 让下拉在流式布局中撑满容器宽度。
  */
 export default {
   name: 'EquipmentSearchDropdown',
@@ -83,13 +85,29 @@ export default {
     emptyHint: {
       type: String,
       default: null
+    },
+    /** 输入框占位文本 */
+    placeholder: {
+      type: String,
+      default: '搜索装备名称...'
+    },
+    /** 初始搜索词（父级可用来回填已选装备型号；变化时会同步内部搜索词） */
+    initialSearch: {
+      type: String,
+      default: ''
+    },
+    /** 流式布局：撑满可用宽度（默认固定宽度 520px，计算器单行场景使用） */
+    fluid: {
+      type: Boolean,
+      default: false
     }
   },
   emits: ['select'],
   data() {
+    const initial = this.initialSearch || ''
     return {
-      searchQuery: '',
-      debouncedSearchQuery: '',
+      searchQuery: initial,
+      debouncedSearchQuery: initial,
       searchTimeout: null,
       isDropdownOpen: false,
       selectedCategory: '',
@@ -102,10 +120,21 @@ export default {
       this.searchTimeout = setTimeout(() => {
         this.debouncedSearchQuery = val
       }, 200)
+    },
+    initialSearch(val) {
+      // 父级回填搜索词（如恢复清单时预填已选装备型号）
+      const next = val || ''
+      this.searchQuery = next
+      this.debouncedSearchQuery = next
     }
+  },
+  mounted() {
+    // 点击组件外部时收起下拉（避免多个实例同时展开重叠）
+    document.addEventListener('mousedown', this.handleDocumentMousedown)
   },
   beforeUnmount() {
     if (this.searchTimeout) clearTimeout(this.searchTimeout)
+    document.removeEventListener('mousedown', this.handleDocumentMousedown)
   },
   computed: {
     categoryOptions() {
@@ -156,7 +185,18 @@ export default {
     }
   },
   methods: {
-    toSafeDisplay
+    toSafeDisplay,
+    /** 选中装备后收起下拉并通知父组件 */
+    onSelect(equipment) {
+      this.isDropdownOpen = false
+      this.$emit('select', equipment)
+    },
+    /** 点击组件外部时收起下拉 */
+    handleDocumentMousedown(event) {
+      if (this.$el && !this.$el.contains(event.target)) {
+        this.isDropdownOpen = false
+      }
+    }
   }
 }
 </script>
@@ -384,5 +424,13 @@ export default {
     padding: 3px 10px;
     font-size: 12px;
   }
+}
+
+/* 流式布局：撑满父容器可用宽度（放在媒体查询之后保证优先级，如 ValuePage 复用场景） */
+.search-dropdown.fluid {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  flex: 1 1 auto;
 }
 </style>

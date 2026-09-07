@@ -12,54 +12,16 @@
         <button class="add-btn" @click="addRodEntry">+ 添加鱼竿</button>
       </div>
       <div v-for="(entry, index) in rodEntries" :key="'rod-' + index" class="entry-row">
-        <div class="search-dropdown">
-          <div class="search-row">
-            <div class="search-input-wrapper">
-              <input
-                type="text"
-                class="search-input"
-                v-model="entry.search"
-                @input="onSearchInput(entry)"
-                placeholder="搜索鱼竿..."
-                @focus="entry.isDropdownOpen = true"
-                @blur="onSearchBlur(entry, 'rod', index)"
-              />
-              <span class="search-icon">🔍</span>
-            </div>
-            <div class="selected-tags" v-if="entry.equipment">
-              <span class="tag-type">{{ entry.equipment.category }}</span>
-              <span class="tag-rating" v-if="getRatingAlias(entry.equipment.rating) !== '常规'">{{ getRatingAlias(entry.equipment.rating) }}</span>
-            </div>
-          </div>
-          <div v-if="entry.isDropdownOpen && getRodCategoryOptions().length > 0" class="category-filter-header">
-            <button class="category-toggle-btn" @mousedown.prevent="entry.showCategoryFilter = !entry.showCategoryFilter">
-              {{ entry.showCategoryFilter ? '▼' : '▲' }} 装备类型
-            </button>
-          </div>
-          <div v-if="entry.isDropdownOpen && entry.showCategoryFilter" class="category-filter-wrapper">
-            <button
-              v-for="cat in getRodCategoryOptions()"
-              :key="cat"
-              :class="['category-filter-btn', { active: entry.selectedCategory === cat }]"
-              @mousedown.prevent="entry.selectedCategory = cat"
-            >
-              {{ cat }}
-            </button>
-          </div>
-          <div v-if="entry.isDropdownOpen" class="dropdown-list">
-            <div
-              v-for="rod in getFilteredRodList(entry)"
-              :key="rod.id"
-              class="dropdown-item"
-              @mousedown.prevent="selectEquipment(index, 'rod', rod, entry)"
-            >
-              <span class="dropdown-name">{{ rod.model }}</span>
-              <span class="dropdown-type">{{ rod.category }}</span>
-              <span class="dropdown-category" v-if="getRatingAlias(rod.rating) !== '常规'">{{ getRatingAlias(rod.rating) }}</span>
-              <span v-if="rod.ratingAlias && rod.ratingAlias !== '常规'" class="dropdown-rating">{{ rod.ratingAlias }}</span>
-            </div>
-            <div v-if="getFilteredRodList(entry).length === 0" class="dropdown-empty">未找到匹配的装备</div>
-          </div>
+        <EquipmentSearchDropdown
+          :equipment-list="rodList"
+          :initial-search="entry.search"
+          placeholder="搜索鱼竿..."
+          fluid
+          @select="selectRodEquipment(index, $event)"
+        />
+        <div class="selected-tags" v-if="entry.equipment">
+          <span class="tag-type">{{ entry.equipment.category }}</span>
+          <span class="tag-rating" v-if="getRatingAlias(entry.equipment.rating) !== '常规'">{{ getRatingAlias(entry.equipment.rating) }}</span>
         </div>
         <div class="quantity-input-wrapper">
           <label>数量:</label>
@@ -89,54 +51,16 @@
         <button class="add-btn" @click="addReelEntry">+ 添加渔轮</button>
       </div>
       <div v-for="(entry, index) in reelEntries" :key="'reel-' + index" class="entry-row">
-        <div class="search-dropdown">
-          <div class="search-row">
-            <div class="search-input-wrapper">
-              <input
-                type="text"
-                class="search-input"
-                v-model="entry.search"
-                @input="onSearchInput(entry)"
-                placeholder="搜索渔轮..."
-                @focus="entry.isDropdownOpen = true"
-                @blur="onSearchBlur(entry, 'reel', index)"
-              />
-              <span class="search-icon">🔍</span>
-            </div>
-            <div class="selected-tags" v-if="entry.equipment">
-              <span class="tag-type">{{ entry.equipment.category }}</span>
-              <span class="tag-rating" v-if="getRatingAlias(entry.equipment.rating) !== '常规'">{{ getRatingAlias(entry.equipment.rating) }}</span>
-            </div>
-          </div>
-          <div v-if="entry.isDropdownOpen && getReelCategoryOptions().length > 0" class="category-filter-header">
-            <button class="category-toggle-btn" @mousedown.prevent="entry.showCategoryFilter = !entry.showCategoryFilter">
-              {{ entry.showCategoryFilter ? '▼' : '▲' }} 装备类型
-            </button>
-          </div>
-          <div v-if="entry.isDropdownOpen && entry.showCategoryFilter" class="category-filter-wrapper">
-            <button
-              v-for="cat in getReelCategoryOptions()"
-              :key="cat"
-              :class="['category-filter-btn', { active: entry.selectedCategory === cat }]"
-              @mousedown.prevent="entry.selectedCategory = cat"
-            >
-              {{ cat }}
-            </button>
-          </div>
-          <div v-if="entry.isDropdownOpen" class="dropdown-list">
-            <div
-              v-for="reel in getFilteredReelList(entry)"
-              :key="reel.id"
-              class="dropdown-item"
-              @mousedown.prevent="selectEquipment(index, 'reel', reel, entry)"
-            >
-              <span class="dropdown-name">{{ reel.model }}</span>
-              <span class="dropdown-type">{{ reel.category }}</span>
-              <span class="dropdown-category" v-if="getRatingAlias(reel.rating) !== '常规'">{{ getRatingAlias(reel.rating) }}</span>
-              <span v-if="reel.ratingAlias && reel.ratingAlias !== '常规'" class="dropdown-rating">{{ reel.ratingAlias }}</span>
-            </div>
-            <div v-if="getFilteredReelList(entry).length === 0" class="dropdown-empty">未找到匹配的装备</div>
-          </div>
+        <EquipmentSearchDropdown
+          :equipment-list="reelList"
+          :initial-search="entry.search"
+          placeholder="搜索渔轮..."
+          fluid
+          @select="selectReelEquipment(index, $event)"
+        />
+        <div class="selected-tags" v-if="entry.equipment">
+          <span class="tag-type">{{ entry.equipment.category }}</span>
+          <span class="tag-rating" v-if="getRatingAlias(entry.equipment.rating) !== '常规'">{{ getRatingAlias(entry.equipment.rating) }}</span>
         </div>
         <div class="quantity-input-wrapper">
           <label>数量:</label>
@@ -220,18 +144,19 @@
 </template>
 
 <script>
-import { searchAndRankEquipment, sortByPanelTension, EQUIPMENT_SEARCH_FIELDS } from '../utils/search.js'
 import { getRatingAlias } from '../constants/equipment.js'
 import { formatPrice as formatPriceDisplay, parsePrice } from '../utils/display.js'
 import { loadRodAndReelData } from '../utils/equipmentLoader.js'
 import { readStorage, writeStorage, STORAGE_KEYS } from '../utils/storage.js'
 import AppToast from './common/AppToast.vue'
+import EquipmentSearchDropdown from './calculator/EquipmentSearchDropdown.vue'
 import { lockScroll, bindEscape } from '../utils/modal.js'
 
 export default {
   name: 'ValuePage',
   components: {
-    AppToast
+    AppToast,
+    EquipmentSearchDropdown
   },
   data() {
     return {
@@ -316,13 +241,6 @@ export default {
     })
   },
   beforeUnmount() {
-    // 清理所有 entry 的搜索防抖计时器
-    for (const entry of this.rodEntries) {
-      if (entry.searchTimer) clearTimeout(entry.searchTimer)
-    }
-    for (const entry of this.reelEntries) {
-      if (entry.searchTimer) clearTimeout(entry.searchTimer)
-    }
     if (this.entrySaveTimer) clearTimeout(this.entrySaveTimer)
     if (this.escOff) {
       this.escOff()
@@ -341,13 +259,28 @@ export default {
       return {
         equipment: equipment || null,
         quantity: quantity || 1,
-        search: equipment ? equipment.model : '',
-        debouncedSearch: '',
-        searchTimer: null,
-        isDropdownOpen: false,
-        selectedCategory: '',
-        showCategoryFilter: false
+        // 搜索框回填文本：已选装备时展示其型号
+        search: equipment ? (equipment.model || equipment.equipmentName || '') : ''
       }
+    },
+    /** 装备型号兜底取显示名 */
+    equipmentModel(equipment) {
+      if (!equipment) return ''
+      return equipment.model || equipment.equipmentName || ''
+    },
+    /** 下拉选中鱼竿 */
+    selectRodEquipment(index, equipment) {
+      const entry = this.rodEntries[index]
+      if (!entry) return
+      entry.equipment = equipment
+      entry.search = this.equipmentModel(equipment)
+    },
+    /** 下拉选中渔轮 */
+    selectReelEquipment(index, equipment) {
+      const entry = this.reelEntries[index]
+      if (!entry) return
+      entry.equipment = equipment
+      entry.search = this.equipmentModel(equipment)
     },
     /** 防抖持久化清单（只存型号与数量，恢复时重新匹配） */
     scheduleSaveEntries() {
@@ -472,103 +405,17 @@ export default {
         this.reelList = reelData
       } catch (e) { console.error('加载装备数据失败:', e) }
     },
-    getRodCategoryOptions() {
-      if (!Array.isArray(this.rodList)) return []
-      const categories = [...new Set(this.rodList.map(item => item.form))].filter(Boolean)
-      return ['全部', ...categories]
-    },
-    getReelCategoryOptions() {
-      if (!Array.isArray(this.reelList)) return []
-      const categories = [...new Set(this.reelList.map(item => item.form))].filter(Boolean)
-      return ['全部', ...categories]
-    },
-    getFilteredRodList(entry) {
-      if (!Array.isArray(this.rodList)) return []
-      let filtered = this.rodList
-
-      if (entry.selectedCategory && entry.selectedCategory !== '全部') {
-        filtered = filtered.filter(item => item.form === entry.selectedCategory)
-      }
-
-      if (entry.debouncedSearch && entry.debouncedSearch.trim()) {
-        filtered = searchAndRankEquipment(filtered, entry.debouncedSearch, EQUIPMENT_SEARCH_FIELDS)
-      } else {
-        filtered = sortByPanelTension(filtered)
-      }
-
-      return filtered
-    },
-    getFilteredReelList(entry) {
-      if (!Array.isArray(this.reelList)) return []
-      let filtered = this.reelList
-
-      if (entry.selectedCategory && entry.selectedCategory !== '全部') {
-        filtered = filtered.filter(item => item.form === entry.selectedCategory)
-      }
-
-      if (entry.debouncedSearch && entry.debouncedSearch.trim()) {
-        filtered = searchAndRankEquipment(filtered, entry.debouncedSearch, EQUIPMENT_SEARCH_FIELDS)
-      } else {
-        filtered = sortByPanelTension(filtered)
-      }
-
-      return filtered
-    },
     addRodEntry() {
-      this.rodEntries.push({
-        equipment: null,
-        quantity: 1,
-        search: '',
-        debouncedSearch: '',
-        searchTimer: null,
-        isDropdownOpen: false,
-        selectedCategory: '',
-        showCategoryFilter: false
-      })
+      this.rodEntries.push(this.createEntry(null, 1))
     },
     addReelEntry() {
-      this.reelEntries.push({
-        equipment: null,
-        quantity: 1,
-        search: '',
-        debouncedSearch: '',
-        searchTimer: null,
-        isDropdownOpen: false,
-        selectedCategory: '',
-        showCategoryFilter: false
-      })
+      this.reelEntries.push(this.createEntry(null, 1))
     },
     removeRodEntry(index) {
       this.rodEntries.splice(index, 1)
     },
     removeReelEntry(index) {
       this.reelEntries.splice(index, 1)
-    },
-    selectEquipment(index, type, equipment, entry) {
-      if (type === 'rod') {
-        this.rodEntries[index].equipment = equipment
-        this.rodEntries[index].search = equipment.model
-      } else {
-        this.reelEntries[index].equipment = equipment
-        this.reelEntries[index].search = equipment.model
-      }
-      entry.isDropdownOpen = false
-    },
-    onSearchInput(entry) {
-      if (entry.searchTimer) clearTimeout(entry.searchTimer)
-      entry.searchTimer = setTimeout(() => {
-        entry.debouncedSearch = entry.search
-      }, 200)
-    },
-    onSearchBlur(entry, _type, _index) {
-      // 延迟关闭，让点击事件先触发
-      setTimeout(() => {
-        entry.isDropdownOpen = false
-        // 如果已选择装备，恢复显示model
-        if (entry.equipment) {
-          entry.search = entry.equipment.model
-        }
-      }, 200)
     },
     formatPrice(price) {
       return formatPriceDisplay(price)
@@ -664,47 +511,6 @@ export default {
   background: var(--bg-secondary);
 }
 
-.search-dropdown {
-  position: relative;
-  flex: 1;
-  min-width: 260px;
-}
-
-.search-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.search-input-wrapper {
-  position: relative;
-  flex: 1;
-}
-
-.search-input {
-  width: 100%;
-  padding: 8px 12px 8px 32px;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: var(--color-surface);
-  color: var(--text-main);
-  font-size: 14px;
-  outline: none;
-  box-sizing: border-box;
-}
-
-.search-input:focus {
-  border-color: var(--color-primary);
-}
-
-.search-icon {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-hint);
-}
-
 .selected-tags {
   display: flex;
   gap: 6px;
@@ -723,118 +529,6 @@ export default {
 .tag-rating {
   background: var(--color-success-bg);
   color: var(--color-success);
-}
-
-.category-filter-header {
-  margin-top: 6px;
-}
-
-.category-toggle-btn {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  font-size: 12px;
-  cursor: pointer;
-  padding: 0;
-}
-
-.category-filter-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 6px;
-  padding: 8px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-}
-
-.category-filter-btn {
-  padding: 4px 10px;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  background: var(--color-surface);
-  color: var(--text-secondary);
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.category-filter-btn:hover,
-.category-filter-btn.active {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-  background: var(--color-primary-bg);
-}
-
-.dropdown-list {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  margin-top: 4px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  max-height: 240px;
-  overflow-y: auto;
-  z-index: 10;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.dropdown-item {
-  padding: 10px 12px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border-bottom: 1px solid var(--color-divider);
-  font-size: 13px;
-}
-
-.dropdown-item:last-child {
-  border-bottom: none;
-}
-
-.dropdown-item:hover {
-  background: var(--color-primary-bg);
-}
-
-.dropdown-name {
-  flex: 1;
-  font-weight: 500;
-  color: var(--text-main);
-}
-
-.dropdown-type {
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: var(--color-primary-bg);
-  color: var(--color-primary);
-  font-size: 12px;
-}
-
-.dropdown-category,
-.dropdown-rating {
-  font-size: 12px;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.dropdown-category {
-  background: var(--color-success-bg);
-  color: var(--color-success);
-}
-
-.dropdown-rating {
-  background: var(--color-warning-bg);
-  color: var(--color-warning);
-}
-
-.dropdown-empty {
-  padding: 12px;
-  text-align: center;
-  color: var(--text-hint);
-  font-size: 13px;
 }
 
 .quantity-input-wrapper {
@@ -1079,13 +773,6 @@ export default {
 
 .modal-confirm-btn:hover {
   opacity: 0.9;
-}
-
-/* 深色主题下筛选激活态保持白字可读 */
-::v-deep(:root[data-theme="dark"]) .category-filter-btn.active {
-  background-color: var(--color-success);
-  border-color: var(--color-success);
-  color: var(--color-surface);
 }
 
 @media (max-width: 720px) {

@@ -363,68 +363,20 @@
           </div>
           <!-- 鱼种和地图左右布局 -->
           <div class="form-row">
-            <div class="form-group form-col">
-              <label class="form-label">适用鱼种（可多选）</label>
-              <!-- 已选标签 -->
-              <div v-if="submitForm.suitableFish.length" class="selected-tags">
-                <span v-for="(fish, i) in submitForm.suitableFish" :key="i" class="selected-tag">
-                  {{ fish }}
-                  <span class="tag-remove" @click="toggleFishSelection(fish)">✕</span>
-                </span>
-              </div>
-              <!-- 搜索框 -->
-              <input
-                v-model="fishSearchKeyword"
-                type="text"
-                class="search-input"
-                placeholder="输入鱼种名称搜索..."
-              />
-              <!-- 多选列表 -->
-              <div class="multi-select-container">
-                <div 
-                  v-for="fish in filteredFishSpeciesList" 
-                  :key="fish.name"
-                  class="multi-select-item"
-                  :class="{ selected: submitForm.suitableFish.includes(fish.display_name) }"
-                  @click="toggleFishSelection(fish.display_name)"
-                >
-                  <span class="checkbox-icon">{{ submitForm.suitableFish.includes(fish.display_name) ? '☑' : '☐' }}</span>
-                  <span class="item-text">{{ fish.display_name }}</span>
-                </div>
-              </div>
-              <span class="select-hint">已选择 {{ submitForm.suitableFish.length }} 个鱼种</span>
-            </div>
-            <div class="form-group form-col">
-              <label class="form-label">适用地图（可多选）</label>
-              <!-- 已选标签 -->
-              <div v-if="submitForm.suitableMap.length" class="selected-tags">
-                <span v-for="(map, i) in submitForm.suitableMap" :key="i" class="selected-tag">
-                  {{ map }}
-                  <span class="tag-remove" @click="toggleMapSelection(map)">✕</span>
-                </span>
-              </div>
-              <!-- 搜索框 -->
-              <input
-                v-model="mapSearchKeyword"
-                type="text"
-                class="search-input"
-                placeholder="输入地图名称搜索..."
-              />
-              <!-- 多选列表 -->
-              <div class="multi-select-container">
-                <div 
-                  v-for="map in filteredMapList" 
-                  :key="map.name"
-                  class="multi-select-item"
-                  :class="{ selected: submitForm.suitableMap.includes(map.display_name) }"
-                  @click="toggleMapSelection(map.display_name)"
-                >
-                  <span class="checkbox-icon">{{ submitForm.suitableMap.includes(map.display_name) ? '☑' : '☐' }}</span>
-                  <span class="item-text">{{ map.display_name }}</span>
-                </div>
-              </div>
-              <span class="select-hint">已选择 {{ submitForm.suitableMap.length }} 张地图</span>
-            </div>
+            <FishMapMultiSelect
+              v-model="submitForm.suitableFish"
+              :options="fishSpeciesList"
+              label="适用鱼种（可多选）"
+              placeholder="输入鱼种名称搜索..."
+              unit="个鱼种"
+            />
+            <FishMapMultiSelect
+              v-model="submitForm.suitableMap"
+              :options="mapsList"
+              label="适用地图（可多选）"
+              placeholder="输入地图名称搜索..."
+              unit="张地图"
+            />
           </div>
         </div>
         <div class="modal-footer">
@@ -473,6 +425,7 @@ import EquipmentSummary from './calculator/EquipmentSummary.vue'
 import WearCurveChart from './calculator/WearCurveChart.vue'
 import AppToast from './common/AppToast.vue'
 import AppSkeleton from './common/AppSkeleton.vue'
+import FishMapMultiSelect from './common/FishMapMultiSelect.vue'
 import { lockScroll, bindEscape } from '../utils/modal.js'
 import { fetchWithTimeout } from '../utils/fetch.js'
 
@@ -484,7 +437,8 @@ export default {
     EquipmentSummary,
     WearCurveChart,
     AppToast,
-    AppSkeleton
+    AppSkeleton,
+    FishMapMultiSelect
   },
   data() {
     return {
@@ -524,9 +478,7 @@ export default {
       submitMode: 'new', // 'new' | 'overwrite'
       mapsList: [],
       fishSpeciesList: [],
-      recommendedBuilds: [],
-      fishSearchKeyword: '',
-      mapSearchKeyword: ''
+      recommendedBuilds: []
     }
   },
   mounted() {
@@ -719,26 +671,6 @@ export default {
         minTension: fish.min_tension || 0,
         maxTension: fish.max_tension || 0
       }
-    },
-    /** 根据搜索关键词过滤鱼种列表 */
-    filteredFishSpeciesList() {
-      if (!this.fishSearchKeyword.trim()) {
-        return this.fishSpeciesList
-      }
-      const keyword = this.fishSearchKeyword.toLowerCase()
-      return this.fishSpeciesList.filter(fish => 
-        fish.display_name.toLowerCase().includes(keyword)
-      )
-    },
-    /** 根据搜索关键词过滤地图列表 */
-    filteredMapList() {
-      if (!this.mapSearchKeyword.trim()) {
-        return this.mapsList
-      }
-      const keyword = this.mapSearchKeyword.toLowerCase()
-      return this.mapsList.filter(map => 
-        map.display_name.toLowerCase().includes(keyword)
-      )
     },
     /** 过滤目标鱼种下拉列表 */
     filteredTargetFishList() {
@@ -1210,26 +1142,6 @@ export default {
       }
       if (build.friction > 0) {
         this.friction = clampFriction(build.friction, build.calculation_rule || this.calculationRule)
-      }
-    },
-    /** 切换鱼种选择状态 */
-    toggleFishSelection(fishName) {
-      const index = this.submitForm.suitableFish.indexOf(fishName)
-      if (index > -1) {
-        // 已选中，取消选择
-        this.submitForm.suitableFish.splice(index, 1)
-      } else {
-        // 未选中，添加选择
-        this.submitForm.suitableFish.push(fishName)
-      }
-    },
-    /** 切换地图选择状态 */
-    toggleMapSelection(mapName) {
-      const index = this.submitForm.suitableMap.indexOf(mapName)
-      if (index > -1) {
-        this.submitForm.suitableMap.splice(index, 1)
-      } else {
-        this.submitForm.suitableMap.push(mapName)
       }
     },
     /** 选择目标鱼种 */
