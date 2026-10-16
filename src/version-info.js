@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20261016-02',
+  currentVersion: 'V20261016-03',
   buildTime: '2026-10-16',
   changelog: [
+    {
+      version: 'V20261016-03',
+      date: '2026-10-16',
+      changes: [
+        '新增：GameKee 图鉴自动爬取——11 分区全字段落库 gamekee_items，渔竿/渔轮按别名归一补齐现有表列，GitHub Actions 每日定时'
+      ]
+    },
     {
       version: 'V20261016-02',
       date: '2026-10-16',
