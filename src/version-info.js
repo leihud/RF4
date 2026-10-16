@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20261016-04',
+  currentVersion: 'V20261016-05',
   buildTime: '2026-10-16',
   changelog: [
+    {
+      version: 'V20261016-05',
+      date: '2026-10-16',
+      changes: [
+        '修复：README 迁移命令数据库名 rf4-db 误写为应为 rf4'
+      ]
+    },
     {
       version: 'V20261016-04',
       date: '2026-10-16',
