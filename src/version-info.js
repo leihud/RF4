@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20260907-02',
-  buildTime: '2026-09-07',
+  currentVersion: 'V20261016-01',
+  buildTime: '2026-10-16',
   changelog: [
+    {
+      version: 'V20261016-01',
+      date: '2026-10-16',
+      changes: [
+        '优化：ValuePage 复用装备搜索下拉并抽取鱼种/地图多选公共组件'
+      ]
+    },
     {
       version: 'V20260907-02',
       date: '2026-09-07',
@@ -282,13 +289,6 @@ export const versionInfo = {
       date: '2026-08-26',
       changes: [
         '删除：移除游戏汉化功能（页面、路由、脚本、API、文档）'
-      ]
-    },
-    {
-      version: 'V20260826-06',
-      date: '2026-08-26',
-      changes: [
-        '优化：游戏汉化重构，移除硬编码路径，改为上传俄服基线+汉化基线+新俄服文件'
       ]
     },
   ]

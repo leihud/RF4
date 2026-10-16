@@ -6,6 +6,18 @@ import {
 } from '../constants/equipment.js'
 import { toSafeNumber } from './sanitize.js'
 
+/**
+ * 读取装备磨损值（%），兼容渔轮双磨损模型：
+ *  - 锁轮拉力读 lockWear，面板拉力读 panelWear（由 pickWear 传入字段名区分）
+ *  - 专属磨损缺失（null/undefined）时回退共用字段 wear（兼容旧数据/鱼竿/线材）
+ */
+function pickWear(equipment, wearKey) {
+  if (equipment && equipment[wearKey] != null) {
+    return toSafeNumber(equipment[wearKey], 0)
+  }
+  return toSafeNumber(equipment && equipment.wear, 0)
+}
+
 function round(value, digits = 2) {
   const safeValue = toSafeNumber(value, 0)
   const factor = 10 ** digits
@@ -17,7 +29,7 @@ export function formatTension(value) {
 }
 
 export function calculateActualLockTension(equipment, calcRule) {
-  const wear = toSafeNumber(equipment && equipment.wear, 0)
+  const wear = pickWear(equipment, 'lockWear')
   const lockTension = toSafeNumber(
     (equipment && equipment.lockTension) != null ? equipment.lockTension : (equipment && equipment.maxTension),
     0
@@ -37,7 +49,7 @@ export function calculateActualLockTension(equipment, calcRule) {
 }
 
 export function calculateActualPanelTension(equipment, calcRule, friction = 0) {
-  const wear = toSafeNumber(equipment && equipment.wear, 0)
+  const wear = pickWear(equipment, 'panelWear')
   const panelTension = toSafeNumber(
     (equipment && equipment.panelTension) != null
       ? equipment.panelTension

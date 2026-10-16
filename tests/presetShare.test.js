@@ -8,6 +8,8 @@ describe('encodePreset / decodePreset 往返', () => {
       reelModel: 'Test Reel 3000',
       rodWear: 15,
       reelWear: 20,
+      reelLockWear: 22,
+      reelPanelWear: 18,
       friction: 25,
       mainLineTension: 12.5,
       mainLineWear: 5,
@@ -20,6 +22,17 @@ describe('encodePreset / decodePreset 往返', () => {
 
     const decoded = decodePreset('?' + encoded)
     expect(decoded).toEqual(state)
+  })
+
+  it('渔轮双磨损缺失时回退共用 reelWear（兼容旧链接）', () => {
+    // 模拟旧版链接负载：只有 lw，无 lk/pw
+    const json = JSON.stringify({ r: '鱼竿A', l: '渔轮B', lw: 30, f: 25 })
+    const encoded = 'p=' + btoa(unescape(encodeURIComponent(json)))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+    const decoded = decodePreset('?' + encoded)
+    expect(decoded.reelWear).toBe(30)
+    expect(decoded.reelLockWear).toBe(30)
+    expect(decoded.reelPanelWear).toBe(30)
   })
 
   it('部分状态解码时缺失字段回退默认值', () => {

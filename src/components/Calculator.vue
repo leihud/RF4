@@ -209,7 +209,45 @@
                     锁轮:{{ toSafeNumber(selectedEquipmentMap[type].lockTension) }} kN
                   </span>
                 </template>
-                <div class="wear-input-wrapper">
+                <div v-if="type === '渔轮'" class="wear-input-wrapper">
+                  <span class="wear-label" title="影响锁轮拉力">摩擦制动器磨损:</span>
+                  <input
+                    type="number"
+                    class="wear-input"
+                    v-model.number="selectedEquipmentMap[type].lockWear"
+                    placeholder="0"
+                    min="0"
+                    max="100"
+                  />
+                  <span class="wear-unit">%</span>
+                  <span class="wear-label" title="影响面板拉力">装备磨损:</span>
+                  <input
+                    type="number"
+                    class="wear-input"
+                    v-model.number="selectedEquipmentMap[type].panelWear"
+                    placeholder="0"
+                    min="0"
+                    max="100"
+                  />
+                  <span class="wear-unit">%</span>
+                  <button
+                    v-for="p in WEAR_PRESETS"
+                    :key="'lock' + p"
+                    type="button"
+                    class="wear-preset-btn"
+                    :title="'摩擦制动器磨损设为' + p + '%'"
+                    @click="selectedEquipmentMap[type].lockWear = p"
+                  >{{ p }}</button>
+                  <button
+                    v-for="p in WEAR_PRESETS"
+                    :key="'panel' + p"
+                    type="button"
+                    class="wear-preset-btn wear-preset-btn-panel"
+                    :title="'装备磨损设为' + p + '%'"
+                    @click="selectedEquipmentMap[type].panelWear = p"
+                  >{{ p }}</button>
+                </div>
+                <div v-else class="wear-input-wrapper">
                   <span class="wear-label">磨损:</span>
                   <input
                     type="number"
@@ -790,9 +828,17 @@ export default {
       const existingIndex = this.selectedEquipmentList.findIndex(
         item => item.equipmentType === safe.equipmentType
       )
-      const next = { ...safe, wear: 0 }
+      // 渔轮双磨损：lockWear=摩擦制动器磨损（锁轮拉力）、panelWear=装备磨损（面板拉力）
+      const next = safe.equipmentType === '渔轮'
+        ? { ...safe, wear: 0, lockWear: 0, panelWear: 0 }
+        : { ...safe, wear: 0 }
       if (existingIndex >= 0) {
-        next.wear = toSafeNumber(this.selectedEquipmentList[existingIndex].wear, 0)
+        const prev = this.selectedEquipmentList[existingIndex]
+        next.wear = toSafeNumber(prev.wear, 0)
+        if (safe.equipmentType === '渔轮') {
+          next.lockWear = toSafeNumber(prev.lockWear, 0)
+          next.panelWear = toSafeNumber(prev.panelWear, 0)
+        }
         this.selectedEquipmentList.splice(existingIndex, 1, next)
       } else {
         this.selectedEquipmentList.push(next)
@@ -885,7 +931,14 @@ export default {
         if (reel) {
           const rod = this.selectedEquipmentMap['鱼竿']
           if (!rod || isRodReelCompatible(rod, reel)) {
-            this.selectedEquipmentList.push({ ...reel, wear: preset.reelWear || 0 })
+            // 双磨损：新链接带 lk/pw；旧链接缺省回退共用 reelWear
+            const legacyWear = preset.reelWear || 0
+            this.selectedEquipmentList.push({
+              ...reel,
+              wear: legacyWear,
+              lockWear: preset.reelLockWear != null ? preset.reelLockWear : legacyWear,
+              panelWear: preset.reelPanelWear != null ? preset.reelPanelWear : legacyWear
+            })
           }
         }
       }
@@ -899,6 +952,8 @@ export default {
         reelModel: reel ? (reel.model || reel.equipmentName) : '',
         rodWear: rod ? toSafeNumber(rod.wear, 0) : 0,
         reelWear: reel ? toSafeNumber(reel.wear, 0) : 0,
+        reelLockWear: reel ? toSafeNumber(reel.lockWear, 0) : 0,
+        reelPanelWear: reel ? toSafeNumber(reel.panelWear, 0) : 0,
         friction: toSafeNumber(this.friction, 0),
         mainLineTension: toSafeNumber(this.customEquipment['主线'].maxTension, 0),
         mainLineWear: toSafeNumber(this.customEquipment['主线'].wear, 0),
@@ -1102,14 +1157,14 @@ export default {
         }
       }
       
-      // 匹配并设置渔轮
+      // 匹配并设置渔轮（方案不带磨损，渔轮双磨损归零）
       if (build.reel_model) {
         const reel = this.equipmentData.find(
           item => item.equipmentType === '渔轮' && 
             (item.model === build.reel_model || item.equipmentName === build.reel_model)
         )
         if (reel) {
-          this.selectedEquipmentList.push({ ...reel, wear: 0 })
+          this.selectedEquipmentList.push({ ...reel, wear: 0, lockWear: 0, panelWear: 0 })
         }
       }
       

@@ -92,6 +92,13 @@ function tensionAt(item, type, calcRule, friction, mode, wear) {
     const maxTension = toSafeNumber(item.maxTension, 0)
     return maxTension * (1 - wear / 100)
   }
+  if (type === 'reel') {
+    // 渔轮双磨损：锁轮线扫 lockWear（摩擦制动器磨损），面板线扫 panelWear（装备磨损）
+    if (mode === 'panel') {
+      return calculateActualPanelTension({ ...item, panelWear: wear }, calcRule, friction)
+    }
+    return calculateActualLockTension({ ...item, lockWear: wear }, calcRule)
+  }
   const probe = { ...item, wear }
   if (mode === 'panel') {
     return calculateActualPanelTension(probe, calcRule, friction)
@@ -137,21 +144,20 @@ export default {
     },
     /** 纯数据（不含 path），供 yMax 与 wearSeries 复用，避免循环依赖 */
     seriesData() {
-      return this.candidates.map((c) => {
-        const pts = []
-        for (let wear = 0; wear <= 100; wear += 2) {
-          pts.push([wear, tensionAt(c.item, c.type, this.calcRule, this.friction, this.mode, wear)])
+      const out = []
+      for (const c of this.candidates) {
+        if (c.type === 'reel') {
+          // 渔轮拆两条：锁轮拉力线（摩擦制动器磨损）+ 面板拉力线（装备磨损）
+          const lockWear = toSafeNumber(c.item && c.item.lockWear, 0)
+          const panelWear = toSafeNumber(c.item && c.item.panelWear, 0)
+          out.push(this.buildSeries(`${c.key}-lock`, `${c.name}·锁轮`, c, 'lock', lockWear))
+          out.push(this.buildSeries(`${c.key}-panel`, `${c.name}·面板`, c, 'panel', panelWear))
+        } else {
+          const itemWear = toSafeNumber(c.item && c.item.wear, 0)
+          out.push(this.buildSeries(c.key, c.name, c, this.mode, itemWear))
         }
-        const itemWear = toSafeNumber(c.item && c.item.wear, 0)
-        const curValue = tensionAt(c.item, c.type, this.calcRule, this.friction, this.mode, itemWear)
-        return {
-          key: c.key,
-          name: c.name,
-          wear: itemWear,
-          pts,
-          curValue: fmtNum(curValue)
-        }
-      })
+      }
+      return out
     },
     yMax() {
       let max = 1
@@ -170,6 +176,15 @@ export default {
     }
   },
   methods: {
+    /** 构建单条序列：sweepWear 为横轴变量，curWear 为当前磨损位置 */
+    buildSeries(key, name, candidate, mode, curWear) {
+      const pts = []
+      for (let wear = 0; wear <= 100; wear += 2) {
+        pts.push([wear, tensionAt(candidate.item, candidate.type, this.calcRule, this.friction, mode, wear)])
+      }
+      const curValue = tensionAt(candidate.item, candidate.type, this.calcRule, this.friction, mode, curWear)
+      return { key, name, wear: curWear, pts, curValue: fmtNum(curValue) }
+    },
     xAt(wear) { return this.padL + (wear / 100) * this.innerW },
     yAt(ratio) { return this.padT + this.innerH - ratio * this.innerH }
   }

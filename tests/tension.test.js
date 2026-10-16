@@ -56,6 +56,18 @@ describe('calculateActualLockTension', () => {
     const bad = { equipmentType: '鱼竿', lockTension: {}, wear: [] }
     expect(calculateActualLockTension(bad, CALC_RULES.GUIDE)).toBe(0)
   })
+
+  it('渔轮：lockWear 优先于 wear（摩擦制动器磨损只影响锁轮拉力）', () => {
+    const reel = { equipmentType: '渔轮', lockTension: 60, wear: 50, lockWear: 10, panelWear: 80 }
+    // 60 × (1 - 0.7 × 0.1) = 55.8
+    expect(calculateActualLockTension(reel, CALC_RULES.GUIDE)).toBe(55.8)
+  })
+
+  it('渔轮：lockWear 缺失时回退共用 wear（兼容旧数据）', () => {
+    const reel = { equipmentType: '渔轮', lockTension: 60, wear: 50 }
+    // 60 × (1 - 0.7 × 0.5) = 39
+    expect(calculateActualLockTension(reel, CALC_RULES.GUIDE)).toBe(39)
+  })
 })
 
 describe('calculateActualPanelTension', () => {
@@ -86,6 +98,17 @@ describe('calculateActualPanelTension', () => {
   it('其他类型直接返回面板拉力', () => {
     const line = { equipmentType: '主线', panelTension: 12, wear: 50 }
     expect(calculateActualPanelTension(line, CALC_RULES.GUIDE, 0)).toBe(12)
+  })
+
+  it('渔轮：panelWear 优先于 wear（装备磨损只影响面板拉力）', () => {
+    const reel = { equipmentType: '渔轮', panelTension: 29, wear: 50, lockWear: 80, panelWear: 0 }
+    expect(calculateActualPanelTension(reel, CALC_RULES.GUIDE, 29)).toBe(29)
+  })
+
+  it('渔轮：panelWear 缺失时回退共用 wear（兼容旧数据）', () => {
+    const reel = { equipmentType: '渔轮', panelTension: 29, wear: 50 }
+    // 29 × (1 - 0.5) × (29/29) = 14.5
+    expect(calculateActualPanelTension(reel, CALC_RULES.GUIDE, 29)).toBe(14.5)
   })
 })
 

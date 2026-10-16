@@ -20,7 +20,7 @@ const NUMERIC_KEYS = new Set([
   'id',
   'lockTension', 'panelTension', 'maxTension', 'minTension',
   'silverPrice', 'goldPrice', 'price',
-  'wear', 'friction', 'frictionForce',
+  'wear', 'lockWear', 'panelWear', 'friction', 'frictionForce',
   'strengthKg', 'panelStrength',
   'testG', 'adaptWeightG', 'adaptWeightStar',
   'lengthM', 'weightG',

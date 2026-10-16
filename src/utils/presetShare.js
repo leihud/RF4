@@ -2,7 +2,8 @@
  * 装备方案 URL 编码/解码：将当前计算器状态压缩为短 URL 参数，
  * 实现方案保存为书签或分享给他人，无需后端存储。
  *
- * 编码字段：竿型号、轮型号、竿磨损、轮磨损、摩擦值、主线拉力/磨损、引线拉力/磨损、计算规则
+ * 编码字段：竿型号、轮型号、竿磨损、轮磨损（含渔轮摩擦制动器磨损/装备磨损双磨损）、
+ * 摩擦值、主线拉力/磨损、引线拉力/磨损、计算规则
  */
 
 const PRESET_PREFIX = 'p='
@@ -18,6 +19,9 @@ export function encodePreset(state) {
     l: state.reelModel || '',
     rw: state.rodWear || 0,
     lw: state.reelWear || 0,
+    // 渔轮双磨损：lk=摩擦制动器磨损（锁轮拉力）、pw=装备磨损（面板拉力）
+    lk: state.reelLockWear || 0,
+    pw: state.reelPanelWear || 0,
     f: state.friction || 0,
     ml: state.mainLineTension || 0,
     mw: state.mainLineWear || 0,
@@ -64,11 +68,15 @@ export function decodePreset(queryString) {
     const json = decodeURIComponent(escape(atob(padded)))
     const compact = JSON.parse(json)
 
+    // 兼容旧链接：双磨损缺失时回退共用轮磨损 lw
+    const legacyReelWear = compact.lw || 0
     return {
       rodModel: compact.r || '',
       reelModel: compact.l || '',
       rodWear: compact.rw || 0,
-      reelWear: compact.lw || 0,
+      reelWear: legacyReelWear,
+      reelLockWear: compact.lk != null ? compact.lk : legacyReelWear,
+      reelPanelWear: compact.pw != null ? compact.pw : legacyReelWear,
       friction: compact.f || 0,
       mainLineTension: compact.ml || 0,
       mainLineWear: compact.mw || 0,
