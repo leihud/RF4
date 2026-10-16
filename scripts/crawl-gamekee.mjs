@@ -72,19 +72,22 @@ async function getJson(url, label) {
   }
 }
 
-/** D1 HTTP API 查询：statements=[{sql, params}] */
+/**
+ * D1 HTTP API 执行：statements=[{sql, params}]。
+ * 走 /raw 端点的 {"batch":[{sql, params}]} 格式（/query 只支持单条 {sql, params}）。
+ */
 async function d1Query(statements) {
   if (!CF_ACCOUNT_ID || !CF_D1_TOKEN) {
     throw new Error('缺少 CF_ACCOUNT_ID / CF_D1_TOKEN 环境变量（真实写库需要）')
   }
-  const url = `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/d1/database/${D1_DATABASE_ID}/query`
+  const url = `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/d1/database/${D1_DATABASE_ID}/raw`
   const res = await fetch(url, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${CF_D1_TOKEN}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ statements })
+    body: JSON.stringify({ batch: statements.map((s) => ({ sql: s.sql, params: s.params || [] })) })
   })
   const json = await res.json()
   if (!json.success) throw new Error(`D1 API 失败: ${JSON.stringify(json.errors)}`)
@@ -170,9 +173,17 @@ async function main() {
     for (const tableType of [['渔竿图鉴', 'rods', ROD_ATTR_COLUMNS], ['渔轮图鉴', 'reels', REEL_ATTR_COLUMNS]]) {
       const [section, table, colMap] = tableType
       const sectionItems = items.filter((it) => it.leaf.section === section && it.parsed)
-      // 现有 model → id
+      // 现有 model → id（/raw 返回 {columns, rows}，转成对象数组）
       const existing = await d1Query([{ sql: `SELECT id, model FROM ${table}` }])
-      const modelMap = new Map((existing[0].results || []).map((r) => [String(r.model).trim(), r.id]))
+      const rawRes = existing[0].results
+      const modelMap = new Map()
+      if (rawRes && Array.isArray(rawRes.rows)) {
+        const cols = rawRes.columns
+        for (const row of rawRes.rows) {
+          const obj = Object.fromEntries(cols.map((c, i) => [c, row[i]]))
+          modelMap.set(String(obj.model).trim(), obj.id)
+        }
+      }
       for (const { leaf, parsed } of sectionItems) {
         const { columns } = mapAttrsToColumns(parsed, colMap)
         const model = parsed.name || leaf.name
