@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20261016-05',
+  currentVersion: 'V20261016-06',
   buildTime: '2026-10-16',
   changelog: [
+    {
+      version: 'V20261016-06',
+      date: '2026-10-16',
+      changes: [
+        '修复：D1 HTTP API 请求体格式错误——/query 单条 {sql}、批量改用 /raw {batch:[{sql,params}]}，并适配 /raw 行列式返回结构'
+      ]
+    },
     {
       version: 'V20261016-05',
       date: '2026-10-16',
