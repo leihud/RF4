@@ -4,6 +4,7 @@ import {
   cleanText,
   cleanNumber,
   extractProfile,
+  extractProfiles,
   parseProfile,
   flattenTree,
   mapAttrsToColumns,
@@ -92,6 +93,25 @@ describe('extractProfile / parseProfile（真实 fixture）', () => {
     expect(extractProfile({ children: [{ type: 'paragraph', children: [{ text: '普通文章' }] }] })).toBeNull()
     expect(extractProfile('')).toBeNull()
     expect(extractProfile('非JSON')).toBeNull()
+  })
+
+  it('extractProfiles：一个页面含多个尺寸变体（真实 Albacore fixture）', () => {
+    const detail = fixture('gamekee-detail-reel-albacore.json')
+    const profiles = extractProfiles(detail.data.content_json)
+    expect(profiles).toHaveLength(2)
+    const parsed1 = parseProfile(profiles[0])
+    const parsed2 = parseProfile(profiles[1])
+    expect(parsed1.name).toBe('Albacore 20')
+    expect(parsed2.name).toBe('Albacore 40 DS')
+    // 变体字段各自独立
+    expect(parsed1.attrsMap['大小'].value).toBe('20')
+    expect(parsed1.attrsMap['锁轮拉力'].num).toBe(205)
+    expect(parsed2.attrsMap['大小'].value).toBe('40')
+  })
+
+  it('extractProfiles：非图鉴富文本返回空数组', () => {
+    expect(extractProfiles({ children: [{ type: 'paragraph', children: [{ text: '普通文章' }] }] })).toEqual([])
+    expect(extractProfiles('')).toEqual([])
   })
 
   it('同键重复保留非空值', () => {

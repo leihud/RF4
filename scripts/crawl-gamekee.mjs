@@ -19,7 +19,7 @@
  */
 import {
   flattenTree,
-  extractProfile,
+  extractProfiles,
   parseProfile,
   mapAttrsToColumns,
   ROD_ATTR_COLUMNS,
@@ -108,8 +108,9 @@ async function main() {
   const cidMap = new Map((dict.dict || []).map((d) => [d.id, d.c_id]))
   console.log(`c_id 映射: ${cidMap.size} 条`)
 
-  // 3) 逐条抓取解析
-  const items = [] // {leaf, profile解析结果, detailVersion}
+  // 3) 逐条抓取解析（一个页面可能含多个尺寸变体 profile → 展开为变体级条目）
+  const items = [] // 变体级: {leaf, parsed, version}
+  let pages = 0
   let failed = 0
   for (let i = 0; i < finalLeaves.length; i++) {
     const leaf = finalLeaves[i]
@@ -117,20 +118,25 @@ async function main() {
     if (!cId) { console.warn(`  [${i + 1}/${finalLeaves.length}] 无 c_id: ${leaf.name}#${leaf.entryId}`); failed++; continue }
     try {
       const detail = await getJson(`${BASE}/content/detail/${cId}`, `${leaf.name}`)
-      const profile = parseProfile(extractProfile(detail.content_json))
-      if (!profile || !profile.name) {
+      const version = String(detail.updated_at || '')
+      const profiles = extractProfiles(detail.content_json)
+      pages++
+      if (profiles.length === 0) {
         // 富文本文章类条目（无图鉴 profile）：仅记录条目本身
-        items.push({ leaf, parsed: null, version: String(detail.updated_at || '') })
-        continue
+        items.push({ leaf, parsed: null, version })
+      } else {
+        for (const p of profiles) {
+          const parsed = parseProfile(p)
+          if (parsed && parsed.name) items.push({ leaf, parsed, version })
+        }
       }
-      items.push({ leaf, parsed: profile, version: String(detail.updated_at || '') })
     } catch (e) {
       console.warn(`  抓取失败 ${leaf.name}#${leaf.entryId}: ${e.message}`)
       failed++
     }
     if ((i + 1) % 50 === 0) console.log(`  进度 ${i + 1}/${finalLeaves.length}`)
   }
-  console.log(`抓取完成: ${items.length} 条（失败 ${failed}）`)
+  console.log(`抓取完成: ${pages} 个页面 → ${items.length} 个装备变体（失败 ${failed}）`)
   if (items.length === 0) throw new Error('没有抓到任何条目')
 
   // 4) 落库
@@ -143,9 +149,9 @@ async function main() {
       const statements = batch.map(({ leaf, parsed, version }) => ({
         sql: `INSERT INTO gamekee_items (entry_id, section, category_path, name, entry_name, desc_title, description, attrs_json, content_version, synced_at)
               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
-              ON CONFLICT(entry_id) DO UPDATE SET
+              ON CONFLICT(entry_id, name) DO UPDATE SET
                 section=excluded.section, category_path=excluded.category_path,
-                name=excluded.name, entry_name=excluded.entry_name,
+                entry_name=excluded.entry_name,
                 desc_title=excluded.desc_title, description=excluded.description,
                 attrs_json=excluded.attrs_json, content_version=excluded.content_version,
                 synced_at=datetime('now')`,

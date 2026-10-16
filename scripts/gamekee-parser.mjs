@@ -34,27 +34,31 @@ export function cleanText(s) {
 }
 
 /**
- * 从 content_json（字符串或对象）中找到 character-profile 节点。
- * 条目可能是富文本文章（无 profile）→ 返回 null。
+ * 从 content_json（字符串或对象）中找到全部 character-profile 节点。
+ * 一个页面可能含多个尺寸变体 profile（如 Albacore 20 + Albacore 40 DS）。
+ * 条目可能是富文本文章（无 profile）→ 返回空数组。
  */
-export function extractProfile(contentJson) {
+export function extractProfiles(contentJson) {
   let root = contentJson
   if (typeof root === 'string') {
-    const s = cleanText(root) === '' ? '' : root.replace(/^\uFEFF/, '').trim()
-    if (!s) return null
-    try { root = JSON.parse(s) } catch { return null }
+    const s = root.replace(/^\uFEFF/, '').trim()
+    if (!s) return []
+    try { root = JSON.parse(s) } catch { return [] }
   }
-  const found = (function find(n) {
-    if (!n || typeof n !== 'object') return null
-    if (Array.isArray(n)) {
-      for (const c of n) { const r = find(c); if (r) return r }
-      return null
-    }
-    if (n.type === 'character-profile') return n
-    for (const v of Object.values(n)) { const r = find(v); if (r) return r }
-    return null
+  const found = []
+  ;(function walk(n) {
+    if (!n || typeof n !== 'object') return
+    if (Array.isArray(n)) { n.forEach(walk); return }
+    if (n.type === 'character-profile' && n.data) found.push(n.data)
+    for (const v of Object.values(n)) walk(v)
   })(root)
-  return found && found.data ? found.data : null
+  return found
+}
+
+/** 兼容旧调用：取第一个 profile（无则 null） */
+export function extractProfile(contentJson) {
+  const all = extractProfiles(contentJson)
+  return all.length ? all[0] : null
 }
 
 /**
