@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20261016-03',
+  currentVersion: 'V20261016-04',
   buildTime: '2026-10-16',
   changelog: [
+    {
+      version: 'V20261016-04',
+      date: '2026-10-16',
+      changes: [
+        '优化：爬取按页面多变体展开落库——gamekee_items 唯一键改 (entry_id,name)，extractProfiles 取全部尺寸变体，profile.name 与库内 model 粒度对齐'
+      ]
+    },
     {
       version: 'V20261016-03',
       date: '2026-10-16',
