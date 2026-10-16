@@ -1,0 +1,28 @@
+# GameKee RF4 图鉴自动爬取 → D1 更新
+# 每日北京时间 05:00（UTC 21:00）运行；支持手动触发。
+# Secrets（仓库 Settings → Secrets and variables → Actions）：
+#   CF_ACCOUNT_ID : Cloudflare 账户 ID
+#   CF_D1_TOKEN   : API Token（权限：Account → D1 → Edit）
+name: Crawl GameKee RF4
+
+on:
+  schedule:
+    - cron: '0 21 * * *'
+  workflow_dispatch:
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run crawler
+        env:
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_D1_TOKEN: ${{ secrets.CF_D1_TOKEN }}
+        run: node scripts/crawl-gamekee.mjs

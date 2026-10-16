@@ -1,0 +1,658 @@
+﻿[
+    {
+        "key":  "562664456374227364",
+        "type":  "illustrated-book",
+        "data":  [
+                     {
+                         "key":  "26245140521257206",
+                         "type":  "character-profile",
+                         "data":  {
+                                      "isShowImageList":  true,
+                                      "isShowName":  true,
+                                      "isShowAttrList":  true,
+                                      "isShowDesc":  true,
+                                      "title":  "基础信息",
+                                      "name":  {
+                                                   "type":  "simpleEditor",
+                                                   "data":  [
+                                                                {
+                                                                    "type":  "paragraph",
+                                                                    "children":  [
+                                                                                     {
+                                                                                         "text":  "Profisher"
+                                                                                     }
+                                                                                 ]
+                                                                }
+                                                            ]
+                                               },
+                                      "descTitle":  {
+                                                        "type":  "simpleEditor",
+                                                        "data":  [
+                                                                     {
+                                                                         "type":  "paragraph",
+                                                                         "children":  [
+                                                                                          {
+                                                                                              "text":  "能力：超轻钓法"
+                                                                                          }
+                                                                                      ]
+                                                                     }
+                                                                 ]
+                                                    },
+                                      "desc":  {
+                                                   "type":  "simpleEditor",
+                                                   "data":  [
+                                                                {
+                                                                    "type":  "paragraph",
+                                                                    "children":  [
+                                                                                     {
+                                                                                         "text":  "Profisher - Express Fishing公司提供的入门级低槽路亚轮。 带有坚固塑料外壳和高质量不锈钢轴承的简单鱼线轮。 作为第一个路亚轮是一个不错的选择。"
+                                                                                     }
+                                                                                 ]
+                                                                }
+                                                            ]
+                                               },
+                                      "attrList":  [
+                                                       {
+                                                           "key":  "0.4d65a89b14221",
+                                                           "title":  {
+                                                                         "type":  "simpleEditor",
+                                                                         "data":  [
+                                                                                      {
+                                                                                          "type":  "paragraph",
+                                                                                          "children":  [
+                                                                                                           {
+                                                                                                               "text":  "形式"
+                                                                                                           }
+                                                                                                       ]
+                                                                                      }
+                                                                                  ]
+                                                                     },
+                                                           "content":  {
+                                                                           "type":  "simpleEditor",
+                                                                           "data":  [
+                                                                                        {
+                                                                                            "type":  "paragraph",
+                                                                                            "children":  [
+                                                                                                             {
+                                                                                                                 "text":  "水滴轮"
+                                                                                                             }
+                                                                                                         ]
+                                                                                        }
+                                                                                    ]
+                                                                       }
+                                                       },
+                                                       {
+                                                           "key":  "0.0ee7ad4f3aa3c",
+                                                           "isOneLine":  false,
+                                                           "isWapOneLine":  true,
+                                                           "title":  {
+                                                                         "type":  "simpleEditor",
+                                                                         "data":  [
+                                                                                      {
+                                                                                          "type":  "paragraph",
+                                                                                          "children":  [
+                                                                                                           {
+                                                                                                               "text":  "防海水"
+                                                                                                           }
+                                                                                                       ]
+                                                                                      }
+                                                                                  ]
+                                                                     },
+                                                           "content":  {
+                                                                           "type":  "simpleEditor",
+                                                                           "data":  [
+                                                                                        {
+                                                                                            "type":  "paragraph",
+                                                                                            "children":  [
+                                                                                                             {
+                                                                                                                 "text":  "-"
+                                                                                                             }
+                                                                                                         ]
+                                                                                        }
+                                                                                    ]
+                                                                       }
+                                                       },
+                                                       {
+                                                           "key":  "0.6b41ff8ddc7ca",
+                                                           "title":  {
+                                                                         "type":  "simpleEditor",
+                                                                         "data":  [
+                                                                                      {
+                                                                                          "type":  "paragraph",
+                                                                                          "children":  [
+                                                                                                           {
+                                                                                                               "text":  "大小"
+                                                                                                           }
+                                                                                                       ]
+                                                                                      }
+                                                                                  ]
+                                                                     },
+                                                           "content":  {
+                                                                           "type":  "simpleEditor",
+                                                                           "data":  [
+                                                                                        {
+                                                                                            "type":  "paragraph",
+                                                                                            "children":  [
+                                                                                                             {
+                                                                                                                 "text":  "LP"
+                                                                                                             }
+                                                                                                         ]
+                                                                                        }
+                                                                                    ]
+                                                                       }
+                                                       },
+                                                       {
+                                                           "key":  "0.b05bae3fa6d7c",
+                                                           "isOneLine":  false,
+                                                           "isWapOneLine":  true,
+                                                           "title":  {
+                                                                         "type":  "simpleEditor",
+                                                                         "data":  [
+                                                                                      {
+                                                                                          "type":  "paragraph",
+                                                                                          "children":  [
+                                                                                                           {
+                                                                                                               "text":  "测试"
+                                                                                                           }
+                                                                                                       ]
+                                                                                      }
+                                                                                  ]
+                                                                     },
+                                                           "content":  {
+                                                                           "type":  "simpleEditor",
+                                                                           "data":  [
+                                                                                        {
+                                                                                            "type":  "paragraph",
+                                                                                            "children":  [
+                                                                                                             {
+                                                                                                                 "text":  "≥"
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "text":  "6.5",
+                                                                                                                 "color":  "#ff0000"
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "text":  "g"
+                                                                                                             }
+                                                                                                         ]
+                                                                                        }
+                                                                                    ]
+                                                                       }
+                                                       },
+                                                       {
+                                                           "key":  "0.82966a4565eca",
+                                                           "title":  {
+                                                                         "type":  "simpleEditor",
+                                                                         "data":  [
+                                                                                      {
+                                                                                          "type":  "paragraph",
+                                                                                          "children":  [
+                                                                                                           {
+                                                                                                               "text":  "传动比"
+                                                                                                           }
+                                                                                                       ]
+                                                                                      }
+                                                                                  ]
+                                                                     },
+                                                           "content":  {
+                                                                           "type":  "simpleEditor",
+                                                                           "data":  [
+                                                                                        {
+                                                                                            "type":  "paragraph",
+                                                                                            "children":  [
+                                                                                                             {
+                                                                                                                 "text":  "6.2",
+                                                                                                                 "color":  "#ff0000"
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "text":  ":"
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "text":  "1",
+                                                                                                                 "color":  "#ff0000"
+                                                                                                             }
+                                                                                                         ]
+                                                                                        }
+                                                                                    ]
+                                                                       }
+                                                       },
+                                                       {
+                                                           "key":  "0.2f39fd6abfe6d",
+                                                           "title":  {
+                                                                         "type":  "simpleEditor",
+                                                                         "data":  [
+                                                                                      {
+                                                                                          "type":  "paragraph",
+                                                                                          "children":  [
+                                                                                                           {
+                                                                                                               "text":  "摩擦制动力"
+                                                                                                           }
+                                                                                                       ]
+                                                                                      }
+                                                                                  ]
+                                                                     },
+                                                           "content":  {
+                                                                           "type":  "simpleEditor",
+                                                                           "data":  [
+                                                                                        {
+                                                                                            "type":  "paragraph",
+                                                                                            "children":  [
+                                                                                                             {
+                                                                                                                 "text":  "3.2",
+                                                                                                                 "color":  "#ff0000"
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "text":  "kg"
+                                                                                                             }
+                                                                                                         ]
+                                                                                        }
+                                                                                    ]
+                                                                       }
+                                                       },
+                                                       {
+                                                           "key":  "0.d731b6dd4128d",
+                                                           "isOneLine":  false,
+                                                           "isWapOneLine":  true,
+                                                           "title":  {
+                                                                         "type":  "simpleEditor",
+                                                                         "data":  [
+                                                                                      {
+                                                                                          "type":  "paragraph",
+                                                                                          "children":  [
+                                                                                                           {
+                                                                                                               "text":  "回线速度"
+                                                                                                           }
+                                                                                                       ]
+                                                                                      }
+                                                                                  ]
+                                                                     },
+                                                           "content":  {
+                                                                           "type":  "simpleEditor",
+                                                                           "data":  [
+                                                                                        {
+                                                                                            "type":  "paragraph",
+                                                                                            "children":  [
+                                                                                                             {
+                                                                                                                 "text":  "0.7"
+                                                                                                             }
+                                                                                                         ]
+                                                                                        }
+                                                                                    ]
+                                                                       }
+                                                       },
+                                                       {
+                                                           "key":  "0.6a50a72e4cd7f",
+                                                           "isOneLine":  false,
+                                                           "isWapOneLine":  true,
+                                                           "title":  {
+                                                                         "type":  "simpleEditor",
+                                                                         "data":  [
+                                                                                      {
+                                                                                          "type":  "paragraph",
+                                                                                          "children":  [
+                                                                                                           {
+                                                                                                               "text":  "锁轮拉力"
+                                                                                                           }
+                                                                                                       ]
+                                                                                      }
+                                                                                  ]
+                                                                     },
+                                                           "content":  {
+                                                                           "type":  "simpleEditor",
+                                                                           "data":  [
+                                                                                        {
+                                                                                            "type":  "paragraph",
+                                                                                            "children":  [
+                                                                                                             {
+                                                                                                                 "text":  ""
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "text":  "8.03",
+                                                                                                                 "color":  "#ff0000"
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "text":  "kg"
+                                                                                                             }
+                                                                                                         ]
+                                                                                        }
+                                                                                    ]
+                                                                       }
+                                                       },
+                                                       {
+                                                           "key":  "0.b4ab9d4da0c82",
+                                                           "isOneLine":  false,
+                                                           "isWapOneLine":  true,
+                                                           "title":  {
+                                                                         "type":  "simpleEditor",
+                                                                         "data":  [
+                                                                                      {
+                                                                                          "type":  "paragraph",
+                                                                                          "children":  [
+                                                                                                           {
+                                                                                                               "text":  "银币"
+                                                                                                           }
+                                                                                                       ]
+                                                                                      }
+                                                                                  ]
+                                                                     },
+                                                           "content":  {
+                                                                           "type":  "simpleEditor",
+                                                                           "data":  [
+                                                                                        {
+                                                                                            "type":  "paragraph",
+                                                                                            "children":  [
+                                                                                                             {
+                                                                                                                 "text":  "139.9"
+                                                                                                             }
+                                                                                                         ]
+                                                                                        }
+                                                                                    ]
+                                                                       }
+                                                       },
+                                                       {
+                                                           "key":  "0.907c1c3659d58",
+                                                           "title":  {
+                                                                         "type":  "simpleEditor",
+                                                                         "data":  [
+                                                                                      {
+                                                                                          "type":  "paragraph",
+                                                                                          "children":  [
+                                                                                                           {
+                                                                                                               "text":  "金币"
+                                                                                                           }
+                                                                                                       ]
+                                                                                      }
+                                                                                  ]
+                                                                     },
+                                                           "content":  {
+                                                                           "type":  "simpleEditor",
+                                                                           "data":  [
+                                                                                        {
+                                                                                            "type":  "paragraph",
+                                                                                            "children":  [
+                                                                                                             {
+                                                                                                                 "text":  "1.34",
+                                                                                                                 "color":  "rgb(255, 255, 255)",
+                                                                                                                 "bgColor":  "rgb(235, 144, 58)"
+                                                                                                             }
+                                                                                                         ]
+                                                                                        }
+                                                                                    ]
+                                                                       }
+                                                       },
+                                                       {
+                                                           "key":  "0.df7702abe0147",
+                                                           "isOneLine":  true,
+                                                           "isWapOneLine":  true,
+                                                           "title":  {
+                                                                         "type":  "simpleEditor",
+                                                                         "data":  [
+                                                                                      {
+                                                                                          "type":  "paragraph",
+                                                                                          "children":  [
+                                                                                                           {
+                                                                                                               "text":  "线轴容量"
+                                                                                                           }
+                                                                                                       ]
+                                                                                      }
+                                                                                  ]
+                                                                     },
+                                                           "content":  {
+                                                                           "type":  "simpleEditor",
+                                                                           "data":  [
+                                                                                        {
+                                                                                            "type":  "paragraph",
+                                                                                            "children":  [
+                                                                                                             {
+                                                                                                                 "text":  ""
+                                                                                                             }
+                                                                                                         ]
+                                                                                        }
+                                                                                    ]
+                                                                       }
+                                                       },
+                                                       {
+                                                           "key":  "0.ea647a8ff8fb5",
+                                                           "isOneLine":  true,
+                                                           "isWapOneLine":  true,
+                                                           "title":  {
+                                                                         "type":  "simpleEditor",
+                                                                         "data":  [
+                                                                                      {
+                                                                                          "type":  "paragraph",
+                                                                                          "children":  [
+                                                                                                           {
+                                                                                                               "text":  "0.22",
+                                                                                                               "color":  "#ff0000"
+                                                                                                           },
+                                                                                                           {
+                                                                                                               "text":  "毫米"
+                                                                                                           }
+                                                                                                       ]
+                                                                                      }
+                                                                                  ]
+                                                                     },
+                                                           "content":  {
+                                                                           "type":  "simpleEditor",
+                                                                           "data":  [
+                                                                                        {
+                                                                                            "type":  "paragraph",
+                                                                                            "children":  [
+                                                                                                             {
+                                                                                                                 "text":  "166",
+                                                                                                                 "color":  "#ff0000"
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "text":  "米"
+                                                                                                             }
+                                                                                                         ]
+                                                                                        }
+                                                                                    ]
+                                                                       }
+                                                       },
+                                                       {
+                                                           "key":  "0.d10578e2edb02",
+                                                           "isOneLine":  true,
+                                                           "isWapOneLine":  true,
+                                                           "title":  {
+                                                                         "type":  "simpleEditor",
+                                                                         "data":  [
+                                                                                      {
+                                                                                          "type":  "paragraph",
+                                                                                          "children":  [
+                                                                                                           {
+                                                                                                               "text":  "0.25",
+                                                                                                               "color":  "#ff0000"
+                                                                                                           },
+                                                                                                           {
+                                                                                                               "text":  "毫米"
+                                                                                                           }
+                                                                                                       ]
+                                                                                      }
+                                                                                  ]
+                                                                     },
+                                                           "content":  {
+                                                                           "type":  "simpleEditor",
+                                                                           "data":  [
+                                                                                        {
+                                                                                            "type":  "paragraph",
+                                                                                            "children":  [
+                                                                                                             {
+                                                                                                                 "text":  "135",
+                                                                                                                 "color":  "#ff0000"
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "text":  "米"
+                                                                                                             }
+                                                                                                         ]
+                                                                                        }
+                                                                                    ]
+                                                                       }
+                                                       },
+                                                       {
+                                                           "key":  "0.7ac62b0c6d6f3",
+                                                           "isOneLine":  true,
+                                                           "isWapOneLine":  true,
+                                                           "title":  {
+                                                                         "type":  "simpleEditor",
+                                                                         "data":  [
+                                                                                      {
+                                                                                          "type":  "paragraph",
+                                                                                          "children":  [
+                                                                                                           {
+                                                                                                               "text":  "0.28",
+                                                                                                               "color":  "#ff0000"
+                                                                                                           },
+                                                                                                           {
+                                                                                                               "text":  "毫米"
+                                                                                                           }
+                                                                                                       ]
+                                                                                      }
+                                                                                  ]
+                                                                     },
+                                                           "content":  {
+                                                                           "type":  "simpleEditor",
+                                                                           "data":  [
+                                                                                        {
+                                                                                            "type":  "paragraph",
+                                                                                            "children":  [
+                                                                                                             {
+                                                                                                                 "text":  "130",
+                                                                                                                 "color":  "#ff0000"
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "text":  "米"
+                                                                                                             }
+                                                                                                         ]
+                                                                                        }
+                                                                                    ]
+                                                                       }
+                                                       },
+                                                       {
+                                                           "key":  "0.ce50cb37daf1a",
+                                                           "isOneLine":  true,
+                                                           "isWapOneLine":  true,
+                                                           "title":  {
+                                                                         "type":  "simpleEditor",
+                                                                         "data":  [
+                                                                                      {
+                                                                                          "type":  "paragraph",
+                                                                                          "children":  [
+                                                                                                           {
+                                                                                                               "text":  "等级要求"
+                                                                                                           }
+                                                                                                       ]
+                                                                                      }
+                                                                                  ]
+                                                                     },
+                                                           "content":  {
+                                                                           "type":  "simpleEditor",
+                                                                           "data":  [
+                                                                                        {
+                                                                                            "type":  "paragraph",
+                                                                                            "children":  [
+                                                                                                             {
+                                                                                                                 "text":  "4"
+                                                                                                             }
+                                                                                                         ]
+                                                                                        }
+                                                                                    ]
+                                                                       }
+                                                       },
+                                                       {
+                                                           "key":  "0.c9979a444cf28",
+                                                           "title":  {
+                                                                         "type":  "simpleEditor",
+                                                                         "data":  [
+                                                                                      {
+                                                                                          "type":  "paragraph",
+                                                                                          "children":  [
+                                                                                                           {
+                                                                                                               "text":  "评级"
+                                                                                                           }
+                                                                                                       ]
+                                                                                      }
+                                                                                  ]
+                                                                     },
+                                                           "content":  {
+                                                                           "type":  "simpleEditor",
+                                                                           "data":  [
+                                                                                        {
+                                                                                            "type":  "paragraph",
+                                                                                            "children":  [
+                                                                                                             {
+                                                                                                                 "text":  ""
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "type":  "image",
+                                                                                                                 "src":  "//cdnimg-v2.gamekee.com/wiki2.0/images/w_85/h_81/50209/428514/2023/11/1/82914.png",
+                                                                                                                 "href":  "",
+                                                                                                                 "alt":  "",
+                                                                                                                 "style":  {
+                                                                                                                               "width":  "auto",
+                                                                                                                               "verticalAlign":  "middle",
+                                                                                                                               "height":  "16px"
+                                                                                                                           },
+                                                                                                                 "children":  [
+                                                                                                                                  {
+                                                                                                                                      "text":  ""
+                                                                                                                                  }
+                                                                                                                              ]
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "text":  ""
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "type":  "image",
+                                                                                                                 "src":  "//cdnimg-v2.gamekee.com/wiki2.0/images/w_85/h_81/50209/428514/2024/11/10/877853.png",
+                                                                                                                 "href":  "",
+                                                                                                                 "alt":  "",
+                                                                                                                 "style":  {
+                                                                                                                               "width":  "auto",
+                                                                                                                               "verticalAlign":  "middle",
+                                                                                                                               "height":  "16px"
+                                                                                                                           },
+                                                                                                                 "children":  [
+                                                                                                                                  {
+                                                                                                                                      "text":  ""
+                                                                                                                                  }
+                                                                                                                              ]
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "text":  " "
+                                                                                                             }
+                                                                                                         ]
+                                                                                        }
+                                                                                    ]
+                                                                       },
+                                                           "isOneLine":  true
+                                                       }
+                                                   ],
+                                      "imageSize":  {
+                                                        "width":  200,
+                                                        "height":  222
+                                                    },
+                                      "imagesList":  [
+
+                                                     ],
+                                      "imageList":  [
+                                                        "//cdnimg-v2.gamekee.com/wiki2.0/images/w_256/h_256/50209/428514/2024/11/19/256225.png"
+                                                    ]
+                                  }
+                     }
+                 ],
+        "children":  [
+                         {
+                             "text":  ""
+                         }
+                     ]
+    },
+    {
+        "type":  "paragraph",
+        "children":  [
+                         {
+                             "text":  ""
+                         }
+                     ]
+    }
+]

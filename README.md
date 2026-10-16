@@ -53,7 +53,7 @@ npx wrangler d1 migrations apply rf4-db --local
 
 ## 迁移与数据库
 
-所有 schema 变更以递增序号存放在 `migrations/`（`0001_create_*.sql` 至 `0017_*.sql`）。应用迁移：
+所有 schema 变更以递增序号存放在 `migrations/`（`0001_create_*.sql` 至 `0018_*.sql`）。应用迁移：
 
 ```bash
 # 本地
@@ -63,6 +63,27 @@ npx wrangler d1 migrations apply rf4-db --remote
 ```
 
 注意：`0015_create_lines.sql` 已随"线材库"功能下线删除（功能移除而非迁移失败），迁移目录缺号属正常。
+
+## 图鉴自动爬取（GameKee → D1）
+
+`scripts/crawl-gamekee.mjs` 定时爬取 [GameKee RF4 图鉴](https://www.gamekee.com/rf4/) 的 11 个分区（渔竿/渔轮/鱼线/钓钩/拟饵/鱼饵/钓组/诱饵/食品/工业品/辅助用品），清洗整合后落库：
+
+- **全字段落库**：所有条目（含全部属性 JSON）进 `gamekee_items`（迁移 0018），按 `entry_id` UPSERT
+- **竿/轮补齐**：渔竿/渔轮属性按别名归一（如 `摩擦制动`/`摩擦力`→`摩擦制动力`、`适配重(克)`→`适配重`）映射回 `rods`/`reels` 现有列，按 `model` 匹配——存在则 UPDATE（爬取结果为准，空值不覆盖），不存在则 INSERT，并记录 `gamekee_entry_id` 追踪
+- 每轮运行汇总写入 `gamekee_sync_log`
+
+触发方式：
+
+- **定时**：GitHub Actions 每日 UTC 21:00（北京时间 05:00）运行（`.github/workflows/crawl-gamekee.yml`）
+- **手动**：Actions 页面 workflow_dispatch，或本地执行
+
+```bash
+node scripts/crawl-gamekee.mjs --dry-run              # 只抓取解析打印摘要，不写库
+node scripts/crawl-gamekee.mjs --limit 20 --dry-run   # 冒烟：只抓前 20 条
+CF_ACCOUNT_ID=xxx CF_D1_TOKEN=yyy node scripts/crawl-gamekee.mjs  # 真实写库
+```
+
+GitHub Actions 需配置 Secrets：`CF_ACCOUNT_ID`（账户 ID）、`CF_D1_TOKEN`（API Token，权限 D1 → Edit）。
 
 ## 环境变量 / Secrets
 
