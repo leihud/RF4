@@ -57,9 +57,9 @@ npx wrangler d1 migrations apply rf4-db --local
 
 ```bash
 # 本地
-npx wrangler d1 migrations apply rf4-db --local
+npx wrangler d1 migrations apply rf4 --local
 # 生产
-npx wrangler d1 migrations apply rf4-db --remote
+npx wrangler d1 migrations apply rf4 --remote
 ```
 
 注意：`0015_create_lines.sql` 已随"线材库"功能下线删除（功能移除而非迁移失败），迁移目录缺号属正常。
