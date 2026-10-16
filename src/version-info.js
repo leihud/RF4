@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20261016-01',
+  currentVersion: 'V20261016-02',
   buildTime: '2026-10-16',
   changelog: [
+    {
+      version: 'V20261016-02',
+      date: '2026-10-16',
+      changes: [
+        '新增：渔轮磨损拆分为摩擦制动器磨损（锁轮拉力）与装备磨损（面板拉力）双磨损独立计算'
+      ]
+    },
     {
       version: 'V20261016-01',
       date: '2026-10-16',
@@ -282,13 +289,6 @@ export const versionInfo = {
       date: '2026-08-26',
       changes: [
         '优化：项目审查清理死代码，移除未引用的摩擦值阈值常量和残留注释'
-      ]
-    },
-    {
-      version: 'V20260826-07',
-      date: '2026-08-26',
-      changes: [
-        '删除：移除游戏汉化功能（页面、路由、脚本、API、文档）'
       ]
     },
   ]
