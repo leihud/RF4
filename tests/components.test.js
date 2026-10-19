@@ -8,7 +8,6 @@ import ComparePage from '../src/components/ComparePage.vue'
 import Calculator from '../src/components/Calculator.vue'
 import BuildsListPage from '../src/components/BuildsListPage.vue'
 import ValuePage from '../src/components/ValuePage.vue'
-import ImportPage from '../src/components/ImportPage.vue'
 import AppHeader from '../src/components/common/AppHeader.vue'
 
 describe('AppToast 共享提示组件', () => {
@@ -178,14 +177,6 @@ describe('各页面挂载冒烟测试（暴露未定义引用/模板错误）', 
     await flushPromises()
     await nextTick()
     expect(wrapper.find('.value-page').exists()).toBe(true)
-    wrapper.unmount()
-  })
-
-  it('ImportPage 挂载渲染无异常', async () => {
-    const wrapper = mount(ImportPage)
-    await flushPromises()
-    await nextTick()
-    expect(wrapper.find('.import-page').exists()).toBe(true)
     wrapper.unmount()
   })
 

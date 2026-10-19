@@ -9,8 +9,6 @@ export const ROUTES = Object.freeze({
   CALCULATOR: '/',
   /** 装备参数对比 */
   COMPARE: '/compare',
-  /** Excel/csv 装备数据导入 */
-  IMPORT: '/import',
   /** 装备价值统计 */
   VALUE: '/value',
   /** 推荐方案汇总 */

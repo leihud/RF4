@@ -1,7 +1,7 @@
 /**
  * Pages Functions 共享工具模块（下划线前缀文件不会被注册为路由）。
  * 统一 JSON 响应、数字提取、搜索归一化与 SQL 搜索条件构建，
- * 消除 equipment/rods/reels/import_data 各自复制一份的重复实现。
+ * 消除 equipment/rods/reels 各自复制一份的重复实现。
  *
  * 说明：前端与 Functions 同源部署（同一 Pages 域名），无需跨域访问，
  * 因此不再返回 Access-Control-Allow-* 通配头，收紧攻击面。
@@ -291,7 +291,7 @@ export function enforceBodyLimit(request, maxBytes) {
 }
 
 /**
- * 管理员密码校验（写操作保护）：import_data / recommended_builds 统一入口。
+ * 管理员密码校验（写操作保护）：recommended_builds 审核与删除入口。
  * 未配置 IMPORT_PASSWORD 时一律拒绝，避免“任意非空密码放行”的降级风险。
  * @returns {boolean}
  */

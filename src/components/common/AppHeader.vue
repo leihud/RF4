@@ -9,7 +9,6 @@
         <router-link :to="routes.BUILDS" class="nav-link" active-class="active">方案汇总</router-link>
         <router-link :to="routes.COMPARE" class="nav-link" active-class="active">参数对比</router-link>
         <router-link :to="routes.VALUE" class="nav-link" active-class="active">价值统计</router-link>
-        <router-link :to="routes.IMPORT" class="nav-link desktop-only" active-class="active">数据导入</router-link>
         <a class="nav-link external desktop-only" href="https://cn.rf4-stat.ru/" target="_blank" rel="noopener noreferrer">RF4 数据站 ↗</a>
         <button
           class="theme-toggle-btn"

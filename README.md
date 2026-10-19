@@ -24,12 +24,12 @@ npx wrangler pages dev dist --port 8788   # 需先 npm run build 生成 dist，�
 ```
 
 `wrangler.toml` 中已声明 D1 数据库绑定 `DB`。本地联调依赖：
-- `IMPORT_PASSWORD`：装备导入 / 方案审核与删除的管理密码（.dev.vars，与生产 secret 同名）
+- `IMPORT_PASSWORD`：方案审核与删除的管理密码（.dev.vars，与生产 secret 同名）
 
 首次开发需要同步数据库结构：
 
 ```bash
-npx wrangler d1 migrations apply rf4-db --local
+npx wrangler d1 migrations apply rf4 --local
 ```
 
 ## 命令
@@ -89,7 +89,7 @@ GitHub Actions 需配置 Secrets：`CF_ACCOUNT_ID`（账户 ID）、`CF_D1_TOKEN
 
 | 变量 | 用途 |
 | --- | --- |
-| `IMPORT_PASSWORD` | 装备导入 / 方案审核与删除的管理密码（secret，本地 .dev.vars 与生产 secret 同名） |
+| `IMPORT_PASSWORD` | 方案审核与删除的管理密码（secret，本地 .dev.vars 与生产 secret 同名） |
 
 生产 secrets 在 CF Dashboard 或 `wrangler secret put IMPORT_PASSWORD` 配置。
 
