@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20261019-01',
+  currentVersion: 'V20261019-02',
   buildTime: '2026-10-19',
   changelog: [
+    {
+      version: 'V20261019-02',
+      date: '2026-10-19',
+      changes: [
+        '删除：移除装备数据导入功能——数据更新由 GameKee 定时爬取接管（含 xlsx 依赖、路由、导航、后端端点）'
+      ]
+    },
     {
       version: 'V20261019-01',
       date: '2026-10-19',
