@@ -40,8 +40,9 @@ const TARGET_SECTIONS = [
 ]
 
 const DRY_RUN = process.argv.includes('--dry-run')
-const CF_ACCOUNT_ID = process.env.CF_ACCOUNT_ID
-const CF_D1_TOKEN = process.env.CF_D1_TOKEN
+// trim 防御：Secret 粘贴时可能混入换行/空格，作为 HTTP 头会报 invalid header value
+const CF_ACCOUNT_ID = (process.env.CF_ACCOUNT_ID || '').trim()
+const CF_D1_TOKEN = (process.env.CF_D1_TOKEN || '').trim()
 // --limit N：只抓前 N 个叶子（冒烟测试用）
 const limitIdx = process.argv.indexOf('--limit')
 const CRAWL_LIMIT = limitIdx >= 0 ? Number(process.argv[limitIdx + 1]) : 0
@@ -96,6 +97,12 @@ async function d1Query(statements) {
 
 async function main() {
   console.log(`== GameKee RF4 爬取开始 ${DRY_RUN ? '（dry-run，不写库）' : ''} ==`)
+
+  // 非 dry-run：先验证 D1 连通性，避免抓完 50 分钟才发现凭证问题
+  if (!DRY_RUN) {
+    await d1Query([{ sql: 'SELECT 1 AS ok' }])
+    console.log('D1 连通性验证通过')
+  }
 
   // 1) 目录树
   const tree = await getJson(`${BASE}/wiki/entry`, '目录树')
