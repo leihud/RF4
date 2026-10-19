@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20261016-06',
-  buildTime: '2026-10-16',
+  currentVersion: 'V20261019-01',
+  buildTime: '2026-10-19',
   changelog: [
+    {
+      version: 'V20261019-01',
+      date: '2026-10-19',
+      changes: [
+        '修复：D1 凭证自动 trim + 启动时先验证 D1 连通性，避免抓取 50 分钟后才暴露 Secret 配置错误'
+      ]
+    },
     {
       version: 'V20261016-06',
       date: '2026-10-16',
