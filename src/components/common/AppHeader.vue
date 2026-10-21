@@ -167,7 +167,7 @@ export default {
     font-size: 12px;
   }
 
-  /* 数据导入/外部数据站属桌面管理功能，移动端收起避免底部 Tab 拥挤 */
+  /* 外部数据站属桌面功能，移动端收起避免底部 Tab 拥挤 */
   .desktop-only {
     display: none;
   }

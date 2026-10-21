@@ -36,4 +36,17 @@ const router = createRouter({
   routes
 })
 
+// 页面标题随路由切换：浏览器历史/收藏/分享链接可区分页面
+const TITLE_MAP = {
+  [ROUTES.CALCULATOR]: '装备计算器',
+  [ROUTES.COMPARE]: '装备参数对比',
+  [ROUTES.BUILDS]: '推荐方案汇总',
+  [ROUTES.VALUE]: '装备价值统计'
+}
+router.afterEach((to) => {
+  document.title = TITLE_MAP[to.path]
+    ? `${TITLE_MAP[to.path]} - RF4 装备计算器`
+    : 'RF4 装备计算器'
+})
+
 export default router

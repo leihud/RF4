@@ -217,11 +217,19 @@ async function main() {
       }
     }
 
-    await d1Query([{
-      sql: `INSERT INTO gamekee_sync_log (section_counts, items_inserted, items_updated, rods_upserted, reels_upserted, errors)
-            VALUES (?, ?, 0, ?, ?, ?)`,
-      params: [JSON.stringify(bySection), items.length, rodsUpsert, reelsUpsert, failed ? `抓取失败 ${failed} 条` : '']
-    }])
+    await d1Query([
+      {
+        sql: `INSERT INTO gamekee_sync_log (section_counts, items_inserted, items_updated, rods_upserted, reels_upserted, errors)
+              VALUES (?, ?, 0, ?, ?, ?)`,
+        params: [JSON.stringify(bySection), items.length, rodsUpsert, reelsUpsert, failed ? `抓取失败 ${failed} 条` : '']
+      },
+      {
+        // 同步刷新 meta 表数据新鲜度标记（格式 ISO|类型，与前端页脚约定一致）
+        sql: `INSERT INTO meta (key, value, updated_at) VALUES ('last_import_at', strftime('%Y-%m-%dT%H:%M:%SZ', 'now') || '|GameKee爬取', datetime('now'))
+              ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = datetime('now')`,
+        params: []
+      }
+    ])
   }
 
   console.log('== 摘要 ==')

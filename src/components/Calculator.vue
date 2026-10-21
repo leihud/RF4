@@ -4,6 +4,12 @@
     <div class="header">
       <h1>装备计算器</h1>
       <div class="header-buttons">
+        <button
+          v-if="selectedEquipmentList.length || customEquipment['主线'].maxTension > 0 || customEquipment['引线'].maxTension > 0"
+          class="share-btn"
+          title="清空全部装备选择与线材输入（保留计算规则与摩擦值）"
+          @click="clearAll"
+        >清空</button>
         <button class="share-btn" @click="sharePreset" :title="shareHint || '分享当前装备方案'">
           {{ shareHint || '分享方案' }}
         </button>
@@ -89,6 +95,21 @@
       装备数据加载失败
     </div>
 
+    <!-- 最近搭配历史：一键恢复（竿/轮/线材/磨损/摩擦/规则整套状态） -->
+    <div v-if="calcHistory.length" class="calc-history">
+      <span class="history-label">最近搭配:</span>
+      <div class="history-chips">
+        <button
+          v-for="(h, i) in calcHistory"
+          :key="i"
+          type="button"
+          class="history-chip"
+          :title="`恢复搭配：${h.rodName} + ${h.reelName}（点击恢复全部状态与磨损）`"
+          @click="applyHistoryEntry(i)"
+        >{{ h.rodName }} × {{ h.reelName }}</button>
+      </div>
+    </div>
+
     <div v-if="isLoading && equipmentData.length === 0" class="loading-wrapper">
       <div class="loading-spinner"></div>
       <span class="loading-text">正在加载装备数据...</span>
@@ -96,7 +117,20 @@
     </div>
 
     <div class="equipment-selector" :class="{ disabled: !calculationRule, flash: justApplied }">
-      <h2>选择装备类型</h2>
+      <h2>
+        选择装备类型
+        <span class="global-wear-presets">
+          <span class="global-wear-label">全部磨损:</span>
+          <button
+            v-for="p in WEAR_PRESETS"
+            :key="'gw' + p"
+            type="button"
+            class="wear-preset-btn"
+            :title="`竿/轮/线全部磨损设为 ${p}%`"
+            @click="setAllWear(p)"
+          >{{ p }}%</button>
+        </span>
+      </h2>
       <div class="type-buttons">
         <div
           v-for="type in equipmentTypes"
@@ -492,6 +526,8 @@ export default {
       },
       friction: DEFAULT_FRICTION,
       selectedEquipmentList: [],
+      /** 最近搭配历史（localStorage 持久化，最多 5 条） */
+      calcHistory: [],
       calculationRule: CALC_RULES.GUIDE,
       justApplied: false,
       WEAR_PRESETS: [0, 50, 100],
@@ -520,6 +556,7 @@ export default {
     }
   },
   mounted() {
+    this.calcHistory = readStorage(STORAGE_KEYS.calcHistory, [])
     this.loadEquipmentData()
     document.addEventListener('click', this.handleClickOutside)
     // 仅在当前浏览器会话首次打开时弹出免责声明
@@ -736,49 +773,123 @@ export default {
     setFriction(value) {
       this.friction = clampFriction(value, this.calculationRule)
     },
-    /** 防抖持久化当前计算状态 */
+    /** 构造当前搭配快照（含渔轮双磨损） */
+    buildStateSnapshot() {
+      return {
+        equipment: this.selectedEquipmentList.map(item => ({
+          type: item.equipmentType,
+          model: item.model || item.equipmentName,
+          wear: item.wear || 0,
+          lockWear: item.lockWear != null ? item.lockWear : (item.wear || 0),
+          panelWear: item.panelWear != null ? item.panelWear : (item.wear || 0)
+        })),
+        custom: JSON.parse(JSON.stringify(this.customEquipment)),
+        friction: this.friction,
+        rule: this.calculationRule
+      }
+    },
+    /** 防抖持久化当前计算状态 + 写入最近搭配历史 */
     scheduleSaveState() {
       if (this._stateSaveTimer) clearTimeout(this._stateSaveTimer)
       this._stateSaveTimer = setTimeout(() => {
         try {
-          const state = {
-            equipment: this.selectedEquipmentList.map(item => ({
-              type: item.equipmentType,
-              model: item.model || item.equipmentName,
-              wear: item.wear || 0
-            })),
-            custom: this.customEquipment,
-            friction: this.friction,
-            rule: this.calculationRule
-          }
+          const state = this.buildStateSnapshot()
           writeStorage(STORAGE_KEYS.calcState, state)
+          this.pushHistorySnapshot(state)
         } catch (e) { /* 存储不可用（隐私模式/超容量）时静默降级 */ }
       }, 400)
+    },
+    /** 最近搭配历史：竿+轮齐备时入档，去重刷新时间戳，保留最近 5 条 */
+    pushHistorySnapshot(state) {
+      const rod = state.equipment.find(e => e.type === '鱼竿')
+      const reel = state.equipment.find(e => e.type === '渔轮')
+      if (!rod || !reel) return
+      const key = `${rod.model}|${reel.model}|${state.custom?.主线?.maxTension || 0}`
+      const list = this.calcHistory.filter(h => h.key !== key)
+      list.unshift({
+        key,
+        at: Date.now(),
+        rodName: rod.model,
+        reelName: reel.model,
+        state
+      })
+      this.calcHistory = list.slice(0, 5)
+      writeStorage(STORAGE_KEYS.calcHistory, this.calcHistory)
+    },
+    /** 点击历史胶囊：整体替换当前搭配（显式操作，不受恢复门限制） */
+    applyHistoryEntry(index) {
+      const entry = this.calcHistory[index]
+      if (!entry) return
+      if (!this.equipmentData.length) {
+        this.showToast('装备数据尚未加载完成，请稍后再试', 'error')
+        return
+      }
+      this.applyStateSnapshot(entry.state)
+      this.showToast('已恢复最近搭配', 'success')
+    },
+    /**
+     * 应用一套完整快照：清空当前选择后整体替换
+     * （竿/轮按 model 匹配装备库；渔轮双磨损/单磨损按存档还原）
+     */
+    applyStateSnapshot(state) {
+      this.selectedEquipmentList = []
+      if (state.rule) this.calculationRule = state.rule
+      if (state.friction != null) this.friction = clampFriction(state.friction, this.calculationRule)
+      if (state.custom) {
+        for (const type of ['主线', '引线']) {
+          if (state.custom[type]) Object.assign(this.customEquipment[type], state.custom[type])
+        }
+        if (state.custom['鱼钩'] && state.custom['鱼钩'].name) {
+          this.customEquipment['鱼钩'].name = state.custom['鱼钩'].name
+        }
+      }
+      if (Array.isArray(state.equipment)) {
+        for (const saved of state.equipment) {
+          const item = this.equipmentData.find(d =>
+            d.equipmentType === saved.type &&
+            (d.model === saved.model || d.equipmentName === saved.model)
+          )
+          if (!item) continue
+          const restored = { ...item, wear: saved.wear || 0 }
+          if (saved.type === '渔轮') {
+            restored.lockWear = saved.lockWear != null ? saved.lockWear : (saved.wear || 0)
+            restored.panelWear = saved.panelWear != null ? saved.panelWear : (saved.wear || 0)
+          }
+          this.selectedEquipmentList.push(restored)
+        }
+      }
+    },
+    /** 一键清空：移除全部已选装备与线材输入（保留计算规则与摩擦值） */
+    clearAll() {
+      this.selectedEquipmentList = []
+      this.customEquipment = {
+        '主线': { maxTension: 0, wear: 0, material: '', diameter: 0, length: 0 },
+        '引线': { maxTension: 0, wear: 0, material: '', diameter: 0, length: 0 },
+        '鱼钩': { name: '' }
+      }
+      this.selectedType = null
+      this.showToast('已清空全部选择', 'success')
+    },
+    /** 全局磨损预设：竿/轮（双磨损）/主线/引线一次设为同一磨损值 */    setAllWear(value) {
+      const v = Math.max(0, Math.min(100, toSafeNumber(value, 0)))
+      for (const item of this.selectedEquipmentList) {
+        item.wear = v
+        if (item.equipmentType === '渔轮') {
+          item.lockWear = v
+          item.panelWear = v
+        }
+      }
+      for (const type of ['主线', '引线']) {
+        this.customEquipment[type].wear = v
+      }
+      this.showToast(`全部磨损已设为 ${v}%`, 'success')
     },
     /** 从 localStorage 恢复上次计算状态（仅当无 URL 方案/一键应用时） */
     restoreFromSavedState() {
       try {
         const state = readStorage(STORAGE_KEYS.calcState)
         if (!state) return
-        if (state.rule) this.calculationRule = state.rule
-        if (state.friction != null) this.friction = clampFriction(state.friction, this.calculationRule)
-        if (state.custom) {
-          for (const type of ['主线', '引线']) {
-            if (state.custom[type]) Object.assign(this.customEquipment[type], state.custom[type])
-          }
-          if (state.custom['鱼钩'] && state.custom['鱼钩'].name) {
-            this.customEquipment['鱼钩'].name = state.custom['鱼钩'].name
-          }
-        }
-        if (Array.isArray(state.equipment)) {
-          for (const saved of state.equipment) {
-            const item = this.equipmentData.find(d =>
-              d.equipmentType === saved.type &&
-              (d.model === saved.model || d.equipmentName === saved.model)
-            )
-            if (item) this.selectedEquipmentList.push({ ...item, wear: saved.wear || 0 })
-          }
-        }
+        this.applyStateSnapshot(state)
       } catch (e) {
         console.error('恢复本地状态失败:', e)
       }
@@ -1142,29 +1253,41 @@ export default {
     applyRecommendedBuild(build) {
       // 保存方案元数据，供提交弹窗预填
       this.sourceBuild = build
-      
+
+      // 方案不含磨损：同款装备已选时继承其磨损值，避免每次应用方案都归零重填
+      const inheritWear = (type, model, extraKeys) => {
+        const prev = this.selectedEquipmentMap[type]
+        if (prev && (prev.model === model || prev.equipmentName === model)) {
+          const w = { wear: toSafeNumber(prev.wear, 0) }
+          for (const k of extraKeys) w[k] = toSafeNumber(prev[k], 0)
+          return w
+        }
+        return null
+      }
+
       // 清空当前选择
       this.selectedEquipmentList = []
-      
+
       // 匹配并设置鱼竿
       if (build.rod_model) {
         const rod = this.equipmentData.find(
-          item => item.equipmentType === '鱼竿' && 
+          item => item.equipmentType === '鱼竿' &&
             (item.model === build.rod_model || item.equipmentName === build.rod_model)
         )
         if (rod) {
-          this.selectedEquipmentList.push({ ...rod, wear: 0 })
+          this.selectedEquipmentList.push({ ...rod, wear: 0, ...inheritWear('鱼竿', build.rod_model, []) })
         }
       }
-      
-      // 匹配并设置渔轮（方案不带磨损，渔轮双磨损归零）
+
+      // 匹配并设置渔轮（方案不带磨损，同款已选时继承双磨损）
       if (build.reel_model) {
         const reel = this.equipmentData.find(
-          item => item.equipmentType === '渔轮' && 
+          item => item.equipmentType === '渔轮' &&
             (item.model === build.reel_model || item.equipmentName === build.reel_model)
         )
         if (reel) {
-          this.selectedEquipmentList.push({ ...reel, wear: 0, lockWear: 0, panelWear: 0 })
+          const base = { ...reel, wear: 0, lockWear: 0, panelWear: 0 }
+          this.selectedEquipmentList.push({ ...base, ...inheritWear('渔轮', build.reel_model, ['lockWear', 'panelWear']) })
         }
       }
       
@@ -1243,6 +1366,68 @@ h1 {
 .header-buttons {
   display: flex;
   gap: 10px;
+}
+
+/* 最近搭配历史 */
+.calc-history {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.history-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.history-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.history-chip {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--text-main);
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history-chip:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* 标题行全局磨损预设 */
+.global-wear-presets {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 12px;
+}
+
+.global-wear-label {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.equipment-selector h2 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
 /* 磨损/摩擦快捷预设按钮 */

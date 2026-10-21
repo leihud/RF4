@@ -10,6 +10,8 @@
 export const STORAGE_KEYS = {
   /** 计算器状态 */
   calcState: 'calc_state_v1',
+  /** 计算器最近搭配历史（最多 5 条，含竿/轮双磨损） */
+  calcHistory: 'calc_history_v1',
   /** 对比列表 */
   compareList: 'compare_list_v1',
   /** 方案列表筛选状态 */
