@@ -94,6 +94,9 @@
         <span class="tips-icon"></span>
         <span>{{ currentFishRec.tips }}</span>
         <span class="tips-range">推荐拉力: {{ currentFishRec.minTension }}-{{ currentFishRec.maxTension }} kN</span>
+        <span v-if="currentFishRec.trophyKg > 0" class="tips-range">
+          奖杯: {{ currentFishRec.trophyKg }}kg<template v-if="currentFishRec.maxRecordKg > 0"> · 最大纪录: {{ currentFishRec.maxRecordKg }}kg<template v-if="currentFishRec.maxRecordDate">（{{ currentFishRec.maxRecordDate }}）</template></template><template v-if="currentFishRec.rarity"> · {{ currentFishRec.rarity }}</template>
+        </span>
       </div>
     </div>
 
@@ -769,17 +772,23 @@ export default {
         label: `${l.name} Ø${l.diameter_mm}mm ${l.strength_kg}kg`
       }))
     },
-    /** 鱼种推荐配置 */
+    /** 当前选中鱼种的推荐配置 */
     currentFishRec() {
       if (!this.selectedFish) return null
       const fish = this.fishSpeciesList.find(f => f.display_name === this.selectedFish)
       if (!fish) return null
+      // 奖杯重量/最大纪录单位为克，展示换算为 kg
+      const toKg = (g) => (g > 0 ? Math.round(g / 100) / 10 : 0)
       return {
         name: fish.display_name,
         difficulty: fish.difficulty || '未知',
         tips: fish.description || '',
         minTension: fish.min_tension || 0,
-        maxTension: fish.max_tension || 0
+        maxTension: fish.max_tension || 0,
+        trophyKg: toKg(fish.trophy_weight),
+        maxRecordKg: toKg(fish.max_record_weight),
+        maxRecordDate: fish.max_record_date || '',
+        rarity: fish.rarity || ''
       }
     },
     /** 过滤目标鱼种下拉列表 */
@@ -920,7 +929,8 @@ export default {
       if (/сталь/i.test(t)) return '钢'
       return ''
     },
-    /** 选择线材型号：自动填充材质/线径/长度/拉力（kg→kN） */
+    /** 选择线材型号：自动填充材质/线径/拉力（kg→kN）。
+     *  注意：CSV 里的长度是购买卷长（20/100/300m），不是实际使用长度，不自动填充。 */
     onLinePreset(type) {
       const pick = this.linePicks[type]
       if (!pick) return
@@ -929,10 +939,9 @@ export default {
       const target = this.customEquipment[type]
       target.diameter = line.diameter_mm
       target.maxTension = Number((line.strength_kg * 0.00981).toFixed(3))
-      if (type === '主线') target.length = line.length_m || target.length
       const material = this.mapLineMaterial(line.type)
       if (material) target.material = material
-      this.showToast(`已填充「${line.name}」：${line.diameter_mm}mm / ${line.strength_kg}kg`, 'success')
+      this.showToast(`已填充「${line.name}」：${line.diameter_mm}mm / ${line.strength_kg}kg（整卷 ${line.length_m}m）`, 'success')
     },
     /** 一键清空：移除全部已选装备与线材输入（保留计算规则与摩擦值） */
     clearAll() {
@@ -2521,6 +2530,11 @@ h2 {
   .custom-input-group {
     flex-wrap: wrap;
     gap: 6px;
+  }
+
+  /* 小屏下线材型号输入独占一行，避免行内横向滚动过长 */
+  .line-preset-input {
+    width: 100%;
   }
 
   .wear-input-wrapper,
