@@ -1,7 +1,10 @@
 <template>
   <div class="value-page">
     <div class="page-header">
-      <h1>装备价值统计</h1>
+      <div>
+        <h1>装备价值统计</h1>
+        <p class="page-desc">记录鱼竿与渔轮数量，自动汇总银币/金币总投入</p>
+      </div>
       <button class="back-btn" @click="$router.back()">← 返回计算器</button>
     </div>
 
@@ -435,14 +438,20 @@ export default {
 .page-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 16px;
 }
 
 .page-header h1 {
-  margin: 0;
+  margin: 0 0 4px;
   font-size: 22px;
-  color: var(--text-main);
+  color: var(--text-heading);
+}
+
+.page-desc {
+  font-size: 13px;
+  color: var(--text-hint);
+  margin: 0;
 }
 
 .back-btn {

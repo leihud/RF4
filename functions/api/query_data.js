@@ -59,13 +59,16 @@ export async function onRequestGet(context) {
 
     const where = q ? ` WHERE ${conf.search}` : ''
     const params = q ? [`%${q}%`] : []
+    // 占位符用显式编号（?1=搜索词），LIMIT/OFFSET 编号动态延续，避免空搜索时编号断档绑定失败
+    const limitIdx = params.length + 1
+    const offsetIdx = params.length + 2
 
     const countRes = await env.DB.prepare(`SELECT COUNT(*) AS total FROM ${table}${where}`)
       .bind(...params).all()
     const total = countRes.results?.[0]?.total || 0
 
     const dataRes = await env.DB.prepare(
-      `SELECT * FROM ${table}${where} ORDER BY ${conf.order} LIMIT ?2 OFFSET ?3`
+      `SELECT * FROM ${table}${where} ORDER BY ${conf.order} LIMIT ?${limitIdx} OFFSET ?${offsetIdx}`
     ).bind(...params, pageSize, (page - 1) * pageSize).all()
 
     const response = jsonResponse({

@@ -1,7 +1,10 @@
 <template>
   <div class="compare-page">
     <div class="compare-header">
-      <h1>参数对比</h1>
+      <div>
+        <h1>参数对比</h1>
+        <p class="page-desc">从装备库选择多件装备，横向对比关键参数与性价比</p>
+      </div>
       <button class="back-btn" @click="goBack">返回计算器</button>
     </div>
 
@@ -729,15 +732,21 @@ export default {
 .compare-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid var(--color-primary-bg);
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--color-divider);
 }
 
 .compare-header h1 {
-  color: var(--color-primary);
-  font-size: 28px;
+  color: var(--text-heading);
+  font-size: 22px;
+  margin: 0 0 4px;
+}
+
+.page-desc {
+  font-size: 13px;
+  color: var(--text-hint);
   margin: 0;
 }
 

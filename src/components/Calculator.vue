@@ -2,42 +2,32 @@
   <div class="app">
     <DisclaimerModal v-if="showDisclaimer" @close="showDisclaimer = false" />
     <div class="header">
-      <h1>装备计算器</h1>
-      <div class="header-buttons">
-        <button
-          v-if="selectedEquipmentList.length"
-          class="share-btn"
-          title="清空全部装备选择（保留计算规则与摩擦值）"
-          @click="clearAll"
-        >清空</button>
+      <div>
+        <h1>装备计算器</h1>
+        <p class="header-sub">选择鱼竿与渔轮，设定磨损与摩擦，计算实际可承受拉力</p>
       </div>
     </div>
 
-    <div class="rule-selector">
-      <span class="rule-label">计算规则:</span>
+    <!-- 工具行：计算规则 + 全局磨损 + 清空 -->
+    <div class="toolbar">
+      <div class="toolbar-group">
+        <span class="toolbar-label">计算规则</span>
+        <div class="segmented">
+          <button
+            v-for="rule in CALC_RULE_OPTIONS"
+            :key="rule.value"
+            :class="['segment-btn', { active: calculationRule === rule.value }]"
+            @click="calculationRule = rule.value"
+          >{{ rule.label }}</button>
+        </div>
+      </div>
+      <div class="toolbar-spacer"></div>
       <button
-        v-for="rule in CALC_RULE_OPTIONS"
-        :key="rule.value"
-        :class="['rule-btn', { active: calculationRule === rule.value }]"
-        @click="calculationRule = rule.value"
-      >
-        {{ rule.label }}
-      </button>
-    </div>
-
-    <!-- 最近搭配历史：一键恢复（竿/轮/磨损/摩擦/规则整套状态） -->
-    <div v-if="calcHistory.length" class="calc-history">
-      <span class="history-label">最近搭配:</span>
-      <div class="history-chips">
-        <button
-          v-for="(h, i) in calcHistory"
-          :key="i"
-          type="button"
-          class="history-chip"
-          :title="`恢复搭配：${h.rodName} + ${h.reelName}`"
-          @click="applyHistoryEntry(i)"
-        >{{ h.rodName }} × {{ h.reelName }}</button>
-      </div>
+        v-if="selectedEquipmentList.length"
+        class="danger-btn"
+        title="清空全部装备选择（保留计算规则与摩擦值）"
+        @click="clearAll"
+      >清空重选</button>
     </div>
 
     <div v-if="dataLoadError" class="rule-warning rule-warning--error">
@@ -54,34 +44,42 @@
     <div class="calc-layout">
       <!-- 左：鱼竿 -->
       <section class="gear-panel" :class="{ disabled: !calculationRule, active: selectedType === '鱼竿' }">
-        <h3 class="gear-title">鱼竿</h3>
+        <h3 class="gear-title"><span class="gear-icon">🎣</span> 鱼竿
+          <span class="status-badge" :class="rod ? 'ok' : 'none'">{{ rod ? '已选择' : '未选择' }}</span>
+        </h3>
         <template v-if="rod">
-          <span v-if="rod.category || rod.subCategory" class="selected-category-tag">{{ toSafeDisplay(rod.category || rod.subCategory) }}</span>
-          <span v-if="rod.ratingAlias && rod.ratingAlias !== '常规'" class="selected-rating-tag">{{ toSafeDisplay(rod.ratingAlias) }}</span>
-          <span class="selected-name">{{ toSafeDisplay(rod.model || rod.equipmentName) }}</span>
-          <span class="selected-tension">拉力: {{ toSafeNumber(rod.panelTension || rod.lockTension) }} kN</span>
-          <div class="wear-input-wrapper">
-            <span class="wear-label">磨损:</span>
-            <input type="number" class="wear-input" v-model.number="rod.wear" min="0" max="100" />
-            <span class="wear-unit">%</span>
-            <button
-              v-for="p in WEAR_PRESETS"
-              :key="'r' + p"
-              type="button"
-              class="wear-preset-btn"
-              :title="'设为' + p + '% 磨损'"
-              @click="rod.wear = p"
-            >{{ p }}</button>
+          <div class="gear-name-row">
+            <span class="gear-name">{{ toSafeDisplay(rod.model || rod.equipmentName) }}</span>
+            <span v-if="rod.category || rod.subCategory" class="selected-category-tag">{{ toSafeDisplay(rod.category || rod.subCategory) }}</span>
+            <span v-if="rod.ratingAlias && rod.ratingAlias !== '常规'" class="selected-rating-tag">{{ toSafeDisplay(rod.ratingAlias) }}</span>
           </div>
-          <span v-if="getMergedAdaptWeight(rod, '鱼竿')" class="actual-tension adapt-weight-tag">适配重: {{ getMergedAdaptWeight(rod, '鱼竿') }}</span>
+          <div class="gear-meta">
+            <span class="selected-tension">面板拉力: {{ toSafeNumber(rod.panelTension || rod.lockTension) }} kN</span>
+            <span v-if="getMergedAdaptWeight(rod, '鱼竿')" class="selected-tension">适配重: {{ getMergedAdaptWeight(rod, '鱼竿') }}</span>
+          </div>
+          <div class="param-block">
+            <div class="param-label">磨损设定 <span class="param-hint">影响面板拉力（×0.7 系数）</span></div>
+            <div class="wear-input-wrapper">
+              <input type="number" class="wear-input" v-model.number="rod.wear" min="0" max="100" />
+              <span class="wear-unit">%</span>
+              <button
+                v-for="p in WEAR_PRESETS"
+                :key="'r' + p"
+                type="button"
+                class="wear-preset-btn"
+                :title="'设为' + p + '% 磨损'"
+                @click="rod.wear = p"
+              >{{ p }}%</button>
+            </div>
+          </div>
           <div class="gear-actions">
             <button class="select-btn" @click="selectType('鱼竿')">更换装备</button>
             <button class="clear-btn" title="移除鱼竿" @click="clearGear('鱼竿')">×</button>
           </div>
         </template>
         <template v-else>
-          <span class="placeholder">未选择</span>
-          <button class="select-btn" @click="selectType('鱼竿')">选择装备</button>
+          <div class="empty-hint">从装备库中选择一支鱼竿开始计算</div>
+          <button class="select-btn" @click="selectType('鱼竿')">选择鱼竿</button>
         </template>
         <EquipmentSearchDropdown
           v-if="selectedType === '鱼竿'"
@@ -92,55 +90,67 @@
 
       <!-- 右：渔轮 -->
       <section class="gear-panel" :class="{ disabled: !calculationRule, active: selectedType === '渔轮' }">
-        <h3 class="gear-title">渔轮</h3>
+        <h3 class="gear-title"><span class="gear-icon">🌀</span> 渔轮
+          <span class="status-badge" :class="reel ? 'ok' : 'none'">{{ reel ? '已选择' : '未选择' }}</span>
+        </h3>
         <template v-if="reel">
-          <span v-if="reel.category || reel.subCategory" class="selected-category-tag">{{ toSafeDisplay(reel.category || reel.subCategory) }}</span>
-          <span v-if="reel.ratingAlias && reel.ratingAlias !== '常规'" class="selected-rating-tag">{{ toSafeDisplay(reel.ratingAlias) }}</span>
-          <span class="selected-name">{{ toSafeDisplay(reel.model || reel.equipmentName) }}</span>
-          <span class="selected-tension">面板: {{ toSafeNumber(reel.panelTension || reel.lockTension || 0) }} kN</span>
-          <span class="selected-tension">锁轮: {{ toSafeNumber(reel.lockTension) }} kN</span>
-          <div class="wear-input-wrapper">
-            <span class="wear-label" title="影响锁轮拉力">摩擦制动器磨损:</span>
-            <input type="number" class="wear-input" v-model.number="reel.lockWear" min="0" max="100" />
-            <span class="wear-unit">%</span>
-            <span class="wear-label" title="影响面板拉力">装备磨损:</span>
-            <input type="number" class="wear-input" v-model.number="reel.panelWear" min="0" max="100" />
-            <span class="wear-unit">%</span>
-            <button
-              v-for="p in WEAR_PRESETS"
-              :key="'lk' + p"
-              type="button"
-              class="wear-preset-btn"
-              :title="'摩擦制动器磨损设为' + p + '%'"
-              @click="reel.lockWear = p"
-            >{{ p }}</button>
-            <button
-              v-for="p in WEAR_PRESETS"
-              :key="'pw' + p"
-              type="button"
-              class="wear-preset-btn"
-              :title="'装备磨损设为' + p + '%'"
-              @click="reel.panelWear = p"
-            >{{ p }}</button>
+          <div class="gear-name-row">
+            <span class="gear-name">{{ toSafeDisplay(reel.model || reel.equipmentName) }}</span>
+            <span v-if="reel.category || reel.subCategory" class="selected-category-tag">{{ toSafeDisplay(reel.category || reel.subCategory) }}</span>
+            <span v-if="reel.ratingAlias && reel.ratingAlias !== '常规'" class="selected-rating-tag">{{ toSafeDisplay(reel.ratingAlias) }}</span>
           </div>
-          <div class="friction-input-wrapper">
-            <span class="friction-label">摩擦:</span>
-            <input
-              type="number"
-              class="friction-input"
-              :value="toSafeNumber(friction)"
-              @change="onFrictionChange"
-              min="0"
-              :max="toSafeNumber(frictionMax)"
-            />
-            <button
-              v-for="f in frictionPresets"
-              :key="'f' + f"
-              type="button"
-              class="friction-preset-btn"
-              :title="'设为摩擦值 ' + f"
-              @click="setFriction(f)"
-            >{{ f }}</button>
+          <div class="gear-meta">
+            <span class="selected-tension">面板: {{ toSafeNumber(reel.panelTension || reel.lockTension || 0) }} kN</span>
+            <span class="selected-tension">锁轮: {{ toSafeNumber(reel.lockTension) }} kN</span>
+          </div>
+          <div class="param-block">
+            <div class="param-label">摩擦设定 <span class="param-hint">影响常规（面板）拉力</span></div>
+            <div class="friction-input-wrapper">
+              <input
+                type="number"
+                class="friction-input"
+                :value="toSafeNumber(friction)"
+                @change="onFrictionChange"
+                min="0"
+                :max="toSafeNumber(frictionMax)"
+              />
+              <span class="wear-unit">/ {{ toSafeNumber(frictionMax) }}</span>
+              <button
+                v-for="f in frictionPresets"
+                :key="'f' + f"
+                type="button"
+                class="friction-preset-btn"
+                :title="'设为摩擦值 ' + f"
+                @click="setFriction(f)"
+              >{{ f }}</button>
+            </div>
+          </div>
+          <div class="param-block">
+            <div class="param-label">磨损设定
+              <span class="param-hint">摩擦制动器磨损 → 锁轮拉力 · 装备磨损 → 面板拉力</span>
+            </div>
+            <div class="wear-grid">
+              <div class="wear-field">
+                <span class="wear-label">摩擦制动器</span>
+                <input type="number" class="wear-input" v-model.number="reel.lockWear" min="0" max="100" />
+                <span class="wear-unit">%</span>
+              </div>
+              <div class="wear-field">
+                <span class="wear-label">装备</span>
+                <input type="number" class="wear-input" v-model.number="reel.panelWear" min="0" max="100" />
+                <span class="wear-unit">%</span>
+              </div>
+              <div class="wear-field wear-presets-field">
+                <button
+                  v-for="p in WEAR_PRESETS"
+                  :key="'lk' + p"
+                  type="button"
+                  class="wear-preset-btn"
+                  :title="'两项磨损同时设为' + p + '%'"
+                  @click="reel.lockWear = p; reel.panelWear = p"
+                >{{ p }}%</button>
+              </div>
+            </div>
           </div>
           <div class="gear-actions">
             <button class="select-btn" @click="selectType('渔轮')">更换装备</button>
@@ -148,8 +158,8 @@
           </div>
         </template>
         <template v-else>
-          <span class="placeholder">未选择</span>
-          <button class="select-btn" @click="selectType('渔轮')">选择装备</button>
+          <div class="empty-hint">选择与鱼竿兼容的渔轮</div>
+          <button class="select-btn" @click="selectType('渔轮')">选择渔轮</button>
         </template>
         <EquipmentSearchDropdown
           v-if="selectedType === '渔轮'"
@@ -162,33 +172,31 @@
       </section>
     </div>
 
-    <!-- 全局磨损预设 -->
-    <div class="global-wear-bar">
-      <span class="global-wear-label">全部磨损:</span>
-      <button
-        v-for="p in WEAR_PRESETS"
-        :key="'gw' + p"
-        type="button"
-        class="wear-preset-btn"
-        :title="`竿/轮全部磨损设为 ${p}%`"
-        @click="setAllWear(p)"
-      >{{ p }}%</button>
-    </div>
-
     <!-- 计算结果 -->
     <div v-if="allSelected" class="result-card">
-      <div class="result-group">
-        <h4 class="result-title">锁轮拉力</h4>
-        <div class="result-row"><span>鱼竿</span><span>{{ formatTension(rodLock) }} kN</span></div>
-        <div class="result-row"><span>渔轮</span><span>{{ formatTension(reelLock) }} kN</span></div>
-        <div class="result-row result-min"><span>最小拉力（木桶）</span><span>{{ formatTension(minLock) }} kN</span></div>
+      <div class="result-hero">
+        <div class="hero-item">
+          <span class="hero-label">锁轮拉力下限</span>
+          <span class="hero-value">{{ formatTension(minLock) }}<small> kN</small></span>
+        </div>
+        <div class="hero-item">
+          <span class="hero-label">常规拉力下限</span>
+          <span class="hero-value">{{ formatTension(minPanel) }}<small> kN</small></span>
+        </div>
       </div>
-      <div class="result-group">
-        <h4 class="result-title">常规拉力（面板）</h4>
-        <div class="result-row"><span>鱼竿</span><span>{{ formatTension(rodPanel) }} kN</span></div>
-        <div class="result-row"><span>渔轮</span><span>{{ formatTension(reelPanel) }} kN</span></div>
-        <div class="result-row result-min"><span>最小拉力（木桶）</span><span>{{ formatTension(minPanel) }} kN</span></div>
+      <div class="result-detail">
+        <div class="result-group">
+          <h4 class="result-title">锁轮拉力</h4>
+          <div class="result-row"><span>鱼竿</span><span>{{ formatTension(rodLock) }} kN</span></div>
+          <div class="result-row"><span>渔轮</span><span>{{ formatTension(reelLock) }} kN</span></div>
+        </div>
+        <div class="result-group">
+          <h4 class="result-title">常规拉力（面板）</h4>
+          <div class="result-row"><span>鱼竿</span><span>{{ formatTension(rodPanel) }} kN</span></div>
+          <div class="result-row"><span>渔轮</span><span>{{ formatTension(reelPanel) }} kN</span></div>
+        </div>
       </div>
+      <p class="result-note">取鱼竿与渔轮中较小值（木桶效应）</p>
     </div>
 
     <!-- 磨损-拉力衰减曲线 -->
@@ -248,8 +256,6 @@ export default {
       showDisclaimer: false,
       friction: DEFAULT_FRICTION,
       selectedEquipmentList: [],
-      /** 最近搭配历史（localStorage 持久化，最多 5 条） */
-      calcHistory: [],
       calculationRule: CALC_RULES.GUIDE,
       justApplied: false,
       WEAR_PRESETS: [0, 50, 100],
@@ -319,7 +325,6 @@ export default {
     }
   },
   mounted() {
-    this.calcHistory = readStorage(STORAGE_KEYS.calcHistory, [])
     this.loadEquipmentData()
     document.addEventListener('click', this.handleClickOutside)
     if (!sessionStorage.getItem('disclaimer_shown')) {
@@ -379,17 +384,6 @@ export default {
       this.selectedType = null
       this.showToast('已清空全部选择', 'success')
     },
-    setAllWear(value) {
-      const v = Math.max(0, Math.min(100, toSafeNumber(value, 0)))
-      for (const item of this.selectedEquipmentList) {
-        item.wear = v
-        if (item.equipmentType === '渔轮') {
-          item.lockWear = v
-          item.panelWear = v
-        }
-      }
-      this.showToast(`全部磨损已设为 ${v}%`, 'success')
-    },
     setFriction(value) {
       this.friction = clampFriction(value, this.calculationRule)
     },
@@ -410,38 +404,14 @@ export default {
         rule: this.calculationRule
       }
     },
-    /** 防抖持久化当前计算状态 + 写入最近搭配历史 */
+    /** 防抖持久化当前计算状态（刷新页面可恢复） */
     scheduleSaveState() {
       if (this._stateSaveTimer) clearTimeout(this._stateSaveTimer)
       this._stateSaveTimer = setTimeout(() => {
         try {
-          const state = this.buildStateSnapshot()
-          writeStorage(STORAGE_KEYS.calcState, state)
-          this.pushHistorySnapshot(state)
+          writeStorage(STORAGE_KEYS.calcState, this.buildStateSnapshot())
         } catch (e) { /* 存储不可用时静默降级 */ }
       }, 400)
-    },
-    /** 最近搭配历史：竿+轮齐备时入档，去重刷新，保留最近 5 条 */
-    pushHistorySnapshot(state) {
-      const rod = state.equipment.find(e => e.type === '鱼竿')
-      const reel = state.equipment.find(e => e.type === '渔轮')
-      if (!rod || !reel) return
-      const key = `${rod.model}|${reel.model}`
-      const list = this.calcHistory.filter(h => h.key !== key)
-      list.unshift({ key, at: Date.now(), rodName: rod.model, reelName: reel.model, state })
-      this.calcHistory = list.slice(0, 5)
-      writeStorage(STORAGE_KEYS.calcHistory, this.calcHistory)
-    },
-    /** 点击历史胶囊：整体替换当前搭配 */
-    applyHistoryEntry(index) {
-      const entry = this.calcHistory[index]
-      if (!entry) return
-      if (!this.equipmentData.length) {
-        this.showToast('装备数据尚未加载完成，请稍后再试', 'error')
-        return
-      }
-      this.applyStateSnapshot(entry.state)
-      this.showToast('已恢复最近搭配', 'success')
     },
     /** 应用一套完整快照：清空当前选择后整体替换 */
     applyStateSnapshot(state) {
@@ -500,78 +470,100 @@ export default {
 </script>
 
 <style scoped>
+/* ── 页头 ── */
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 16px;
 }
 
 .header h1 {
-  font-size: 22px;
+  font-size: 24px;
   color: var(--text-heading);
 }
 
-.header-buttons {
-  display: flex;
-  gap: 8px;
-}
-
-.share-btn {
-  padding: 8px 16px;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  background: var(--color-surface);
-  color: var(--text-secondary);
+.header-sub {
   font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s;
+  color: var(--text-hint);
+  margin-top: 4px;
 }
 
-.share-btn:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-}
-
-.rule-selector {
+/* ── 工具行：规则 + 全局磨损 + 清空 ── */
+.toolbar {
   display: flex;
   align-items: center;
-  gap: 8px;
   flex-wrap: wrap;
+  gap: 12px 24px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 12px 16px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
-.rule-label {
-  font-size: 14px;
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toolbar-label {
+  font-size: 13px;
   color: var(--text-secondary);
 }
 
-.rule-btn {
-  padding: 6px 14px;
-  border: 1px solid var(--color-border);
+.toolbar-spacer {
+  flex: 1;
+}
+
+.segmented {
+  display: inline-flex;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.segment-btn {
+  padding: 5px 14px;
+  border: none;
   border-radius: 6px;
-  background: var(--color-surface);
+  background: transparent;
   color: var(--text-secondary);
   font-size: 13px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
 }
 
-.rule-btn.active {
-  border-color: var(--color-primary);
+.segment-btn.active {
+  background: var(--color-surface);
   color: var(--color-primary);
-  background: var(--color-primary-bg);
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
 }
 
+.danger-btn {
+  padding: 7px 16px;
+  border: 1px solid var(--color-danger);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-danger);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.danger-btn:hover {
+  background: var(--color-danger-bg);
+}
+
+/* ── 状态提示 ── */
 .rule-warning {
   background: var(--color-warning-bg);
   color: var(--color-warning-strong);
   padding: 10px 14px;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 13px;
   margin-bottom: 12px;
 }
@@ -579,47 +571,6 @@ export default {
 .rule-warning--error {
   background: var(--color-danger-bg);
   color: var(--color-danger-strong);
-}
-
-/* 最近搭配历史 */
-.calc-history {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 12px;
-}
-
-.history-label {
-  font-size: 13px;
-  color: var(--text-secondary);
-  flex-shrink: 0;
-}
-
-.history-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.history-chip {
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--text-main);
-  font-size: 12px;
-  padding: 4px 10px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
-  max-width: 260px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.history-chip:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
 }
 
 .loading-wrapper {
@@ -648,7 +599,7 @@ export default {
   to { transform: rotate(360deg); }
 }
 
-/* 左右布局：左竿右轮 */
+/* ── 左右装备面板 ── */
 .calc-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -659,9 +610,14 @@ export default {
 .gear-panel {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 14px 16px;
+  border-radius: 12px;
+  padding: 16px 18px;
   position: relative;
+  transition: border-color 0.15s;
+}
+
+.gear-panel.active {
+  border-color: var(--color-primary);
 }
 
 .gear-panel.disabled {
@@ -670,23 +626,195 @@ export default {
 }
 
 .gear-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 15px;
   color: var(--text-main);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   font-weight: 600;
+}
+
+.gear-icon {
+  font-size: 17px;
+}
+
+.status-badge {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 10px;
+  border-radius: 10px;
+}
+
+.status-badge.ok {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+}
+
+.status-badge.none {
+  background: var(--bg-secondary);
+  color: var(--text-hint);
+}
+
+.gear-name-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.gear-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-heading);
+  word-break: break-all;
+}
+
+.selected-category-tag,
+.selected-rating-tag {
+  display: inline-block;
+  font-size: 11px;
+  padding: 2px 9px;
+  border-radius: 10px;
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.selected-rating-tag {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.gear-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.selected-tension {
+  display: inline-block;
+  font-size: 12px;
+  background: var(--color-tension-bg);
+  color: var(--color-tension-text);
+  padding: 3px 10px;
+  border-radius: 6px;
+}
+
+.empty-hint {
+  color: var(--text-hint);
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+/* ── 参数分组 ── */
+.param-block {
+  border-top: 1px dashed var(--color-divider);
+  padding: 12px 0 4px;
+  margin-top: 12px;
+}
+
+.param-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
+
+.param-hint {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-hint);
+  margin-left: 6px;
+}
+
+.wear-input-wrapper,
+.friction-input-wrapper {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.wear-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  min-width: 72px;
+}
+
+.wear-input,
+.friction-input {
+  width: 64px;
+  padding: 6px 9px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--text-main);
+  font-size: 14px;
+  text-align: center;
+}
+
+.wear-input:focus,
+.friction-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.wear-unit {
+  font-size: 12px;
+  color: var(--text-hint);
+}
+
+.wear-preset-btn,
+.friction-preset-btn {
+  padding: 4px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.wear-preset-btn:hover,
+.friction-preset-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* 渔轮双磨损网格 */
+.wear-grid {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.wear-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wear-presets-field {
+  gap: 4px;
 }
 
 .gear-actions {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 10px;
+  margin-top: 14px;
 }
 
 .select-btn {
-  padding: 7px 14px;
+  padding: 7px 16px;
   border: 1px solid var(--color-primary);
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--color-primary-bg);
   color: var(--color-primary);
   font-size: 13px;
@@ -715,143 +843,65 @@ export default {
   background: var(--color-danger-bg);
 }
 
-.placeholder {
-  color: var(--text-hint);
-  font-size: 13px;
-  margin-right: 12px;
-}
-
-.selected-category-tag,
-.selected-rating-tag {
-  display: inline-block;
-  font-size: 11px;
-  padding: 1px 8px;
-  border-radius: 10px;
-  margin-right: 6px;
-  background: var(--color-primary-bg);
-  color: var(--color-primary);
-}
-
-.selected-rating-tag {
-  background: var(--color-success-bg);
-  color: var(--color-success);
-}
-
-.selected-name {
-  display: block;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-main);
-  margin: 6px 0;
-  word-break: break-all;
-}
-
-.selected-tension {
-  display: inline-block;
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin-right: 12px;
-  background: var(--color-tension-bg);
-  color: var(--color-tension-text);
-  padding: 2px 8px;
-  border-radius: 4px;
-}
-
-.wear-input-wrapper,
-.friction-input-wrapper {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.wear-label,
-.friction-label {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-
-.wear-input,
-.friction-input {
-  width: 60px;
-  padding: 5px 8px;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
+/* ── 结果卡 ── */
+.result-card {
   background: var(--color-surface);
-  color: var(--text-main);
-  font-size: 13px;
-}
-
-.wear-input:focus,
-.friction-input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-}
-
-.wear-unit {
-  font-size: 12px;
-  color: var(--text-hint);
-  margin-right: 8px;
-}
-
-.wear-preset-btn,
-.friction-preset-btn {
-  padding: 3px 8px;
   border: 1px solid var(--color-border);
-  border-radius: 4px;
-  background: var(--color-surface);
-  color: var(--text-secondary);
-  font-size: 11px;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.wear-preset-btn:hover,
-.friction-preset-btn:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-}
-
-.actual-tension {
-  display: inline-block;
-  font-size: 12px;
-  margin-top: 8px;
-  color: var(--color-tension-text);
-  background: var(--color-tension-bg);
-  padding: 3px 10px;
-  border-radius: 4px;
-}
-
-/* 全局磨损条 */
-.global-wear-bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  border-radius: 12px;
+  padding: 18px 20px;
   margin-bottom: 16px;
 }
 
-.global-wear-label {
-  font-size: 13px;
-  color: var(--text-secondary);
-}
-
-/* 计算结果卡 */
-.result-card {
+.result-hero {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 16px;
+  gap: 14px;
   margin-bottom: 16px;
+}
+
+.hero-item {
+  background: var(--color-tension-bg);
+  border-radius: 10px;
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hero-label {
+  font-size: 12px;
+  color: var(--color-tension-text);
+}
+
+.hero-value {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--color-tension-text);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.hero-value small {
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 2px;
+}
+
+.result-detail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.result-group {
+  border-top: 1px dashed var(--color-divider);
+  padding-top: 12px;
 }
 
 .result-title {
-  font-size: 14px;
-  color: var(--text-main);
-  margin-bottom: 10px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
   font-weight: 600;
 }
 
@@ -860,34 +910,38 @@ export default {
   justify-content: space-between;
   font-size: 13px;
   color: var(--text-secondary);
-  padding: 5px 0;
+  padding: 4px 0;
 }
 
-.result-row.result-min {
-  border-top: 1px solid var(--color-divider);
-  margin-top: 4px;
-  padding-top: 8px;
-  color: var(--color-tension-text);
-  font-weight: 600;
-  font-size: 14px;
+.result-note {
+  font-size: 11px;
+  color: var(--text-hint);
+  margin-top: 12px;
 }
 
-/* 移动端：单列 */
+/* ── 移动端 ── */
 @media (max-width: 768px) {
   .calc-layout,
-  .result-card {
+  .result-hero,
+  .result-detail {
     grid-template-columns: 1fr;
   }
 
   .header h1 {
-    font-size: 18px;
+    font-size: 20px;
   }
 
-  .rule-selector {
-    flex-direction: column;
-    align-items: flex-start;
+  .toolbar {
     gap: 10px;
-    padding: 12px;
+  }
+
+  .toolbar-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .hero-value {
+    font-size: 24px;
   }
 }
 </style>
