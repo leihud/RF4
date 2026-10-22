@@ -15,40 +15,44 @@
       >{{ t.label }}</button>
     </div>
 
-    <!-- 渔获速查：专用 UI -->
+    <!-- 渔获速查：定时同步的渔获流（数据延迟约 30 分钟） -->
     <template v-if="activeTab === 'fishing'">
       <div class="search-bar">
         <input
-          v-model="fishingQuery"
+          v-model="keyword"
           type="text"
           class="search-input"
-          placeholder="输入地图或鱼种关键字，如：铜湖 / 锦鲤"
-          @keyup.enter="searchFishing"
+          placeholder="输入地图 / 鱼种 / 饵料关键字，如：铜湖 / 锦鲤"
+          @input="debouncedSearch"
         />
-        <button class="search-btn" :disabled="fishingLoading" @click="searchFishing">
-          {{ fishingLoading ? '查询中...' : '查询' }}
-        </button>
       </div>
-      <p class="fishing-note">查询 rf4-stat 最新渔获流（最近约 100 条，按关键字过滤地图/鱼种）</p>
-      <div v-if="fishingError" class="query-error">{{ fishingError }}</div>
-      <div v-if="fishingRows.length" class="data-table-wrap">
-        <table class="data-table">
-          <thead>
-            <tr><th>时间</th><th>地图</th><th>鱼种</th><th>重量</th><th>饵料</th><th>钓法</th></tr>
-          </thead>
-          <tbody>
-            <tr v-for="(r, i) in fishingRows" :key="i">
-              <td>{{ r.time }}</td>
-              <td>{{ r.location }}</td>
-              <td>{{ r.fish }}</td>
-              <td>{{ r.weight }}</td>
-              <td>{{ r.bait }}</td>
-              <td>{{ r.method }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div v-else-if="!fishingLoading && fishingSearched" class="query-empty">没有匹配的渔获记录</div>
+      <p class="fishing-note">定时同步自 RF4-STAT 的最新渔获流（每 30 分钟更新，数据延迟约半小时）</p>
+      <div v-if="loading" class="query-loading">查询中...</div>
+      <div v-else-if="error" class="query-error">{{ error }}</div>
+      <template v-else>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>时间</th><th>地图</th><th>鱼种</th><th>重量</th><th>饵料</th><th>钓法</th></tr>
+            </thead>
+            <tbody>
+              <tr v-for="(row, i) in rows" :key="i">
+                <td>{{ row.time_text }}</td>
+                <td>{{ row.location }}</td>
+                <td>{{ row.fish_name }}</td>
+                <td>{{ row.weight_text }}</td>
+                <td>{{ row.bait }}</td>
+                <td>{{ row.method }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pager">
+          <span class="pager-info">共 {{ total }} 条 · 第 {{ page }}/{{ totalPages }} 页</span>
+          <button :disabled="page <= 1" @click="goPage(page - 1)">上一页</button>
+          <button :disabled="page >= totalPages" @click="goPage(page + 1)">下一页</button>
+        </div>
+      </template>
     </template>
 
     <!-- 通用数据表 -->
@@ -203,12 +207,7 @@ export default {
       page: 1,
       pageSize: PAGE_SIZE,
       loading: false,
-      error: '',
-      fishingQuery: '',
-      fishingRows: [],
-      fishingLoading: false,
-      fishingError: '',
-      fishingSearched: false
+      error: ''
     }
   },
   computed: {
@@ -247,7 +246,7 @@ export default {
       this.page = 1
       this.rows = []
       this.error = ''
-      if (key !== 'fishing') this.loadData()
+      this.loadData()
     },
     debouncedSearch() {
       if (this._searchTimer) clearTimeout(this._searchTimer)
@@ -264,9 +263,10 @@ export default {
       this.loading = true
       this.error = ''
       try {
-        const conf = this.activeConf
+        // 渔获速查走同一查询端点（fishing_feed 表），其余按当前 Tab 配置
+        const table = this.activeTab === 'fishing' ? 'fishing_feed' : this.activeConf.table
         const params = new URLSearchParams({
-          table: conf.table,
+          table,
           page: String(this.page),
           pageSize: String(this.pageSize)
         })
@@ -282,28 +282,6 @@ export default {
         this.total = 0
       } finally {
         this.loading = false
-      }
-    },
-    /** 渔获速查：后端代理抓取 rf4-stat 最新渔获流并按关键字过滤 */
-    async searchFishing() {
-      const q = this.fishingQuery.trim()
-      if (!q) {
-        this.fishingError = '请输入地图或鱼种关键字'
-        return
-      }
-      this.fishingLoading = true
-      this.fishingError = ''
-      this.fishingSearched = true
-      try {
-        const res = await fetchWithTimeout(`/api/rf4stat_fishing?q=${encodeURIComponent(q)}`)
-        const result = await res.json()
-        if (!result.success) throw new Error(result.message || '查询失败')
-        this.fishingRows = result.data || []
-      } catch (e) {
-        this.fishingError = '查询失败：' + e.message
-        this.fishingRows = []
-      } finally {
-        this.fishingLoading = false
       }
     }
   }

@@ -178,3 +178,63 @@ export function parseWeightTable(html) {
   }
   return out
 }
+
+/**
+ * RF4-STAT /fishing/ 渔获流列表 HTML → 行数组。
+ * 每行 <tr class="load-row">：
+ *  - share_id：fishing/<id> 链接
+ *  - time_text：td.time 内时刻 + 日期 small（如 "07:31 22.10"）
+ *  - location：td.mobile-location
+ *  - fish_name / weight_text：td.fish 内链接文本 + small（"18 458 克"）
+ *  - bait：td.bait
+ *  - method：img title="钓法: xxx"
+ */
+export function parseFishingFeed(html) {
+  const htmlText = String(html || '')
+  const rowRe = /<tr[^>]*class="[^"]*load-row[^"]*"[^>]*>([\s\S]*?)<\/tr>/g
+  const out = []
+  const stripTags = (s) => String(s || '')
+    .replace(/<span[^>]*>[\s\S]*?<\/span>/g, ' ')
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+  let m
+  while ((m = rowRe.exec(htmlText)) !== null) {
+    const row = m[1]
+    const shareMatch = row.match(/href="fishing\/(\d+)"/)
+    if (!shareMatch) continue
+    // 按 class 名 token 精确匹配单元格（避免 fish 误配 fish-icon）
+    const cellRe = (cls) => {
+      const re = /<td[^>]*class="([^"]*)"[^>]*>([\s\S]*?)<\/td>/g
+      let c
+      while ((c = re.exec(row)) !== null) {
+        if (c[1].split(/\s+/).includes(cls)) return c[2]
+      }
+      return ''
+    }
+    const timeCell = cellRe('time')
+    const timeMatch = timeCell.match(/(\d{1,2}:\d{2})/)
+    const dateMatch = timeCell.match(/<small[^>]*>([\s\S]*?)<\/small>/)
+    const time_text = [timeMatch ? timeMatch[1] : '', stripTags(dateMatch ? dateMatch[1] : '')]
+      .filter(Boolean).join(' ')
+    const fishCell = cellRe('fish')
+    const fishName = stripTags((fishCell.match(/<a[^>]*>([\s\S]*?)<\/a>/) || [])[1] || '')
+    const weightMatch = fishCell.match(/<small[^>]*>([\s\S]*?)<\/small>/)
+    const weight_text = stripTags(weightMatch ? weightMatch[1] : '')
+    const methodMatch = row.match(/title="钓法:\s*([^"]+)"/)
+    // 饵料文本在 data-filter="bait" 链接中（图片单元格 bait-icon 只有图标）
+    const baitMatch = row.match(/data-filter="bait"[^>]*>([^<]+)</)
+    out.push({
+      share_id: shareMatch[1],
+      time_text,
+      location: stripTags(cellRe('mobile-location')),
+      fish_name: fishName,
+      weight_text,
+      bait: baitMatch ? baitMatch[1].trim() : '',
+      method: methodMatch ? methodMatch[1].trim() : ''
+    })
+  }
+  return out
+}

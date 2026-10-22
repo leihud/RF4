@@ -9,7 +9,8 @@ import {
   parseHooksCsv,
   parseCalcOptions,
   extractPageTitle,
-  parseWeightTable
+  parseWeightTable,
+  parseFishingFeed
 } from '../scripts/stats-parser.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -131,5 +132,27 @@ describe('parseWeightTable（真实 rf4stat fixture）', () => {
   })
   it('所有行都有名称与 slug', () => {
     expect(rows.every(r => r.name && r.slug)).toBe(true)
+  })
+})
+
+describe('parseFishingFeed（真实 rf4stat 渔获流 fixture）', () => {
+  const rows = parseFishingFeed(fixture('rf4stat-fishing.html'))
+  it('解析出全部渔获行（约 100 条）', () => {
+    expect(rows.length).toBeGreaterThan(90)
+  })
+  it('首行字段完整', () => {
+    const first = rows[0]
+    expect(first.share_id).toMatch(/^\d+$/)
+    expect(first.time_text).toMatch(/\d{1,2}:\d{2}/)
+    expect(first.location).toBeTruthy()
+    expect(first.fish_name).toBeTruthy()
+    expect(first.weight_text).toMatch(/克/)
+  })
+  it('所有行都有编号、地图与鱼种', () => {
+    expect(rows.every(r => r.share_id && r.location && r.fish_name)).toBe(true)
+  })
+  it('无渔获行时返回空', () => {
+    expect(parseFishingFeed('<html>空</html>')).toEqual([])
+    expect(parseFishingFeed('')).toEqual([])
   })
 })

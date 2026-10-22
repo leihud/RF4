@@ -1,0 +1,25 @@
+# 渔获速查数据同步：每 30 分钟抓取 RF4-STAT 最新渔获流写库
+# （Worker 直连会被 Cloudflare 盾拦截，改为定时入库 + 前端查库）
+name: Sync Fishing Feed
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Crawl fishing feed
+        env:
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_D1_TOKEN: ${{ secrets.CF_D1_TOKEN }}
+        run: node scripts/crawl-fishing-feed.mjs

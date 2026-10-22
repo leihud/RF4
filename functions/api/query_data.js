@@ -37,6 +37,10 @@ const TABLES = {
   reel_strength: {
     search: `model LIKE ?1 OR category LIKE ?1`,
     order: 'model'
+  },
+  fishing_feed: {
+    search: `location LIKE ?1 OR fish_name LIKE ?1 OR bait LIKE ?1`,
+    order: 'id DESC'
   }
 }
 
