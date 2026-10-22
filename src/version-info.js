@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20261022-07',
+  currentVersion: 'V20261022-08',
   buildTime: '2026-10-22',
   changelog: [
+    {
+      version: 'V20261022-08',
+      date: '2026-10-22',
+      changes: [
+        '修复：渔获速查改为定时入库+查库（Worker 直连被 CF 盾拦截），新增每 30 分钟同步任务与 fishing_feed 表'
+      ]
+    },
     {
       version: 'V20261022-07',
       date: '2026-10-22',
