@@ -85,6 +85,16 @@ CF_ACCOUNT_ID=xxx CF_D1_TOKEN=yyy node scripts/crawl-gamekee.mjs  # 真实写库
 
 GitHub Actions 需配置 Secrets：`CF_ACCOUNT_ID`（账户 ID）、`CF_D1_TOKEN`（API Token，权限 D1 → Edit）。
 
+## 装备参数与奖杯数据（Potryasov / RF4-STAT）
+
+`scripts/crawl-potryasov.mjs`（每周六 04:00，`crawl-equipment.yml`）拉取 Potryasov Game 的公开 Google Sheets CSV：
+
+- **鱼线线径-拉力对照**（~307 行）→ `fishing_lines` 表，`/api/fishing_lines` 供计算器主线/引线选择器（选型号自动填充材质/线径/长度/拉力，kg→kN 换算）
+- **鱼钩钩号-拉力矩阵**（23 型号 × 20 钩号）→ `fishing_hooks` 表，`/api/fishing_hooks` 供鱼钩名称选择器
+- **渔轮强度表**（~862 条）→ `reel_strength` 表（交叉校验 `reels.lockTension`，差异仅记录不改动）
+
+`scripts/crawl-rf4stat.mjs`（同 workflow）抓取 RF4-STAT `/weight/` 全量表 → 更新 `fish_species` 奖杯/超级奖杯/最大纪录/稀有性列（按显示名匹配；合规约束：5 秒 Crawl-delay、仅抓无参列表页）。
+
 ## 环境变量 / Secrets
 
 | 变量 | 用途 |

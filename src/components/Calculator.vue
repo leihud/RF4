@@ -16,6 +16,16 @@
       </div>
     </div>
 
+    <!-- 鱼线库选项（主线/引线选择器共用）：307 行 datalist 性能可接受 -->
+    <datalist id="fishing-line-options">
+      <option v-for="l in lineOptions" :key="l.id" :value="l.label" />
+    </datalist>
+
+    <!-- 鱼钩型号选项 -->
+    <datalist id="fishing-hook-options">
+      <option v-for="h in fishingHooks" :key="h.id" :value="h.name" />
+    </datalist>
+
     <div class="rule-selector">
       <span class="rule-label">计算规则:</span>
       <button
@@ -148,11 +158,22 @@
                     type="text"
                     class="hook-name-input"
                     v-model="customEquipment[type].name"
-                    placeholder="请输入鱼钩名称"
+                    list="fishing-hook-options"
+                    placeholder="输入或从鱼钩库选择"
                   />
                 </template>
                 <template v-else>
                   <span v-if="type === '主线' || type === '引线'" class="material-wrapper">
+                    <span class="material-label">线材:</span>
+                    <input
+                      type="text"
+                      class="line-preset-input"
+                      v-model="linePicks[type]"
+                      list="fishing-line-options"
+                      placeholder="选型号自动填充"
+                      title="从鱼线库选择型号，自动填充材质/线径/长度/拉力"
+                      @change="onLinePreset(type)"
+                    />
                     <span class="material-label">材质:</span>
                     <select
                       class="material-select"
@@ -528,6 +549,12 @@ export default {
       selectedEquipmentList: [],
       /** 最近搭配历史（localStorage 持久化，最多 5 条） */
       calcHistory: [],
+      /** 鱼线线径-拉力数据（Potryasov CSV，供主线/引线选择器） */
+      fishingLines: [],
+      /** 鱼钩型号数据（供鱼钩选择器） */
+      fishingHooks: [],
+      /** 主线/引线当前选中的线材型号 label */
+      linePicks: { '主线': '', '引线': '' },
       calculationRule: CALC_RULES.GUIDE,
       justApplied: false,
       WEAR_PRESETS: [0, 50, 100],
@@ -557,6 +584,7 @@ export default {
   },
   mounted() {
     this.calcHistory = readStorage(STORAGE_KEYS.calcHistory, [])
+    this.loadLinesAndHooks()
     this.loadEquipmentData()
     document.addEventListener('click', this.handleClickOutside)
     // 仅在当前浏览器会话首次打开时弹出免责声明
@@ -734,7 +762,14 @@ export default {
         return fishMatch && mapMatch
       })
     },
-    /** 当前选中鱼种的推荐配置 */
+    /** 鱼线选项：datalist 用唯一 label（型号+线径+拉力） */
+    lineOptions() {
+      return this.fishingLines.map(l => ({
+        ...l,
+        label: `${l.name} Ø${l.diameter_mm}mm ${l.strength_kg}kg`
+      }))
+    },
+    /** 鱼种推荐配置 */
     currentFishRec() {
       if (!this.selectedFish) return null
       const fish = this.fishSpeciesList.find(f => f.display_name === this.selectedFish)
@@ -858,6 +893,46 @@ export default {
           this.selectedEquipmentList.push(restored)
         }
       }
+    },
+    /** 加载鱼线/鱼钩数据（选择器数据源，失败静默——保持手输可用） */
+    async loadLinesAndHooks() {
+      try {
+        const [linesRes, hooksRes] = await Promise.allSettled([
+          fetchWithTimeout('/api/fishing_lines'),
+          fetchWithTimeout('/api/fishing_hooks')
+        ])
+        if (linesRes.status === 'fulfilled' && linesRes.value.ok) {
+          const data = await linesRes.value.json()
+          if (data.success) this.fishingLines = data.data || []
+        }
+        if (hooksRes.status === 'fulfilled' && hooksRes.value.ok) {
+          const data = await hooksRes.value.json()
+          if (data.success) this.fishingHooks = data.data || []
+        }
+      } catch (e) { /* 静默：选择器无数据时退化为手输 */ }
+    },
+    /** 俄文线材类型 → 中文材质选项映射（未命中返回空=不改动材质） */
+    mapLineMaterial(type) {
+      const t = String(type || '')
+      if (/шнур|плетен/i.test(t)) return '编织线绳'
+      if (/фтор|флюор|флюорокарбон/i.test(t)) return '氟碳线'
+      if (/моно|нейлон/i.test(t)) return '尼龙线'
+      if (/сталь/i.test(t)) return '钢'
+      return ''
+    },
+    /** 选择线材型号：自动填充材质/线径/长度/拉力（kg→kN） */
+    onLinePreset(type) {
+      const pick = this.linePicks[type]
+      if (!pick) return
+      const line = this.lineOptions.find(l => l.label === pick)
+      if (!line) return
+      const target = this.customEquipment[type]
+      target.diameter = line.diameter_mm
+      target.maxTension = Number((line.strength_kg * 0.00981).toFixed(3))
+      if (type === '主线') target.length = line.length_m || target.length
+      const material = this.mapLineMaterial(line.type)
+      if (material) target.material = material
+      this.showToast(`已填充「${line.name}」：${line.diameter_mm}mm / ${line.strength_kg}kg`, 'success')
     },
     /** 一键清空：移除全部已选装备与线材输入（保留计算规则与摩擦值） */
     clearAll() {
@@ -1428,6 +1503,22 @@ h1 {
   align-items: center;
   flex-wrap: wrap;
   gap: 4px;
+}
+
+/* 线材型号选择输入（主线/引线） */
+.line-preset-input {
+  width: 150px;
+  padding: 5px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--text-main);
+  font-size: 12px;
+}
+
+.line-preset-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
 }
 
 /* 磨损/摩擦快捷预设按钮 */

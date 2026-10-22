@@ -1,0 +1,31 @@
+# Potryasov 装备参数 + RF4-STAT 奖杯数据 每周爬取
+# Secrets 与 crawl-gamekee.yml 共用：CF_ACCOUNT_ID / CF_D1_TOKEN
+name: Crawl Equipment Sources
+
+on:
+  schedule:
+    - cron: '0 20 * * 5'   # 每周六 04:00 北京时间（UTC 20:00 周五）
+  workflow_dispatch:
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Crawl Potryasov (lines/hooks/reel strength)
+        env:
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_D1_TOKEN: ${{ secrets.CF_D1_TOKEN }}
+        run: node scripts/crawl-potryasov.mjs
+
+      - name: Crawl RF4-STAT trophy weights
+        env:
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_D1_TOKEN: ${{ secrets.CF_D1_TOKEN }}
+        run: node scripts/crawl-rf4stat.mjs

@@ -11,7 +11,9 @@ export async function onRequestGet(context) {
     if (cached) return cached
 
     const result = await env.DB.prepare(
-      'SELECT name, display_name, difficulty, min_tension, max_tension, description FROM fish_species ORDER BY display_name'
+      `SELECT name, display_name, difficulty, min_tension, max_tension, description,
+              trophy_weight, super_trophy_weight, max_record_weight, max_record_date, rarity
+       FROM fish_species ORDER BY display_name`
     ).all()
 
     const response = jsonResponse({
