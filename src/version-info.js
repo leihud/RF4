@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20261022-04',
+  currentVersion: 'V20261022-05',
   buildTime: '2026-10-22',
   changelog: [
+    {
+      version: 'V20261022-05',
+      date: '2026-10-22',
+      changes: [
+        '优化：移除磨损快速预设按钮，结果区改为磨损前→磨损后对照展示'
+      ]
+    },
     {
       version: 'V20261022-04',
       date: '2026-10-22',
