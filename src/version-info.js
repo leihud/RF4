@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20261022-05',
+  currentVersion: 'V20261022-06',
   buildTime: '2026-10-22',
   changelog: [
+    {
+      version: 'V20261022-06',
+      date: '2026-10-22',
+      changes: [
+        '优化：拉力结果改为装备卡内独立展示（竿/轮各自的磨损前→磨损后），移除下限与明细表'
+      ]
+    },
     {
       version: 'V20261022-05',
       date: '2026-10-22',
