@@ -10,14 +10,14 @@ const routes = [
     component: Calculator
   },
   {
+    path: ROUTES.QUERY,
+    name: 'DatabaseQuery',
+    component: () => import('../components/DatabaseQueryPage.vue')
+  },
+  {
     path: ROUTES.COMPARE,
     name: 'Compare',
     component: () => import('../components/ComparePage.vue')
-  },
-  {
-    path: ROUTES.BUILDS,
-    name: 'BuildsList',
-    component: () => import('../components/BuildsListPage.vue')
   },
   {
     path: ROUTES.VALUE,
@@ -36,11 +36,11 @@ const router = createRouter({
   routes
 })
 
-// 页面标题随路由切换：浏览器历史/收藏/分享链接可区分页面
+// 页面标题随路由切换：浏览器历史/收藏可区分页面
 const TITLE_MAP = {
   [ROUTES.CALCULATOR]: '装备计算器',
+  [ROUTES.QUERY]: '数据查询',
   [ROUTES.COMPARE]: '装备参数对比',
-  [ROUTES.BUILDS]: '推荐方案汇总',
   [ROUTES.VALUE]: '装备价值统计'
 }
 router.afterEach((to) => {

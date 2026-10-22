@@ -14,18 +14,10 @@ export const STORAGE_KEYS = {
   calcHistory: 'calc_history_v1',
   /** 对比列表 */
   compareList: 'compare_list_v1',
-  /** 方案列表筛选状态 */
-  buildsFilters: 'builds_filters_v1',
   /** 价值统计清单 */
   valueList: 'value_list_v1',
-  /** 本地点赞的方案 id 集合 */
-  likedIds: 'build_liked_ids',
-  /** 客户端指纹（点赞去重） */
-  clientId: 'rf4_client_id',
   /** 亮/暗主题（原始文本 'light'/'dark'） */
-  theme: 'rf4_theme',
-  /** 用户"我的提交"本地索引 */
-  mineBuilds: 'rf4_my_submissions'
+  theme: 'rf4_theme'
 }
 
 function getStorage() {

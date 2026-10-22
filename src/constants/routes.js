@@ -7,10 +7,10 @@
 export const ROUTES = Object.freeze({
   /** 装备计算器首页 */
   CALCULATOR: '/',
+  /** 数据库查询 */
+  QUERY: '/query',
   /** 装备参数对比 */
   COMPARE: '/compare',
   /** 装备价值统计 */
-  VALUE: '/value',
-  /** 推荐方案汇总 */
-  BUILDS: '/builds'
+  VALUE: '/value'
 })

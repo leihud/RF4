@@ -3,10 +3,9 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import AppToast from '../src/components/common/AppToast.vue'
-import EquipmentSummary from '../src/components/calculator/EquipmentSummary.vue'
 import ComparePage from '../src/components/ComparePage.vue'
 import Calculator from '../src/components/Calculator.vue'
-import BuildsListPage from '../src/components/BuildsListPage.vue'
+import DatabaseQueryPage from '../src/components/DatabaseQueryPage.vue'
 import ValuePage from '../src/components/ValuePage.vue'
 import AppHeader from '../src/components/common/AppHeader.vue'
 
@@ -35,63 +34,6 @@ describe('AppToast 共享提示组件', () => {
     expect(wrapper.vm.visible).toBe(true)
     await new Promise(resolve => setTimeout(resolve, 3200))
     expect(wrapper.vm.visible).toBe(false)
-  })
-})
-
-describe('EquipmentSummary 装备组合总览', () => {
-  const baseProps = {
-    selectedEquipmentList: [
-      { equipmentType: '鱼竿', model: '测试竿A', silverPrice: '1,000', goldPrice: '', panelTension: 30, lockTension: 25, category: '海竿' },
-      { equipmentType: '渔轮', model: '测试轮B', silverPrice: '2,000', goldPrice: '10', lockTension: 40, frictionForce: 20, category: '纺车式' }
-    ],
-    customEquipment: {
-      '主线': { maxTension: 0, wear: 0, material: '', diameter: 0, length: 0 },
-      '引线': { maxTension: 0, wear: 0, material: '', diameter: 0, length: 0 }
-    },
-    actualLockTensionMap: {},
-    actualPanelTensionMap: {}
-  }
-
-  it('渲染五行结构的关键标签', () => {
-    const wrapper = mount(EquipmentSummary, { props: baseProps })
-    const text = wrapper.text()
-    expect(text).toContain('装备组合')
-    expect(text).toContain('总价格')
-    expect(text).toContain('鱼竿适配重')
-    expect(text).toContain('渔轮适配重')
-    expect(text).toContain('鱼竿价格')
-    expect(text).toContain('渔轮价格')
-  })
-
-  it('装备组合文本包含已选装备型号', () => {
-    const wrapper = mount(EquipmentSummary, { props: baseProps })
-    expect(wrapper.text()).toContain('测试竿A')
-    expect(wrapper.text()).toContain('测试轮B')
-  })
-
-  it('总价格为银价求和（含千分位价格解析）', () => {
-    const wrapper = mount(EquipmentSummary, { props: baseProps })
-    // 1000 + 2000 = 3000
-    expect(wrapper.vm.totalSilverPrice).toBe(3000)
-    expect(wrapper.vm.totalGoldPrice).toBe(10)
-  })
-
-  it('主线录入拉力后展示最小拉力行', () => {
-    const props = {
-      ...baseProps,
-      customEquipment: {
-        ...baseProps.customEquipment,
-        '主线': { maxTension: 12.5, wear: 0, material: '氟碳线', diameter: 0.35, length: 150 }
-      },
-      actualLockTensionMap: { '鱼竿': 25, '渔轮': 40 },
-      actualPanelTensionMap: { '鱼竿': 30, '渔轮': 20 }
-    }
-    const wrapper = mount(EquipmentSummary, { props })
-    const text = wrapper.text()
-    expect(text).toContain('锁轮下最小拉力')
-    expect(text).toContain('常规下最小拉力')
-    // 主线 12.5kN 应为锁轮下最小值
-    expect(text).toContain('12.50')
   })
 })
 
@@ -140,10 +82,8 @@ describe('各页面挂载冒烟测试（暴露未定义引用/模板错误）', 
     global.fetch = async (url) => {
       const u = String(url)
       let body = []
-      if (u.includes('/api/recommended_builds')) body = { success: true, data: [], hasMore: false }
-      else if (u.includes('/api/meta')) body = { success: true, data: {} }
-      else if (u.includes('/api/maps')) body = [{ name: 'm1', display_name: '测试地图' }]
-      else if (u.includes('/api/fish_species')) body = [{ name: 'f1', display_name: '测试鱼种' }]
+      if (u.includes('/api/meta')) body = { success: true, data: {} }
+      else if (u.includes('/api/query_data')) body = { success: true, data: [], total: 0 }
       else if (u.includes('/api/rods')) body = [rod]
       else if (u.includes('/api/reels')) body = [reel]
       return { ok: true, json: async () => body }
@@ -156,19 +96,21 @@ describe('各页面挂载冒烟测试（暴露未定义引用/模板错误）', 
     setupFetch()
   })
 
-  it('Calculator 挂载渲染无异常', async () => {
+  it('Calculator 挂载渲染无异常（左右竿/轮布局）', async () => {
     const wrapper = mount(Calculator)
     await flushPromises()
     await nextTick()
-    expect(wrapper.find('.equipment-selector').exists()).toBe(true)
+    expect(wrapper.find('.calc-layout').exists()).toBe(true)
+    expect(wrapper.findAll('.gear-panel').length).toBe(2)
     wrapper.unmount()
   })
 
-  it('BuildsListPage 挂载渲染无异常', async () => {
-    const wrapper = mount(BuildsListPage)
+  it('DatabaseQueryPage 挂载渲染无异常并默认加载鱼竿表', async () => {
+    const wrapper = mount(DatabaseQueryPage)
     await flushPromises()
     await nextTick()
-    expect(wrapper.find('.builds-list-page').exists()).toBe(true)
+    expect(wrapper.find('.tab-bar').exists()).toBe(true)
+    expect(wrapper.find('.data-table').exists()).toBe(true)
     wrapper.unmount()
   })
 

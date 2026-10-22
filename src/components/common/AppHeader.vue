@@ -6,7 +6,7 @@
       </router-link>
       <nav class="nav-links">
         <router-link :to="routes.CALCULATOR" class="nav-link" exact-active-class="active">装备计算</router-link>
-        <router-link :to="routes.BUILDS" class="nav-link" active-class="active">方案汇总</router-link>
+        <router-link :to="routes.QUERY" class="nav-link" active-class="active">数据查询</router-link>
         <router-link :to="routes.COMPARE" class="nav-link" active-class="active">参数对比</router-link>
         <router-link :to="routes.VALUE" class="nav-link" active-class="active">价值统计</router-link>
         <a class="nav-link external desktop-only" href="https://cn.rf4-stat.ru/" target="_blank" rel="noopener noreferrer">RF4 数据站 ↗</a>

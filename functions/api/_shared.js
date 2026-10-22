@@ -290,17 +290,6 @@ export function enforceBodyLimit(request, maxBytes) {
   return { ok: true }
 }
 
-/**
- * 管理员密码校验（写操作保护）：recommended_builds 审核与删除入口。
- * 未配置 IMPORT_PASSWORD 时一律拒绝，避免“任意非空密码放行”的降级风险。
- * @returns {boolean}
- */
-export function validateAdminPassword(env, password) {
-  const importPassword = env.IMPORT_PASSWORD
-  if (!importPassword) return false
-  return password === importPassword
-}
-
 export function errorResponse(error, status = 500) {
   // 统一错误契约 { success:false, message }；
   // 不向前端回传 DB 等内部实现细节，调用方应先在 catch 中用 console.error 记录原始错误

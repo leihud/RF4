@@ -1,6 +1,12 @@
-# 俄罗斯钓鱼4 装备搭配计算器（RF4）
+# 俄罗斯钓鱼4 装备计算器（RF4）
 
-俄罗斯钓鱼4（Russian Fishing 4）装备搭配方案计算与分享工具。前端为 Vue 3 + Vite 单页应用，部署于 Cloudflare Pages，数据层使用 D1（SQLite）与 Pages Functions。
+俄罗斯钓鱼4（Russian Fishing 4）个人装备拉力计算与数据库查询工具。前端为 Vue 3 + Vite 单页应用，部署于 Cloudflare Pages，数据层使用 D1（SQLite）与 Pages Functions；装备/鱼种/渔获数据由定时爬虫自动维护（GameKee 每日、Potryasov/RF4-STAT 每周）。
+
+## 功能
+
+- **装备计算器**（`/`）：左右结构选鱼竿+渔轮，分别设定磨损（渔轮区分摩擦制动器磨损/装备磨损）与摩擦值，计算锁轮/常规拉力与木桶最小值；磨损-拉力衰减曲线；最近搭配本地一键恢复
+- **数据查询**（`/query`）：数据库全量检索——鱼竿/渔轮/鱼线/鱼钩/鱼种（含奖杯重量）/渔轮强度/图鉴全字段，支持关键字搜索与分页；渔获速查（实时抓取 RF4-STAT 最新渔获流按地图/鱼种过滤）
+- **参数对比**（`/compare`）、**装备价值统计**（`/value`）
 
 ## 技术栈
 
@@ -23,8 +29,7 @@ npm run build
 npx wrangler pages dev dist --port 8788   # 需先 npm run build 生成 dist，并配置好 .dev.vars
 ```
 
-`wrangler.toml` 中已声明 D1 数据库绑定 `DB`。本地联调依赖：
-- `IMPORT_PASSWORD`：方案审核与删除的管理密码（.dev.vars，与生产 secret 同名）
+`wrangler.toml` 中已声明 D1 数据库绑定 `DB`。
 
 首次开发需要同步数据库结构：
 
@@ -97,11 +102,7 @@ GitHub Actions 需配置 Secrets：`CF_ACCOUNT_ID`（账户 ID）、`CF_D1_TOKEN
 
 ## 环境变量 / Secrets
 
-| 变量 | 用途 |
-| --- | --- |
-| `IMPORT_PASSWORD` | 方案审核与删除的管理密码（secret，本地 .dev.vars 与生产 secret 同名） |
-
-生产 secrets 在 CF Dashboard 或 `wrangler secret put IMPORT_PASSWORD` 配置。
+应用本身无运行时 secrets。GitHub Actions 爬虫使用：`CF_ACCOUNT_ID`、`CF_D1_TOKEN`（见上文）。历史 secret `IMPORT_PASSWORD` 已随方案功能下线，可在 CF Dashboard 删除。
 
 ## 目录结构
 
