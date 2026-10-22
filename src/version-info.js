@@ -4,9 +4,17 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20261021-01',
-  buildTime: '2026-10-21',
+  currentVersion: 'V20261022-01',
+  buildTime: '2026-10-22',
   changelog: [
+    {
+      version: 'V20261022-01',
+      date: '2026-10-22',
+      changes: [
+        '优化：线材选择不再自动填卷长，移动端线材输入全宽，鱼种奖杯数据展示',
+        '新增：接入 Potryasov 鱼线/鱼钩参数（线径-拉力对照、钩号-拉力矩阵）与 RF4-STAT 奖杯数据，计算器主线/引线/鱼钩选择器自动填充'
+      ]
+    },
     {
       version: 'V20261021-01',
       date: '2026-10-21',
