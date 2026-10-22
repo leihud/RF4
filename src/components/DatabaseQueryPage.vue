@@ -2,7 +2,7 @@
   <div class="app">
     <div class="page-header">
       <h1>数据查询</h1>
-      <p class="page-desc">数据库全量数据检索：鱼竿 / 渔轮 / 鱼线 / 鱼钩 / 鱼种 / 渔轮强度 / 图鉴全字段 / 渔获速查</p>
+      <p class="page-desc">数据库全量数据检索：鱼竿 / 渔轮 / 鱼线 / 鱼钩 / 鱼种 / 图鉴全字段 · 渔获速查（实时）</p>
     </div>
 
     <!-- 分类 Tab -->
@@ -165,13 +165,7 @@ const TABS = [
     ]
   },
   {
-    key: 'reel_strength', label: '渔轮强度', table: 'reel_strength',
-    searchPlaceholder: '搜索渔轮型号',
-    columns: [
-      { prop: 'model', label: '型号' },
-      { prop: 'strength_kg', label: '强度(kg)' },
-      { prop: 'category', label: '轮型' }
-    ]
+    key: 'fishing', label: '渔获速查'
   },
   {
     key: 'gamekee_items', label: '图鉴全字段', table: 'gamekee_items',

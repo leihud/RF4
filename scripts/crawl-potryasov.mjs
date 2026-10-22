@@ -12,7 +12,7 @@
  *
  * 环境：Node >= 18，零第三方依赖。请求间隔 2s，温和限频（该站偶发 403，重试即可）。
  */
-import { parseLinesCsv, parseHooksCsv, parseCalcOptions } from './stats-parser.mjs'
+import { parseLinesCsv, parseHooksCsv, parseCalcOptions, extractPageTitle } from './stats-parser.mjs'
 
 const CALC_MAIN_URL = 'https://potryasovgame.ru/page114271846.html'
 const LINES_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRlGuvbmIjJBh9DHH8xwK6wHX9U7PCTP_Q8ph8LA_2UAivTWZ_I8ecMAxHN9Gqt4aSO-NWgsDQ-8rG8/pub?gid=1858081774&single=true&output=csv'
@@ -85,16 +85,17 @@ async function main() {
   for (const link of subLinks) {
     try {
       const html = await getText(`https://potryasovgame.ru${link}`)
+      const pageTitle = extractPageTitle(html)
       const opts = parseCalcOptions(html)
       let fresh = 0
       for (const o of opts) {
         const key = o.model.toLowerCase()
         if (seen.has(key)) continue
         seen.add(key)
-        reelStrength.push({ ...o, category: link })
+        reelStrength.push({ ...o, category: pageTitle || link })
         fresh++
       }
-      console.log(`  ${link}: ${opts.length} option（新增 ${fresh}）`)
+      console.log(`  ${link} [${pageTitle || '-'}]: ${opts.length} option（新增 ${fresh}）`)
     } catch (e) {
       console.warn(`  子页失败 ${link}: ${e.message}`)
     }
@@ -103,6 +104,8 @@ async function main() {
 
   // 4) 落库
   if (!DRY_RUN) {
+    // 先清空渔轮强度表：修复历史脏数据（早期版本误抓磨损系数行）
+    await d1Query([{ sql: 'DELETE FROM reel_strength' }])
     const BATCH = 40
     // 鱼线 UPSERT
     for (let i = 0; i < lines.length; i += BATCH) {

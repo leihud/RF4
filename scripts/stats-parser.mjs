@@ -100,6 +100,10 @@ export function parseHooksCsv(csvText) {
 /**
  * Tilda 强度计算器页 HTML → [{model, strength_kg}]。
  * 数据在 <option value="Admiral 1000s = 9.00"> 中；"?" 表示未知（跳过）。
+ *
+ * 注意：计算器页还内嵌「齿轮磨损 0-100% → 0.00-1.00 系数」的 option，
+ * 形如 value="50% = 0.5"，会被同一正则命中——必须过滤：
+ * 型号必须含字母且不含百分号，否则视为磨损系数行丢弃。
  */
 export function parseCalcOptions(html) {
   const out = []
@@ -108,9 +112,24 @@ export function parseCalcOptions(html) {
   while ((m = re.exec(html)) !== null) {
     const model = m[1].trim()
     const kg = parseRuNumber(m[2])
-    if (model && kg != null) out.push({ model, strength_kg: kg })
+    if (!model || kg == null) continue
+    // 排除磨损系数行：含 % 或纯数字（无字母）的都不是型号名
+    if (model.includes('%') || !/[A-Za-z\u0400-\u04FF]/.test(model)) continue
+    out.push({ model, strength_kg: kg })
   }
   return out
+}
+
+/** 从子页 HTML 提取页面标题（作轮型分类名），失败返回空串 */
+export function extractPageTitle(html) {
+  const m = String(html || '').match(/<title[^>]*>([\s\S]*?)<\/title>/i)
+  if (!m) return ''
+  return m[1]
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\s*[|–—-]\s*Potryasov.*$/i, '')
+    .trim()
 }
 
 /**

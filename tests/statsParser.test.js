@@ -8,6 +8,7 @@ import {
   parseLinesCsv,
   parseHooksCsv,
   parseCalcOptions,
+  extractPageTitle,
   parseWeightTable
 } from '../scripts/stats-parser.mjs'
 
@@ -87,6 +88,28 @@ describe('parseCalcOptions', () => {
   })
   it('无 option 时返回空', () => {
     expect(parseCalcOptions('<div>no data</div>')).toEqual([])
+  })
+  it('过滤齿轮磨损系数行（0-100% 非型号）', () => {
+    const html = `<select>
+      <option value="Admiral 1000s = 9.00">A</option>
+      <option value="0% = 1">0</option>
+      <option value="50% = 0.5">50</option>
+      <option value="100% = 0">100</option>
+      <option value="25 = 0.25">25</option>
+    </select>`
+    const rows = parseCalcOptions(html)
+    expect(rows).toEqual([{ model: 'Admiral 1000s', strength_kg: 9 }])
+  })
+})
+
+describe('extractPageTitle', () => {
+  it('提取标题并去除站名后缀', () => {
+    const html = '<html><head><title>Спиннинги — Potryasov Game</title></head></html>'
+    expect(extractPageTitle(html)).toBe('Спиннинги')
+  })
+  it('无标题返回空串', () => {
+    expect(extractPageTitle('<div>x</div>')).toBe('')
+    expect(extractPageTitle('')).toBe('')
   })
 })
 
