@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20261022-03',
+  currentVersion: 'V20261022-04',
   buildTime: '2026-10-22',
   changelog: [
+    {
+      version: 'V20261022-04',
+      date: '2026-10-22',
+      changes: [
+        '修复：渔获速查补上 Tab 入口，移除多余的渔轮强度查询；渔轮强度数据修复（过滤磨损系数行、轮型用页面标题、清空重建）'
+      ]
+    },
     {
       version: 'V20261022-03',
       date: '2026-10-22',
