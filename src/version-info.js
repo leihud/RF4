@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20261022-06',
+  currentVersion: 'V20261022-07',
   buildTime: '2026-10-22',
   changelog: [
+    {
+      version: 'V20261022-07',
+      date: '2026-10-22',
+      changes: [
+        '优化：鱼竿去掉锁轮拉力项，移除磨损-拉力衰减曲线'
+      ]
+    },
     {
       version: 'V20261022-06',
       date: '2026-10-22',
