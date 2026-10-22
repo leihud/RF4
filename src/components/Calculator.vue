@@ -58,10 +58,30 @@
             <span v-if="getMergedAdaptWeight(rod, '鱼竿')" class="selected-tension">适配重: {{ getMergedAdaptWeight(rod, '鱼竿') }}</span>
           </div>
           <div class="param-block">
-            <div class="param-label">磨损设定 <span class="param-hint">影响面板拉力（×0.7 系数）</span></div>
+            <div class="param-label">磨损设定 <span class="param-hint">影响拉力（×0.7 系数）</span></div>
             <div class="wear-input-wrapper">
               <input type="number" class="wear-input" v-model.number="rod.wear" min="0" max="100" />
               <span class="wear-unit">%</span>
+            </div>
+          </div>
+          <div class="gear-result">
+            <div class="gear-result-row">
+              <span class="gear-result-label">面板拉力</span>
+              <span class="tension-compare">
+                <span class="before">{{ formatTension(rodPanelRaw) }}</span>
+                <span class="arrow">→</span>
+                <span class="after">{{ formatTension(rodPanel) }}</span>
+                <span class="unit">kN</span>
+              </span>
+            </div>
+            <div class="gear-result-row">
+              <span class="gear-result-label">锁轮拉力</span>
+              <span class="tension-compare">
+                <span class="before">{{ formatTension(rodLockRaw) }}</span>
+                <span class="arrow">→</span>
+                <span class="after">{{ formatTension(rodLock) }}</span>
+                <span class="unit">kN</span>
+              </span>
             </div>
           </div>
           <div class="gear-actions">
@@ -134,6 +154,26 @@
               </div>
             </div>
           </div>
+          <div class="gear-result">
+            <div class="gear-result-row">
+              <span class="gear-result-label">锁轮拉力 <small>摩擦制动器磨损</small></span>
+              <span class="tension-compare">
+                <span class="before">{{ formatTension(reelLockRaw) }}</span>
+                <span class="arrow">→</span>
+                <span class="after">{{ formatTension(reelLock) }}</span>
+                <span class="unit">kN</span>
+              </span>
+            </div>
+            <div class="gear-result-row">
+              <span class="gear-result-label">面板拉力 <small>装备磨损 · 摩擦 {{ toSafeNumber(friction) }}</small></span>
+              <span class="tension-compare">
+                <span class="before">{{ formatTension(reelPanelRaw) }}</span>
+                <span class="arrow">→</span>
+                <span class="after">{{ formatTension(reelPanel) }}</span>
+                <span class="unit">kN</span>
+              </span>
+            </div>
+          </div>
           <div class="gear-actions">
             <button class="select-btn" @click="selectType('渔轮')">更换装备</button>
             <button class="clear-btn" title="移除渔轮" @click="clearGear('渔轮')">×</button>
@@ -154,68 +194,9 @@
       </section>
     </div>
 
-    <!-- 计算结果 -->
-    <div v-if="allSelected" class="result-card">
-      <div class="result-hero">
-        <div class="hero-item">
-          <span class="hero-label">锁轮拉力下限</span>
-          <span class="hero-value">{{ formatTension(minLock) }}<small> kN</small></span>
-        </div>
-        <div class="hero-item">
-          <span class="hero-label">常规拉力下限</span>
-          <span class="hero-value">{{ formatTension(minPanel) }}<small> kN</small></span>
-        </div>
-      </div>
-      <div class="result-detail">
-        <div class="result-group">
-          <h4 class="result-title">锁轮拉力 <span class="result-hint">磨损前 → 磨损后</span></h4>
-          <div class="result-row">
-            <span>鱼竿</span>
-            <span class="tension-compare">
-              <span class="before">{{ formatTension(rodLockRaw) }}</span>
-              <span class="arrow">→</span>
-              <span class="after">{{ formatTension(rodLock) }}</span>
-              <span class="unit">kN</span>
-            </span>
-          </div>
-          <div class="result-row">
-            <span>渔轮</span>
-            <span class="tension-compare">
-              <span class="before">{{ formatTension(reelLockRaw) }}</span>
-              <span class="arrow">→</span>
-              <span class="after">{{ formatTension(reelLock) }}</span>
-              <span class="unit">kN</span>
-            </span>
-          </div>
-        </div>
-        <div class="result-group">
-          <h4 class="result-title">常规拉力（面板） <span class="result-hint">磨损前 → 磨损后</span></h4>
-          <div class="result-row">
-            <span>鱼竿</span>
-            <span class="tension-compare">
-              <span class="before">{{ formatTension(rodPanelRaw) }}</span>
-              <span class="arrow">→</span>
-              <span class="after">{{ formatTension(rodPanel) }}</span>
-              <span class="unit">kN</span>
-            </span>
-          </div>
-          <div class="result-row">
-            <span>渔轮</span>
-            <span class="tension-compare">
-              <span class="before">{{ formatTension(reelPanelRaw) }}</span>
-              <span class="arrow">→</span>
-              <span class="after">{{ formatTension(reelPanel) }}</span>
-              <span class="unit">kN</span>
-            </span>
-          </div>
-        </div>
-      </div>
-      <p class="result-note">「磨损前」为无磨损时的拉力（面板拉力已按摩擦值折算）；下限取鱼竿与渔轮中较小值（木桶效应）</p>
-    </div>
-
     <!-- 磨损-拉力衰减曲线 -->
     <WearCurveChart
-      v-if="allSelected && wearCurveCandidates.length"
+      v-if="wearCurveCandidates.length"
       :candidates="wearCurveCandidates"
       :calc-rule="calculationRule"
       :friction="friction"
@@ -283,7 +264,6 @@ export default {
       for (const item of this.selectedEquipmentList) map[item.equipmentType] = item
       return map
     },
-    allSelected() { return !!(this.rod && this.reel) },
     frictionMax() { return getFrictionMax(this.calculationRule) },
     frictionPresets() {
       const max = this.frictionMax
@@ -319,9 +299,7 @@ export default {
     rodLockRaw() { return this.rodWearFree ? calculateActualLockTension(this.rodWearFree, this.calculationRule) : 0 },
     rodPanelRaw() { return this.rodWearFree ? calculateActualPanelTension(this.rodWearFree, this.calculationRule, this.friction) : 0 },
     reelLockRaw() { return this.reelWearFree ? calculateActualLockTension(this.reelWearFree, this.calculationRule) : 0 },
-    reelPanelRaw() { return this.reelWearFree ? calculateActualPanelTension(this.reelWearFree, this.calculationRule, this.friction) : 0 },
-    minLock() { return this.allSelected ? Math.min(this.rodLock, this.reelLock) : 0 },
-    minPanel() { return this.allSelected ? Math.min(this.rodPanel, this.reelPanel) : 0 }
+    reelPanelRaw() { return this.reelWearFree ? calculateActualPanelTension(this.reelWearFree, this.calculationRule, this.friction) : 0 }
   },
   watch: {
     calculationRule(val) {
@@ -857,82 +835,34 @@ export default {
   background: var(--color-danger-bg);
 }
 
-/* ── 结果卡 ── */
-.result-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 18px 20px;
-  margin-bottom: 16px;
-}
-
-.result-hero {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin-bottom: 16px;
-}
-
-.hero-item {
+/* ── 卡片内结果：磨损前 → 磨损后（各算各的，不联动） ── */
+.gear-result {
   background: var(--color-tension-bg);
   border-radius: 10px;
-  padding: 14px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  padding: 10px 14px;
+  margin-top: 14px;
 }
 
-.hero-label {
+.gear-result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+}
+
+.gear-result-row + .gear-result-row {
+  border-top: 1px dashed var(--color-border);
+}
+
+.gear-result-label {
   font-size: 12px;
   color: var(--color-tension-text);
 }
 
-.hero-value {
-  font-size: 30px;
-  font-weight: 700;
-  color: var(--color-tension-text);
-  font-variant-numeric: tabular-nums;
-  line-height: 1.1;
-}
-
-.hero-value small {
-  font-size: 14px;
-  font-weight: 500;
-  margin-left: 2px;
-}
-
-.result-detail {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-
-.result-group {
-  border-top: 1px dashed var(--color-divider);
-  padding-top: 12px;
-}
-
-.result-title {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
-.result-hint {
-  font-size: 11px;
-  font-weight: 400;
+.gear-result-label small {
+  font-size: 10px;
   color: var(--text-hint);
   margin-left: 4px;
-}
-
-.result-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-  color: var(--text-secondary);
-  padding: 5px 0;
 }
 
 /* 磨损前 → 磨损后 对照 */
@@ -957,7 +887,7 @@ export default {
 .tension-compare .after {
   color: var(--color-tension-text);
   font-weight: 700;
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .tension-compare .unit {
@@ -965,17 +895,9 @@ export default {
   font-size: 11px;
 }
 
-.result-note {
-  font-size: 11px;
-  color: var(--text-hint);
-  margin-top: 12px;
-}
-
 /* ── 移动端 ── */
 @media (max-width: 768px) {
-  .calc-layout,
-  .result-hero,
-  .result-detail {
+  .calc-layout {
     grid-template-columns: 1fr;
   }
 
@@ -990,10 +912,6 @@ export default {
   .toolbar-group {
     width: 100%;
     justify-content: space-between;
-  }
-
-  .hero-value {
-    font-size: 24px;
   }
 }
 </style>
