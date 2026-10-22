@@ -4,9 +4,16 @@
  * 版本号格式：V+ 发布日期 + 分支代码 (如 V20260817-01)
  */
 export const versionInfo = {
-  currentVersion: 'V20261022-01',
+  currentVersion: 'V20261022-02',
   buildTime: '2026-10-22',
   changelog: [
+    {
+      version: 'V20261022-02',
+      date: '2026-10-22',
+      changes: [
+        '修复：GameKee 坏 profile 名字校验，防止整页文本混入装备型号名写入数据库'
+      ]
+    },
     {
       version: 'V20261022-01',
       date: '2026-10-22',
