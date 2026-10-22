@@ -6,6 +6,7 @@ import {
   extractProfile,
   extractProfiles,
   parseProfile,
+  isValidProfileName,
   flattenTree,
   mapAttrsToColumns,
   normalizeAttrKey,
@@ -72,6 +73,27 @@ describe('normalizeAttrKey', () => {
   })
   it('未命中保留原名', () => {
     expect(normalizeAttrKey('自定义字段')).toBe('自定义字段')
+  })
+})
+
+describe('isValidProfileName（坏 profile 名字过滤）', () => {
+  it('正常型号名通过', () => {
+    expect(isValidProfileName('Venga 6000')).toBe(true)
+    expect(isValidProfileName('Hydra G2 30s')).toBe(true)
+    expect(isValidProfileName('Atlas Marker 4.0LB')).toBe(true)
+  })
+  it('整页内容拼进名字的坏 profile 被拒', () => {
+    const bad = 'Venga 6000能力：无Hydra G2 – 是Syberia公司制造的新一代纺车式卷线轮。 评级 Hydra G2 30s'
+    expect(isValidProfileName(bad)).toBe(false)
+  })
+  it('超长名字被拒', () => {
+    expect(isValidProfileName('A'.repeat(61))).toBe(false)
+  })
+  it('含描述句号的被拒', () => {
+    expect(isValidProfileName('某轮。描述文本')).toBe(false)
+  })
+  it('空名被拒', () => {
+    expect(isValidProfileName('')).toBe(false)
   })
 })
 

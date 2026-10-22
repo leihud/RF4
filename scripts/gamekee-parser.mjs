@@ -141,6 +141,19 @@ export function normalizeAttrKey(rawTitle) {
 }
 
 /**
+ * profile 名字合法性校验：GameKee 个别页面存在把整页内容拼进名字的坏 profile
+ * （名字混入"能力："/描述句号段落/超长文本）。合法名字应为短型号名。
+ */
+export function isValidProfileName(name) {
+  const n = cleanText(name)
+  if (!n || n.length > 60) return false
+  if (n.includes('能力：') || n.includes('能力:')) return false
+  // 正常型号名不含句号/分号段落（防描述混入）
+  if (/[。；]/.test(n)) return false
+  return true
+}
+
+/**
  * character-profile → 装备对象：
  * { name, descTitle, description, attrs: [{key, raw, value, num}], attrsMap }
  */

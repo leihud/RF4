@@ -21,6 +21,7 @@ import {
   flattenTree,
   extractProfiles,
   parseProfile,
+  isValidProfileName,
   mapAttrsToColumns,
   ROD_ATTR_COLUMNS,
   REEL_ATTR_COLUMNS
@@ -137,7 +138,13 @@ async function main() {
       } else {
         for (const p of profiles) {
           const parsed = parseProfile(p)
-          if (parsed && parsed.name) items.push({ leaf, parsed, version })
+          if (!parsed || !parsed.name) continue
+          // 名字合法性校验：跳过 GameKee 坏 profile（防脏写，详见 isValidProfileName）
+          if (!isValidProfileName(parsed.name)) {
+            console.warn(`  跳过坏名字 profile（${leaf.name}#${leaf.entryId}）: ${parsed.name.slice(0, 40)}…`)
+            continue
+          }
+          items.push({ leaf, parsed, version })
         }
       }
     } catch (e) {
