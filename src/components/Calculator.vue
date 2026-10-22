@@ -74,15 +74,6 @@
                 <span class="unit">kN</span>
               </span>
             </div>
-            <div class="gear-result-row">
-              <span class="gear-result-label">锁轮拉力</span>
-              <span class="tension-compare">
-                <span class="before">{{ formatTension(rodLockRaw) }}</span>
-                <span class="arrow">→</span>
-                <span class="after">{{ formatTension(rodLock) }}</span>
-                <span class="unit">kN</span>
-              </span>
-            </div>
           </div>
           <div class="gear-actions">
             <button class="select-btn" @click="selectType('鱼竿')">更换装备</button>
@@ -194,15 +185,6 @@
       </section>
     </div>
 
-    <!-- 磨损-拉力衰减曲线 -->
-    <WearCurveChart
-      v-if="wearCurveCandidates.length"
-      :candidates="wearCurveCandidates"
-      :calc-rule="calculationRule"
-      :friction="friction"
-      mode="lock"
-    />
-
     <AppToast ref="toast" />
   </div>
 </template>
@@ -229,7 +211,6 @@ import { loadRodAndReelData } from '../utils/equipmentLoader.js'
 import { readStorage, writeStorage, STORAGE_KEYS } from '../utils/storage.js'
 import DisclaimerModal from './calculator/DisclaimerModal.vue'
 import EquipmentSearchDropdown from './calculator/EquipmentSearchDropdown.vue'
-import WearCurveChart from './calculator/WearCurveChart.vue'
 import AppToast from './common/AppToast.vue'
 import AppSkeleton from './common/AppSkeleton.vue'
 
@@ -238,7 +219,6 @@ export default {
   components: {
     DisclaimerModal,
     EquipmentSearchDropdown,
-    WearCurveChart,
     AppToast,
     AppSkeleton
   },
@@ -283,20 +263,12 @@ export default {
       if (compatible === null) return null
       return (item) => compatible.includes(item.category)
     },
-    wearCurveCandidates() {
-      const out = []
-      if (this.rod) out.push({ key: 'rod', name: this.rod.model || this.rod.equipmentName || '鱼竿', type: 'rod', item: this.rod })
-      if (this.reel) out.push({ key: 'reel', name: this.reel.model || this.reel.equipmentName || '渔轮', type: 'reel', item: this.reel })
-      return out
-    },
-    rodLock() { return this.rod ? calculateActualLockTension(this.rod, this.calculationRule) : 0 },
     rodPanel() { return this.rod ? calculateActualPanelTension(this.rod, this.calculationRule, this.friction) : 0 },
     reelLock() { return this.reel ? calculateActualLockTension(this.reel, this.calculationRule) : 0 },
     reelPanel() { return this.reel ? calculateActualPanelTension(this.reel, this.calculationRule, this.friction) : 0 },
     /** 无磨损副本：用于「磨损前」拉力对照（面板拉力仍按当前摩擦值折算） */
     rodWearFree() { return this.rod ? { ...this.rod, wear: 0, lockWear: 0, panelWear: 0 } : null },
     reelWearFree() { return this.reel ? { ...this.reel, wear: 0, lockWear: 0, panelWear: 0 } : null },
-    rodLockRaw() { return this.rodWearFree ? calculateActualLockTension(this.rodWearFree, this.calculationRule) : 0 },
     rodPanelRaw() { return this.rodWearFree ? calculateActualPanelTension(this.rodWearFree, this.calculationRule, this.friction) : 0 },
     reelLockRaw() { return this.reelWearFree ? calculateActualLockTension(this.reelWearFree, this.calculationRule) : 0 },
     reelPanelRaw() { return this.reelWearFree ? calculateActualPanelTension(this.reelWearFree, this.calculationRule, this.friction) : 0 }
